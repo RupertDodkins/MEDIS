@@ -1,0 +1,11 @@
+# parent lib directory path definition
+export CAOS_ROOT="/Users/marcel/Simul/caos_pse"
+
+# parent working directory path definition
+export CAOS_WORK="/Users/marcel/Simul/caos_pse/work_caos"
+
+# startup file path definition
+export IDL_STARTUP="/Users/marcel/Simul/caos_pse/work_caos/caos_startup.pro"
+
+# IDL/X11 problem...
+export IDL_GR_X_RENDERER=1

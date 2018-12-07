@@ -1,0 +1,706 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta name="description" content="utilities Software Package" />
+  <meta name="keywords" content="utilities Sofware Package, CAOS PSE" />
+  <meta http-equiv="content-type" content="text/html; charset=windows-1252" />
+  <link rel="stylesheet" type="text/css" href="html_template_style/style.css" />
+<title>Utilities - Help</title>
+</head>
+
+<body>
+  <div id="main">
+    <div id="header">
+      <div id="logo">
+        <div id="logo_text">
+          <h1><a href="utilities_help.html">Utilities<span class="logo_colour"> HELP </span></a></h1>
+          <h2>A software package of the CAOS Problem Solving Environment.</h2>
+        </div>
+      </div>
+      <div id="menubar">
+        <ul id="menu">
+          <li><a href="utilities_help.html">Home</a></li>
+          <li class="selected"><a href="utilities_routines.html">Routines</a></li>
+          <li><a href="utilities_contacts.html">Contacts</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="content_header"></div>
+    <div id="site_content">
+      <div id="sidebar_container">
+        <div class="sidebar">
+          <!-- insert your sidebar items here --> 
+          <div class="sidebar_top"></div>
+          <div class="sidebar_item">
+            <h3>Latest News</h3>
+            <h4>New Software Package Release</h4>
+            <h5>Wed Jun 22 16:52:46 2016</h5>
+            <p> Today the new version of the Software Package UTILITIES has been released. </p>
+          </div>
+          <div class="sidebar_base"></div>
+        </div>
+        <div class="sidebar">
+          <div class="sidebar_top"></div>
+          <div class="sidebar_item">
+            <h3>Useful Links</h3>
+            <ul>
+              <li><a href="http://lagrange.oca.eu/caos" target="_blanck">UTILITIES homepage</a></li>
+              <li><a href="http://lagrange.oca.eu/caos" target="_blanck">CAOS homepage</a></li>
+              <li><a href="http://www.exelisvis.com/" target="_blanck">IDL homepage</a></li>
+              <li><a href="http://idlastro.gsfc.nasa.gov/homepage.html" target="_blanck">The IDL Astronomy Library</a></li>
+            </ul>
+          </div>
+          <div class="sidebar_base"></div>
+        </div>
+      </div>
+      <div id="content">
+        <!-- insert the page content here -->
+        <a name="TOP"></a>
+        <a name="ROUTINELIST">
+        <h2>List of Routines</h2>
+        <table width="75%"><tr>
+           <td align="center"><a href="#DIS">DIS</a></td>
+           <td align="center"><a href="#RFT">RFT</a></td>
+           <td align="center"><a href="#SAV">SAV</a></td>
+        </tr><tr>
+           <td align="center"><a href="#WFT">WFT</a></td>
+           <td align="center"><a href="#XXX">XXX</a></td>
+        </tr></table>
+        <hr width=75%>
+<H1>Routine Descriptions</H1>
+<A NAME="DIS">
+<H2>DIS</H2></A>
+<A HREF="#RFT">[Next Routine]</A>
+<A HREF="#ROUTINELIST">[List of Routines]</A>
+<PRE>
+ NAME:
+   dis 
+
+ PURPOSE:
+   DIS executes the simulation for the data DISplay (DIS) module
+   of package "Utilities".
+   It can display the relevant field of each defined output type
+   of the software package, i.e.:
+
+   -source type (src_t):
+       displays the 2D-map or the 3D-map, does not display anything if the
+       source is a point-like one.
+
+   -atmosphere type (atm_t):
+       displays the wavefronts of each turbulent layer.
+
+   -wavefront propagated type (wfp_t):
+       displays the propagated wavefront.
+
+   -structure function type (stf_t):
+       displays the theoretical and the simulated structure functions.
+
+   -image type (img_t):
+       displays the point-spread function or the image.
+
+   -multiple image type (mim_t):
+       displays the SH array of spots.
+
+   -commands type (com_t):
+       displays the commands sent to the mirror.
+
+   -centroiding measure type (mes_t):
+       displays the centroiding measures.
+
+ CATEGORY:
+    main module's routine
+
+ CALLING SEQUENCE:
+    error = dis(inp_yyy_t, par, INIT=init)
+
+ OUTPUT:
+    error: long scalar (error code, see !caos_error var in caos_init.pro).
+
+ INPUTS:
+    inp_yyy_t: structure of type yyy_t.
+    par      : parameters structure from dis_gui.
+
+ KEYWORD PARAMETERS:
+    INIT: initialization structure.
+
+ COMMON BLOCKS:
+    common caos_block, tot_iter, this_iter
+
+    tot_iter   : total number of iteration during the simulation run.
+    this_iter  : current iteration number.
+
+ SIDE EFFECTS:
+    none.
+
+ RESTRICTIONS:
+    none.
+
+ CALLED NON-IDL FUNCTIONS:
+    launch_dis
+    display_3d
+    image_show2
+    win_pos_manager
+
+ ROUTINE MODIFICATION HISTORY:
+    program written: april 2016,
+                     Marcel Carbillet (Lagrange) [marcel.carbillet@unice.fr],
+                     Andrea La Camera (DIBRIS) [andrea.lacamera@unige.it]:
+                    -global merging of dsp.pro of module DSP (from Soft.
+                     Pack. AIRY 6.1 ) and dis.pro of module DIS (from Soft.
+                     Pack. CAOS 5.2) for new CAOS Problem-Solving Env. 7.0.
+    modifications  : date,
+                     author (institute) [email@address]:
+                    -description of modification.
+
+ MODULE MODIFICATION HISTORY:
+    module written : Marcel Carbillet (Lagrange) [marcel.carbillet@unice.fr],
+                     Andrea La Camera (DIBRIS) [andrea.lacamera@unige.it].
+    modifications  : for version x.y,
+                     author (institute) [email address]:
+                    -description of modification.
+
+</PRE><P>
+<STRONG>(See dis/dis.pro)</STRONG><P>
+<HR>
+ 
+<A NAME="RFT">
+<H2>RFT</H2></A>
+<A HREF="#DIS">[Previous Routine]</A>
+<A HREF="#SAV">[Next Routine]</A>
+<A HREF="#ROUTINELIST">[List of Routines]</A>
+<PRE>
+ NAME:
+    rft
+
+ ROUTINE'S PURPOSE:
+    rft manages the simulation for the Read FiTs file (RFT) module.
+
+ MODULE'S PURPOSE:
+    RFT read a FITS file provided in input.
+    Both cases of 2D input images and 3D input image cubes are supported.
+    Header's keywords can be used as input parameters of the image structures,
+    if they are labeled as :
+       resolut  = pixel size [arcsec] [float]
+       lambda   = Filter center wavelength [meters] [float]
+       width    = Filter width [meters] [float]
+       psf      = psf choice (1=psf, 0=image) [byte/integer]
+    Otherwise, parameters have to be set up by means of the GUI of the module.
+
+ CATEGORY:
+    main module's routine
+
+ CALLING SEQUENCE:
+    error = rft(out_img_t, $ ; output structure
+                par        ) ; parameter structure
+
+ OUTPUT:
+    error: long scalar (error code, see !caos_error var in caos_init.pro).
+
+ INPUTS:
+    par      : parameters structure.
+
+ INCLUDED OUTPUTS:
+    out_img_t: structure of type img_t.
+
+ KEYWORD PARAMETERS:
+    none.
+
+ COMMON BLOCKS:
+    common caos_block, tot_iter, this_iter
+
+    tot_iter   : total number of iteration during the simulation run.
+    this_iter  : current iteration number.
+
+ SIDE EFFECTS:
+    none.
+
+ RESTRICTIONS:
+    This module is designed for restoring of data cubes once, during the
+    initialization phase. It is not designed for sequencial restoring of
+    structures iteration after iteration. For this reason it is more likely
+    to be used within the package AIRY (Algorithms for Image Restoration in
+    interferometrY), than within the original CAOS (Code for Adaptive Optics
+    Systems) package. In addition it needs the astrolib package for restoring
+    of FITS format data cubes.
+
+ CALLED NON-IDL FUNCTIONS:
+    routines of the astrolib package for the FITS format management.
+
+ ROUTINE MODIFICATION HISTORY:
+    routine written: oct 2000,
+                     Serge Correia (OAA) [marcel@arcetri.astro.it].
+    modifications  : february 2003,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -use of variable "calibration" eliminited for version 4.0
+                     of the whole system CAOS.
+
+ MODULE MODIFICATION HISTORY:
+    module written : version beta,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it],
+                     Serge  Correia   (OAA) [marcel@arcetri.astro.it].
+    modifications  : for version 2.0,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -no more use of the common variable "calibration" and
+                     the tag "calib" (structure "info") for version 4.0 of
+                     the whole Software System CAOS.
+                   : for version 3.0,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -added better selection of central wavelength and band-width
+                    -global GUI reordering for better fitting in screens !
+                     Gabriele Desidera' (DISI) [desidera@disi.unige.it]:
+                    -added possibility to insert integration times in association
+                     with the loaded data cube.
+                   : february 2011,
+                     Andrea La Camera (DISI) [lacamera@disi.unige.it]:
+                    -"Insert hour angle" button and table added;
+                    -"Insert integration time" button and table changed;
+                    -New GUI design.
+                   : february 2012,
+                     Andrea La Camera (DISI) [lacamera@disi.unige.it]:
+                    -file "rft_time_gui.pro" and folder "rft_gui_lib" removed
+                     [unused and no more necessary]
+                    -New way to call AIRY_HELP. By using the "online_help" 
+                     routine, we resolved a known-issue of the Soft.Pack.
+                   : from CAOS_PSE v 7.0 (2016) 
+                    -this module has been moved from AIRY 6.1 to the new 
+                     package "Utilities". Version number has been
+                     reset to 1.0. 
+                    -parameters deleted: angle, angle_ok, read_keyword
+                    -the parameters can be now read from the FITS
+                     header. According to WFT module, they must be: PSF,
+                     NPIXEL, RESOLUT, LAMBDA, WIDTH, TIME_IN, TIME_IN*
+                    -the HEADER of the FITS file is now saved within
+                     the IMG_T structure and can be used/updated by
+                     other modules. 
+                    -Band L and M have been added to available filters
+                    -background is now an array NxNxP (event. P=1)
+</PRE><P>
+<STRONG>(See rft/rft.pro)</STRONG><P>
+<HR>
+ 
+<A NAME="SAV">
+<H2>SAV</H2></A>
+<A HREF="#RFT">[Previous Routine]</A>
+<A HREF="#WFT">[Next Routine]</A>
+<A HREF="#ROUTINELIST">[List of Routines]</A>
+<PRE>
+ NAME:
+    sav
+
+ ROUTINE'S PURPOSE:
+    SAV executes the simulation for the data SAVing (SAV) module.
+
+ MODULE'S PURPOSE:
+    Using SAV, output structures data of any kind can be saved.
+    To do so, SAV writes a prototype file (filename.sav - saved using the
+    IDL "save" function) and an actual data file (filename.xdr - written using
+    XDR format). The prototype file permits afterwards to read the data file
+    - that can be done easily using the ReSTore (RST) utility.
+
+ CATEGORY:
+    main module's routine
+
+ CALLING SEQUENCE:
+    error = sav(inp_yyy_t, $
+                par,       $
+                INIT=init  )
+
+ OUTPUT:
+    error: long scalar (error code, see !caos_error var in caos_init.pro).
+
+ INPUTS:
+    inp_yyy_t: structure of type yyy_t (a priori unknown type).
+    par      : parameters structure from sav_gui.
+
+ KEYWORD PARAMETERS:
+    INIT: initialisation data structure
+
+ COMMON BLOCKS:
+    common caos_block, tot_iter, this_iter
+
+    tot_iter   : total number of iteration during the simulation run.
+    this_iter  : current iteration number.
+
+ SIDE EFFECTS:
+       none.
+
+ RESTRICTIONS:
+       if the modules creating the output structures does not give a constant
+       (in means of size in bytes) output, the prototype structure does no more
+       make any sense and the saved file cannot be easily read anymore (at
+       least using the RST utility).
+
+ CALLED NON-IDL FUNCTIONS:
+       none.
+
+ ROUTINE MODIFICATION HISTORY:
+    routine written: march 1999,
+                     Simone Esposito  (OAA) [esposito@arcetri.astro.it],
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it].
+    modifications  : december 1999,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -adapted to version 2.0 (CAOS).
+                   : january--march 2003,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -use of variable "calibration" eliminited for version 4.0
+                     of the whole CAOS Software System.
+                   : may 2016,
+                     Ulysse Perruchon-Monge & Adama Sy (Dépt.Physique UNS),
+                     Marcel Carbillet (Lagrange) [marcel.carbillet@unice.fr]:
+                    -moved from Soft.Pack.CAOS 5.2 to new package "Utilities"
+                     of new version (7.0) of the CAOS PSE,
+                    -simple IDL "save" format and FITS format added.
+
+ MODULE MODIFICATION HISTORY:
+    module written : Simone Esposito  (OAA) [esposito@arcetri.astro.it],
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it].
+                   : version 2.0
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -modified in order to be adapted to version 2.0 (CAOS)
+                   : for version 4.0,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -no more use of the common variable "calibration" and
+                     the tag "calib" (structure "info") for version 4.0 of
+                     the whole CAOS Software System.
+                   : for version 7.0,
+                     Ulysse Perruchon-Monge & Adama Sy (Dépt.Physique UNS),
+                     Marcel Carbillet (Lagrange) [marcel.carbillet@unice.fr]:
+                    -moved from Soft.Pack.CAOS 5.2 to new package "Utilities"
+                     of new version (7.0) of the CAOS PSE,
+                    -simple IDL "save" format and FITS format added.
+                    -useless init.counter eliminated (this_iter used instead).
+</PRE><P>
+<STRONG>(See sav/sav.pro)</STRONG><P>
+<HR>
+ 
+<A NAME="WFT">
+<H2>WFT</H2></A>
+<A HREF="#SAV">[Previous Routine]</A>
+<A HREF="#XXX">[Next Routine]</A>
+<A HREF="#ROUTINELIST">[List of Routines]</A>
+<PRE>
+ NAME:
+    wft
+
+ ROUTINE'S PURPOSE:
+    WFT executes the simulation for the Write FiTs (WFT) module.
+
+ MODULE'S PURPOSE:
+    Using WFT, output structures image (img_t) can be saved in .fits format 
+    which header contains parameters of the image structure.
+
+ CATEGORY:
+    main module's routine
+
+ CALLING SEQUENCE:
+    error = wft(inp_img_t, $
+                par  )
+
+ OUTPUT:
+    error: long scalar (error code, see !caos_error var in caos_init.pro).
+
+ INPUTS:
+    inp_img_t: structure of type img_t (image type).
+    par      : parameters structure from wft_gui.
+
+ KEYWORD PARAMETERS:
+    none
+
+ COMMON BLOCKS:
+    common caos_block, tot_iter, this_iter
+
+    tot_iter   : total number of iteration during the simulation run.
+    this_iter  : current iteration number.
+
+ SIDE EFFECTS:
+       none.
+
+ RESTRICTIONS:
+       none.
+
+ CALLED NON-IDL FUNCTIONS:
+       
+    imstruc_to_fits.pro
+
+ ROUTINE MODIFICATION HISTORY:
+    routine written: october 2000,
+                     Serge Correia (OAA) [correia@arcetri.astro.it].
+    modifications  : february 2003,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -use of variable "calibration" eliminited for version 4.0
+                     of the whole system CAOS.
+
+ MODULE MODIFICATION HISTORY:
+    module written : Serge Correia (OAA) [correia@arcetri.astro.it].
+    modifications  : for version 2.0,
+                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+                    -no more use of the common variable "calibration" and
+                     the tag "calib" (structure "info") for version 4.0 of
+                     the whole Software System CAOS.
+     modification  : for version 3.0,
+                     Gabriele Desidera' (DISI, Universita' di Genova) [desidera@disi.unige.it]
+                    -add the possibility to write multiple images for multiple iterations  
+                   : for version 5.0,
+                     Andrea La Camera (DISI) [lacamera@disi.unige.it],
+                     Gabriele Desidera' (DISI) [desidera@disi.unige.it]:
+                    -multi-frame case implemented,
+                    -FITS header completed (imstruc_to_fits.pro modified),
+                    -INIT eliminated (obsolete).
+                   : February 2012,
+                     Andrea La Camera (DISI) [lacamera@disi.unige.it]:
+                    -New way to call AIRY_HELP. By using the "online_help" 
+                     routine, we resolved a known-issue of the Soft.Pack.
+                   : from CAOS_PSE v 7.0 (2016) 
+                    -this module has been moved from AIRY 6.1 to the new 
+                     package "Utilities". Version number has been
+                     reset to 1.0. 
+                   : may 2016,
+                     Andrea La Camera (DIBRIS) [andrea.lacamera@unige.it]:
+                    -header (if present, defined by previous modules) is
+                     saved, together with the usual WFT keywords. 
+                    -TIME_IN change in EXPTIME (worldwide used)
+                    -small changes in imstruc_to_fits.pro
+</PRE><P>
+<STRONG>(See wft/wft.pro)</STRONG><P>
+<HR>
+ 
+<A NAME="XXX">
+<H2>XXX</H2></A>
+<A HREF="#WFT">[Previous Routine]</A>
+<A HREF="#ROUTINELIST">[List of Routines]</A>
+<PRE>
+ NAME:
+    xxx
+
+ ROUTINE'S PURPOSE:
+    xxx manages the simulation for the [PUT HERE THE NAME] (XXX) module,
+    that is:
+       1-call the module's initialisation routine xxx_init at the first
+         iteration of the simulation project,
+       2-call the module's program routine xxx_prog otherwise, managing
+         at the same time the possible time integration/delay.
+**
+** put here all other possible informations about how the routine works.
+**
+
+ MODULE'S PURPOSE:
+**
+** place here a DETAILED descrition about the module and its Graphical User
+** Interface. this will be used used as the module help in the global CAOS
+** hyper-text help file xyz_help.html.
+**
+** here is a general description of the overall set of module's routines:
+**
+*******************************************************************************
+** HOW A MODULE IS ORGANISED:                                                 *
+**                                                                            *
+** EACH MODULE IS MADE OF A GIVEN GROUP OF STANDARD ROUTINES (SIX). TWO OF    *
+** THEM ARE DIRECTLY CALLABLE BY THE USER:                                    *
+**                                                                            *
+**   xxx_gui.pro: GUI definition for saving the parameters associated to an   *
+**                instance of a module in a standard location and structure.  *
+**   xxx.pro    : function to call in order to run the module simulation. the *
+**                inputs are tested, time behaviour of the module is managed  *
+**                and the right code is called depending on the current status*
+**                of the simulation: initialization status or running status. *
+**                                                                            *
+** AND THE REMAINING FOUR ARE MODULE'S UTILITY ROUTINES:                      *
+**                                                                            *
+**   xxx_info.pro       : function returning info on the module: description, *
+**                        input, output, initialization is needed or not, etc.*
+**   xxx_gen_default.pro: function where the parameters needed by the module  *
+**                        are defined and saved in a standard location and    *
+**                        structure (the file xxx_default.sav). it is used    *
+**                        only during the module developing.                  *
+**   xxx_init.pro       : function called during the initialization process,  *
+**                        by xxx.pro (this is where the initialisation data   *
+**                        are computed). do not call it directly.             *
+**   xxx_prog.pro       : function containing the algorithm that simulates    *
+**                        the module. this is where the main code of the      *
+**                        module is. it has to be called from xxx.pro, do not *
+**                        call it directly.                                   *
+**                                                                            *
+** IN ADDITION, TWO SUB-FOLDERS CAN BE USED TO STORE SUB-ROUTINES USED EITHER *
+** FOR THE GUI OR THE MODULE'S ROUTINES:                                      *
+**                                                                            *
+**    xxx_gui_lib: library of routines specific to the program xxx_gui.pro.   *
+**                                                                            *
+**    xxx_lib    : library of routines specific to the program(s) xxx.pro,    *
+**                 xxx_init.pro, and/or xxx_prog.pro.                         *
+**                                                                            *
+** NOTE THAT UTILITY ROUTINES OF GENERAL INTEREST FOR THE PACKAGE (I.E. FOR   *
+** SEVERAL MODULES OF THE SAME PACKAGE OR AS A STANDALONE ROUTINE) COULD BE   *
+** THOUGHT TO BE STORED IN THE PACKAGE FOLDER !CAOS_ENV.PACK_LIB, OR EVEN, IF *
+** OF MORE GENERAL INTEREST IN THE CAOS SYSTEM FOLDER !CAOS_ENV.LIB.          *
+**                                                                            *
+*******************************************************************************
+
+ CATEGORY:
+    main module's routine
+
+ CALLING SEQUENCE:
+    error = xxx(inp_yyy_t, $ ; 1st input structure
+                inp_zzz_t, $ ; 2nd input structure
+                out_aaa_t, $ ; 1st output structure
+                out_bbb_t, $ ; 2nd output structure
+                par,       $ ; parameter structure
+                INIT=init, $ ; initialisation data structure
+                TIME=time  ) ; time integration/delay structure
+**
+** in this example we describe the generic example of a module with 2 inputs
+** and 2 outputs, that needs initialisation data and time integration/delay
+** management.
+** if your module needs just one or even no input, and/or just one or even no
+** output, and/or no time integration/delay management, just DELETE
+** the concerned lines above and below.
+** 
+
+ OUTPUT:
+    error: long scalar (error code, see !caos_error var in caos_init.pro).
+
+ INPUTS:
+    inp_yyy_t: structure of type yyy_t.
+**
+** describe here this input
+**
+    inp_zzz_t: structure of type zzz_t.
+**
+** describe here this input
+**
+    par      : parameters structure.
+**
+** describe here the parameters file
+**
+
+ INCLUDED OUTPUTS:
+    out_aaa_t: structure of type aaa_t.
+**
+** describe here this output
+**
+    out_bbb_t: structure of type bbb_t.
+**
+** describe here this output
+**
+
+ KEYWORD PARAMETERS:
+**
+** the keyword INIT is needed only if an initialisation is requested
+**
+    INIT: initialisation data structure.
+**
+** the keyword TIME is needed only if time integration/delay is requested
+**
+    TIME: time-evolution structure.
+
+ COMMON BLOCKS:
+    common caos_block, tot_iter, this_iter
+
+    tot_iter   : total number of iteration during the simulation run.
+    this_iter  : current iteration number.
+
+ SIDE EFFECTS:
+    none.
+**
+** describe here the possible side effects
+**
+
+ RESTRICTIONS:
+    none.
+**
+** describe here the possible restrictions using the module
+**
+
+ CALLED NON-IDL FUNCTIONS:
+    none.
+**
+** describe here the non-IDL routines used by xxx.pro, if any.
+** these routines must be put either in the module's sub-folder
+** !caos_env.modules+"xxx/xxx_lib/", or in the Package library
+** folder !caos_env.pack_lib, or even in the CAOS system library
+** !caos_env.lib.
+**
+
+ ROUTINE MODIFICATION HISTORY:
+    routine written: date,
+                     author (institute) [e-mail].
+    modifications  : date,
+                     author (institute) [e-mail]:
+                    -description of the modifications.
+                   : date,
+                     author (institute) [e-mail]:
+                    -description of the modifications.
+
+ MODULE MODIFICATION HISTORY:
+    module written : author (institute) [e-mail].
+    modifications  : for version software_version,
+                     author (institute) [e-mail]:
+                    -modifications made.
+**
+** ROUTINE'S TEMPLATE MODIFICATION HISTORY:
+**    routine written: may 1998,
+**                     Armando Riccardi (OAA) [riccardi@arcetri.astro.it].
+**    modifications  : november 1998,
+**                     Armando Riccardi (OAA) [riccardi@arcetri.astro.it]:
+**                    -completely re-written in order to manage the
+**                     initialization process, calibration loop and timing
+**                     support.
+**                   : january/february 1999,
+**                     Armando Riccardi (OAA) [riccardi@arcetri.astro.it],
+**                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+**                    -some modifications/corrections for version 1.0.
+**                   : november 1999,
+**                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+**                    -enhanced and adapted to version 2.0 (CAOS).
+**                    -help lines completely modified.
+**                   : june 2001,
+**                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+**                    -enhanced for version 3.0 of CAOS (package-oriented).
+**                   : january 2003,
+**                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+**                    -simplified templates for the version 4.0 of the
+**                     whole CAOS system (no more use of the COMMON variable
+**                     "calibration" and no more use of the possible
+**                     initialisation file and, obviously, of the calibration
+**                     file as well).
+**                   : january 2006,
+**                     Marcel Carbillet (LUAN) [marcel.carbillet@unice.fr]:
+**                    -xxx_par --> par (!).
+**
+** MODULE'S TEMPLATES MODIFICATION HISTORY:
+**    module written : Armando Riccardi (OAA) [riccardi@arcetri.astro.it].
+**    modifications  : for version 1.0,
+**                     Armando Riccardi (OAA) [riccardi@arcetri.astro.it],
+**                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+**                    -enhanced and adapted to version 1.0.
+**                   : for version 2.0,
+**                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+**                    -enhanced and adapted to version 2.0 (CAOS).
+**                   : for version 3.0,
+**                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+**                    -enhanced for version 3.0 of CAOS (package-oriented).
+**                   : for version 4.0 of the whole 'system CAOS',
+**                     Marcel Carbillet (OAA) [marcel@arcetri.astro.it]:
+**                    -no more use of the COMMON variable "calibration" and
+**                     the tag "calib" (structure "info").
+**                    -no more use of the initialisation file and, obviously,
+**                     the calibration file.
+**                   : for version 5.0 of the Soft.Pack.CAOS,
+**                         version 3.0 of the Soft.Pack.AIRY,
+**                         version 1.0 of the Soft.Pack.MAOS,
+**                     Marcel Carbillet (LUAN) [marcel.carbillet@unice.fr]:
+**                    -no more crash provoked when controlling the Soft.Pack.
+**                     version for existing parameter files - just a warning.
+**                     (seems to be nothing but this is a definitive improvement
+**                     for users freedom ;-) !!)
+**
+</PRE><P>
+<STRONG>(See xxx/xxx.pro)</STRONG><P>
+<HR>
+    <div id="content_footer"></div>
+    <div id="footer">
+      <p>Copyright &copy; simplestyle_4 | <a href="http://validator.w3.org/check?uri=referer">HTML5</a> | <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> | <a href="http://www.html5webtemplates.co.uk">design from HTML5webtemplates.co.uk</a></p>
+    </div>
+  </div>
+</body>
+</html>

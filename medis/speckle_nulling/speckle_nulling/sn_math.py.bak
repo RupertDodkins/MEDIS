@@ -1,0 +1,186 @@
+import numpy as np
+# import image_registration as imreg
+import scipy.optimize as opt 
+#import gaussfitter as gf
+import scipy.special as special
+# import ipdb
+
+def rotateXY(xvals, yvals, thetadeg = 0):
+    theta = np.pi/180.0*thetadeg
+    return (np.cos(theta)*xvals- np.sin(theta)*yvals, 
+            np.sin(theta)*xvals+ np.cos(theta)*yvals)
+
+
+def point_in_poly(x,y,poly):
+    #poly is a list of x, y pairs
+    n = len(poly)
+    inside = False
+
+    p1x,p1y = poly[0]
+    for i in range(n+1):
+        p2x,p2y = poly[i % n]
+        if y > min(p1y,p2y):
+            if y <= max(p1y,p2y):
+                if x <= max(p1x,p2x):
+                    if p1y != p2y:
+                        xints = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                    if p1x == p2x or x <= xints:
+                        inside = not inside
+        p1x,p1y = p2x,p2y
+
+    return inside
+
+def points_in_poly(xvals, yvals, polyvertices):
+    #use meshgrid before
+    ans=np.zeros(np.shape(xvals))
+    for i in range(np.shape(xvals)[0]):
+        for j in range(np.shape(xvals)[1]):
+            if point_in_poly(xvals[i, j], yvals[i,j], polyvertices):
+                ans[i,j] = 1
+    return ans
+
+
+#-----Robust Mean--------------
+def robust_mean(x):
+    y = x.flatten()
+    n = len(y)
+    y.sort()
+    ind_qt1 = round((n+1)/4.)
+    ind_qt3 = round((n+1)*3/4.)
+    IQR = y[ind_qt3]- y[ind_qt1]
+    lowFense = y[ind_qt1] - 1.5*IQR
+    highFense = y[ind_qt3] + 1.5*IQR
+    ok = (y>lowFense)*(y<highFense)
+    yy=y[ok]
+    return yy.mean(dtype='double')
+
+
+#-------Robust Standard Deviation---
+
+def robust_std(x):
+    y = x.flatten()
+    n = len(y)
+    y.sort()
+    ind_qt1 = round((n+1)/4.)
+    ind_qt3 = round((n+1)*3/4.)
+    IQR = y[ind_qt3]- y[ind_qt1]
+    lowFense = y[ind_qt1] - 1.5*IQR
+    highFense = y[ind_qt3] + 1.5*IQR
+    ok = (y>lowFense)*(y<highFense)
+    yy=y[ok]
+    return yy.std(dtype='double')
+
+#-------Robust variance---
+
+def robust_var(x):
+    y = x.flatten()
+    n = len(y)
+    y.sort()
+    ind_qt1 = round((n+1)/4.)
+    ind_qt3 = round((n+1)*3/4.)
+    IQR = y[ind_qt3]- y[ind_qt1]
+    lowFense = y[ind_qt1] - 1.5*IQR
+    highFense = y[ind_qt3] + 1.5*IQR
+    ok = (y>lowFense)*(y<highFense)
+    yy=y[ok]
+    return yy.var(dtype='double')
+
+
+def ideal2dpsf(xs, ys,  xc, yc, 
+               pix = 25, lambdaoverd=90.7, aoverA=.32,
+               fudgefactor = 2.15, amp = 1):
+    scalefact = lambdaoverd/pix
+    v = np.hypot(xs-xc, ys-yc)*np.pi/scalefact
+        
+    a= (2*special.jn(1, v)/v)
+    b= -aoverA**2*fudgefactor*2*special.jn(1,v*aoverA)/(aoverA*v)
+    retval = (a+b)**2
+    retval[np.isnan(retval)]=(2*0.5 - aoverA**2*2*0.5)**2
+    return amp*retval/np.max(retval)
+
+
+def gausspsf2d(npix, fwhm, normalize=True): 
+    """ 
+    Parameters 
+    ---------- 
+    npix: int 
+        Number of pixels for each dimension. 
+        Just one number to make all sizes equal. 
+
+    fwhm: float 
+        FWHM (pixels) in each dimension. 
+        Single number to make all the same. 
+
+    normalize: bool, optional 
+        Normalized so total PSF is 1. 
+
+    Returns 
+    ------- 
+    psf: array_like 
+        Gaussian point spread function. 
+    """ 
+
+    # Initialize PSF params 
+    cntrd = (npix - 1.0) * 0.5 
+    st_dev = 0.5 * fwhm / np.sqrt( 2.0 * np.log(2) ) 
+
+    # Make PSF 
+    x, y = np.indices([npix,npix]) - (npix-1)*0.5
+    psf = np.exp( -0.5 * ((x**2 + y**2)/st_dev**2) )
+    # Normalize 
+    if normalize: psf /= psf.sum() 
+
+    return psf
+
+def fitgaussian((x, y), image):
+        #xfg =np.argwhere(np.sum(image, axis=0)==np.max(np.sum(image, axis=0)))[0] 
+        #yfg =np.argwhere(np.sum(image, axis=1)==np.max(np.sum(image, axis=1)))[0] 
+        #initguess = (1,xfg,yfg,1,1,1,np.mean(image))
+        wherenan = np.isnan(image)
+        whereinf = np.isinf(image)
+        image[wherenan]=0
+        image[whereinf]=0
+        offsetguess = np.mean(image)
+        amplitudeguess = np.max(image)-offsetguess
+        xoguess = x[np.where(image==np.max(image))]
+        yoguess = y[np.where(image==np.max(image))]
+        initguess = (amplitudeguess,
+                     xoguess,
+                     yoguess,
+                     1.0,
+                     1.0,
+                     0.0,
+                     offsetguess)
+        #print initguess
+        #x, y = np.meshgrid( np.arange(image.shape[0]),
+        #                    np.arange(image.shape[1]))
+
+        popt, pcov = opt.curve_fit(twoD_Gaussian, (x,y), 
+                       image.ravel(),
+                       p0 = initguess, maxfev = 100000000)
+        #return np.array([popt[1], popt[2]])
+        return popt
+
+def image_centroid_gaussian1(image):
+        xfg =np.argwhere(np.sum(image, axis=0)==np.max(np.sum(image, axis=0)))[0] 
+        yfg =np.argwhere(np.sum(image, axis=1)==np.max(np.sum(image, axis=1)))[0] 
+        initguess = (1,xfg,yfg,1,1,1,np.mean(image))
+    #    print initguess
+        x, y = np.meshgrid( np.arange(image.shape[0]),
+                            np.arange(image.shape[1]))
+
+        popt, pcov = opt.curve_fit(twoD_Gaussian, (x,y), 
+                       image.ravel(),
+                       p0 = initguess, maxfev = 100000000)
+        #return np.array([popt[1], popt[2]])
+        return popt
+
+def twoD_Gaussian((x, y), amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
+    xo = float(xo)
+    yo = float(yo)    
+    a = (np.cos(theta)**2)/(2*sigma_x**2) + (np.sin(theta)**2)/(2*sigma_y**2)
+    b = -(np.sin(2*theta))/(4*sigma_x**2) + (np.sin(2*theta))/(4*sigma_y**2)
+    c = (np.sin(theta)**2)/(2*sigma_x**2) + (np.cos(theta)**2)/(2*sigma_y**2)
+    g = offset + amplitude*np.exp( - (a*((x-xo)**2) + 2*b*(x-xo)*(y-yo) 
+                            + c*((y-yo)**2)))
+    return g.ravel()

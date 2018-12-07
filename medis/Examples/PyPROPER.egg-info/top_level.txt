@@ -1,0 +1,4 @@
+backup
+proper/libcconv
+proper/libcconvthread
+proper/libszoom

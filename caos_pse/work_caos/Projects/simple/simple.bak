@@ -1,0 +1,172 @@
+; --
+; -- CAOS Application builder. Version 7.0
+; --
+; -- file:simple.pro
+; --
+; -- Main procedure file for project: 
+;  Projects/simple
+; -- Automatically generated on: Mon Apr 17 20:37:58 2017
+; --
+;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Error message procedure ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PRO ProjectMsg, TheMod
+;              Common Block definition
+;              =======================
+;                  Total nmb Current  
+;                  of iter.  iteration
+;                  --------  ---------
+COMMON caos_block, tot_iter, this_iter
+
+MESSAGE,"Error calling Module: "+TheMod+" at iteration:"+STRING(this_iter)
+END
+ 
+PRO simple, mode
+COMMON caos_block, tot_iter, this_iter
+
+if (n_params() eq 0) then begin
+setenv, 'CAOS_ROOT=/home/kids/Downloads/caos_pse/'
+setenv, 'CAOS_WORK=/home/kids/Downloads/caos_pse/work_caos/'
+setenv, 'IDL_STARTUP=/home/kids/Downloads/caos_pse/work_caos/caos_startup.pro'
+caos_init
+endif else begin
+;do nothing
+endelse
+tot_iter =           10
+if (n_params() eq 0) then begin
+   tot_iter=iter_gui(          10)
+endif else begin
+;do nothing
+endelse
+this_iter = 0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Load Parameter variables ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; - Module: src_00006
+src_00006_c=0
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,src_gui(       6)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/src_00006.sav'
+src_00006_p=par
+; - Module: atm_00001
+atm_00001_c=0
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,atm_gui(       1)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/atm_00001.sav'
+atm_00001_p=par
+; - Module: src_00002
+src_00002_c=0
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,src_gui(       2)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/src_00002.sav'
+src_00002_p=par
+; - Module: gpr_00007
+gpr_00007_c=0
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,gpr_gui(       7)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/gpr_00007.sav'
+gpr_00007_p=par
+; - Module: gpr_00003
+gpr_00003_c=0
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,gpr_gui(       3)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/gpr_00003.sav'
+gpr_00003_p=par
+; - Module: wfa_00011
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,wfa_gui(      11)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/wfa_00011.sav'
+wfa_00011_p=par
+; - Module: dis_00010
+dis_00010_c=0
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,dis_gui(      10)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/dis_00010.sav'
+dis_00010_p=par
+; - Module: dis_00009
+dis_00009_c=0
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,dis_gui(       9)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/dis_00009.sav'
+dis_00009_p=par
+; - Module: dis_00004
+dis_00004_c=0
+if (n_params() eq 0) then begin
+cd, '/home/kids/Downloads/caos_pse/work_caos/Projects/simple'
+print,dis_gui(       4)
+cd, '/home/kids/Downloads/caos_pse/work_caos/'
+endif
+RESTORE, 'Projects/simple/dis_00004.sav'
+dis_00004_p=par
+
+;;;;;;;;;;;;;;;;;
+; Initialization;
+;;;;;;;;;;;;;;;;;
+
+t0=systime(/SEC)
+print, " "
+print, "=== RUNNING INITIALIZATION... ==="
+@Projects/simple/mod_calls.pro
+ti=systime(/SEC)-t0
+
+;;;;;;;;;;;;;;;;
+; Loop Control ;
+;;;;;;;;;;;;;;;;
+
+t0=systime(/SEC)
+print, " "
+print, "=== RUNNING SIMULATION...     ==="
+FOR this_iter=1L, tot_iter DO BEGIN		; Begin Main Loop
+	print, "=== ITER. #"+strtrim(this_iter)+"/"+$
+         strtrim(tot_iter,1)+"...", FORMAT="(A,$)"
+  if this_iter LT tot_iter then begin
+     for k=0,79 do print, string(8B), format="(A,$)"
+  endif else print, " " 
+	@Projects/simple/mod_calls.pro
+ENDFOR							; End Main Loop
+ts=systime(/SEC)-t0
+print, " "
+print, "=== CPU time for initialization phase    =", ti, " s."
+print, "=== CPU time for simulation phase        =", ts, " s."
+print, "    [=> CPU time/iteration=", strtrim(ts/tot_iter,2), "s.]"
+print, "=== total CPU time (init.+simu. phases)  =", ti+ts, " s."
+print, " "
+if (n_params() eq 0) then begin
+   ret=dialog_message("QUIT IDL Virtual Machine ?",/info)
+endif else begin
+;do nothing
+endelse
+
+;;;;;;;;;;;;;;;;;
+; End Main      ;
+;;;;;;;;;;;;;;;;;
+
+END

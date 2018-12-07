@@ -1,0 +1,3 @@
+# aliases
+alias caos='cd /Data/PythonProjects/MEDIS/caos_pse/work_caos ; source caos_env.sh ; idl'
+# alias airy='cd /Data/PythonProjects/MEDIS/caos_pse/work_airy ; source caos_env.sh ; idl'

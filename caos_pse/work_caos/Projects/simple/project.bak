@@ -1,0 +1,200 @@
+;FILEVER:        8
+;PROJECT: simple
+;       0 - PROJECT TYPE
+;          10 - ITERATIONS
+;       9 - NMODS
+;       0       4       0       2 - Box
+; MODULE: wfa
+;      11 - ID
+;       0 - STATUS
+;       3       1 - SLOT
+;       2 - Ninputs
+;       7       0 - Input       0    Nptns:           2   Dtype:       6
+;	     210     385
+;	     230     427
+;       3       0 - Input       1    Nptns:           2   Dtype:       6
+;	     210     485
+;	     230     442
+;       1 - Noutputs
+;       0 - Output   Dtype:       6
+; MODULE: dis
+;      10 - ID
+;       0 - STATUS
+;       4       1 - SLOT
+;       1 - Ninputs
+;      11       0 - Input       0    Nptns:           2   Dtype:       6
+;	     280     435
+;	     300     435
+;       0 - Noutputs
+; MODULE: dis
+;       9 - ID
+;       0 - STATUS
+;       3       2 - SLOT
+;       1 - Ninputs
+;       7       0 - Input       0    Nptns:           2   Dtype:       6
+;	     210     385
+;	     230     385
+;       0 - Noutputs
+; MODULE: gpr
+;       7 - ID
+;       0 - STATUS
+;       2       2 - SLOT
+;       2 - Ninputs
+;       6       0 - Input       0    Nptns:           2   Dtype:       5
+;	     140     385
+;	     160     377
+;       1       0 - Input       1    Nptns:           2   Dtype:       1
+;	      70     435
+;	     160     392
+;       1 - Noutputs
+;       0 - Output   Dtype:       6
+; MODULE: src
+;       6 - ID
+;       0 - STATUS
+;       1       2 - SLOT
+;       0 - Ninputs
+;       1 - Noutputs
+;       0 - Output   Dtype:       5
+; MODULE: atm
+;       1 - ID
+;       1 - STATUS
+;       0       1 - SLOT
+;       0 - Ninputs
+;       1 - Noutputs
+;       0 - Output   Dtype:       1
+; MODULE: src
+;       2 - ID
+;       1 - STATUS
+;       1       0 - SLOT
+;       0 - Ninputs
+;       1 - Noutputs
+;       0 - Output   Dtype:       5
+; MODULE: gpr
+;       3 - ID
+;       1 - STATUS
+;       2       0 - SLOT
+;       2 - Ninputs
+;       2       0 - Input       0    Nptns:           2   Dtype:       5
+;	     140     485
+;	     160     477
+;       1       0 - Input       1    Nptns:           2   Dtype:       1
+;	      70     435
+;	     160     492
+;       1 - Noutputs
+;       0 - Output   Dtype:       6
+; MODULE: dis
+;       4 - ID
+;       1 - STATUS
+;       3       0 - SLOT
+;       1 - Ninputs
+;       3       0 - Input       0    Nptns:           2   Dtype:       6
+;	     210     485
+;	     230     485
+;       0 - Noutputs
+; --
+; -- CAOS Application builder. Version 7.0
+; --
+; -- file: project.pro
+; --
+; -- Main procedure file for project: 
+;  Projects/simple
+; -- Automatically generated on: Mon Apr 17 20:37:58 2017
+; --
+;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Error message procedure ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PRO ProjectMsg, TheMod
+;              Common Block definition
+;              =======================
+;                  Total nmb Current  
+;                  of iter.  iteration
+;                  --------  ---------
+COMMON caos_block, tot_iter, this_iter
+
+MESSAGE,"Error calling Module: "+TheMod+" at iteration:"+STRING(this_iter)
+END
+
+COMMON caos_block, tot_iter, this_iter
+
+tot_iter =           10
+this_iter = 0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Load Parameter variables ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; - Module: src_00006
+src_00006_c=0
+RESTORE, 'Projects/simple/src_00006.sav'
+src_00006_p=par
+; - Module: atm_00001
+atm_00001_c=0
+RESTORE, 'Projects/simple/atm_00001.sav'
+atm_00001_p=par
+; - Module: src_00002
+src_00002_c=0
+RESTORE, 'Projects/simple/src_00002.sav'
+src_00002_p=par
+; - Module: gpr_00007
+gpr_00007_c=0
+RESTORE, 'Projects/simple/gpr_00007.sav'
+gpr_00007_p=par
+; - Module: gpr_00003
+gpr_00003_c=0
+RESTORE, 'Projects/simple/gpr_00003.sav'
+gpr_00003_p=par
+; - Module: wfa_00011
+RESTORE, 'Projects/simple/wfa_00011.sav'
+wfa_00011_p=par
+; - Module: dis_00010
+dis_00010_c=0
+RESTORE, 'Projects/simple/dis_00010.sav'
+dis_00010_p=par
+; - Module: dis_00009
+dis_00009_c=0
+RESTORE, 'Projects/simple/dis_00009.sav'
+dis_00009_p=par
+; - Module: dis_00004
+dis_00004_c=0
+RESTORE, 'Projects/simple/dis_00004.sav'
+dis_00004_p=par
+
+;;;;;;;;;;;;;;;;;
+; Initialization;
+;;;;;;;;;;;;;;;;;
+
+t0=systime(/SEC)
+print, " "
+print, "=== RUNNING INITIALIZATION... ==="
+@Projects/simple/mod_calls.pro
+ti=systime(/SEC)-t0
+
+;;;;;;;;;;;;;;;;
+; Loop Control ;
+;;;;;;;;;;;;;;;;
+
+t0=systime(/SEC)
+print, " "
+print, "=== RUNNING SIMULATION...     ==="
+FOR this_iter=1L, tot_iter DO BEGIN		; Begin Main Loop
+	print, "=== ITER. #"+strtrim(this_iter)+"/"+$
+         strtrim(tot_iter,1)+"...", FORMAT="(A,$)"
+  if this_iter LT tot_iter then begin
+     for k=0,79 do print, string(8B), format="(A,$)"
+  endif else print, " " 
+	@Projects/simple/mod_calls.pro
+ENDFOR							; End Main Loop
+ts=systime(/SEC)-t0
+print, " "
+print, "=== CPU time for initialization phase    =", ti, " s."
+print, "=== CPU time for simulation phase        =", ts, " s."
+print, "    [=> CPU time/iteration=", strtrim(ts/tot_iter,2), "s.]"
+print, "=== total CPU time (init.+simu. phases)  =", ti+ts, " s."
+print, " "
+;;;;;;;;;;;;;;;;;
+; End Main      ;
+;;;;;;;;;;;;;;;;;
+
+END

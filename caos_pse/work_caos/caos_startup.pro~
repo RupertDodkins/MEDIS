@@ -1,0 +1,17 @@
+;; CAOS system path expansion
+!PATH=!PATH+':'+EXPAND_PATH('+/Users/marcel/Simul/caos_pse/')
+
+;; other necessary IDL libraries (at least "The IDL Astronomy User's Library",
+;; often called "astrolib" or "astron")
+!PATH=!PATH+':'+EXPAND_PATH('+/Users/marcel/Simul/astrolib/')
+
+;; other optional libraries (your own routines, PAOLA, etc.)
+;!PATH=!PATH+':'+EXPAND_PATH('+/Users/marcel/Simul/prog_IDL/')
+;!PATH=!PATH+':'+EXPAND_PATH('+/Users/marcel/Simul/paola_v7.1/')
+
+;; some optional IDL options
+device, decomposed=0
+device, retain=2
+
+;; initialize caos stuff
+caos_init

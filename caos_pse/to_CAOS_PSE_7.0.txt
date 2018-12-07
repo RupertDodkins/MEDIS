@@ -1,0 +1,23 @@
++-----------------------------------------+
+| Main modifications for distribution 7.0 |
++-----------------------------------------+
+
+- unification of CAOS_Application_Builder (became caos_pse/appbuild), CAOS_Library (became caos_pse/pse_lib) and the various utility modules (in caos_pse/packages/Utilities) into one version history only: the one of the whole CAOS Problem-Solving Environment.
+- global variable browser eliminated (became useless with the use of "online_help" in the modules GUI).
+- working directory-ies now within main path.
+- appbuilder: routines saveproject, savevmproject, worksheet, loopctrl, savevmproject, run, selectfile, and iter_gui debugged (in particular when project name was too long, and for windows case - use of global variables delim and exp_delim).
+- library: routines make_help and caos_init adapted to version 7.0.
+- library: routines spec2mag, n_phot, makepupil, make_elong_gauss, addnoise, makedefzernike, wf2modes, image_show2, positivization, noll, zeropadding, shiffft, and fftshift added and/or enhanced and/or debugged.
+- library: caos_init adapted to version 7.0 (global variabile browser eliminated because it became useless)
+- library: caos_init enhanced for windows case (global variable exp_delim added).
+- Utilities: unified DIS (Soft.Pack.CAOS) and DSP (Soft.Pack.AIRY) into ONE general display module.
+- Utilities: new SAV module (from Soft.Pack.CAOS, with additional SAVE and FITS formats).
+- Utilities: utility RFT (from Soft. Pack. CAOS) moved to package "Utilities".
+- Utilities: modules RFT and WFT (drom Soft. Pack. AIRY) moved to package "Utilities".
+- Utilities: template package "xxx" moved to package "Utilities".
+
+
+---
+Compiled June 2016,
+Marcel Carbillet [marcel.carbillet@unice.fr],
+UMR 7293 Lagrange (Université de Nice Sophia-Antipolis/CNRS/Observatoire de la Côte d'Azur).
