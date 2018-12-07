@@ -1,7 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="60288460-b5da-408e-a6cd-3284a6626feb" name="Default Changelist" comment="" />
+    <list default="true" id="60288460-b5da-408e-a6cd-3284a6626feb" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Analysis/phot.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Analysis/stats.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Atmosphere/caos.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/H2RG.py" beforeDir="false" afterPath="$PROJECT_DIR$/medis/Detector/H2RG.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/H2RG.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/MKIDs.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/distribution.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/pipeline.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/readout.py" beforeDir="false" afterPath="$PROJECT_DIR$/medis/Detector/readout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/readout.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/spectral.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Detector/temporal.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/0.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/2.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/ADI_example.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/AO_inspect.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/AO_invest2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/BetaPic.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/DSI_demo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/DSI_example.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/HCI_compare.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/HR8799.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/HR8799_ELT.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/HR8799_MEC.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/HR8799_SPHERE.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/HR8799_comp.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/HR8799_demo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/Jupyter Notebooks/.ipynb_checkpoints/simple_telescope-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/Jupyter Notebooks/simple_telescope.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/MKID_HCI_demo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/MKID_pic.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/ML_HR8799_dev.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/ML_HR8799_dev.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/PyPROPER.egg-info/PKG-INFO" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/PyPROPER.egg-info/SOURCES.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/PyPROPER.egg-info/dependency_links.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/PyPROPER.egg-info/requires.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/PyPROPER.egg-info/top_level.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/SDI_example.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/SSD_example.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/SSD_speedup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/SSD_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Examples/build/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/Irnewobsform.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/LCnewobsform.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Examples/build/lib.macosx-10.13-intel-2.7/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/child_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/example_SSD.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/latestiteration.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/loadmosaic.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/multi_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/telescope_objtest.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/backup/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/build/lib.macosx-10.13-intel-2.7/backup/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/medis/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/build/lib.macosx-10.13-intel-2.7/backup/child_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/build/lib.macosx-10.13-intel-2.7/backup/example_SSD.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/build/lib.macosx-10.13-intel-2.7/backup/latestiteration.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/build/lib.macosx-10.13-intel-2.7/backup/loadmosaic.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/build/lib.macosx-10.13-intel-2.7/backup/multi_test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/build/lib.macosx-10.13-intel-2.7/backup/telescope_objtest.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/build/lib.macosx-10.13-intel-2.7/backup/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/bunching.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/calibrate_dm_intensity_specknull.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/check_timecube.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/coron_inspect.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/detector_comp.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/exptime_inspection.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/get_photon_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/get_photon_data.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/latestiteration.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/mkid_params.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/novary64act.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/observe.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/postproc_compare.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/postproc_compare2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/proper_demo.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/quasi_static_invest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/r0_inspection.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/raw_contrast.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/read_dark.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/save.pkl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/save.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/simple_telescope.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/take_MKIDs_obs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/vortex.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/wavefront100.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/wavefront100novary.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/wavefront50novaryaoacthigh.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/wavefront64.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/wavefront64novaryaoacthigh.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/wavefront64rovaryaoacthigh.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/wavefront_ana.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/zz_perf_2_0_128_i.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/zz_perf_2_0_128_r.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/zz_psf_2_0_128_i.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/zz_psf_2_0_128_r.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/zz_vvc_2_0_128_i.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Examples/zz_vvc_2_0_128_r.fits" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Telescope/FPWFS.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Telescope/run_system.py" beforeDir="false" afterPath="$PROJECT_DIR$/medis/Telescope/run_system.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Telescope/run_system.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Telescope/telescope_dm.py.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/medis/Utils/plot_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/medis/Utils/plot_tools.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,32 +129,32 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="bak" value="4" />
-          <entry key="ipynb" value="2" />
+          <entry key="bak" value="5" />
+          <entry key="ipynb" value="9" />
           <entry key="md" value="3" />
           <entry key="pro" value="6" />
-          <entry key="py" value="263" />
+          <entry key="py" value="267" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="IPNB" value="2" />
+          <entry key="IPNB" value="9" />
           <entry key="Markdown" value="3" />
-          <entry key="PLAIN_TEXT" value="10" />
-          <entry key="Python" value="263" />
+          <entry key="PLAIN_TEXT" value="11" />
+          <entry key="Python" value="267" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="579" />
           <entry key="md" value="202" />
-          <entry key="py" value="12671" />
+          <entry key="py" value="12781" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="202" />
-          <entry key="Python" value="13250" />
+          <entry key="Python" value="13360" />
         </counts>
       </usages-collector>
     </session>
@@ -59,10 +166,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/pca/pca_fullfr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
+            <state relative-caret-position="3819">
               <caret line="495" selection-start-line="495" selection-end-line="495" />
             </state>
           </provider>
@@ -71,7 +178,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/medis/params.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="870">
+            <state relative-caret-position="900">
               <caret line="60" column="28" selection-start-line="60" selection-start-column="28" selection-end-line="60" selection-end-column="28" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
@@ -83,9 +190,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/medis/Telescope/telescope_dm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" column="31" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="31" />
+            <state relative-caret-position="414">
+              <caret line="151" column="28" selection-start-line="151" selection-start-column="28" selection-end-line="151" selection-end-column="28" />
               <folding>
+                <element signature="e#0#9#0" expanded="true" />
                 <marker date="1544137009450" expanded="true" signature="7550:7933" ph="..." />
               </folding>
             </state>
@@ -93,10 +201,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/medis/Examples/MKID_HCI_demo.py">
+        <entry file="file://$PROJECT_DIR$/Examples/MKID_HCI_demo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="12" column="15" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="15" />
+            <state relative-caret-position="226">
+              <caret line="91" lean-forward="true" selection-start-line="91" selection-end-line="91" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medis/Detector/readout.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="725">
+              <caret line="388" column="11" selection-start-line="388" selection-start-column="11" selection-end-line="388" selection-end-column="11" />
+              <folding>
+                <element signature="e#59#77#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -104,29 +224,59 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/medis/Telescope/run_system.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4455">
-              <caret line="297" column="78" selection-start-line="297" selection-start-column="78" selection-end-line="297" selection-end-column="78" />
+            <state relative-caret-position="734">
+              <caret line="255" selection-start-line="255" selection-end-line="257" selection-end-column="41" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/medis/Examples/get_photon_data.py">
+        <entry file="file://$PROJECT_DIR$/medis/Detector/get_photon_data.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2040">
-              <caret line="136" column="32" selection-start-line="136" selection-start-column="32" selection-end-line="136" selection-end-column="32" />
+            <state relative-caret-position="703">
+              <caret line="365" column="17" selection-start-line="365" selection-start-column="4" selection-end-line="365" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medis/Utils/plot_tools.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="330">
+              <caret line="419" column="34" selection-start-line="419" selection-start-column="34" selection-end-line="419" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Examples/Jupyter Notebooks/simple_telescope.ipynb">
+          <provider selected="true" editor-type-id="ipnb-editor">
+            <state>
+              <selected id="0" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Examples/Jupyter Notebooks/simpleSystem.ipynb">
+          <provider selected="true" editor-type-id="ipnb-editor">
+            <state>
+              <selected id="2" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>labels</find>
-      <find>_subtr_proj_fullfr</find>
-      <find>312</find>
-      <find>scaling</find>
       <find>grid</find>
       <find>np.sin</find>
       <find>grid(</find>
@@ -153,16 +303,21 @@
       <find>run_sy</find>
       <find>quick_wfs</find>
       <find>quick_ao</find>
+      <find>tp.platescale</find>
+      <find>wf.</find>
+      <find>view</find>
+      <find>figma</find>
     </findStrings>
     <replaceStrings>
       <replace>print(</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/medis" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GotoClassSymbolConfiguration">
     <file-type-list>
+      <filtered-out-file-type name="PythonRegExp" />
       <filtered-out-file-type name="BuildoutCfg" />
       <filtered-out-file-type name="CommandLine" />
       <filtered-out-file-type name="DTD" />
@@ -174,7 +329,6 @@
       <filtered-out-file-type name="TEXT" />
       <filtered-out-file-type name="Properties" />
       <filtered-out-file-type name="Python" />
-      <filtered-out-file-type name="PythonRegExp" />
       <filtered-out-file-type name="RegExp" />
       <filtered-out-file-type name="RELAX-NG" />
       <filtered-out-file-type name="ReST" />
@@ -186,9 +340,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$USER_HOME$/.local/lib/python3.7/site-packages/PyPROPER-1.0.1-py3.7-macosx-10.9-x86_64.egg/proper/prop_fftw.py" />
-        <option value="$USER_HOME$/.local/lib/python3.7/site-packages/PyPROPER-1.0.1-py3.7-macosx-10.9-x86_64.egg/proper/prop_fftw_wisdom.py" />
-        <option value="$USER_HOME$/.local/lib/python3.7/site-packages/PyPROPER-1.0.1-py3.7-macosx-10.9-x86_64.egg/proper/prop_use_fftw.py" />
         <option value="$USER_HOME$/.local/lib/python3.7/site-packages/PyPROPER-1.0.1-py3.7-macosx-10.9-x86_64.egg/proper/prop_fits_write.py" />
         <option value="$USER_HOME$/.local/lib/python3.7/site-packages/PyPROPER-1.0.1-py3.7-macosx-10.9-x86_64.egg/proper/prop_fit_zernikes.py" />
         <option value="$USER_HOME$/.local/lib/python3.7/site-packages/PyPROPER-1.0.1-py3.7-macosx-10.9-x86_64.egg/proper/prop_table.py" />
@@ -220,13 +371,10 @@
         <option value="$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/var/shapes.py" />
         <option value="$PROJECT_DIR$/medis/Examples/MKID_HCI_demo_bak.py" />
         <option value="$PROJECT_DIR$/medis/Utils/rawImageIO.py" />
-        <option value="$PROJECT_DIR$/medis/Detector/readout.py" />
         <option value="$USER_HOME$/.local/lib/python3.7/site-packages/PyPROPER-1.0.1-py3.7-macosx-10.9-x86_64.egg/proper/prop_dm.py" />
         <option value="$PROJECT_DIR$/medis/Examples/simple_telescope.py" />
-        <option value="$PROJECT_DIR$/medis/Telescope/run_system.py" />
         <option value="$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/preproc/rescaling.py" />
         <option value="$PROJECT_DIR$/medis/params.py" />
-        <option value="$PROJECT_DIR$/medis/Utils/plot_tools.py" />
         <option value="$PROJECT_DIR$/medis/Telescope/coronagraph.py" />
         <option value="$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/pca/pca_fullfr.py" />
         <option value="$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/phot/simple_telescope.ipynb" />
@@ -235,14 +383,22 @@
         <option value="$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/phot/contrcurve.py" />
         <option value="$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/metrics/contrcurve.py" />
         <option value="$PROJECT_DIR$/medis/Analysis/phot.py" />
-        <option value="$PROJECT_DIR$/medis/Telescope/telescope_dm.py" />
         <option value="$PROJECT_DIR$/medis/Examples/MKID_HCI_demo.py" />
+        <option value="$PROJECT_DIR$/medis/Telescope/telescope_dm.py" />
+        <option value="$PROJECT_DIR$/Examples/MKID_HCI_demo.py" />
+        <option value="$PROJECT_DIR$/medis/Detector/readout.py" />
+        <option value="$PROJECT_DIR$/medis/Utils/plot_tools.py" />
+        <option value="$PROJECT_DIR$/Examples/Jupyter Notebooks/simple_telescope.ipynb" />
+        <option value="$PROJECT_DIR$/medis/Telescope/run_system.py" />
+        <option value="$PROJECT_DIR$/Examples/Jupyter Notebooks/simpleSystem.ipynb" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1680" />
-    <option name="height" value="1050" />
+    <option name="x" value="1440" />
+    <option name="y" value="-1020" />
+    <option name="width" value="1200" />
+    <option name="height" value="1920" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -259,33 +415,14 @@
             </path>
             <path>
               <item name="MEDIS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="MEDIS" type="462c0819:PsiDirectoryNode" />
+              <item name="Examples" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="MEDIS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (supervised-detection-exoplanets-hci-master) &gt;" type="70bed36:NamedLibraryElementNode" />
-            </path>
-            <path>
-              <item name="MEDIS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (supervised-detection-exoplanets-hci-master) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MEDIS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (supervised-detection-exoplanets-hci-master) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="MEDIS" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
-              <item name="&lt; Python 3.7 (supervised-detection-exoplanets-hci-master) &gt;" type="70bed36:NamedLibraryElementNode" />
-              <item name="python3.7" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-              <item name="vip_hci" type="462c0819:PsiDirectoryNode" />
+              <item name="MEDIS" type="462c0819:PsiDirectoryNode" />
+              <item name="Examples" type="462c0819:PsiDirectoryNode" />
+              <item name="Jupyter Notebooks" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -300,11 +437,13 @@
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/medis/Examples" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/medis/Detector" />
+      <recent name="$PROJECT_DIR$/" />
+      <recent name="$PROJECT_DIR$" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -319,7 +458,28 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.MKID_HCI_demo">
+  <component name="RunManager" selected="Python.MKID_HCI_demo (1)">
+    <configuration name="MKID_HCI_demo (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="MEDIS" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Examples" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Examples/MKID_HCI_demo.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="MKID_HCI_demo" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="MEDIS" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -362,7 +522,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="ML_HR8799_dev" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="ML_HR8799_dev (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="MEDIS" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -370,11 +530,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/medis/Examples" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Examples" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/medis/Examples/ML_HR8799_dev.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Examples/ML_HR8799_dev.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -404,41 +564,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="MEDIS" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$USER_HOME$/test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Python.test" />
-      <item itemvalue="Python.ML_HR8799_dev" />
       <item itemvalue="Python.MKID_pic" />
       <item itemvalue="Python.MKID_HCI_demo" />
       <item itemvalue="Python.simple_telescope" />
+      <item itemvalue="Python.ML_HR8799_dev (1)" />
+      <item itemvalue="Python.MKID_HCI_demo (1)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.MKID_HCI_demo (1)" />
+        <item itemvalue="Python.ML_HR8799_dev (1)" />
         <item itemvalue="Python.MKID_HCI_demo" />
         <item itemvalue="Python.simple_telescope" />
         <item itemvalue="Python.MKID_pic" />
-        <item itemvalue="Python.ML_HR8799_dev" />
-        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -465,9 +604,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <frame x="1440" y="-1020" width="1200" height="1920" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.123568416" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17387617" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -477,13 +617,13 @@
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="5" weight="0.32920355" />
       <window_info anchor="bottom" id="Version Control" order="6" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" sideWeight="0.4996986" visible="true" weight="0.37653062" />
-      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.50030136" side_tool="true" visible="true" weight="0.37653062" />
-      <window_info anchor="bottom" id="Python Console" order="9" weight="0.27079645" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49964765" visible="true" weight="0.37567568" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5003524" side_tool="true" weight="0.44457832" />
+      <window_info anchor="bottom" id="Python Console" order="9" weight="0.26972973" />
+      <window_info anchor="bottom" id="Run" order="10" weight="0.412973" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Run" order="3" weight="0.53846157" />
     </layout>
     <layout-to-restore>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.123931624" />
@@ -509,37 +649,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/miniconda3/lib/python3.7/site-packages/photutils/centroids/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="120" selection-start-line="120" selection-end-line="120" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/pca/svd.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="223" selection-start-line="223" selection-end-line="223" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medis/Examples/postproc_compare2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="978">
-          <caret line="316" column="16" lean-forward="true" selection-start-line="296" selection-start-column="5" selection-end-line="316" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medis/Utils/rawImageIO.py.bak">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$USER_HOME$/miniconda3/lib/python3.7/site-packages/astropy/utils/decorators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="468" lean-forward="true" selection-start-line="468" selection-end-line="468" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.local/lib/python3.7/site-packages/PyPROPER-1.0.1-py3.7-macosx-10.9-x86_64.egg/proper/prop_fits_write.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="750">
@@ -668,13 +777,6 @@
     <entry file="file://$PROJECT_DIR$/medis/Analysis/phot.py.bak">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/medis/Utils/plot_tools.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/preproc/derotation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="368">
@@ -690,10 +792,13 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/medis/Examples/simple_telescope.ipynb" />
-    <entry file="file://$PROJECT_DIR$/medis/Examples/simple_telescope.py">
+    <entry file="file://$PROJECT_DIR$/Examples/simple_telescope.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="69">
           <caret line="54" column="29" lean-forward="true" selection-start-line="54" selection-start-column="29" selection-end-line="54" selection-end-column="29" />
+          <folding>
+            <element signature="e#1#14#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -704,7 +809,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medis/Examples/HR8799_demo.py">
+    <entry file="file://$PROJECT_DIR$/Examples/HR8799_demo.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="368">
           <caret line="96" column="22" selection-start-line="96" selection-start-column="22" selection-end-line="96" selection-end-column="22" />
@@ -743,6 +848,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="765">
           <caret line="480" column="75" selection-start-line="480" selection-start-column="75" selection-end-line="480" selection-end-column="75" />
+          <folding>
+            <element signature="e#101#133#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -750,6 +858,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3565">
           <caret line="22" column="21" selection-start-line="22" selection-start-column="21" selection-end-line="22" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -780,28 +891,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medis/Examples/DSI_demo.py">
+    <entry file="file://$PROJECT_DIR$/Examples/DSI_demo.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-912" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medis/Detector/readout.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
-          <caret line="93" column="17" selection-start-line="93" selection-start-column="17" selection-end-line="93" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/miniconda3/lib/python3.7/site-packages/vip_hci/pca/pca_fullfr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
+        <state relative-caret-position="3819">
           <caret line="495" selection-start-line="495" selection-end-line="495" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/medis/params.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="870">
+        <state relative-caret-position="900">
           <caret line="60" column="28" selection-start-line="60" selection-start-column="28" selection-end-line="60" selection-end-column="28" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -809,34 +913,77 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Examples/ML_HR8799_dev.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/medis/Telescope/telescope_dm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="31" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="31" />
+        <state relative-caret-position="414">
+          <caret line="151" column="28" selection-start-line="151" selection-start-column="28" selection-end-line="151" selection-end-column="28" />
           <folding>
+            <element signature="e#0#9#0" expanded="true" />
             <marker date="1544137009450" expanded="true" signature="7550:7933" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medis/Examples/MKID_HCI_demo.py">
+    <entry file="file://$PROJECT_DIR$/medis/Detector/readout.py.bak">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medis/Detector/readout.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="12" column="15" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="15" />
+        <state relative-caret-position="725">
+          <caret line="388" column="11" selection-start-line="388" selection-start-column="11" selection-end-line="388" selection-end-column="11" />
+          <folding>
+            <element signature="e#59#77#0" expanded="true" />
+          </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Examples/MKID_HCI_demo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="91" lean-forward="true" selection-start-line="91" selection-end-line="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Examples/Jupyter Notebooks/simpleSystem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1285" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/medis/Telescope/run_system.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4455">
-          <caret line="297" column="78" selection-start-line="297" selection-start-column="78" selection-end-line="297" selection-end-column="78" />
+        <state relative-caret-position="734">
+          <caret line="255" selection-start-line="255" selection-end-line="257" selection-end-column="41" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medis/Examples/get_photon_data.py">
+    <entry file="file://$PROJECT_DIR$/medis/Detector/get_photon_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2040">
-          <caret line="136" column="32" selection-start-line="136" selection-start-column="32" selection-end-line="136" selection-end-column="32" />
+        <state relative-caret-position="703">
+          <caret line="365" column="17" selection-start-line="365" selection-start-column="4" selection-end-line="365" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medis/Utils/plot_tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="419" column="34" selection-start-line="419" selection-start-column="34" selection-end-line="419" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Examples/Jupyter Notebooks/simple_telescope.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Examples/Jupyter Notebooks/simpleSystem.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="2" />
         </state>
       </provider>
     </entry>

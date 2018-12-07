@@ -253,9 +253,9 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
     # quicklook_wf(wf_array[0, 0], show=True)
     iter_func(wf_array, coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
-    if 'None' not in tp.occulter_type:  # kludge for now until more sophisticated coronapraph has been installed
-        for iw in range(len(wf_array)):
-            wf_array[iw,0].wfarr *= 0.1
+    # if 'None' not in tp.occulter_type:  # kludge for now until more sophisticated coronagraph has been installed
+    #     for iw in range(len(wf_array)):
+    #         wf_array[iw,0].wfarr *= 0.1
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
     # dprint(wf_array.shape)
     # quicklook_wf(wf_array[0, 0], show=True)
@@ -263,7 +263,6 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     # quicklook_wf(wf_array[1, 0], show=True)
 
     dprint(proper.prop_get_sampling_arcsec(wf_array[0,0]))
-    dprint(proper.prop_get_sampling_arcsec(wf_array[1,0]))
     # dprint(proper.prop_get_sampling_arcsec(wf_array[0,1]))
 
     #         # exit()

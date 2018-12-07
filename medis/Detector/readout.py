@@ -386,7 +386,7 @@ def save_hypercube_hdf5(hypercube, HyperCubeFile = 'hyper.hdf'):
     f.close()
 
 def get_integ_hypercube(plot=False):
-    import Examples.get_photon_data as gpd
+    import Detector.get_photon_data as gpd
     print(os.path.isfile(iop.hyperFile), iop.hyperFile)
     print(ap.numframes)
 

@@ -210,9 +210,9 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
     # fig =plt.figure(figsize=(14,7))
 
     if width == 4 or width != 2:
-        fig, axes = plt.subplots(nrows=1, ncols=width,figsize=(14,3.4))
+        fig, axes = plt.subplots(nrows=2, ncols=width,figsize=(14,3.4))
     elif width == 2:
-        fig, axes = plt.subplots(nrows=1, ncols=width,figsize=(7,3.1))
+        fig, axes = plt.subplots(nrows=2, ncols=width,figsize=(7,3.1))
     # maps = len(datacube)
     # print maps, width
 
@@ -413,13 +413,11 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
         cbar_ax = fig.add_axes([0.45, 0.15, 0.4, 0.05])
         fig.colorbar(im, cax=cbar_ax, orientation='horizontal')
 
-    figManager = plt.get_current_fig_manager()
-    # if px=0, plot will display on 1st screen
-    figManager.window.move(-1920, 0)
-    # figManager.window.showMaximized()
-    # figManager.window.move(np.random.uniform(0,1440),np.random.uniform(0,825)) #[825, 1440]
-
-    figManager.window.setFocus()
+    # # For plotting on the leftmost screen
+    # figManager = plt.get_current_fig_manager()
+    # # if px=0, plot will display on 1st screen
+    # figManager.window.move(-1920, 0)
+    # figManager.window.setFocus()
 
     if show==True:
         plt.tight_layout()
@@ -502,14 +500,11 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
     plt.tight_layout()
 
 
-
-    figManager = plt.get_current_fig_manager()
-    # if px=0, plot will display on 1st screen
-    figManager.window.move(-1920, 0)
-    # figManager.window.showMaximized()
-    # figManager.window.move(np.random.uniform(0,1440),np.random.uniform(0,825)) #[825, 1440]
-
-    figManager.window.setFocus()
+    # # For plotting on the leftmost screen
+    # figManager = plt.get_current_fig_manager()
+    # # if px=0, plot will display on 1st screen
+    # figManager.window.move(-1920, 0)
+    # figManager.window.setFocus()
 
     if show==True:
         plt.show(block=True)
