@@ -16,7 +16,7 @@ from . import temporal as temp
 from . import spectral as spec
 # import Detector.readout as read
 # import matplotlib.pyplot as plt
-from . import H2RG
+# from . import H2RG
 from Utils.misc import dprint
 
 
@@ -348,8 +348,8 @@ def remove_close_photons(cube):
     return photons
 
 def take_exposure(hypercube):
-    dprint(np.sum(hypercube))
-    dprint((ap.exposure_time, cp.frame_time))
+    # dprint(np.sum(hypercube))
+    # dprint((ap.exposure_time, cp.frame_time))
     factor = ap.exposure_time/ cp.frame_time
     num_exp = int(ap.numframes/factor)
     # print factor, num_exp
@@ -392,15 +392,12 @@ def get_integ_hypercube(plot=False):
 
 
     if os.path.isfile(iop.hyperFile):
-        dprint(iop.hyperFile[-3:])
         if iop.hyperFile[-3:] == '.h5':
         # try:
             hypercube = open_hypercube_hdf5(HyperCubeFile=iop.hyperFile)
         else:
         # except:
             hypercube = open_hypercube(HyperCubeFile=iop.hyperFile)
-        dprint(hypercube.shape)
-        dprint(np.sum(hypercube))
     else:
 
         # hypercube = gpd.run()

@@ -1,3 +1,5 @@
+The speckle nulling package has been slightly adapted from code courtesy of Michael Bottom for Palomar and Keck
+
 Install PyCharm
 
 pip install Cython

@@ -616,7 +616,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
                     obj_map = proper.prop_errormap(wf_array[0,0], atmos_map, MULTIPLY = (1+pist_error)/3, WAVEFRONT=True, MAP = "obj_map", SAMPLING=tp.samp)# )##FILE='telescope_objtest.fits'
                     # quicklook_im(obj_map, logAmp=False)
                 except IOError:
-                    print('*** Using exception hack for name rounding error ***', end=' ')
+                    print('*** Using exception hack for name rounding error ***')
                     i = 0
                     up = True
                     indx = float(atmos_map[-19:-11])

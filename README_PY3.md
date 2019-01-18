@@ -1,3 +1,5 @@
+The speckle nulling package has been slightly adapted from code courtesy of Michael Bottom for Palomar and Keck
+
 framework python install
 conda = "~/minconda3/bin/conda"
 
@@ -22,9 +24,7 @@ pip install h5py
 
 pip install PyYAML
 
-<cd to proper python2.7> python setup.py install
-
-convert all proper files to python 3 with 2to3
+<cd to downloaded and unzipped proper directory> python setup.py install
 
 conda install pytables
 
@@ -35,3 +35,7 @@ pip install configobj
 pip install PyQt5
 
 in matplotlibrc: backend: Qt5Agg
+
+pip install vip_hci (may have to change get_annulus to get_annulus_segments in snr.py)
+
+pip install --upgrade --no-deps statsmodels

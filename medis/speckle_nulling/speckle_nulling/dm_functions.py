@@ -9,8 +9,8 @@ from configobj import ConfigObj
 import numpy as np
 # import ipdb
 import sn_filehandling as flh
-from PIL import Image
-from PIL import ImageDraw
+# from PIL import Image
+# from PIL import ImageDraw
 from params import tp
 
 def intensitymodel( amp, k_rad, a=0, b=0, c=0):

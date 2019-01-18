@@ -5,7 +5,11 @@ import numpy as np
 sys.path.append(os.environ['MEDIS_DIR'])
 from params import tp, mp, cp, sp, ap, iop
 import Detector.get_photon_data as gpd
+import matplotlib as mpl
+mpl.use('Qt5Agg')
+# set matplotlibrc to Qt5Agg
 import matplotlib.pyplot as plt
+
 from matplotlib.colors import LogNorm
 from Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
 import pickle
@@ -13,6 +17,7 @@ from Utils.misc import dprint
 import Detector.readout as read
 import Analysis.phot
 from vip_hci import phot, pca
+from statsmodels.tsa.stattools import acf
 
 # Parameters specific to this script
 sp.show_wframe = False
@@ -20,9 +25,7 @@ sp.save_obs = False
 sp.show_cube=False
 ap.companion = False
 sp.get_ints=False
-ap.star_photons = int(1e8) # A 5 apparent mag star 1e6 cts/cm^2/s
-# ap.contrast = [10**-4.5,10**-4.1,10**-4.1,10**-4.1]  # [0.1,0.1]
-# ap.lods = [[8,-2.16],[-3,3.0],[-3,0.1],[-4,-6]]#[6,-4.5],
+ap.star_photons = int(1e6) #1e8
 ap.contrast = [10**-4.1,10**-4.1,10**-4.1]  # [0.1,0.1]
 ap.lods = [[-3.2,3.2],[-3.2,0.3],[-4.2,-6.2]]#[6,-4.5],
 tp.diam=8.
@@ -49,7 +52,8 @@ tp.aber_vals = {'a': [5e-18, 1e-19],#'a': [5e-17, 1e-18],
                 'c': [3.1, 0.5],
                 'a_amp': [0.05, 0.01]}
 # mp.date = '181203compBright1sLessOOPP/'
-mp.date = 'HR8799niceAberMKIDsPCA7200nocomp/'
+# mp.date = 'HR8799niceAberMKIDsPCA7200nocomp/'
+mp.date = 'HR8799niceAberMKIDsPCA72001e6/'
 # mp.date = 'just2'
 mp.bad_pix = True
 mp.array_size = np.array([146,146])
@@ -121,7 +125,7 @@ if __name__ == '__main__':
     star_phot = phot.contrcurve.aperture_flux(np.sum(psf_template,axis=0),[mp.array_size[0]//2],[mp.array_size[0]//2],lod,1)[0]/1e4#/ap.numframes * 500
     wsamples = np.linspace(tp.band[0], tp.band[1], tp.w_bins)
     scale_list = wsamples/(tp.band[1]-tp.band[0])
-    scale_list = scale_list#[::-1]
+    # scale_list = scale_list[::-1]
     algo_dict = {'scale_list': scale_list}
 
     ap.exposure_time = 0.1  # 0.001
@@ -158,7 +162,18 @@ if __name__ == '__main__':
     # SDI = pca.pca(fast_hyper, angle_list=np.zeros((fast_hyper.shape[1])), scale_list=scale_list,
     #               mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
     # quicklook_im(SDI, logAmp=True, show=False)
-    #
+
+    plt.figure()
+    for y in [73, 85, 105, 120]:
+        print(y)
+        corr, ljb, pvalue = acf(fast_hyper[0, :, 73, y], unbiased=False, qstat=True, nlags=len(range(ap.numframes)))
+        star_corr = corr
+        # plt.plot(fast_hyper[0, :, 73, y])
+        plt.plot(star_corr)
+        # plt.xscale('log')
+    loop_frames(fast_hyper[0], logAmp=True)
+    plt.show()
+
     # SDI = pca.pca(med_hyper, angle_list=np.zeros((med_hyper.shape[1])), scale_list=scale_list,
     #               mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
     # quicklook_im(SDI, logAmp=True, show=False)
@@ -173,7 +188,7 @@ if __name__ == '__main__':
 
     dprint((fast_hyper.shape, med_hyper.shape, slow_hyper.shape))
 
-    fast_hyper = fast_hyper[:,:100]
+    fast_hyper = fast_hyper[:,:10]
     method_out = Analysis.phot.eval_method(fast_hyper, pca.pca,psf_template,
                                            np.zeros((fast_hyper.shape[1])), algo_dict,
                                            fwhm=lod, star_phot=star_phot)

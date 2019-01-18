@@ -478,9 +478,9 @@ def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=4, star_ph
     fulloutput = metrics.contrcurve.contrast_curve(cube=cube,
                                    angle_list=angle_list, psf_template=psf_template,
                                    fwhm=fwhm, pxscale=tp.platescale/1000,
-                                   starphot=star_phot, algo=algo, nbranch=2,
+                                   starphot=star_phot, algo=algo, nbranch=3,
                                     adimsdi = 'double', ncomp = 7, ncomp2=None,
-                                   debug=False, plot=False, theta=0,full_output=True, fc_snr=100, **algo_dict)
+                                   debug=True, plot=False, theta=0,full_output=True, fc_snr=10, **algo_dict)
     plt.show()
     metrics_out = [fulloutput[0]['throughput'], fulloutput[0]['noise'], fulloutput[0]['sensitivity_student']]
     metrics_out = np.array(metrics_out)
