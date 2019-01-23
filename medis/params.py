@@ -179,7 +179,8 @@ class io_params():
         # self.rootdir = os.path.realpath(__file__)[:-16]#'/Data/PythonProjects/MEDIS/Data'
         self.proc_dir = 'medis/Processed'
         # self.datadir = os.path.join(self.rootdir, self.proc_dir, date)
-        self.datadir = os.path.join('/Users/dodkins/ScienceData', self.proc_dir, date)
+        # self.datadir = os.path.join('/Users/dodkins/ScienceData', self.proc_dir, date)
+        self.datadir = os.path.join(os.environ['MKID_RAW_PATH'], self.proc_dir, date)
         self.obsfile = os.path.join(os.environ['MKID_DATA_DIR'], 'medis', mp.data, date,'r0varyObsfile.h5')
         self.LCmapFile = os.path.join(self.datadir, 'LCmap.pkl')
         self.IratioFile = os.path.join(self.datadir,'Iratio.pkl')
@@ -197,8 +198,8 @@ class io_params():
         self.measured_var= os.path.join(self.datadir,'measured_var.pkl')
         # self.data = 'data/aberrations'
         # self.date = '180210/'
-        self.aberdir = os.path.join(os.environ['MKID_DATA_DIR'], 'medis', 'aberrations/181201/')
-        self.coron_temp = os.path.join(os.environ['MKID_DATA_DIR'], self.proc_dir, date,'coron_maps/')
+        self.aberdir = os.path.join(os.environ['MKID_RAW_PATH'], 'medis', 'aberrations/181201/')
+        self.coron_temp = os.path.join(os.environ['MKID_RAW_PATH'], self.proc_dir, date,'coron_maps/')
     def update(self, date='180406b/'):
         self.__init__(date=date)
 

@@ -1,5 +1,5 @@
 import numpy as np
-import pyfits as pf
+import astropy.io.fits as pf
 from configobj import ConfigObj
 import cv2
 import ipdb

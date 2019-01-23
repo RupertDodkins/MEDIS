@@ -5,7 +5,7 @@ import sn_hardware as hardware
 import sn_preprocessing as pre
 import numpy as np
 import os
-import pyfits as pf
+import astropy.io.fits as pf
 import sn_filehandling as flh 
 from configobj import ConfigObj
 

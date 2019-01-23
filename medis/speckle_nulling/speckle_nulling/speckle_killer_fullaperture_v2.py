@@ -2,7 +2,7 @@ import sn_preprocessing as pre
 # import cv2
 import os
 import matplotlib.pyplot as plt
-import pyfits as pf
+import astropy.io.fits as pf
 # import ipdb
 import sn_math as snm
 import numpy as np

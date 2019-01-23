@@ -1,7 +1,7 @@
 import sn_filehandling as flh
 import os
 import numpy as np
-import pyfits as pf
+import astropy.io.fits as pf
 from configobj import ConfigObj
 import ipdb
 import matplotlib.pyplot as plt

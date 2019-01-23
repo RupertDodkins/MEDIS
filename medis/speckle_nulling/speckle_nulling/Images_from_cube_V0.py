@@ -9,7 +9,7 @@ Created on Wed Apr 15 15:26:29 2015
 import numpy as np
 
 # pour lire et enregistrer les fits
-import pyfits as pf
+import astropy.io.fits as pf
 
 from configobj import ConfigObj
 import ipdb

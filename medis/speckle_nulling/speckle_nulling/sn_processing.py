@@ -2,7 +2,7 @@ import time
 import matplotlib.pyplot as plt 
 # import ipdb
 #import image_registration as imreg
-import pyfits as pf
+import astropy.io.fits as pf
 import configobj as co
 import os
 import sn_filehandling as flh

@@ -3,10 +3,14 @@
 import sys, os
 # sys.path.append('D:/dodkins/MEDIS/MEDIS')
 # sys.path.append('D:/dodkins/MEDIS/MEDIS/Telescope')
-sys.path.append(os.environ['MEDIS_DIR'])
-sys.path.append(os.path.join(os.environ['MEDIS_DIR'],'Telescope'))
+
+
+# sys.path.append(os.environ['MEDIS_DIR'])
+# for p in sys.path: print(p)
+# sys.path.append(os.path.join(os.environ['MEDIS_DIR'],'Telescope'))
 
 import proper
+print(proper.__file__)
 import numpy as np
 np.set_printoptions(threshold=np.inf)
 

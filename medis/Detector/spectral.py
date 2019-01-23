@@ -164,9 +164,9 @@ if __name__ == "__main__":
         
         R = Rs[x, y]
         pix_background = detector.get_phase_background(R, 1)
-        print(pix_background, end=' ') 
+        # print(pix_background, end=' ') 
         pix_response = phase*response[x, y]
-        print(pix_response, end=' ') 
+        # print(pix_response, end=' ')
         if pix_background + pix_response < threshold_phase:#photon[3]
             print('photon detected')
             packet = cubes.make_packet([x, y], time, phase)

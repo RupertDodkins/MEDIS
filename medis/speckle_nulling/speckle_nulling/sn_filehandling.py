@@ -2,7 +2,7 @@ import glob
 # import ipdb
 import warnings
 import sys
-import pyfits as pf
+import astropy.io.fits as pf
 # from astropy.extern import configobj as co
 # import configobj as co
 import os

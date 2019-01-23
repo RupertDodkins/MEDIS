@@ -9,7 +9,7 @@ import time
 import socket
 # import ipdb
 import subprocess
-import pyfits as pf
+import astropy.io.fits as pf
 import flatmapfunctions
 # import pexpect
 #GLOBAL FUNCTION

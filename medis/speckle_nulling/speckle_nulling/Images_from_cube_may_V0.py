@@ -11,7 +11,7 @@ import numpy as np
 
 #(fr) pour lire et enregistrer les fits
 #(en) To read and write fits
-import pyfits as pf
+import astropy.io.fits as pf
 
 #(fr) Pour faire des stops
 #(en) To stop the program

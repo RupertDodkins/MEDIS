@@ -210,10 +210,10 @@ def get_unoccult_hyper(hyperFile = '/RefPSF_wLyotStop.pkl', numframes=1):
     # tp.w_bins = 1
     print(iop.obsfile, 'obs')
     hypercube = read.get_integ_hypercube()
-
     tp.__dict__ = tp_orig.__dict__
     ap.__dict__ = ap_orig.__dict__
     iop.__dict__ = iop_orig.__dict__
+
     return hypercube
 
 
