@@ -1,3 +1,10 @@
+"""
+This is the main configuration file. It contains default global variables (as in they are read in by the relevant modules)
+that define the parameters of the whole telescope system. These parameters can be redefined at the beginning of the
+example module the user is running
+
+"""
+
 import numpy as np
 import proper
 import os
@@ -5,6 +12,11 @@ import os
 
 
 class astro_params():
+    """
+    Default parameters for the astronomical system under investigation
+
+    exposure_time, startframe and numframes may seem a bit out of place here. Perhaps this class could be renamed
+    """
     def __init__(self):
         # Total number of photons on the array for a timestep shared between all wavelengths
         self.star_photons = int(1e5) # # A 5 apparent mag star 1e6 cts/cm^2/s
@@ -17,6 +29,11 @@ class astro_params():
         self.numframes = 5000
 
 class caos_params():
+    """
+    Default parameters for the atmosphere
+
+    At some point we should move self.rootdir etc to the io params class
+    """
     def __init__(self):
         self.rootdir = '/Users/dodkins/ScienceData/medis/' # possibly redundant with iop class
         self.data = 'atmos' # possibly redundant with iop class
@@ -32,6 +49,10 @@ class caos_params():
         self.r0s_idx = -1
 
 class telescope_params():
+    """
+    This contains most of the parameters you will probably modify when running tests
+
+    """
     def __init__(self):
         self.grid_size = 128 #128            # grid size
         # self.lamda = 1        # wavelength (microns)
@@ -161,6 +182,10 @@ class H2RG_params():
         self.erate = 1
 
 class simulation_params():
+    """
+    Default parameters for outputs of the simulation. What plots you want to see etc
+
+    """
     def __init__(self):
         self.num_processes = 1 #multiprocessing.cpu_count()
         self.show_wframe = False
@@ -175,6 +200,9 @@ class simulation_params():
                           'c':[0]}#False
 
 class io_params():
+    """
+    This should contain all of the parameters for the file structure. Where do you want the H5/images to be saved
+    """
     def __init__(self, date='180406b/'):
         # self.rootdir = os.path.realpath(__file__)[:-16]#'/Data/PythonProjects/MEDIS/Data'
         self.proc_dir = 'medis/Processed'
@@ -204,7 +232,11 @@ class io_params():
         self.__init__(date=date)
 
 class device_params():
-    '''A object which contains the calculated parameters of the array'''
+    '''
+    This is different from MKID_params in that it contains an instance of these random multidimensional parameters
+
+    Perhaps it could be part of MKID_params
+    '''
     def __init__(self):
         self.response_map = None
         self.Rs = None
@@ -233,10 +265,8 @@ dp = device_params()
 fp = FPWFS_params()
 
 proper.print_it = False
-# proper.print_it = False
 # proper.prop_init_savestate()
-# datadir = '/Data/PythonProjects/MEDIS/Data/time/1KwRMS_2nd/'#'/home/rupert/PythonProjects/MkidCoronSim/Data/1KwRMS/'
-# datadir = '/Data/PythonProjects/MEDIS/caos_pse/work_caos/'
+
 
 
 

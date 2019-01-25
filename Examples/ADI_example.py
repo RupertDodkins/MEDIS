@@ -1,6 +1,6 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
 import sys
-sys.path.append('D:/dodkins/MEDIS/MEDIS')
+# sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
 from params import ap, cp, tp, sp, mp, iop
 import cPickle as pickle

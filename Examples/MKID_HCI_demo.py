@@ -2,12 +2,10 @@
 
 import sys, os
 import numpy as np
-sys.path.append(os.environ['MEDIS_DIR'])
+# sys.path.append(os.environ['MEDIS_DIR'])
+import medis
 from params import tp, mp, cp, sp, ap, iop
 import Detector.get_photon_data as gpd
-import matplotlib as mpl
-mpl.use('Qt5Agg')
-# set matplotlibrc to Qt5Agg
 import matplotlib.pyplot as plt
 
 from matplotlib.colors import LogNorm
@@ -23,11 +21,13 @@ from statsmodels.tsa.stattools import acf
 sp.show_wframe = False
 sp.save_obs = False
 sp.show_cube=False
-ap.companion = False
+ap.companion = True
 sp.get_ints=False
-ap.star_photons = int(1e6) #1e8
-ap.contrast = [10**-4.1,10**-4.1,10**-4.1]  # [0.1,0.1]
-ap.lods = [[-3.2,3.2],[-3.2,0.3],[-4.2,-6.2]]#[6,-4.5],
+ap.star_photons = int(1e8) #1e8
+# ap.contrast = [10**-2.1,10**-3.1,10**-3.1]  # [0.1,0.1]
+# ap.lods = [[-3.2,3.2],[-3.2,0.3],[-4.2,-6.2]]#[6,-4.5],
+ap.contrast = [10**-3.1,10**-3.1,10**-3.1,10**-4,10**-4,10**-4]  # [0.1,0.1]
+ap.lods = [[-1.6,0.0],[-3.2,0.0],[-5,0.0],[1.6,0.0],[3.2,0.0],[5,0.0]]#[6,-4.5],
 tp.diam=8.
 tp.grid_size=148
 tp.beam_ratio =0.5
@@ -35,8 +35,8 @@ tp.use_spiders = True
 tp.use_ao = True
 tp.ao_act = 50
 tp.platescale=10 # mas
-# tp.detector = 'ideal'
-tp.detector = 'MKIDs'
+tp.detector = 'ideal'
+# tp.detector = 'MKIDs'
 tp.use_atmos = True
 tp.use_zern_ab = False
 tp.occulter_type = 'Vortex'#"None (Lyot Stop)"
@@ -53,18 +53,18 @@ tp.aber_vals = {'a': [5e-18, 1e-19],#'a': [5e-17, 1e-18],
                 'a_amp': [0.05, 0.01]}
 # mp.date = '181203compBright1sLessOOPP/'
 # mp.date = 'HR8799niceAberMKIDsPCA7200nocomp/'
-mp.date = 'HR8799niceAberMKIDsPCA72001e6/'
+mp.date = 'HR8799niceAberidealPCA72001e8comp/'
 # mp.date = 'just2'
 mp.bad_pix = True
 mp.array_size = np.array([146,146])
 iop.update(mp.date)
 sp.num_processes = 3
-num_exp =200
+num_exp =100
 cp.frame_time = 0.05
 cp.date = '180828/'
 cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 
-tp.piston_error = True
+tp.piston_error = False
 tp.band = np.array([700, 1500])
 tp.nwsamp = 4
 tp.w_bins = 16#8
@@ -118,11 +118,12 @@ mp.pix_yield = 0.9#0.7 # check dis
 if __name__ == '__main__':
     plotdata, maps = [], []
 
+    print(ap.__dict__)
     psf_template = Analysis.phot.get_unoccult_psf(hyperFile='/IntHyperUnOccult.h5', plot=False, numframes=1)
     psf_template = psf_template[0,:,1:,1:]
     dprint((tp.grid_size//2, psf_template.shape))
     # quicklook_im(np.sum(psf_template,axis=0))
-    star_phot = phot.contrcurve.aperture_flux(np.sum(psf_template,axis=0),[mp.array_size[0]//2],[mp.array_size[0]//2],lod,1)[0]/1e4#/ap.numframes * 500
+    star_phot = phot.contrcurve.aperture_flux(np.sum(psf_template,axis=0),[mp.array_size[0]//2],[mp.array_size[0]//2],lod,1)[0]#/1e4#/ap.numframes * 500
     wsamples = np.linspace(tp.band[0], tp.band[1], tp.w_bins)
     scale_list = wsamples/(tp.band[1]-tp.band[0])
     # scale_list = scale_list[::-1]
@@ -133,6 +134,7 @@ if __name__ == '__main__':
     ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
     iop.hyperFile = iop.datadir + 'HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
     dprint(iop.hyperFile)
+
     orig_hyper = read.get_integ_hypercube(plot=False)[:, :]
 
     # fast_hyper = fast_hyper[:100]
@@ -163,32 +165,34 @@ if __name__ == '__main__':
     #               mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
     # quicklook_im(SDI, logAmp=True, show=False)
 
-    plt.figure()
-    for y in [73, 85, 105, 120]:
-        print(y)
-        corr, ljb, pvalue = acf(fast_hyper[0, :, 73, y], unbiased=False, qstat=True, nlags=len(range(ap.numframes)))
-        star_corr = corr
-        # plt.plot(fast_hyper[0, :, 73, y])
-        plt.plot(star_corr)
-        # plt.xscale('log')
-    loop_frames(fast_hyper[0], logAmp=True)
-    plt.show()
+    # plt.figure()
+    # for y in [73, 85, 105, 120]:
+    #     print(y)
+    #     corr, ljb, pvalue = acf(fast_hyper[0, :, 73, y], unbiased=False, qstat=True, nlags=len(range(ap.numframes)))
+    #     star_corr = corr
+    #     # plt.plot(fast_hyper[0, :, 73, y])
+    #     plt.plot(star_corr)
+    #     # plt.xscale('log')
+    # loop_frames(fast_hyper[0], logAmp=True)
+    # plt.show()
 
-    # SDI = pca.pca(med_hyper, angle_list=np.zeros((med_hyper.shape[1])), scale_list=scale_list,
-    #               mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
+    SDI = pca.pca(fast_hyper, angle_list=np.zeros((fast_hyper.shape[1])), scale_list=scale_list,
+                  mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
     # quicklook_im(SDI, logAmp=True, show=False)
-    #
-    # SDI = pca.pca(slow_hyper, angle_list=np.zeros((slow_hyper.shape[1])), scale_list=scale_list,
-    #               mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
+    maps.append(SDI)
+    SDI = pca.pca(med_hyper, angle_list=np.zeros((med_hyper.shape[1])), scale_list=scale_list,
+                  mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
     # quicklook_im(SDI, logAmp=True, show=True)
-
-    # SDI = pca.pca(v_slow_hyper, angle_list=np.zeros((v_slow_hyper.shape[1])), scale_list=scale_list,
-    #               mask_center_px=None,adimsdi='single', ncomp=4)#, ncomp2=3)#,
+    maps.append(SDI)
+    SDI = pca.pca(slow_hyper, angle_list=np.zeros((slow_hyper.shape[1])), scale_list=scale_list,
+                  mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
     # quicklook_im(SDI, logAmp=True)
+    maps.append(SDI)
 
     dprint((fast_hyper.shape, med_hyper.shape, slow_hyper.shape))
-
-    fast_hyper = fast_hyper[:,:10]
+    indep_images(maps, logAmp=True)
+    plt.show()
+    # fast_hyper = fast_hyper[:,:10]
     method_out = Analysis.phot.eval_method(fast_hyper, pca.pca,psf_template,
                                            np.zeros((fast_hyper.shape[1])), algo_dict,
                                            fwhm=lod, star_phot=star_phot)
@@ -206,6 +210,7 @@ if __name__ == '__main__':
                                            fwhm=lod, star_phot=star_phot)
     plotdata.append(method_out[0])
     maps.append(method_out[1])
+
 
     # method_out = eval_method(v_slow_hyper, pca.pca, np.zeros((v_slow_hyper.shape[1])), algo_dict)
     # plotdata.append(method_out[0])
