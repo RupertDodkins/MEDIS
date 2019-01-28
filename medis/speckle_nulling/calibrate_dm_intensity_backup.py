@@ -3,13 +3,13 @@ import matplotlib.pyplot as plt
 import ipdb
 from validate import Validator
 import numpy as np 
-import medis.speckele_nulling.sn_math as snm
+import medis.speckle_nulling.sn_math as snm
 from configobj import ConfigObj
 import numpy as np
 import flatmapfunctions as FM
-import medis.speckele_nulling.dm_functions as DM
-import medis.speckele_nulling.sn_hardware as hardware
-import medis.speckele_nulling.sn_preprocessing as pre
+import medis.speckle_nulling.dm_functions as DM
+import medis.speckle_nulling.sn_hardware as hardware
+import medis.speckle_nulling.sn_preprocessing as pre
 import scipy.optimize as opt
 from detect_speckles import create_speckle_mask
 import time

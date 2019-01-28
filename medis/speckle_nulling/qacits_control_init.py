@@ -1,18 +1,18 @@
 import numpy as np
-import medis.speckele_nulling.sn_filehandling as flh
+import medis.speckle_nulling.sn_filehandling as flh
 import astropy.io.fits as pf
 from configobj import ConfigObj
 import ipdb
 import matplotlib.pyplot as plt
-import medis.speckele_nulling.sn_hardware as hardware
+import medis.speckle_nulling.sn_hardware as hardware
 from validate import Validator
-import medis.speckele_nulling.sn_preprocessing as pre
-#import medis.speckele_nulling.sn_processing as pro
+import medis.speckle_nulling.sn_preprocessing as pre
+#import medis.speckle_nulling.sn_processing as pro
 from scipy.interpolate import interp1d
-import medis.speckele_nulling.sn_math as snm
+import medis.speckle_nulling.sn_math as snm
 import qacits_control_v2 as qacits
 import dm_registration as dmr
-import medis.speckele_nulling.dm_functions as dmf
+import medis.speckle_nulling.dm_functions as dmf
 import flatmapfunctions as FM
 import time
 

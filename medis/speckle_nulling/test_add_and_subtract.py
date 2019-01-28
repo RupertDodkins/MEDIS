@@ -4,13 +4,13 @@ from configobj import ConfigObj
 import cv2
 import ipdb
 import matplotlib.pyplot as plt
-import medis.speckele_nulling.sn_hardware as hardware
-import medis.speckele_nulling.dm_functions as DM
-import medis.speckele_nulling.sn_filehandling as flh
+import medis.speckle_nulling.sn_hardware as hardware
+import medis.speckle_nulling.dm_functions as DM
+import medis.speckle_nulling.sn_filehandling as flh
 import flatmapfunctions as fmap
 import detect_speckles
 from validate import Validator
-import medis.speckele_nulling.sn_preprocessing as pre
+import medis.speckle_nulling.sn_preprocessing as pre
 
 
 if __name__ == "__main__":

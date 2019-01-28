@@ -25,7 +25,7 @@ import ipdb
 import matplotlib.pyplot as plt
 
 # pour initialiser pharo et p3k
-import medis.speckele_nulling.sn_hardware as hardware
+import medis.speckle_nulling.sn_hardware as hardware
 
 import flatmapfunctions as fmap
 

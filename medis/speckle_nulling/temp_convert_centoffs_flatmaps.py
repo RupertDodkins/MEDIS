@@ -1,4 +1,4 @@
-import medis.speckele_nulling.dm_functions as DM
+import medis.speckle_nulling.dm_functions as DM
 import os
 import ipdb
 import scipy.io

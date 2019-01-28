@@ -1,4 +1,4 @@
-import medis.speckele_nulling.sn_preprocessing as pre
+import medis.speckle_nulling.sn_preprocessing as pre
 import os
 import matplotlib.pyplot as plt
 import astropy.io.fits as pf

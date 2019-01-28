@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 
 #(fr) Pour initialiser PHARO et P3K
 #(en) To initialize PHARO and P3K
-import medis.speckele_nulling.sn_hardware as hardware
+import medis.speckle_nulling.sn_hardware as hardware
 
 #(fr) Pour appliquer une commande au DM
 #(en) To apply a commande to the DM
