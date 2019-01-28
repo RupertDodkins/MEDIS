@@ -35,7 +35,7 @@ class caos_params():
     At some point we should move self.rootdir etc to the io params class
     """
     def __init__(self):
-        self.rootdir = '/Users/dodkins/ScienceData/medis/' # possibly redundant with iop class
+        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
         self.data = 'atmos' # possibly redundant with iop class
         self.date = '180320/'# possibly redundant with iop class
         self.script= 'ATMOS_test'# possibly redundant with iop class
@@ -203,32 +203,32 @@ class io_params():
     """
     This should contain all of the parameters for the file structure. Where do you want the H5/images to be saved
     """
-    def __init__(self, date='180406b/'):
-        # self.rootdir = os.path.realpath(__file__)[:-16]#'/Data/PythonProjects/MEDIS/Data'
-        self.proc_dir = 'medis/Processed'
-        # self.datadir = os.path.join(self.rootdir, self.proc_dir, date)
-        # self.datadir = os.path.join('/Users/dodkins/ScienceData', self.proc_dir, date)
-        self.datadir = os.path.join(os.environ['MKID_RAW_PATH'], self.proc_dir, date)
-        self.obsfile = os.path.join(os.environ['MKID_DATA_DIR'], 'medis', mp.data, date,'r0varyObsfile.h5')
+    def __init__(self, date='test/'):
+        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
+        self.dataout = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # Base path where results are stored (outside repository)
+        self.datadir = os.path.join(self.dataout, date)  # Save results in new sub-directory
+        self.lab_obs_path = '/mnt/kids/'  #
+
+        self.obsfile = os.path.join(self.datadir, date, 'r0varyObsfile.h5')  # a h5 file to test?
         self.LCmapFile = os.path.join(self.datadir, 'LCmap.pkl')
-        self.IratioFile = os.path.join(self.datadir,'Iratio.pkl')
-        self.DSFile = os.path.join(self.datadir,'DS.pkl')
+        self.IratioFile = os.path.join(self.datadir, 'Iratio.pkl')
+        self.DSFile = os.path.join(self.datadir, 'DS.pkl')
         # self.hyperFile = os.path.join(self.datadir,'Hypercube.pkl')
-        self.hyperFile = os.path.join(self.datadir,'Hypercube.hdf')
+        self.hyperFile = os.path.join(self.datadir, 'Hypercube.hdf')
         # self.IQpixel = os.path.join(self.datadir,'./novary64act_medr0_piston.txt')
         self.saveIQ = True
         self.int_maps = os.path.join(self.datadir, 'int_maps.pkl')
-        self.IQpixel = os.path.join(self.datadir,'./novary64act_medr0_piston.txt')
-        self.device_params = os.path.join(self.datadir,'deviceParams.pkl')
-        self.NCPA_meas = os.path.join(self.datadir,'NCPA_meas.pkl')
-        self.CPA_meas = os.path.join(self.datadir,'CPA_meas.pkl')
+        self.IQpixel = os.path.join(self.datadir, './novary64act_medr0_piston.txt')
+        self.device_params = os.path.join(self.datadir, 'deviceParams.pkl')
+        self.NCPA_meas = os.path.join(self.datadir, 'NCPA_meas.pkl')
+        self.CPA_meas = os.path.join(self.datadir, 'CPA_meas.pkl')
         # self.phase_ideal = os.path.join(self.datadir,'phase_ideal.pkl')
-        self.measured_var= os.path.join(self.datadir,'measured_var.pkl')
+        self.measured_var = os.path.join(self.datadir, 'measured_var.pkl')
         # self.data = 'data/aberrations'
         # self.date = '180210/'
-        self.aberdir = os.path.join(os.environ['MKID_RAW_PATH'], 'medis', 'aberrations/181201/')
-        self.coron_temp = os.path.join(os.environ['MKID_RAW_PATH'], self.proc_dir, date,'coron_maps/')
-    def update(self, date='180406b/'):
+        self.aberdir = os.path.join(self.lab_obs_path, 'medis', 'aberrations/181201/')
+        self.coron_temp = os.path.join(self.lab_obs_path, date, 'coron_maps/')
+    def update(self, date='test/'):
         self.__init__(date=date)
 
 class device_params():
