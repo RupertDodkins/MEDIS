@@ -1,8 +1,7 @@
 import sys, os
 import numpy as np
-sys.path.append(os.environ['MEDIS_DIR'])
 from medis.params import tp, mp, cp, sp, ap, iop
-import get_photon_data as gpd
+import medis.Detector.get_photon_data as gpd
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
