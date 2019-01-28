@@ -9,9 +9,9 @@ import re, os
 # from matplotlib import pyplot as plt
 # from matplotlib.ticker import MultipleLocator
 import pickle as pickle
-from Detector.distribution import *
-from params import mp, cp
-import Utils.misc as misc
+from medis.Detector.distribution import *
+from medis.params import mp, cp
+import medis.Utils.misc as misc
 
 def read_folder(wvlFrames_dir = '/Volumes/Data2/dodkins/FITS files/Wvl Frames (corrected) 26th March/',
                 width = 147, height = 144, out_folder = '../FITS files/neb-20141021-cube.fits',
@@ -123,7 +123,7 @@ def clipped_zoom(img, zoom_factor, **kwargs):
         zw = int(np.round(w / zoom_factor))
         top = (h - zh) // 2
         left = (w - zw) // 2
-        from Utils.plot_tools import quicklook_im
+        from medis.Utils.plot_tools import quicklook_im
         out = zoom(img[top:top+zh, left:left+zw], zoom_tuple, **kwargs)
         # quicklook_im(out, logAmp=True)
         # `out` might still be slightly larger than `img` due to rounding, so

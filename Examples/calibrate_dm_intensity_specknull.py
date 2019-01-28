@@ -1,6 +1,6 @@
 import sys
 sys.path.append('/Data/PythonProjects/MEDIS/MEDIS')
-from params import tp, mp, cp
+from medis.params import tp, mp, cp
 from get_photon_data import run
 import matplotlib.pyplot as plt
 import cPickle as pickle

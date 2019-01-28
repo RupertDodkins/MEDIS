@@ -1,12 +1,12 @@
 import sys, os
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
-from params import tp, mp, cp, sp, ap
+from medis.params import tp, mp, cp, sp, ap
 from medis.Detector.get_photon_data import run
 import matplotlib.pyplot as plt
 import time
 import numpy as np
-import Detector.readout as read
-from Utils.plot_tools import loop_frames, quicklook_im
+import medis.Detector.readout as read
+from medis.Utils.plot_tools import loop_frames, quicklook_im
 
 ap.numframes = 1000
 tp.detector = 'MKIDs'#

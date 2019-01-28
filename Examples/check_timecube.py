@@ -2,11 +2,11 @@ import sys, os
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
 import matplotlib.pylab as plt
-from params import ap,cp,tp,mp
-# import Detector.readout as read
-import Detector.pipeline as pipe
-# import Detector.temporal as temp
-from Utils.plot_tools import view_datacube, quicklook_im, loop_frames
+from medis.params import ap,cp,tp,mp
+# import medis.Detector.readout as read
+import medis.Detector.pipeline as pipe
+# import medis.Detector.temporal as temp
+from medis.Utils.plot_tools import view_datacube, quicklook_im, loop_frames
 import cPickle as pickle
 
 framesFile = 'backup/frames.pkl'

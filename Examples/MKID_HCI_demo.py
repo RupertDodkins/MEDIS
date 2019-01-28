@@ -1,21 +1,26 @@
 '''Example Code for conducting SDI with MKIDs'''
 
-import sys, os
+# import sys
+import os
+import matplotlib as mpl
+mpl.use('Qt5Agg')
 import numpy as np
 # sys.path.append(os.environ['MEDIS_DIR'])
-import medis
-from params import tp, mp, cp, sp, ap, iop
-import Detector.get_photon_data as gpd
+
 import matplotlib.pyplot as plt
 
 from matplotlib.colors import LogNorm
-from Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
-import pickle
-from Utils.misc import dprint
-import Detector.readout as read
-import Analysis.phot
 from vip_hci import phot, pca
 from statsmodels.tsa.stattools import acf
+# import pickle
+# import medis
+from medis.params import tp, mp, cp, sp, ap, iop
+# import medis.Detector.get_photon_data as gpd
+from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
+from medis.Utils.misc import dprint
+import medis.Detector.readout as read
+from medis.Analysis.phot import get_unoccult_psf
+
 
 # Parameters specific to this script
 sp.show_wframe = False
@@ -59,7 +64,7 @@ mp.bad_pix = True
 mp.array_size = np.array([146,146])
 iop.update(mp.date)
 sp.num_processes = 3
-num_exp =100
+num_exp =10
 cp.frame_time = 0.05
 cp.date = '180828/'
 cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
@@ -119,7 +124,7 @@ if __name__ == '__main__':
     plotdata, maps = [], []
 
     print(ap.__dict__)
-    psf_template = Analysis.phot.get_unoccult_psf(hyperFile='/IntHyperUnOccult.h5', plot=False, numframes=1)
+    psf_template = get_unoccult_psf(hyperFile='/IntHyperUnOccult.h5', plot=False, numframes=1)
     psf_template = psf_template[0,:,1:,1:]
     dprint((tp.grid_size//2, psf_template.shape))
     # quicklook_im(np.sum(psf_template,axis=0))
@@ -184,10 +189,10 @@ if __name__ == '__main__':
                   mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
     # quicklook_im(SDI, logAmp=True, show=True)
     maps.append(SDI)
-    SDI = pca.pca(slow_hyper, angle_list=np.zeros((slow_hyper.shape[1])), scale_list=scale_list,
-                  mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
-    # quicklook_im(SDI, logAmp=True)
-    maps.append(SDI)
+    # SDI = pca.pca(slow_hyper, angle_list=np.zeros((slow_hyper.shape[1])), scale_list=scale_list,
+    #               mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
+    # # quicklook_im(SDI, logAmp=True)
+    # maps.append(SDI)
 
     dprint((fast_hyper.shape, med_hyper.shape, slow_hyper.shape))
     indep_images(maps, logAmp=True)

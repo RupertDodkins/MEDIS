@@ -2,13 +2,13 @@
 import sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
-from params import ap, cp, tp, sp, iop
-from Utils.plot_tools import loop_frames, quicklook_im, compare_images
-# from Utils.misc import debug_program
+from medis.params import ap, cp, tp, sp, iop
+from medis.Utils.plot_tools import loop_frames, quicklook_im, compare_images
+# from medis.Utils.misc import debug_program
 # from Examples.get_photon_data import run
-import Detector.readout as read
-# import Detector.H2RG as H2RG
-# import Detector.pipeline as pipe
+import medis.Detector.readout as read
+# import medis.Detector.H2RG as H2RG
+# import medis.Detector.pipeline as pipe
 # import matplotlib.pyplot as plt
 
 sp.save_obs = False

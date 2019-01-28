@@ -5,15 +5,15 @@ import numpy as np
 # import vip
 # import pyfits as pyfits
 import matplotlib.pylab as plt
-import Utils.colormaps as cmaps
+import medis.Utils.colormaps as cmaps
 plt.register_cmap(name='viridis', cmap=cmaps.viridis)
 plt.register_cmap(name='plasma', cmap=cmaps.plasma)
 plt.register_cmap(name='inferno', cmap=cmaps.plasma)
 plt.register_cmap(name='magma', cmap=cmaps.plasma)
 from matplotlib.colors import LogNorm, SymLogNorm
 import matplotlib.ticker as ticker
-from params import tp, sp, iop
-from Utils.misc import dprint
+from medis.params import tp, sp, iop
+from medis.Utils.misc import dprint
 
 # MEDIUM_SIZE = 17
 # plt.rc('font', size=MEDIUM_SIZE)  # controls default text sizes
@@ -437,7 +437,7 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
     # mgr.window.close()
 
     if pupil:
-        import Analysis.phot
+        import medis.Analysis.phot
         image = image * Analysis.phot.aperture(tp.grid_size / 2, tp.grid_size / 2, tp.grid_size / 2)
 
     if show!='continuous':

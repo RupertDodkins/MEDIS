@@ -4,12 +4,12 @@ sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
 import matplotlib.pyplot as plt
 from vip_hci import phot, pca
-from params import ap, cp, tp, sp, mp, iop
-from Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
-import Detector.readout as read
-import Analysis.phot
-import Analysis.stats
-from Utils.misc import dprint
+from medis.params import ap, cp, tp, sp, mp, iop
+from medis.Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
+import medis.Detector.readout as read
+import medis.Analysis.phot
+import medis.Analysis.stats
+from medis.Utils.misc import dprint
 
 # Global params
 sp.save_obs = False
@@ -349,7 +349,7 @@ if __name__ == '__main__':
     # yields = [0.8,0.9,0.95,0.99,0.999]#[0.05,0.2,0.4,0.8,0.995]#[0.99995,0.4]#0.4,0.8,
     # mp.R_mean = 50
     #
-    # import Detector
+    # import medis.Detector
     # dp = Detector.MKIDs.initialize()
     # mp.bad_pix = True
     # bad_map = np.ones((tp.grid_size-1, tp.grid_size-1))
@@ -461,7 +461,7 @@ if __name__ == '__main__':
     # mp.bad_pix = False
     #
     # rad_samps = []
-    # import Detector
+    # import medis.Detector
     # dp = Detector.MKIDs.initialize()
     # bad_map = np.ones((tp.grid_size-1, tp.grid_size-1))
     # bad_map[dp.response_map[1:-1,1:-1]==0]=0

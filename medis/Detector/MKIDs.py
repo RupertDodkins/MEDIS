@@ -6,9 +6,9 @@ import os
 from matplotlib import pyplot as plt
 import sys
 from .distribution import *
-from params import mp, ap, tp, iop, dp
-from Utils.plot_tools import quicklook_im, loop_frames
-from Utils.misc import dprint
+from medis.params import mp, ap, tp, iop, dp
+from medis.Utils.plot_tools import quicklook_im, loop_frames
+from medis.Utils.misc import dprint
 from . import spectral as spec
 import math
 # import cubes

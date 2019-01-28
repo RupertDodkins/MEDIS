@@ -5,14 +5,14 @@ import numpy as np
 import copy
 import matplotlib.pyplot as plt
 from vip_hci import phot, pca
-from params import ap, cp, tp, sp, mp, iop
-from Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images, grid
-from Utils.rawImageIO import clipped_zoom
-import Detector.readout as read
-import Analysis.phot
-import Analysis.stats
+from medis.params import ap, cp, tp, sp, mp, iop
+from medis.Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images, grid
+from medis.Utils.rawImageIO import clipped_zoom
+import medis.Detector.readout as read
+import medis.Analysis.phot
+import medis.Analysis.stats
 import pandas as pd
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 
 # Global params
 sp.save_obs = False

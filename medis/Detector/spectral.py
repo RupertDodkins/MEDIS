@@ -1,7 +1,7 @@
 from .temporal import *
 import numpy as np
-from params import mp, tp
-from Utils.misc import dprint
+from medis.params import mp, tp
+from medis.Utils.misc import dprint
 np.set_printoptions(threshold=np.inf)
 
 def planck(T, l):

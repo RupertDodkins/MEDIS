@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 import os, sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
-from params import cp, tp
-import Utils.rawImageIO as rawImageIO
+from medis.params import cp, tp
+import medis.Utils.rawImageIO as rawImageIO
 # import pidly
 import numpy as np
 import matplotlib.pyplot as plt
 # import pyfits
 # import astropy.io.fits as pyfits
 import glob
-import Utils.misc as misc
-from Detector.distribution import lognorm, Distribution
+import medis.Utils.misc as misc
+from medis.Detector.distribution import lognorm, Distribution
 
 
 def make_idl_params():
@@ -125,13 +125,13 @@ def plot_phasemaps():
     # hypercube[w, t, :, :] = fits[0].data
     filenames= rawImageIO.read_folder(atmosdir)
     cube = []
-    import Analysis.phot
+    import medis.Analysis.phot
     for filename in filenames:
         phase = rawImageIO.read_image(filename, prob_map=False)[0]
         tp.grid_size=80
         phase = phase*Analysis.phot.aperture(tp.grid_size/2,tp.grid_size/2,tp.grid_size/2)
         cube.append(phase)
-    from Utils.plot_tools import compare_images, view_datacube,indep_images, quicklook_im
+    from medis.Utils.plot_tools import compare_images, view_datacube,indep_images, quicklook_im
     # indep_images(cube, titles=['$\phi$']*3)
     # quicklook_im(cube[0], logAmp=False)
     # cube = np.array(cube)/(2*np.pi*1000*10**-9)

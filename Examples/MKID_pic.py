@@ -1,13 +1,13 @@
 import sys, os
 import numpy as np
 sys.path.append(os.environ['MEDIS_DIR'])
-from params import tp, mp, cp, sp, ap, iop
+from medis.params import tp, mp, cp, sp, ap, iop
 import get_photon_data as gpd
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
-from Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
+from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
 import pickle
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 
 sp.show_wframe = False
 sp.save_obs = False

@@ -3,10 +3,10 @@ import sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
 
 import numpy as np
-from params import ap, cp, tp, sp, hp
+from medis.params import ap, cp, tp, sp, hp
 import pickle as pickle
 import os
-from Utils.plot_tools import loop_frames, quicklook_im
+from medis.Utils.plot_tools import loop_frames, quicklook_im
 from . import readout as read
 import matplotlib.pyplot as plt
 H2RGhyperCubeFile = './BinnedH2RGhyper.pkl'

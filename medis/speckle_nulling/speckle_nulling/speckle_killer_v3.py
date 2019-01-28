@@ -20,9 +20,9 @@ import flatmapfunctions as fmf
 import scipy.ndimage as sciim
 from copy import deepcopy
 import copy
-# import Telescope.FPWFS as FPWFS
-from Utils.plot_tools import quicklook_im, quicklook_wf
-from params import tp
+# import medis.Telescope.FPWFS as FPWFS
+from medis.Utils.plot_tools import quicklook_im, quicklook_wf
+from medis.params import tp
 import proper
 
 class output_imagecube:

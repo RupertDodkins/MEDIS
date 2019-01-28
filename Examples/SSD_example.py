@@ -10,18 +10,18 @@ import multiprocessing
 import time
 from functools import partial
 import matplotlib.pylab as plt
-from params import ap, cp, tp, mp, sp, iop
-# import Detector.analysis as ana
-import Detector.readout as read
-import Detector.pipeline as pipe
-# import Detector.temporal as temp
-import Detector.spectral as spec
-from Detector.distribution import gaussian, poisson, MR, gaussian2
+from medis.params import ap, cp, tp, mp, sp, iop
+# import medis.Detector.analysis as ana
+import medis.Detector.readout as read
+import medis.Detector.pipeline as pipe
+# import medis.Detector.temporal as temp
+import medis.Detector.spectral as spec
+from medis.Detector.distribution import gaussian, poisson, MR, gaussian2
 from scipy.optimize import curve_fit
-from Utils.plot_tools import view_datacube, quicklook_im, loop_frames, add_subplot_axes, annotate_axis
-import Utils.misc as misc
+from medis.Utils.plot_tools import view_datacube, quicklook_im, loop_frames, add_subplot_axes, annotate_axis
+import medis.Utils.misc as misc
 import medis.Detector.get_photon_data as gpd
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 import traceback
 import itertools
 
@@ -740,7 +740,7 @@ if __name__ == '__main__':
     wsamples = np.linspace(tp.band[0], tp.band[1], tp.nwsamp)
     scale_list = tp.band[0] / wsamples
     print wsamples, tp.band, scale_list
-    from Detector.analysis import make_SNR_plot, make_cont_plot
+    from medis.Detector.analysis import make_SNR_plot, make_cont_plot
     from vip_hci import pca
     SDIs = []
 
@@ -772,7 +772,7 @@ if __name__ == '__main__':
 # # make_LC_map(num_chunks, max_photons, xlocs, ylocs, bin_time, LCmapFile)
 #
 #     labels = ['total_map','median','interval_map','Iratio','mIratio']
-#     import Detector.analysis as ana
+#     import medis.Detector.analysis as ana
 #     ana.make_cont_plot(images,labels)
 
 # max_photons=1.5e8

@@ -3,17 +3,17 @@ import proper
 import numpy as np
 import matplotlib.pylab as plt
 import FPWFS
-from Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
-import Utils.rawImageIO as rawImageIO
-import Utils.misc as misc
-from params import tp, cp, mp, ap,iop#, fp
+from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
+import medis.Utils.rawImageIO as rawImageIO
+import medis.Utils.misc as misc
+from medis.params import tp, cp, mp, ap,iop#, fp
 from scipy import interpolate
 from configobj import ConfigObj
 from validate import Validator
 import sys
 import cPickle as pickle
 # print proper.__file__
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 import copy
 # import scipy
 
@@ -477,7 +477,7 @@ def add_static(wfo, f_lens, loc = 'CPA', type='phase'):
 
 
 
-    # import Analysis.phot as phot
+    # import medis.Analysis.phot as phot
     # mask = phot.aperture(64,64,64)
     # prim_map = prim_map*mask
     # quicklook_im(prim_map*1e9, logAmp=False, colormap="jet", show=True, axis=None, title='nm')
@@ -949,7 +949,7 @@ def quick_wfs(wfo, iter, r0):
     # CPA_map = unwrap_phase(CPA_map)
     # quicklook_im(CPA_map, logAmp=False)
     if tp.piston_error:
-        # from Utils.misc import debprint
+        # from medis.Utils.misc import debprint
         # var = 0.27*(tp.diam/(r0 * tp.ao_act))*(5/3)
         var = 0.001#1e-11 #0.1 wavelengths 0.1*1000e-9
         # debprint(var)
@@ -1004,7 +1004,7 @@ def wfs_measurement(wfo, iter, iw,r0):#, obj_map, wfs_sample):
     # quicklook_im(obj_map, logAmp=False)
 
     # if tp.piston_error:
-    #     # from Utils.misc import debprint
+    #     # from medis.Utils.misc import debprint
     #     # var = 0.27*(tp.diam/(r0 * tp.ao_act))*(5/3)
     #     var = 0.001#1e-11 #0.1 wavelengths 0.1*1000e-9
     #     # debprint(var)

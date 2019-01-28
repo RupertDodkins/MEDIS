@@ -10,14 +10,14 @@ import numpy as np
 np.set_printoptions(threshold=np.inf)
 
 import matplotlib.pylab as plt
-import Utils.colormaps as cmaps
+import medis.Utils.colormaps as cmaps
 plt.register_cmap(name='viridis', cmap=cmaps.viridis)
 plt.register_cmap(name='plasma', cmap=cmaps.plasma)
 
-from params import ap,cp,tp,mp
-import Detector.analysis as ana
-import Detector.MKIDs as MKIDs
-import Telescope.run_system as run_system 
+from medis.params import ap,cp,tp,mp
+import medis.Detector.analysis as ana
+import medis.Detector.MKIDs as MKIDs
+import medis.Telescope.run_system as run_system 
 
 # tp.nwsamp = 1
 tp.occulter_type =None# None#
@@ -28,7 +28,7 @@ if tp.detector == 'MKIDs':
 
 #code to run CAOS
 if tp.use_atmos and glob.glob(cp.atmosdir+'*.fits') == []:
-    import Atmosphere.caos as caos #import here since pidly can stay open sometimes and that's annoying
+    import medis.Atmosphere.caos as caos #import here since pidly can stay open sometimes and that's annoying
     caos.make_idl_params()
     caos.generate_maps()
 

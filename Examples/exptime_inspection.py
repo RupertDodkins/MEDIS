@@ -1,8 +1,8 @@
 import sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
-from params import tp, mp, cp,sp
+from medis.params import tp, mp, cp,sp
 from get_photon_data import run
-from Utils.plot_tools import view_datacube
+from medis.Utils.plot_tools import view_datacube
 import numpy as np
 import matplotlib.pyplot as plt
 

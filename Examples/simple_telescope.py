@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 sys.path.append(os.environ['MEDIS_DIR'])
-from Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im
+from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im
 
 
 def simple_telescope(wavelength, gridsize):

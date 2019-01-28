@@ -1,7 +1,7 @@
 '''This code handles all the functionality of an ideal camera'''
 
 import numpy as np
-from params import mp
+from medis.params import mp
 
 def assign_calibtime(datacube,step):
     '''unfinished and untest'''

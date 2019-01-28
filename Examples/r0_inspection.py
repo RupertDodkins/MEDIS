@@ -1,12 +1,12 @@
 import sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
-from params import tp, mp, cp, sp, ap
+from medis.params import tp, mp, cp, sp, ap
 from get_photon_data import run
-from Utils.plot_tools import view_datacube, quicklook_im
+from medis.Utils.plot_tools import view_datacube, quicklook_im
 import numpy as np
 import matplotlib.pyplot as plt
 from get_photon_data import run
-import Atmosphere.caos as caos
+import medis.Atmosphere.caos as caos
 
 tp.detector = 'ideal'#
 ap.numframes = 1

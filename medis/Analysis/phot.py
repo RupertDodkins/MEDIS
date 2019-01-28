@@ -13,11 +13,11 @@ import sys
 # import subprocess
 # import vip_hci as vip
 # plots = vip.var.pp_subplots
-from params import cp, mp, tp, iop, ap
-# import Detector.pipeline as pipe
-import Detector.readout as read
-from Utils.plot_tools import quicklook_im, loop_frames
-from Utils.misc import dprint
+from medis.params import cp, mp, tp, iop, ap
+# import medis.Detector.pipeline as pipe
+import medis.Detector.readout as read
+from medis.Utils.plot_tools import quicklook_im, loop_frames
+from medis.Utils.misc import dprint
 from vip_hci import phot, metrics
 
 # import MKIDs

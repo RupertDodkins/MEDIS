@@ -5,13 +5,13 @@ import numpy as np
 # import copy
 import matplotlib.pyplot as plt
 from vip_hci import phot, pca
-from params import ap, cp, tp, sp, mp, iop
-from Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
-import Utils.rawImageIO as rawImageIO
-import Telescope.telescope_dm as tdm
-import Detector.readout as read
-import Analysis.phot
-# import Analysis.stats
+from medis.params import ap, cp, tp, sp, mp, iop
+from medis.Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
+import medis.Utils.rawImageIO as rawImageIO
+import medis.Telescope.telescope_dm as tdm
+import medis.Detector.readout as read
+import medis.Analysis.phot
+# import medis.Analysis.stats
 # import pandas as pd
 from statsmodels.tsa.stattools import acf
 

@@ -2,16 +2,16 @@
 import sys
 # sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
-from params import ap, cp, tp, sp, mp, iop
+from medis.params import ap, cp, tp, sp, mp, iop
 import cPickle as pickle
 import os
-from Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images
-from Utils.misc import debug_program
+from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images
+from medis.Utils.misc import debug_program
 from medis.Detector.get_photon_data import run
-import Detector.readout as read
-import Detector.H2RG as H2RG
-from Utils.rawImageIO import clipped_zoom
-import Analysis.phot as phot
+import medis.Detector.readout as read
+import medis.Detector.H2RG as H2RG
+from medis.Utils.rawImageIO import clipped_zoom
+import medis.Analysis.phot as phot
 # import proper
 
 

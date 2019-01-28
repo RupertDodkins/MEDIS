@@ -8,8 +8,8 @@ import h5py
 # import os, struct
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
-from Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames
-from Utils.misc import dprint
+from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames
+from medis.Utils.misc import dprint
 # from parsePacketDump2 import parsePacketData
 
 # h = 4.135668e-15

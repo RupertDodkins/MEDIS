@@ -7,16 +7,16 @@ import numpy as np
 # np.set_printoptions(threshold=np.inf)
 import multiprocessing
 import matplotlib.pylab as plt
-from params import ap, cp, tp, mp, sp, iop
-# import Detector.analysis as ana
-import Detector.pipeline as pipe
-# import Detector.temporal as temp
-import Detector.spectral as spec
+from medis.params import ap, cp, tp, mp, sp, iop
+# import medis.Detector.analysis as ana
+import medis.Detector.pipeline as pipe
+# import medis.Detector.temporal as temp
+import medis.Detector.spectral as spec
 from scipy.optimize import curve_fit
-import Utils.misc as misc
+import medis.Utils.misc as misc
 import medis.Detector.get_photon_data as gpd
 import Examples.SSD_example as SSD
-import Analysis.stats as stats
+import medis.Analysis.stats as stats
 import traceback
 import itertools
 

@@ -2,17 +2,17 @@
 import sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
-from params import ap, cp, tp, sp, mp, iop
+from medis.params import ap, cp, tp, sp, mp, iop
 import cPickle as pickle
 import os
-from Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, grid
-from Utils.misc import debug_program
+from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, grid
+from medis.Utils.misc import debug_program
 from medis.Detector.get_photon_data import run
-import Detector.readout as read
-import Detector.H2RG as H2RG
-from Utils.rawImageIO import clipped_zoom
-import Analysis.phot as phot
-from Utils.misc import dprint
+import medis.Detector.readout as read
+import medis.Detector.H2RG as H2RG
+from medis.Utils.rawImageIO import clipped_zoom
+import medis.Analysis.phot as phot
+from medis.Utils.misc import dprint
 # import proper
 #
 # def get_hypercube(plot=False):
@@ -239,7 +239,7 @@ if __name__ == '__main__':
     # loop_frames(hypercube[0], logAmp=False)
     # loop_frames(hypercube[:, 0], logAmp=False)
     # LCcube = np.transpose(hypercube, (2, 3, 0, 1))
-    # import Analysis.stats
+    # import medis.Analysis.stats
     # Dmap = Analysis.stats.get_Dmap(LCcube, algo_dict['thresh'])
 
 

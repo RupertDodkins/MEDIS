@@ -3,20 +3,20 @@ import os
 import numpy as np
 import scipy.stats as stats
 import multiprocessing
-from params import cp, mp, tp, ap, sp, iop
-import Detector.pipeline as pipe
+from medis.params import cp, mp, tp, ap, sp, iop
+import medis.Detector.pipeline as pipe
 import traceback
 import itertools
 import pickle as pickle
-from Utils.plot_tools import quicklook_im, quicklook_wf, quicklook_IQ, loop_frames
+from medis.Utils.plot_tools import quicklook_im, quicklook_wf, quicklook_IQ, loop_frames
 import proper
 import matplotlib.pyplot as plt
-import Utils.misc as misc
-from Detector.distribution import gaussian, poisson, MR, gaussian2
+import medis.Utils.misc as misc
+from medis.Detector.distribution import gaussian, poisson, MR, gaussian2
 from scipy.optimize import curve_fit
-import Detector.readout as read
+import medis.Detector.readout as read
 from . import phot
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 import copy
 
 sentinel = None
@@ -748,7 +748,7 @@ def get_Iratio(LCmap, xlocs=None, ylocs=None, xinspect=None, yinspect=None, insp
     Ic = np.zeros((len(xlocs), len(ylocs)))
     Is = np.zeros((len(xlocs), len(ylocs)))
     mIratio = np.zeros((len(xlocs), len(ylocs)))
-    # from Utils.plot_tools import loop_frames
+    # from medis.Utils.plot_tools import loop_frames
     # loop_frames(np.transpose(LCmap))
     for ix, xloc in enumerate(xlocs):
         for iy, yloc in enumerate(ylocs):

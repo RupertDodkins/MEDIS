@@ -7,17 +7,17 @@ from copy import copy
 import tables as pt
 # import matplotlib.pyplot as plt
 import pickle as pickle
-from params import ap, cp, tp, mp, iop, hp, sp
+from medis.params import ap, cp, tp, mp, iop, hp, sp
 from . import MKIDs
 import proper
-import Utils.misc as misc
-from Utils.plot_tools import view_datacube, loop_frames, quicklook_im
+import medis.Utils.misc as misc
+from medis.Utils.plot_tools import view_datacube, loop_frames, quicklook_im
 from . import temporal as temp
 from . import spectral as spec
-# import Detector.readout as read
+# import medis.Detector.readout as read
 # import matplotlib.pyplot as plt
 # from . import H2RG
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 
 
 def get_packets(datacube, step, dp,mp):
@@ -386,7 +386,7 @@ def save_hypercube_hdf5(hypercube, HyperCubeFile = 'hyper.hdf'):
     f.close()
 
 def get_integ_hypercube(plot=False):
-    import Detector.get_photon_data as gpd
+    import medis.Detector.get_photon_data as gpd
     print(os.path.isfile(iop.hyperFile), iop.hyperFile)
     print(ap.numframes)
 

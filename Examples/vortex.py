@@ -3,10 +3,10 @@ sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
 import proper
 import cv2
-from params import ap, tp, iop
-import Telescope.telescope_dm as tdm
-from Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames
-import Analysis.phot as phot
+from medis.params import ap, tp, iop
+import medis.Telescope.telescope_dm as tdm
+from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames
+import medis.Analysis.phot as phot
 
 from astropy.io.fits import getdata, writeto
 
@@ -49,7 +49,7 @@ def vortex(wfo):
         gridsize = proper.prop_get_gridsize(wfo)
 
         beam_ratio = pixelsize * 4.85e-9 / (wavelength / diam)
-        from Utils.misc import dprint
+        from medis.Utils.misc import dprint
         dprint((wavelength,gridsize,beam_ratio))
         calib = str(charge) + str('_') + str(int(beam_ratio * 100)) + str('_') + str(gridsize)
         my_file = str(tmp_dir + 'zz_perf_' + calib + '_r.fits')

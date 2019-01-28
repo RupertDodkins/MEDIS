@@ -14,20 +14,20 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__))[:-9] + "speckle_null
 
 import proper
 print proper.__file__
-import Telescope.telescope_dm as tdm
-from Telescope.coronagraph import coronagraph
-import Telescope.FPWFS as FPWFS
-from Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames
-import Utils.rawImageIO as rawImageIO
+import medis.Telescope.telescope_dm as tdm
+from medis.Telescope.coronagraph import coronagraph
+import medis.Telescope.FPWFS as FPWFS
+from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames
+import medis.Utils.rawImageIO as rawImageIO
 # import matplotlib.pylab as plt
-# import params
-from params import ap, tp, iop
+# import medis.params
+from medis.params import ap, tp, iop
 
 import numpy as np
-from Analysis.stats import save_pix_IQ
-from Analysis.phot import aper_phot
+from medis.Analysis.stats import save_pix_IQ
+from medis.Analysis.phot import aper_phot
 import speckle_killer_v3 as skv3
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 
 
 

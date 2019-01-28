@@ -11,11 +11,11 @@ import pickle as pickle
 # # import deformable_mirror as DM
 # from scipy.optimize import curve_fit
 # # from scipy import interpolate
-from params import tp, cp, mp, ap, iop, fp
+from medis.params import tp, cp, mp, ap, iop, fp
 sys.path.append(tp.FPWFSdir)
 import speckle_killer_v3 as skv3
 import dm_functions as DM
-from Utils.plot_tools import loop_frames, quicklook_wf, quicklook_im
+from medis.Utils.plot_tools import loop_frames, quicklook_wf, quicklook_im
 
 
 controlregion = np.zeros((tp.grid_size, tp.grid_size))

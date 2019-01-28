@@ -14,8 +14,8 @@ import sys
 from distribution import *
 #import subprocess
 import vip_hci as vip
-from params import cp, mp, tp#, ap
-#import Detector.pipeline as pipe
+from medis.params import cp, mp, tp#, ap
+#import medis.Detector.pipeline as pipe
 import temporal
 # import MKIDs
 

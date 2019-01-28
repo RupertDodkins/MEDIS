@@ -15,18 +15,18 @@ import numpy as np
 np.set_printoptions(threshold=np.inf)
 
 import traceback
-import Utils.colormaps as cmaps
-from Utils.plot_tools import quicklook_im, view_datacube
-from Utils.misc import dprint
-# import Utils.misc as misc
-from params import ap,cp,tp,mp,sp,iop,dp
-# import Detector.analysis as ana
-import Detector.MKIDs as MKIDs
-import Detector.pipeline as pipe
-# import Telescope.run_system as run_system
-import Detector.readout as read #import Simulation, handle_output
-import Telescope.telescope_dm as tdm
-import Atmosphere.caos as caos
+import medis.Utils.colormaps as cmaps
+from medis.Utils.plot_tools import quicklook_im, view_datacube
+from medis.Utils.misc import dprint
+# import medis.Utils.misc as misc
+from medis.params import ap,cp,tp,mp,sp,iop,dp
+# import medis.Detector.analysis as ana
+import medis.Detector.MKIDs as MKIDs
+import medis.Detector.pipeline as pipe
+import medis.Telescope.run_system as run_system
+import medis.Detector.readout as read #import Simulation, handle_output
+import medis.Telescope.telescope_dm as tdm
+import medis.Atmosphere.caos as caos
 from pprint import pprint
 import random
 import pickle as pickle
@@ -38,7 +38,7 @@ import multiprocessing
 
 import glob
 
-# from params import ap, cp, tp, mp, sp
+# from medis.params import ap, cp, tp, mp, sp
 # print tp.occulter_type
 
 sentinel = None
@@ -103,7 +103,7 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
             # dprint((atmos_map, cp.atmosdir))
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap,tp,iop,sp]}
             # dprint(tp.occulter_type)
-            datacube, _ = proper.prop_run("run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
+            datacube, _ = proper.prop_run("medis.Telescope.run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
             # view_datacube(datacube, logAmp=True)
             # print np.sum(datacube,axis=(1,2))
 
@@ -225,7 +225,7 @@ def run():
     else:
         cp.r0s = cp.r0s[cp.r0s_idx]  # the r0 at the index cp.r0s_idx in params will be used throughout
 
-    # import Utils.misc as misc
+    # import medis.Utils.misc as misc
     # misc.debug_program()
     # plt.hist(cp.r0s_selected)
     # plt.show()

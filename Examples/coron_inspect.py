@@ -1,15 +1,15 @@
 import sys
 import numpy as np
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
-from params import tp, mp, cp, sp, ap, iop
+from medis.params import tp, mp, cp, sp, ap, iop
 from get_photon_data import run
 import get_photon_data as gpd
-from Utils.plot_tools import view_datacube
-import Utils.rawImageIO as rawImageIO
-from Utils.plot_tools import quicklook_im, compare_images
-import Analysis.phot as phot
+from medis.Utils.plot_tools import view_datacube
+import medis.Utils.rawImageIO as rawImageIO
+from medis.Utils.plot_tools import quicklook_im, compare_images
+import medis.Analysis.phot as phot
 import proper
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 import matplotlib.pyplot as plt
 
 

@@ -9,7 +9,7 @@ import sys
 # from cubes import read_folder
 from .distribution import *
 #import subprocess
-from params import mp, cp, tp
+from medis.params import mp, cp, tp
 import math
 # import cubes
 #import dynamic_cube_v2 as dc
@@ -17,7 +17,7 @@ import math
 import pickle
 from scipy.interpolate import interp1d
 np.set_printoptions(threshold=np.inf)
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 
 # def read_time_images(location):
 #     filenames = cubes.read_folder(location)

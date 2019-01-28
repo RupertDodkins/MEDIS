@@ -2,12 +2,12 @@ import os
 import proper
 import numpy as np
 import matplotlib.pylab as plt
-from Utils.plot_tools import quicklook_wf, quicklook_im
+from medis.Utils.plot_tools import quicklook_wf, quicklook_im
 from scipy.ndimage.interpolation import shift
 from astropy.io.fits import getdata, writeto
 import cv2
-from params import ap, tp, iop
-from Utils.misc import dprint
+from medis.params import ap, tp, iop
+from medis.Utils.misc import dprint
 import math
 from skimage.transform import resize
 

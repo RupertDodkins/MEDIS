@@ -19,7 +19,7 @@ verbose=True
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))) + "/active_nuller")
 # sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../../active_nulling")
 # print os.path.dirname(os.path.realpath(__file__)) + "/../../active_nulling"
-# import Telescope.FPWFS as FPWFS
+# import medis.Telescope.FPWFS as FPWFS
 import proper
 
 class fake_pharo():

@@ -1,17 +1,17 @@
-from params import mp, ap, cp, tp
+from medis.params import mp, ap, cp, tp
 # import math
 # import MKIDs
 # import cPickle
-# import Utils.misc as misc
+# import medis.Utils.misc as misc
 # import temporal as temp
-import Utils.misc as misc
+import medis.Utils.misc as misc
 from . import spectral as spec
 import matplotlib.pyplot as plt
 # import proper
 import numpy as np
 import os
 import h5py
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 import time
 # import multiprocessing
 # from functools import partial

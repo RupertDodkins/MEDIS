@@ -15,20 +15,20 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__))[:-9] + "speckle_null
 from scipy.interpolate import interp1d
 import proper
 
-import Telescope.telescope_dm as tdm
-from Telescope.coronagraph import coronagraph
-import Telescope.FPWFS as FPWFS
-from Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity
-import Utils.rawImageIO as rawImageIO
+import medis.Telescope.telescope_dm as tdm
+from medis.Telescope.coronagraph import coronagraph
+import medis.Telescope.FPWFS as FPWFS
+from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity
+import medis.Utils.rawImageIO as rawImageIO
 # import matplotlib.pylab as plt
-# import params
-from params import ap, tp, iop, sp
+# import medis.params
+from medis.params import ap, tp, iop, sp
 
 import numpy as np
-from Analysis.stats import save_pix_IQ
-from Analysis.phot import aper_phot
+from medis.Analysis.stats import save_pix_IQ
+from medis.Analysis.phot import aper_phot
 import speckle_killer_v3 as skv3
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 dprint(proper.__file__)
 
 
@@ -202,7 +202,7 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     #         tdm.prop_mid_optics(wf, tp.f_lens)
 
     if tp.use_apod:
-        from coronagraph import apodization
+        from medis.Telescope.coronagraph import apodization
         iter_func(wf_array, apodization, True)
 
 

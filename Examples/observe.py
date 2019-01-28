@@ -1,11 +1,11 @@
 import sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
-from params import tp, mp, sp, cp, ap
+from medis.params import tp, mp, sp, cp, ap
 import matplotlib.pyplot as plt
 from get_photon_data import run
-# import Detector.H2RG as H2RG
-import Detector.readout as read
-from Utils.plot_tools import loop_frames
+# import medis.Detector.H2RG as H2RG
+import medis.Detector.readout as read
+from medis.Utils.plot_tools import loop_frames
 import numpy as np
 
 tp.detector = 'H2RG'#''MKIDs'#

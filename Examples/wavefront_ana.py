@@ -10,20 +10,20 @@ import multiprocessing
 import time
 from functools import partial
 import matplotlib.pylab as plt
-from params import ap, cp, tp, mp, sp, iop
-# import Detector.analysis as ana
-import Detector.readout as read
-import Detector.pipeline as pipe
-# import Detector.temporal as temp
-import Detector.spectral as spec
-from Detector.distribution import gaussian, poisson, MR, gaussian2
+from medis.params import ap, cp, tp, mp, sp, iop
+# import medis.Detector.analysis as ana
+import medis.Detector.readout as read
+import medis.Detector.pipeline as pipe
+# import medis.Detector.temporal as temp
+import medis.Detector.spectral as spec
+from medis.Detector.distribution import gaussian, poisson, MR, gaussian2
 from scipy.optimize import curve_fit
-from Utils.plot_tools import view_datacube, quicklook_im, loop_frames, add_subplot_axes, annotate_axis
-import Utils.misc as misc
+from medis.Utils.plot_tools import view_datacube, quicklook_im, loop_frames, add_subplot_axes, annotate_axis
+import medis.Utils.misc as misc
 import medis.Detector.get_photon_data as gpd
-from Utils.misc import dprint
+from medis.Utils.misc import dprint
 import Examples.SSD_example as SSD
-import Analysis.stats as stats
+import medis.Analysis.stats as stats
 import traceback
 import itertools
 
