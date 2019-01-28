@@ -17,12 +17,12 @@ import ipdb
 import matplotlib.pyplot as plt
 
 # pour initialiser pharo et p3k
-import sn_hardware as hardware
-import dm_functions as DM
-import flatmapfunctions as fmap
-import detect_speckles
+import medis.speckle_nulling.sn_hardware as hardware
+import medis.speckle_nulling.dm_functions as DM
+import medis.speckle_nulling.flatmapfunctions as fmap
+import medis.speckle_nulling.detect_speckles
 from validate import Validator
-import sn_preprocessing as pre
+import medis.speckle_nulling.sn_preprocessing as pre
 
 def shift(image,shift_x,shift_y):
     """Returns a shifted image"""

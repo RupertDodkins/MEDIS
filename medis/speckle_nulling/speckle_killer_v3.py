@@ -1,22 +1,22 @@
-import sn_preprocessing as pre
+import medis.speckle_nulling.sn_preprocessing as pre
 import os
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 # import astropy.io.fits as pf
 # import astropy.io.fits as pf
 # import ipdb
-import sn_math as snm
+import medis.speckle_nulling.sn_math as snm
 import numpy as np
 # from configobj import ConfigObj
-import sn_filehandling as flh
-import sn_hardware as hardware
-import flatmapfunctions as FM
+import medis.speckle_nulling.sn_filehandling as flh
+import medis.speckle_nulling.sn_hardware as hardware
+import medis.speckle_nulling.flatmapfunctions as FM
 # from validate import Validator
-import dm_functions as DM
+import medis.speckle_nulling.dm_functions as DM
 import timeit
 import time
-import detect_speckles
-import flatmapfunctions as fmf
+import medis.speckle_nulling.detect_speckles
+import medis.speckle_nulling.flatmapfunctions as fmf
 import scipy.ndimage as sciim
 from copy import deepcopy
 import copy

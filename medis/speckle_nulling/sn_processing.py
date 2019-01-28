@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 # import ipdb
 #import image_registration as imreg
 import astropy.io.fits as pf

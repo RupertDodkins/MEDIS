@@ -3,11 +3,11 @@ import astropy.io.fits as pf
 from configobj import ConfigObj
 # import ipdb
 import matplotlib.pyplot as plt
-import sn_hardware as hardware
-import sn_preprocessing as pre
-import sn_processing as pro
+import medis.speckle_nulling.sn_hardware as hardware
+import medis.speckle_nulling.sn_preprocessing as pre
+import medis.speckle_nulling.sn_processing as pro
 import scipy.ndimage as sciim
-import sn_math as snm
+import medis.speckle_nulling.sn_math as snm
 import scipy.ndimage.filters as filters
 from scipy.ndimage.morphology import generate_binary_structure, binary_erosion
 

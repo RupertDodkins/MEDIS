@@ -1,10 +1,10 @@
 import ipdb
-import sn_hardware as hardware
-import sn_preprocessing as pre
+import medis.speckele_nulling.sn_hardware as hardware
+import medis.speckele_nulling.sn_preprocessing as pre
 import numpy as np
 import os
 import astropy.io.fits as pf
-import sn_filehandling as flh 
+import medis.speckele_nulling.sn_filehandling as flh
 from configobj import ConfigObj
 
 def build_median(imagelist, outputfile = None): 

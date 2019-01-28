@@ -1,18 +1,17 @@
-import sn_preprocessing as pre
+import medis.speckele_nulling.sn_preprocessing as pre
 import os
 import matplotlib.pyplot as plt
 import astropy.io.fits as pf
 import ipdb
-import sn_math as snm
+import medis.speckle_nulling.sn_math as snm
 import numpy as np
 from configobj import ConfigObj
-import sn_filehandling as flh
-import sn_hardware as hardware
-import sn_processing as pro
-import flatmapfunctions as FM
+import medis.speckle_nulling.sn_filehandling as flh
+import medis.speckle_nulling.sn_hardware as hardware
+import medis.speckle_nulling.sn_processing as pro
+import medis.speckle_nulling.flatmapfunctions as FM
 from validate import Validator
-import dm_functions as DM
-import time
+import medis.speckle_nulling.dm_functions as DM
 
 
 def define_control_annulus(image, cx= None, cy = None):

@@ -3,14 +3,13 @@
 import numpy as np
 import pdb
 # import serial
-import os.path
 import os, sys
 import time
 import socket
 # import ipdb
 import subprocess
 import astropy.io.fits as pf
-import flatmapfunctions
+import medis.speckle_nulling.flatmapfunctions
 # import pexpect
 #GLOBAL FUNCTION
 verbose=True

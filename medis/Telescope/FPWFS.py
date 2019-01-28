@@ -13,8 +13,8 @@ import pickle as pickle
 # # from scipy import interpolate
 from medis.params import tp, cp, mp, ap, iop, fp
 sys.path.append(tp.FPWFSdir)
-import medis.speckle_nulling.speckle_nulling.speckle_killer_v3 as skv3
-import dm_functions as DM
+import medis.speckle_nulling.speckle_killer_v3 as skv3
+import medis.speckele_nulling.dm_functions as DM
 from medis.Utils.plot_tools import loop_frames, quicklook_wf, quicklook_im
 
 

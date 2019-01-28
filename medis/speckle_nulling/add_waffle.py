@@ -1,18 +1,18 @@
-import sn_preprocessing as pre
+import medis.speckele_nulling.sn_preprocessing as pre
 import cv2
 import os
 import matplotlib.pyplot as plt
 import astropy.io.fits as pf
 import ipdb
-import sn_math as snm
+import medis.speckele_nulling.sn_math as snm
 import numpy as np
 from configobj import ConfigObj
-import sn_filehandling as flh
-import sn_hardware as hardware
+import medis.speckele_nulling.sn_filehandling as flh
+import medis.speckele_nulling.sn_hardware as hardware
 import flatmapfunctions as FM
 from validate import Validator
 import flatmapfunctions as fmf
-import dm_functions as DM
+import medis.speckele_nulling.dm_functions as DM
 import time
 
 

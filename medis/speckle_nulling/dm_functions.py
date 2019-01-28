@@ -1,14 +1,11 @@
 
-import sn_processing as pro
+import medis.speckle_nulling.sn_processing as pro
 # from validate import Validator
-import matplotlib.pyplot as plt
-import sys
-import numpy as np 
-import sn_math as snm
+import medis.speckle_nulling.sn_math as snm
 from configobj import ConfigObj
 import numpy as np
 # import ipdb
-import sn_filehandling as flh
+import medis.speckle_nulling.sn_filehandling as flh
 # from PIL import Image
 # from PIL import ImageDraw
 from medis.params import tp

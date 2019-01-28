@@ -1,14 +1,13 @@
 # import ipdb
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import astropy.io.fits as pf
 # import image_registration as imreg
 from scipy.ndimage import median_filter
 from scipy.special import gamma
 from scipy.optimize import curve_fit
 import scipy.ndimage as sciim
-import sn_math as snm
+import medis.speckle_nulling.sn_math as snm
 
 def linearize_and_align(image):
     """Not used: apply Stan Metchev's distortion correction to PHARO"""
