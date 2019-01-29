@@ -1,24 +1,22 @@
-'''Top level code that takes a atmosphere phase map and propagates a wavefront through the system'''
+"""Top level code that takes a atmosphere phase map and propagates a wavefront through the system"""
 
-import sys, os
-# sys.path.append('D:/dodkins/MEDIS/MEDIS')
-# sys.path.append('D:/dodkins/MEDIS/MEDIS/Telescope')
-
-
-# sys.path.append(os.environ['MEDIS_DIR'])
-# for p in sys.path: print(p)
-# sys.path.append(os.path.join(os.environ['MEDIS_DIR'],'Telescope'))
-
+import os
 import proper
 print(proper.__file__)
 import numpy as np
 np.set_printoptions(threshold=np.inf)
 
 import traceback
+import multiprocessing
+import glob
+from pprint import pprint
+import random
+import pickle as pickle
+import time
+
 import medis.Utils.colormaps as cmaps
 from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint
-# import medis.Utils.misc as misc
 from medis.params import ap,cp,tp,mp,sp,iop,dp
 # import medis.Detector.analysis as ana
 import medis.Detector.MKIDs as MKIDs
@@ -27,16 +25,10 @@ import medis.Telescope.run_system as run_system
 import medis.Detector.readout as read #import Simulation, handle_output
 import medis.Telescope.telescope_dm as tdm
 import medis.Atmosphere.caos as caos
-from pprint import pprint
-import random
-import pickle as pickle
-import time
+
 # def run(verbose=False):
 
-import multiprocessing
 
-
-import glob
 
 # from medis.params import ap, cp, tp, mp, sp
 # print tp.occulter_type
@@ -66,6 +58,8 @@ sentinel = None
 #     return index
 # print 'line 54', tp.detector
 # def Simulation(inqueue, output, datacubes, (dp,cp,tp,ap,sp,iop)):
+
+
 def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
 # def Simulation(inqueue, output, (dp, cp)):
     (tp,ap,sp,iop,cp,mp) = xxx_todo_changeme

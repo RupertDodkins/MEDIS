@@ -10,6 +10,47 @@ import proper
 import os
 # import vip
 
+class io_params():
+    """
+    This should contain all of the parameters for the file structure. Where do you want the H5/images to be saved
+    """
+
+    def __init__(self, date='test/'):
+        # High Level Paths
+        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
+        self.dataout = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # Base path where results are stored (outside repository)
+        self.datadir = os.path.join(self.dataout, date)  # Save results in new sub-directory
+        self.lab_obs_path = '/mnt/kids/'  #
+
+        # Chaos  Paths
+        self.atm = 'atmos'  #
+        self.atmosdir = os.path.join(self.rootdir, self.data, self.date)  # possibly redundant with iop class
+        self.idl_params = os.path.join(self.rootdir, self.data, 'idl_params.csv')
+
+        # Other Misc Params
+        self.obsfile = os.path.join(self.datadir, date, 'r0varyObsfile.h5')  # a h5 file to test?
+        self.LCmapFile = os.path.join(self.datadir, 'LCmap.pkl')
+        self.IratioFile = os.path.join(self.datadir, 'Iratio.pkl')
+        self.DSFile = os.path.join(self.datadir, 'DS.pkl')
+        # self.hyperFile = os.path.join(self.datadir,'Hypercube.pkl')
+        self.hyperFile = os.path.join(self.datadir, 'Hypercube.hdf')
+        # self.IQpixel = os.path.join(self.datadir,'./novary64act_medr0_piston.txt')
+        self.saveIQ = True
+        self.int_maps = os.path.join(self.datadir, 'int_maps.pkl')
+        self.IQpixel = os.path.join(self.datadir, './novary64act_medr0_piston.txt')
+        self.device_params = os.path.join(self.datadir, 'deviceParams.pkl')
+        self.NCPA_meas = os.path.join(self.datadir, 'NCPA_meas.pkl')
+        self.CPA_meas = os.path.join(self.datadir, 'CPA_meas.pkl')
+        # self.phase_ideal = os.path.join(self.datadir,'phase_ideal.pkl')
+        self.measured_var = os.path.join(self.datadir, 'measured_var.pkl')
+        # self.data = 'data/aberrations'
+        # self.date = '180210/'
+        self.aberdir = os.path.join(self.lab_obs_path, 'medis', 'aberrations/181201/')
+        self.coron_temp = os.path.join(self.lab_obs_path, date, 'coron_maps/')
+
+    def update(self, date='test/'):
+        self.__init__(date=date)
+
 
 class astro_params():
     """
@@ -28,6 +69,7 @@ class astro_params():
         self.startframe=0 # useful for things like RDI
         self.numframes = 5000
 
+
 class caos_params():
     """
     Default parameters for the atmosphere
@@ -35,12 +77,6 @@ class caos_params():
     At some point we should move self.rootdir etc to the io params class
     """
     def __init__(self):
-        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
-        self.data = 'atmos' # possibly redundant with iop class
-        self.date = '180320/'# possibly redundant with iop class
-        self.script= 'ATMOS_test'# possibly redundant with iop class
-        self.atmosdir= os.path.join(self.rootdir,self.data,self.date) # possibly redundant with iop class
-        self.idl_params = os.path.join(self.rootdir,self.data,'idl_params.csv')
         self.show_caosparams= True # for control over all other variables
         self.frame_time = 0.001 # this is the maximum frame rate of the simulation
         self.vary_r0 = False
@@ -121,6 +157,7 @@ class telescope_params():
         # assert self.aber_params['CPA'] in [None, 'Static', 'Quasi', 'Wave', 'Amp', 'test','Both','Phase']
         # assert self.aber_params['NCPA'] in [None, 'Static', 'Quasi', 'Wave', 'Amp']
 
+
 class mkid_params():
     def __init__(self):
         self.bad_pix = False
@@ -175,11 +212,13 @@ class mkid_params():
         self.lod = 8 #8 pixels in these upsampled images = one lambda/d
         self.nlod = 10 #3 #how many lambda/D do we want to calculate out to
 
+
 class H2RG_params():
     def __init__(self):
         self.use_readnoise=True
         self.readnoise=30
         self.erate = 1
+
 
 class simulation_params():
     """
@@ -199,37 +238,6 @@ class simulation_params():
         self.get_ints = {'w':[0],
                           'c':[0]}#False
 
-class io_params():
-    """
-    This should contain all of the parameters for the file structure. Where do you want the H5/images to be saved
-    """
-    def __init__(self, date='test/'):
-        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
-        self.dataout = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # Base path where results are stored (outside repository)
-        self.datadir = os.path.join(self.dataout, date)  # Save results in new sub-directory
-        self.lab_obs_path = '/mnt/kids/'  #
-
-        self.obsfile = os.path.join(self.datadir, date, 'r0varyObsfile.h5')  # a h5 file to test?
-        self.LCmapFile = os.path.join(self.datadir, 'LCmap.pkl')
-        self.IratioFile = os.path.join(self.datadir, 'Iratio.pkl')
-        self.DSFile = os.path.join(self.datadir, 'DS.pkl')
-        # self.hyperFile = os.path.join(self.datadir,'Hypercube.pkl')
-        self.hyperFile = os.path.join(self.datadir, 'Hypercube.hdf')
-        # self.IQpixel = os.path.join(self.datadir,'./novary64act_medr0_piston.txt')
-        self.saveIQ = True
-        self.int_maps = os.path.join(self.datadir, 'int_maps.pkl')
-        self.IQpixel = os.path.join(self.datadir, './novary64act_medr0_piston.txt')
-        self.device_params = os.path.join(self.datadir, 'deviceParams.pkl')
-        self.NCPA_meas = os.path.join(self.datadir, 'NCPA_meas.pkl')
-        self.CPA_meas = os.path.join(self.datadir, 'CPA_meas.pkl')
-        # self.phase_ideal = os.path.join(self.datadir,'phase_ideal.pkl')
-        self.measured_var = os.path.join(self.datadir, 'measured_var.pkl')
-        # self.data = 'data/aberrations'
-        # self.date = '180210/'
-        self.aberdir = os.path.join(self.lab_obs_path, 'medis', 'aberrations/181201/')
-        self.coron_temp = os.path.join(self.lab_obs_path, date, 'coron_maps/')
-    def update(self, date='test/'):
-        self.__init__(date=date)
 
 class device_params():
     '''
@@ -244,6 +252,7 @@ class device_params():
         self.basesDeg = None
         self.hot_pix = None
 
+
 class FPWFS_params():
     '''Replaces the role of M. Bottom's Config file for speckle_killer_v3'''
     def __init__(self):
@@ -253,6 +262,7 @@ class FPWFS_params():
         self.exclusionzone = 12.
         # self.controlregion = [50,80,35,50] # x1, x2, y1, y2
         self.controlregion = [40,100,20,60] # y1, y2, x1, x2
+
 
 ap = astro_params()
 cp = caos_params()

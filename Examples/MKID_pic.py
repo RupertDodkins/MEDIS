@@ -1,4 +1,4 @@
-import sys, os
+import os
 import numpy as np
 from medis.params import tp, mp, cp, sp, ap, iop
 import medis.Detector.get_photon_data as gpd
@@ -42,7 +42,7 @@ num_exp =1 #5000
 ap.exposure_time = 0.1  # 0.001
 cp.frame_time = 0.1
 cp.date = '180828/'
-cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
+cp.atmosdir= os.path.join(cp.rootdir, cp.data, cp.date)
 ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
 tp.piston_error = True
 tp.band = np.array([800, 1500])
@@ -53,9 +53,9 @@ tp.pix_shift = [30,0]
 lod = 8
 
 # mp.hot_pix =True
-mp.distort_phase =True
-mp.phase_uncertainty =True
-mp.phase_background=True
+mp.distort_phase = True
+mp.phase_uncertainty = True
+mp.phase_background = True
 mp.respons_var = True
 mp.bad_pix = True
 mp.hot_pix = 1
@@ -65,7 +65,7 @@ mp.g_mean = 0.2
 mp.g_sig = 0.04
 mp.bg_mean = -10
 mp.bg_sig = 40
-mp.pix_yield = 0.7 # check dis
+mp.pix_yield = 0.7  # check dis
 
 if __name__ == '__main__':
     if os.path.exists(iop.int_maps):
@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
     # compare_images(ideal, logAmp=True, vmax = 0.01, vmin=1e-6, annos = ['Ideal 800 nm', '1033 nm', '1267 nm', '1500 nm'], title=r'$I$')
     with open(iop.int_maps, 'rb') as handle:
-        int_maps =pickle.load(handle)
+        int_maps = pickle.load(handle)
 
     int_maps = np.array(int_maps)
     dprint(int_maps[0].shape)
@@ -118,6 +118,5 @@ if __name__ == '__main__':
     plt.subplots_adjust(left=0.01, right=0.95, top=0.93, bottom=0.02)
     # plt.savefig(str(p) + '.pdf')
     # plt.show()
-
 
     plt.show()

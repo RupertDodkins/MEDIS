@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-import os, sys
-sys.path.append('D:/dodkins/MEDIS/MEDIS')
-from medis.params import cp, tp
-import medis.Utils.rawImageIO as rawImageIO
+import os
 # import pidly
 import numpy as np
 import matplotlib.pyplot as plt
 # import pyfits
 # import astropy.io.fits as pyfits
 import glob
+
+from medis.params import cp, tp
+import medis.Utils.rawImageIO as rawImageIO
 import medis.Utils.misc as misc
 from medis.Detector.distribution import lognorm, Distribution
 

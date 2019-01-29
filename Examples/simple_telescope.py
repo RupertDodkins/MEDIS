@@ -85,6 +85,7 @@ def simple_telescope(wavelength, gridsize):
     # End
     (wfo, sampling) = proper.prop_end(wfo)
 
-    return (wfo, sampling)
+    return wfo, sampling
 
-proper.prop_run( 'simple_telescope', 1.1, 128, PHASE_OFFSET = 1 )
+
+proper.prop_run('simple_telescope', 1.1, 128, PHASE_OFFSET=1)
