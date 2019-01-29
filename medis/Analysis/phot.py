@@ -6,8 +6,6 @@ import numpy as np
 import os
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
-import sys
-# sys.path.append('/Volumes/Data2/dodkins/scripts/')
 # from datacube import read_folder
 # from distribution import *
 # import subprocess

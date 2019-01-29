@@ -1,0 +1,16 @@
+Gain      = 0.900000
+Deadband  = 0.050000
+cx        = 432.300000
+cy        = 376.500000
+angle     = 69.529203
+lbdoverd  = 3.150000
+quadwidth = 3.000000
+inner_rad = 1.800000
+beta      = 0.900000
+gam_in    = -0.200000
+gam_out   = 0.100000
+Itot      = 1368021.776220
+DIx_ref   = 31203.030875
+DIy_ref   = -10560.660148
+type      = inner
+pupil     = obstructed
