@@ -12,20 +12,20 @@ import os
 
 class io_params():
     """
-    This should contain all of the parameters for the file structure. Where do you want the H5/images to be saved
+    Define file tree/structure to import and save data
     """
 
     def __init__(self, date='test/'):
         # High Level Paths
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
-        self.dataout = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # Base path where results are stored (outside repository)
-        self.datadir = os.path.join(self.dataout, date)  # Save results in new sub-directory
+        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # Base path where results are stored (outside repository)
+        self.data_test = os.path.join(self.datadir, date)  # Save results in new sub-directory
         self.lab_obs_path = '/mnt/kids/'  #
 
         # Chaos  Paths
-        self.atm = 'atmos'  #
-        self.atmosdir = os.path.join(self.rootdir, self.data, self.date)  # possibly redundant with iop class
-        self.idl_params = os.path.join(self.rootdir, self.data, 'idl_params.csv')
+        self.chaos_fits_dir = '180828'  # directory with the FITS Files for Atmosphere created by caos
+        self.atmosdir = os.path.join(self.datadir, self.chaos_fits_dir)  # full path to FITS files
+        self.idl_params = os.path.join(self.datadir, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
         # Other Misc Params
         self.obsfile = os.path.join(self.datadir, date, 'r0varyObsfile.h5')  # a h5 file to test?
@@ -73,8 +73,6 @@ class astro_params():
 class caos_params():
     """
     Default parameters for the atmosphere
-
-    At some point we should move self.rootdir etc to the io params class
     """
     def __init__(self):
         self.show_caosparams= True # for control over all other variables

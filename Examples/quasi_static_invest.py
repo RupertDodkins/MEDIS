@@ -68,7 +68,7 @@ if __name__ == '__main__':
     #
     #
     # for t in np.arange(0,5000,100):
-    #     # atmos_map = cp.atmosdir + 'telz%f_%1.3f.fits' % (t * cp.frame_time, 0.2)
+    #     # atmos_map = iop.atmosdir + 'telz%f_%1.3f.fits' % (t * cp.frame_time, 0.2)
     #     abermap = iop.aberdir + 'telz%f.fits' % (t * cp.frame_time)
     #     print abermap
     #     image = rawImageIO.read_image(filename=abermap, prob_map=False)[0]

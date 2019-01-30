@@ -67,7 +67,7 @@ sp.num_processes = 3
 num_exp =10
 cp.frame_time = 0.05
 cp.date = '180828/'
-cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
+iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 
 tp.piston_error = False
 tp.band = np.array([700, 1500])
