@@ -173,7 +173,7 @@ def modulate(wfo, w, iter):
     # proper.prop_zernikes(wfo, [4], np.array([phase_mod])/4.)
     # # quicklook_wf(wfo)
 
-    # import dm_functions as DM
+    # import medis.speckle_nulling.dm_functions as DM
     # # speck.generate_flatmap(phase)
     # s_amp = DM.amplitudemodel(0.05, 30, c=1.6)
     # waffle = DM.make_speckle_kxy(3, 3, s_amp, np.pi/2.)
@@ -788,7 +788,7 @@ def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
         # dm_map = dm_NCPA
 
     if tp.active_modulate and iter >=8:
-        # import dm_functions as DM
+        # import medis.speckle_nulling.dm_functions as DM
         # # speck.generate_flatmap(phase)
         # s_amp = DM.amplitudemodel(0.05, 30, c=1.6)
         # tp.null_ao_act = tp.ao_act

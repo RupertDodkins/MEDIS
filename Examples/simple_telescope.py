@@ -1,14 +1,13 @@
 
 import proper
 import matplotlib.pyplot as plt
-import sys
-import os
-sys.path.append(os.environ['MEDIS_DIR'])
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im
 
 
 def simple_telescope(wavelength, gridsize):
-    
+
+    import numpy as np
+
     # Define entrance aperture diameter and other quantities
     d_objective = 5.0                        # objective diameter in meters
     fl_objective = 20.0 * d_objective          # objective focal length in meters
@@ -77,7 +76,6 @@ def simple_telescope(wavelength, gridsize):
     amp_map[80:100,80:100] = 0
     quicklook_im(amp_map, logAmp=True)
 
-    import numpy as np
     wfo.wfarr = proper.prop_shift_center(amp_map * np.cos(phase_map) + 1j * amp_map * np.sin(phase_map))
     # quicklook_wf(wf_array[iw,0])
     proper.prop_propagate(wfo, fl_eye, "retina")
@@ -87,6 +85,7 @@ def simple_telescope(wavelength, gridsize):
     # End
     (wfo, sampling) = proper.prop_end(wfo)
 
-    return (wfo, sampling)
+    return wfo, sampling
 
-proper.prop_run( 'simple_telescope', 1.1, 128, PHASE_OFFSET = 1 )
+
+proper.prop_run('simple_telescope', 1.1, 128, PHASE_OFFSET=1)
