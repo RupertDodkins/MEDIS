@@ -86,7 +86,7 @@ num_exp = 100
 ap.exposure_time = 0.1#0.001
 cp.frame_time = 0.1
 cp.date = '180829/180828/'
-cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
+iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
 
 mp.distort_phase =True

@@ -185,7 +185,7 @@ def scale_image(filename, scalefactor):
     pyfits.update(filename, scidata, hdr,0)
 
 # def scale_phasemaps():
-#     filenames = read_folder(cp.atmosdir)
+#     filenames = read_folder(iop.atmosdir)
 #     scidata, hdr = read_image(filenames[0], prob_map=False)
 #     scalefactor = np.pi/np.max(np.abs(scidata)) * 2./3 #kludge for now until you include AO etc
 #     print 'Scaling the phase maps by a factor %s' % scalefactor

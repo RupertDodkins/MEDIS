@@ -27,7 +27,7 @@ if tp.detector == 'MKIDs':
     MKIDs.initialize()
 
 #code to run CAOS
-if tp.use_atmos and glob.glob(cp.atmosdir+'*.fits') == []:
+if tp.use_atmos and glob.glob(iop.atmosdir+'*.fits') == []:
     import medis.Atmosphere.caos as caos #import here since pidly can stay open sometimes and that's annoying
     caos.make_idl_params()
     caos.generate_maps()
@@ -35,7 +35,7 @@ if tp.use_atmos and glob.glob(cp.atmosdir+'*.fits') == []:
 # hypercube = []
 for t in range(1):
     print 'propagating frame:', t
-    kwargs = {'iter':t, 'atmos_map': cp.atmosdir+'telz%f.fits' % (t*mp.frame_time)}
+    kwargs = {'iter':t, 'atmos_map': iop.atmosdir+'telz%f.fits' % (t*mp.frame_time)}
     no_occult = proper.prop_run("run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE = False, PHASE_OFFSET = 1 )[0][0]
 
 tp.occult_loc = (4,-6) #opposit sense to normal x y direction
@@ -43,7 +43,7 @@ tp.occulter_type ='GAUSSIAN'# None#
 
 for t in range(1):
     print 'propagating frame:', t
-    kwargs = {'iter':t, 'atmos_map': cp.atmosdir+'telz%f.fits' % (t*mp.frame_time)}
+    kwargs = {'iter':t, 'atmos_map': iop.atmosdir+'telz%f.fits' % (t*mp.frame_time)}
     occult = proper.prop_run("run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE = False, PHASE_OFFSET = 1 )[0][0]
 
 print np.shape(no_occult)

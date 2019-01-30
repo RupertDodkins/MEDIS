@@ -46,7 +46,7 @@ sentinel = None
 # for t in range(cp.numframes):
 #     print 'propagating frame:', t
 # def mp_worker(t):
-#     kwargs = {'iter': t, 'atmos_map': cp.atmosdir + 'telz%f.fits' % (t * mp.frame_time)}
+#     kwargs = {'iter': t, 'atmos_map': iop.atmosdir + 'telz%f.fits' % (t * mp.frame_time)}
 #     datacube, _ = proper.prop_run("run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
 #     # ana.make_SNR_plot(datacube)
 #     return datacube
@@ -99,9 +99,9 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
             else:
                 r0 = cp.r0s # this is a scalar in this instance
             # dprint((t, r0, 'r0', tp.rot_rate))
-            atmos_map = cp.atmosdir + 'telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
-            # dprint((atmos_map, cp.atmosdir))
-            kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap,tp,iop,sp]}
+            atmos_map = iop.atmosdir + 'telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
+            # dprint((atmos_map, iop.atmosdir))
+            kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
             # dprint(tp.occulter_type)
             datacube, _ = proper.prop_run("medis.Telescope.run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
             # view_datacube(datacube, logAmp=True)
@@ -190,8 +190,9 @@ def run():
     except RuntimeError:
         pass
     # initialize atmosphere
-    dprint(cp.atmosdir)
-    if tp.use_atmos and glob.glob(cp.atmosdir + '*.fits') == []:
+    dprint(iop.atmosdir)
+    if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
+        print("Making New Atmosphere Model")
         caos.make_idl_params()
         caos.generate_maps()
 
@@ -210,7 +211,7 @@ def run():
     if tp.active_null:
         tdm.initialize_NCPA_meas()
 
-    print(cp.atmosdir)
+    print(iop.atmosdir)
     caos.get_r0s()
     print(cp.r0s)
     # cp.r0s = cp.r0s[5:]
