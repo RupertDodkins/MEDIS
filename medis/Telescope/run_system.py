@@ -18,7 +18,6 @@ from medis.Telescope.coronagraph import coronagraph
 import medis.Telescope.FPWFS as FPWFS
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity
 import medis.Utils.rawImageIO as rawImageIO
-# import medis.params
 from medis.params import ap, tp, iop, sp
 
 from medis.Analysis.stats import save_pix_IQ
