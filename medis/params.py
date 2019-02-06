@@ -47,6 +47,7 @@ class io_params():
         # self.date = '180210/'
         self.aberdir = os.path.join(self.lab_obs_path, 'medis', 'aberrations/181201/')
         self.coron_temp = os.path.join(self.lab_obs_path, date, 'coron_maps/')
+        self.FPWFSdir = self.rootdir + 'speckle_nulling/'
 
     def update(self, date='test/'):
         self.__init__(date=date)
@@ -142,11 +143,9 @@ class telescope_params():
         self.speck_peakIs = [0.05]
         self.abertime = 0.5  #time scale of optic aberrations
         self.samp = 0.2#0.125
-        self.rootdir = os.path.realpath(__file__)[:-16]
         # self.data = 'data/aberrations'
         # self.date = '180210/'
         # self.aberdir = os.path.join(self.rootdir,self.data,self.date)
-        self.FPWFSdir = self.rootdir+'/MEDIS/speckle_nulling/speckle_nulling/'
         self.check_args()
         self.pix_shift = False
 

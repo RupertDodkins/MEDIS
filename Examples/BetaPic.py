@@ -1,5 +1,6 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
 import numpy as np
+import os
 import copy
 import matplotlib.pyplot as plt
 from vip_hci import phot, pca
@@ -48,7 +49,6 @@ tp.aber_params = {'CPA': True,
                     'n_surfs': 4,
                     'OOPP': [16,8,8, 4]}#False}#
 mp.date = '180827/'
-import os
 iop.update(mp.date)
 # iop.aberdir = os.path.join(iop.rootdir, 'data/aberrations/180630_30mins')
 cp.date = '1804171hr8m/'
