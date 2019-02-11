@@ -1,6 +1,5 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
 import numpy as np
-import os
 import copy
 import matplotlib.pyplot as plt
 from vip_hci import phot, pca
@@ -10,7 +9,6 @@ from medis.Utils.rawImageIO import clipped_zoom
 import medis.Detector.readout as read
 import medis.Analysis.phot
 import medis.Analysis.stats
-import pandas as pd
 from medis.Utils.misc import dprint
 
 # Global params
@@ -48,11 +46,6 @@ tp.aber_params = {'CPA': True,
                     'Amp': True,
                     'n_surfs': 4,
                     'OOPP': [16,8,8, 4]}#False}#
-mp.date = '180827/'
-iop.update(mp.date)
-# iop.aberdir = os.path.join(iop.rootdir, 'data/aberrations/180630_30mins')
-cp.date = '1804171hr8m/'
-iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 sp.num_processes = 40
 tp.occulter_type = '8th_Order'
 

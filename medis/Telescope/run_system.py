@@ -24,15 +24,14 @@ from medis.Analysis.stats import save_pix_IQ
 from medis.Analysis.phot import aper_phot
 import medis.speckle_nulling.speckle_killer_v3 as skv3
 from medis.Utils.misc import dprint
-dprint(proper.__file__)
 
 
-# print 'line 21', tp.occulter_type
 def iter_func(wavefronts, func, *args, **kwargs):
     shape = wavefronts.shape
     for iw in range(shape[0]):
         for iwf in range(shape[1]):
             func(wavefronts[iw, iwf], *args, **kwargs)
+
 
 def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     passpara = PASSVALUE['params']
@@ -77,7 +76,6 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         for io, (iwf, wf) in enumerate(zip(names, wfs)):
             wf_array[iw, io] = wf
 
-
     iter_func(wf_array, proper.prop_circular_aperture, **{'radius':tp.diam/2})
     if tp.use_atmos:
         tdm.add_atmos(wf_array, *(tp.f_lens, w, PASSVALUE['atmos_map']))
@@ -85,8 +83,6 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
 
     wf_array = tdm.abs_zeros(wf_array)
         # get_intensity(wf_array, sp, phase=True)
-
-
 
     if tp.rot_rate:
         iter_func(wf_array, tdm.rotate_atmos, *(PASSVALUE['atmos_map']))
