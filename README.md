@@ -11,7 +11,7 @@ This will create an environment called medis (which you could change by editing 
 
 $conda activate medis.
 
-The version here may change as the code continues to be tested. If you notice that a package is missing while testing MEDIS, please contact Kristina at k_davis@ucsb.edu. Once we are confident the .yml contains all relevant info, we can try to make this a pip editable install, that will be updated through github.
+The version here may change as the code continues to be tested. If you notice that a package is missing while testing MEDIS, please contact user:KristinaDavis. Once we are confident the .yml contains all relevant info, we can try to make this a pip editable install, that will be updated through github.
 
 One thing left to do is to make an edit to the current version of vip_hci. Go to the package directory on your computer (on my computer that is /home/captainkay/programs/anaconda3/envs/medis/lib/python3.6/site-packages/vip-hci).
 
