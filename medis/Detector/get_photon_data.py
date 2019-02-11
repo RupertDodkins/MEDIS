@@ -97,7 +97,7 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
             # dprint((atmos_map, iop.atmosdir))
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
             # dprint(tp.occulter_type)
-            datacube, _ = proper.prop_run("medis.Telescope.run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
+            datacube, _ = proper.prop_run("medis/Telescope/run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
             # view_datacube(datacube, logAmp=True)
             # print np.sum(datacube,axis=(1,2))
 
