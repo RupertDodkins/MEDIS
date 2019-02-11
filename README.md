@@ -1,42 +1,20 @@
-The speckle nulling package has been slightly adapted from code courtesy of Michael Bottom for Palomar and Keck
+You should then export the repo to your python path. In your .bashrc (or similar), add something along the lines of:
 
-framework python install
-conda = "~/minconda3/bin/conda"
+export PYTHONPATH="/home/user/path/to/repo/MEDIS:$PYTHONPATH"
 
-<go in PyCharm Preferences and set Python to miniconda3/bin/python>
-<do the rest of the commands in that terminal>
 
-conda install python.app
+As of yet, an untested .yaml file of a conda environment can be found medis_env.yml. Information on how to set up a conda environment from a .yml file can be found here.
 
-conda install numpy
+$conda env create -f medis_env.yml
 
-conda install -c conda-forge matplotlib
+This will create an environment called medis (which you could change by editing the first line of the .yml file to be whatever you want). When you are done, activate the environment with
 
-pip install Cython
+$conda activate medis.
 
-% pip install PyFITS # This should be redundant now
+The version here may change as the code continues to be tested. If you notice that a package is missing while testing MEDIS, please contact Kristina at k_davis@ucsb.edu. Once we are confident the .yml contains all relevant info, we can try to make this a pip editable install, that will be updated through github.
 
-Fortran Compiler gFortran and Xcode follow instruction
+One thing left to do is to make an edit to the current version of vip_hci. Go to the package directory on your computer (on my computer that is /home/captainkay/programs/anaconda3/envs/medis/lib/python3.6/site-packages/vip-hci).
 
-pip install astropy
+in the vip_hci directory, go to phot/snr.py
 
-pip install h5py
-
-pip install PyYAML
-
-% <cd to downloaded and unzipped proper directory> python setup.py install
-pip install /path/to/proper3.6.tar.gz # pip install https://sourceforge.net/projects/proper-library/files/proper_v3.0d1_python_3.x_30jul18.tar.gz
-
-conda install pytables
-
-have multiprocessing.set_start_method('spawn') in part of the code
-
-pip install configobj
-
-pip install PyQt5
-
-% in matplotlibrc: backend: Qt5Agg # This has been added to __init__
-
-pip install vip_hci (may have to change get_annulus to get_annulus_segments in snr.py)
-
-pip install --upgrade --no-deps statsmodels
+and change the import statement from get_annulus to get_annulus_segments.
