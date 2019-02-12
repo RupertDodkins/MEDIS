@@ -18,4 +18,4 @@ in the vip_hci directory, go to phot/snr.py
 
 and change the import statement from get_annulus to get_annulus_segments.
 
-The default location for the save data will be path/to/MEDIS/Save/. If you want the data to be saved to a different location then change the iop.datadir variable in params
+The default location for the save data will be home/medis_data/. If you want the data to be saved to a different location then change the iop.datadir variable in params

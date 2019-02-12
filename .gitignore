@@ -1,8 +1,9 @@
+medis.params.py
+
 .DS_Store
 *~*
 *#*
 *.pyc
-.idea
 *.iml
 
 #ignore C compiled (or Cython compiled) files

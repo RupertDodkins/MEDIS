@@ -8,6 +8,7 @@ example module the user is running
 import numpy as np
 import proper
 import os
+from pathlib import Path
 # import vip
 
 class io_params():
@@ -18,11 +19,11 @@ class io_params():
     def __init__(self, date='test/'):
         # High Level Paths
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
-        self.datadir = os.path.join(os.path.dirname(self.rootdir), 'Save')  # Base path where results are stored (outside repository)
+        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Base path where results are stored (outside repository)
         self.data_test = os.path.join(self.datadir, date)  # Save results in new sub-directory
         self.lab_obs_path = '/mnt/kids/'  #
 
-        # Chaos  Paths
+        # Chaos Paths
         self.chaos_fits_dir = 'atmos/180828'  # directory with the FITS Files for Atmosphere created by caos
         self.atmosdir = os.path.join(self.datadir, self.chaos_fits_dir)  # full path to FITS files
         self.idl_params = os.path.join(self.datadir, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
