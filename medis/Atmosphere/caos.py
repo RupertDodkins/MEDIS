@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-import os, sys
-sys.path.append('D:/dodkins/MEDIS/MEDIS')
-from medis.params import cp, tp
-import medis.Utils.rawImageIO as rawImageIO
+import os
 # import pidly
 import numpy as np
 import matplotlib.pyplot as plt
 # import pyfits
 # import astropy.io.fits as pyfits
 import glob
+
+from medis.params import cp, tp, iop
+import medis.Utils.rawImageIO as rawImageIO
 import medis.Utils.misc as misc
 from medis.Detector.distribution import lognorm, Distribution
 
@@ -16,7 +16,7 @@ from medis.Detector.distribution import lognorm, Distribution
 def make_idl_params():
     print('Making IDL params csv')
     with open(cp.idl_params, 'wb') as csvfile:
-        line = '%i,%s,%s,%s' % (cp.numframes, cp.atmosdir, cp.show_caosparams, cp.r0_identifier)
+        line = '%i,%s,%s,%s' % (cp.numframes, iop.atmosdir, cp.show_caosparams, cp.r0_identifier)
         csvfile.write(line)
 
 
@@ -73,7 +73,7 @@ def random_r0walk(idx, values):
     return idx
 
 def get_r0s():
-    startframes = glob.glob(cp.atmosdir + 'telz0.000000_*.fits')
+    startframes = glob.glob(iop.atmosdir + '/telz0.000000_*.fits')
     r0s = []
     for frame in startframes:
         r0s.append(float(frame[-10:-5]))
@@ -98,9 +98,9 @@ def generate_maps():
 
 
 def scale_phasemaps():
-    # filenames = rawImageIO.read_folder(cp.atmosdir)
+    # filenames = rawImageIO.read_folder(iop.atmosdir)
     import multiprocessing
-    filenames = glob.glob(cp.atmosdir + '*0.067*')
+    filenames = glob.glob(iop.atmosdir + '*0.067*')
     scidata, hdr = rawImageIO.read_image(filenames[0], prob_map=False)
     scalefactor = 5.19751 #np.pi * 1e-6 / np.max(np.abs(scidata))  # *0.8 * 4./3 #kludge for now until you include AO etc
     # print filenames

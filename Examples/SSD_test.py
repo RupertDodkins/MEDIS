@@ -61,7 +61,7 @@ iop.update(mp.date)
 # iop.aberdir = os.path.join(iop.rootdir, 'data/aberrations/180630_30mins')
 # cp.date = '1804171hr8m/'
 cp.date = '180829/180828/'
-cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
+iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 sp.num_processes = 30
 tp.occulter_type = 'None'
 num_exp = 1000#2000#1000#50#50#1000

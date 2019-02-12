@@ -1,24 +1,22 @@
-'''Top level code that takes a atmosphere phase map and propagates a wavefront through the system'''
+"""Top level code that takes a atmosphere phase map and propagates a wavefront through the system"""
 
-import sys, os
-# sys.path.append('D:/dodkins/MEDIS/MEDIS')
-# sys.path.append('D:/dodkins/MEDIS/MEDIS/Telescope')
-
-
-# sys.path.append(os.environ['MEDIS_DIR'])
-# for p in sys.path: print(p)
-# sys.path.append(os.path.join(os.environ['MEDIS_DIR'],'Telescope'))
-
+import os
 import proper
 print(proper.__file__)
 import numpy as np
 np.set_printoptions(threshold=np.inf)
 
 import traceback
+import multiprocessing
+import glob
+from pprint import pprint
+import random
+import pickle as pickle
+import time
+
 import medis.Utils.colormaps as cmaps
 from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint
-# import medis.Utils.misc as misc
 from medis.params import ap,cp,tp,mp,sp,iop,dp
 # import medis.Detector.analysis as ana
 import medis.Detector.MKIDs as MKIDs
@@ -27,16 +25,10 @@ import medis.Telescope.run_system as run_system
 import medis.Detector.readout as read #import Simulation, handle_output
 import medis.Telescope.telescope_dm as tdm
 import medis.Atmosphere.caos as caos
-from pprint import pprint
-import random
-import pickle as pickle
-import time
+
 # def run(verbose=False):
 
-import multiprocessing
 
-
-import glob
 
 # from medis.params import ap, cp, tp, mp, sp
 # print tp.occulter_type
@@ -46,7 +38,7 @@ sentinel = None
 # for t in range(cp.numframes):
 #     print 'propagating frame:', t
 # def mp_worker(t):
-#     kwargs = {'iter': t, 'atmos_map': cp.atmosdir + 'telz%f.fits' % (t * mp.frame_time)}
+#     kwargs = {'iter': t, 'atmos_map': iop.atmosdir + 'telz%f.fits' % (t * mp.frame_time)}
 #     datacube, _ = proper.prop_run("run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
 #     # ana.make_SNR_plot(datacube)
 #     return datacube
@@ -66,6 +58,8 @@ sentinel = None
 #     return index
 # print 'line 54', tp.detector
 # def Simulation(inqueue, output, datacubes, (dp,cp,tp,ap,sp,iop)):
+
+
 def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
 # def Simulation(inqueue, output, (dp, cp)):
     (tp,ap,sp,iop,cp,mp) = xxx_todo_changeme
@@ -99,9 +93,9 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
             else:
                 r0 = cp.r0s # this is a scalar in this instance
             # dprint((t, r0, 'r0', tp.rot_rate))
-            atmos_map = cp.atmosdir + 'telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
-            # dprint((atmos_map, cp.atmosdir))
-            kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap,tp,iop,sp]}
+            atmos_map = iop.atmosdir + 'telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
+            # dprint((atmos_map, iop.atmosdir))
+            kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
             # dprint(tp.occulter_type)
             datacube, _ = proper.prop_run("medis.Telescope.run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
             # view_datacube(datacube, logAmp=True)
@@ -190,8 +184,9 @@ def run():
     except RuntimeError:
         pass
     # initialize atmosphere
-    dprint(cp.atmosdir)
-    if tp.use_atmos and glob.glob(cp.atmosdir + '*.fits') == []:
+    dprint(iop.atmosdir)
+    if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
+        print("Making New Atmosphere Model")
         caos.make_idl_params()
         caos.generate_maps()
 
@@ -210,7 +205,7 @@ def run():
     if tp.active_null:
         tdm.initialize_NCPA_meas()
 
-    print(cp.atmosdir)
+    print(iop.atmosdir)
     caos.get_r0s()
     print(cp.r0s)
     # cp.r0s = cp.r0s[5:]

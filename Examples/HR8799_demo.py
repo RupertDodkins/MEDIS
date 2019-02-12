@@ -48,7 +48,7 @@ tp.aber_params = {'CPA': True,
 mp.date = '180416mkids/'
 cp.date = '1804171hr8m/'
 import os
-cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
+iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 iop.update(mp.date)
 sp.num_processes = 48
 # tp.occulter_type = '8th_Order'

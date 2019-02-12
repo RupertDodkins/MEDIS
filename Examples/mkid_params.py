@@ -29,7 +29,7 @@ tp.diam = 8.
 tp.detector = 'MKIDs'
 # cp.date = '180630_30mins/'
 # import os
-# cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
+# iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 # cp.frame_time = 0.005
 cp.frame_time = 0.001
 # ap.star_photons*=1000

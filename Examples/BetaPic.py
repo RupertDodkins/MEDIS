@@ -1,6 +1,4 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
-import sys
-sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
 import copy
 import matplotlib.pyplot as plt
@@ -54,7 +52,7 @@ import os
 iop.update(mp.date)
 # iop.aberdir = os.path.join(iop.rootdir, 'data/aberrations/180630_30mins')
 cp.date = '1804171hr8m/'
-cp.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
+iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 sp.num_processes = 40
 tp.occulter_type = '8th_Order'
 

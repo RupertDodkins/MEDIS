@@ -1,9 +1,5 @@
 '''This code handles most of the telescope optics based functionality'''
 
-import sys, os
-
-sys.path.append(os.path.dirname(os.path.realpath(__file__))[:-9] + "speckle_nulling/speckle_nulling")
-
 # main = sys.argv[0][:-3]
 # modules = main.split('/')[-2:]
 # main = modules[0]+'.'+modules[1]
@@ -14,20 +10,20 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__))[:-9] + "speckle_null
 # iop.__dict__ = params.iop.__dict__
 from scipy.interpolate import interp1d
 import proper
+import numpy as np
+# import matplotlib.pylab as plt
 
 import medis.Telescope.telescope_dm as tdm
 from medis.Telescope.coronagraph import coronagraph
 import medis.Telescope.FPWFS as FPWFS
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity
 import medis.Utils.rawImageIO as rawImageIO
-# import matplotlib.pylab as plt
 # import medis.params
 from medis.params import ap, tp, iop, sp
 
-import numpy as np
 from medis.Analysis.stats import save_pix_IQ
 from medis.Analysis.phot import aper_phot
-import speckle_killer_v3 as skv3
+import medis.speckle_nulling.speckle_killer_v3 as skv3
 from medis.Utils.misc import dprint
 dprint(proper.__file__)
 
