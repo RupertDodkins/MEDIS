@@ -2,11 +2,9 @@
 import proper
 import matplotlib.pyplot as plt
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im
-
+import numpy as np
 
 def simple_telescope(wavelength, gridsize):
-
-    import numpy as np
 
     # Define entrance aperture diameter and other quantities
     d_objective = 5.0                        # objective diameter in meters
@@ -92,4 +90,4 @@ def simple_telescope(wavelength, gridsize):
     return wfo, sampling
 
 
-proper.prop_run('simple_telescope', 1.1, 128, PHASE_OFFSET=1)
+#proper.prop_run('simple_telescope', 1.1, 128, PHASE_OFFSET=1)

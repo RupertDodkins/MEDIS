@@ -5,9 +5,6 @@
 # main = modules[0]+'.'+modules[1]
 # import importlib
 # params = importlib.import_module(main, package=None)
-# ap.__dict__ = params.ap.__dict__
-# tp.__dict__ = params.tp.__dict__
-# iop.__dict__ = params.iop.__dict__
 from scipy.interpolate import interp1d
 import proper
 import numpy as np

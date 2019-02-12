@@ -2,7 +2,6 @@
 
 import os
 import proper
-print(proper.__file__)
 import numpy as np
 np.set_printoptions(threshold=np.inf)
 
@@ -21,7 +20,7 @@ from medis.params import ap,cp,tp,mp,sp,iop,dp
 # import medis.Detector.analysis as ana
 import medis.Detector.MKIDs as MKIDs
 import medis.Detector.pipeline as pipe
-import medis.Telescope.run_system as run_system
+# import medis.Telescope.run_system as run_system
 import medis.Detector.readout as read #import Simulation, handle_output
 import medis.Telescope.telescope_dm as tdm
 import medis.Atmosphere.caos as caos
@@ -97,7 +96,7 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
             # dprint((atmos_map, iop.atmosdir))
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
             # dprint(tp.occulter_type)
-            datacube, _ = proper.prop_run("MEDIS.medis.Telescope.run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
+            datacube, _ = proper.prop_run('medis.Telescope.run_system', 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
             # view_datacube(datacube, logAmp=True)
             # print np.sum(datacube,axis=(1,2))
 
@@ -260,9 +259,8 @@ def run():
         hypercube = np.zeros((ap.numframes,tp.w_bins,tp.grid_size,tp.grid_size))
     # hypercube = []
 
-    dprint(sp.num_processes)
+    #dprint(sp.num_processes)
     for i in range(sp.num_processes):
-        dprint(i)
         p = multiprocessing.Process(target=Simulation, args=(inqueue, output, datacubes,(tp,ap,sp,iop,cp,mp)))
         # p = multiprocessing.Process(target=Simulation, args=(inqueue, output, (dp,cp)))
         jobs.append(p)

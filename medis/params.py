@@ -23,7 +23,7 @@ class io_params():
         self.lab_obs_path = '/mnt/kids/'  #
 
         # Chaos  Paths
-        self.chaos_fits_dir = '180828'  # directory with the FITS Files for Atmosphere created by caos
+        self.chaos_fits_dir = '180828/'  # directory with the FITS Files for Atmosphere created by caos
         self.atmosdir = os.path.join(self.datadir, self.chaos_fits_dir)  # full path to FITS files
         self.idl_params = os.path.join(self.datadir, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
@@ -96,14 +96,14 @@ class telescope_params():
         self.interp_sample = True
         # self.band = np.array([1100,1400]) #J band
         self.band = np.array([800,1500]) # whole DARKNESS band
-        self.rot_rate = 0#1 # deg/s
+        self.rot_rate = 0  #1 # deg/s
         self.use_spiders = True
         self.use_hex = False
-        self.use_atmos = True # have to for now because ao wfs reads in map produced but not neccessary
-        self.use_ao = True#True
+        self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary
+        self.use_ao = True  # True
         self.quick_ao = True
-        self.ao_act = 60#41 #32
-        self.servo_error= [0,1]#[0,1]#False # No delay and rate of 1/frame_time
+        self.ao_act = 60  # 41 #32
+        self.servo_error= [0,1]  #[0,1] # False # No delay and rate of 1/frame_time
         self.active_null = False
         self.active_converge_steps = 1#10
         self.active_modulate=False
@@ -112,9 +112,9 @@ class telescope_params():
         self.piston_error = True
         self.wfs_scale = 3
         # self.occulter_type ='8th_Order'#'GAUSSIAN' None#'SOLID'#
-        self.occulter_type ='Vortex'#'Gaussian'# None#
+        self.occulter_type = 'Vortex'  # 'Gaussian'# None#
         # self.occulter_type = None#
-        self.occult_loc = [0,0]#[3,-5] #correspond to normal x y direction
+        self.occult_loc = [0,0]  # [3,-5] #correspond to normal x y direction
         self.use_apod = True
         self.apod_gaus = 1
         # self.CPA_type = 'Static'#'Quasi'# None
@@ -133,7 +133,7 @@ class telescope_params():
         self.use_zern_ab = False
         self.diam = 5.0 #8.0              # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
-        self.platescale = 13.61 #mas # have to run get_sampling at the focus to find this
+        self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
         self.beam_ratio = 25/64.#0.39#0.3#0.25#0.5
         # self.detector = 'MKIDs'#
         self.detector = 'ideal'#
@@ -141,7 +141,7 @@ class telescope_params():
         self.speck_locs = [[50,60]]
         self.speck_phases = [np.pi/2.]
         self.speck_peakIs = [0.05]
-        self.abertime = 0.5  #time scale of optic aberrations
+        self.abertime = 0.5  # time scale of optic aberrations
         self.samp = 0.2#0.125
         # self.data = 'data/aberrations'
         # self.date = '180210/'
