@@ -31,6 +31,8 @@ def iter_func(wavefronts, func, *args, **kwargs):
 
 
 def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
+
+    dprint("Running System")
     passpara = PASSVALUE['params']
     ap.__dict__ = passpara[0].__dict__
     tp.__dict__ = passpara[1].__dict__

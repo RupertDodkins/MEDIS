@@ -91,11 +91,11 @@ class telescope_params():
     def __init__(self):
         self.grid_size = 128 #128            # grid size
         # self.lamda = 1        # wavelength (microns)
-        self.nwsamp = 3 # number of wavefronts created in PROPER to sample from
-        self.w_bins = 8 # number of bins in the resultant datacube
+        self.nwsamp = 3  # number of wavefronts created in PROPER to sample from
+        self.w_bins = 8  # number of bins in the resultant datacube
         self.interp_sample = True
         # self.band = np.array([1100,1400]) #J band
-        self.band = np.array([800,1500]) # whole DARKNESS band
+        self.band = np.array([800,1500])  # whole DARKNESS band
         self.rot_rate = 0  #1 # deg/s
         self.use_spiders = True
         self.use_hex = False

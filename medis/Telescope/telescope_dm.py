@@ -323,18 +323,18 @@ def generate_maps():
         aberfreq = 1./abertime
         # tp.abertime=2 # aberfreq: number of frames goals per sec?
         num_longframes = aberfreq * ap.numframes*cp.frame_time
-        print(num_longframes, ap.numframes, cp.frame_time)
+        #print(num_longframes, ap.numframes, cp.frame_time)
         aber_cube = np.zeros((ap.numframes+1,tp.grid_size,tp.grid_size))
         lin_size = tp.grid_size**2
         # spacing = int(ap.numframes/num_longframes)
         # frame_idx = np.int_(np.linspace(0,ap.numframes,num_longframes+1))
         c = list(range(0,ap.numframes))
-        print(num_longframes)
+        #print(num_longframes)
         frame_idx = np.sort(random.sample(c,int(num_longframes+1-2)))
         # frame_idx = np.int_(np.sort(np.round(np.random.uniform(0,ap.numframes,num_longframes+1-2))))
         frame_idx = np.hstack(([0],frame_idx,[ap.numframes]))
         # frame_idx = [0,  15,   69,  278,  418,  703, 1287, 1900, 3030, 3228, 5000]
-        print(frame_idx)
+        #print(frame_idx)
         for f in frame_idx:
             aber_cube[f] = proper.prop_psd_errormap(wfo, rms_error, c_freq, high_power, MAP = "prim_map")#FILE=td.aberdir+'/telzPrimary_Map.fits')
             # quicklook_im(aber_cube[f], logAmp=False)
@@ -597,15 +597,16 @@ def add_zern_ab(wfo,f_lens):
     # proper.prop_propagate(wfo, f_lens, "DM")
 
 def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
+    dprint("Adding Atmosphere")
     obj_map = None
     samp = proper.prop_get_sampling(wf_array[0,0])*tp.band[0]*1e-9/w
-    dprint((atmos_map,samp))
+    #dprint((atmos_map,samp))
 
     shape = wf_array.shape
     if tp.piston_error:
         pist_error = np.random.lognormal(0,0.5,1)
         pist_error = 1.1*pist_error/6.9
-        dprint(pist_error)
+        #dprint(pist_error)
     else:
         pist_error = 0
     for iw in range(shape[0]):
@@ -627,7 +628,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
                         # print atmos_map
                         # print indx, indx +i, '%1.6f' % (indx +i)
                         atmos_map = atmos_map[:-19]+ '%1.6f' % (indx +i) + atmos_map[-11:]
-                        print(atmos_map)
+                        # dprint(atmos_map)
                         if up:
                             i+=1e-6
                         else:
@@ -636,6 +637,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
                             i = 0
                             up = 0
                         elif i <= -50e-6:
+                            dprint('Last found atmos map is %s',atmos_map)
                             print('No file found')
                             exit()
 

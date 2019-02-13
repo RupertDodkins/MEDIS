@@ -204,9 +204,7 @@ def run():
     if tp.active_null:
         tdm.initialize_NCPA_meas()
 
-    print(iop.atmosdir)
     caos.get_r0s()
-    print(cp.r0s)
     # cp.r0s = cp.r0s[5:]
     # plt.hist(cp.r0s)
     # plt.show()
@@ -239,9 +237,9 @@ def run():
     #     ap.contrast= []
     #     ap.lods = []
 
-    for param in [ap, cp, tp, mp, sp, iop]:
-        print('\n', param)
-        pprint(param.__dict__)
+    # for param in [ap, cp, tp, mp, sp, iop]:
+    #     print('\n', param)
+    #     pprint(param.__dict__)
     tp.check_args()
 
     output = multiprocessing.Queue()
