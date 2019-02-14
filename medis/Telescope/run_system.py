@@ -5,9 +5,6 @@
 # main = modules[0]+'.'+modules[1]
 # import importlib
 # params = importlib.import_module(main, package=None)
-# ap.__dict__ = params.ap.__dict__
-# tp.__dict__ = params.tp.__dict__
-# iop.__dict__ = params.iop.__dict__
 from scipy.interpolate import interp1d
 import proper
 import numpy as np
@@ -18,24 +15,24 @@ from medis.Telescope.coronagraph import coronagraph
 import medis.Telescope.FPWFS as FPWFS
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity
 import medis.Utils.rawImageIO as rawImageIO
-# import medis.params
 from medis.params import ap, tp, iop, sp
 
 from medis.Analysis.stats import save_pix_IQ
 from medis.Analysis.phot import aper_phot
 import medis.speckle_nulling.speckle_killer_v3 as skv3
 from medis.Utils.misc import dprint
-dprint(proper.__file__)
 
 
-# print 'line 21', tp.occulter_type
 def iter_func(wavefronts, func, *args, **kwargs):
     shape = wavefronts.shape
     for iw in range(shape[0]):
         for iwf in range(shape[1]):
             func(wavefronts[iw, iwf], *args, **kwargs)
 
+
 def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
+
+    dprint("Running System")
     passpara = PASSVALUE['params']
     ap.__dict__ = passpara[0].__dict__
     tp.__dict__ = passpara[1].__dict__
@@ -61,6 +58,7 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         wf_array = np.empty((len(wsamples), 1 + len(ap.contrast)), dtype=object)
     else:
         wf_array = np.empty((len(wsamples), 1), dtype=object)
+
     beam_ratios = np.zeros_like((wsamples))
     for iw, w in enumerate(wsamples):
         # Define the wavefront
@@ -78,7 +76,6 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         for io, (iwf, wf) in enumerate(zip(names, wfs)):
             wf_array[iw, io] = wf
 
-
     iter_func(wf_array, proper.prop_circular_aperture, **{'radius':tp.diam/2})
     if tp.use_atmos:
         tdm.add_atmos(wf_array, *(tp.f_lens, w, PASSVALUE['atmos_map']))
@@ -86,8 +83,6 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
 
     wf_array = tdm.abs_zeros(wf_array)
         # get_intensity(wf_array, sp, phase=True)
-
-
 
     if tp.rot_rate:
         iter_func(wf_array, tdm.rotate_atmos, *(PASSVALUE['atmos_map']))
@@ -258,7 +253,7 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     # quicklook_wf(wf_array[0, 1], show=True)
     # quicklook_wf(wf_array[1, 0], show=True)
 
-    dprint(proper.prop_get_sampling_arcsec(wf_array[0,0]))
+    dprint('Wavefront sampling = %2.8f' % proper.prop_get_sampling_arcsec(wf_array[0,0]))
     # dprint(proper.prop_get_sampling_arcsec(wf_array[0,1]))
 
     #         # exit()

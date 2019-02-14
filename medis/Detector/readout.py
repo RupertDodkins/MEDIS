@@ -36,10 +36,9 @@ def get_packets(datacube, step, dp,mp):
     # loop_frames(datacube)
     if tp.pix_shift is not None:
 
-        moves= np.shape(tp.pix_shift)[0]
+        moves = np.shape(tp.pix_shift)[0]
 
         iteration = step % moves
-        dprint((moves,step,iteration))
         datacube = np.roll(np.roll(datacube, tp.pix_shift[iteration][0], 1),
                            tp.pix_shift[iteration][1], 2)
 
@@ -53,21 +52,14 @@ def get_packets(datacube, step, dp,mp):
         datacube = datacube[:,bottom:-top,left:-right]
     # loop_frames(datacube)
     # quicklook_im(datacube[2], logAmp=False, vmax = 0.001, vmin=1e-8)
-    import matplotlib.pyplot as plt
-    # plt.hist(datacube[2].flatten(), bins=50)
-    # plt.show()
+
 
     if mp.respons_var:
         datacube *= dp.response_map[:datacube.shape[1],:datacube.shape[1]]
     # if mp.hot_pix:
     #     datacube = MKIDs.add_hot_pix(datacube, dp, step)
 
-    # plt.hist(datacube[2].flatten(), bins=50)
-    # plt.show()
-    # quicklook_im(dp.response_map, axis=None, title=' ', label='b')
-    # quicklook_im(datacube[2], logAmp=False, vmax = 0.0002, vmin=1e-8)
-    # view_datacube(datacube)
-    # print np.shape(datacube)
+
     num_events = int(ap.star_photons * ap.exposure_time * np.sum(datacube))
     dprint((num_events, ap.star_photons, np.sum(datacube), ap.exposure_time))
     if num_events * sp.num_processes > 1.0e9:
@@ -99,14 +91,6 @@ def get_packets(datacube, step, dp,mp):
         photons = np.hstack((photons, hot_photons))
     photons = spec.calibrate_phase(photons)
 
-
-
-    import matplotlib.pyplot as plt
-    # plt.plot(np.sum(datacube, axis=(1,2)))
-    # plt.show()
-    #
-    # plt.hist(photons[0], bins=100)
-    # plt.show()
 
     photons = temp.assign_calibtime(photons, step)
 
@@ -204,7 +188,7 @@ def get_packets(datacube, step, dp,mp):
     # plt.hist(packets[:,1], bins=bins)
     # plt.plot(bins[:-1],np.histogram(packets[:,1], bins=bins)[0])
     # plt.show()
-
+    dprint("Completed Readout Loop")
     return packets
 
 # def make_packet(basesDeg, phases, timestamp, pixId, xCoord, yCoord):

@@ -1,5 +1,7 @@
 import os
 import numpy as np
+import matplotlib as mpl
+mpl.use('Qt5Agg')
 from medis.params import tp, mp, cp, sp, ap, iop
 import medis.Detector.get_photon_data as gpd
 import matplotlib.pyplot as plt
@@ -33,10 +35,10 @@ tp.aber_params = {'CPA': True,
                     'Amp': False,
                     'n_surfs': 8,
                     'OOPP': [16,8,8,16,4,4,8,16]}#False}#
-mp.date = '180916/'
+#mp.date = '180916/'
 mp.bad_pix = True
 mp.array_size = np.array([80,125])
-iop.update(mp.date)
+#iop.update(mp.date)
 sp.num_processes = 1
 num_exp =1 #5000
 ap.exposure_time = 0.1  # 0.001
@@ -69,14 +71,13 @@ if __name__ == '__main__':
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)
 
-    ideal = gpd.run()[0, :]
+    ideal = gpd.take_obs_data()[0, :]
 
     # compare_images(ideal, logAmp=True, vmax = 0.01, vmin=1e-6, annos = ['Ideal 800 nm', '1033 nm', '1267 nm', '1500 nm'], title=r'$I$')
     with open(iop.int_maps, 'rb') as handle:
         int_maps = pickle.load(handle)
 
     int_maps = np.array(int_maps)
-    dprint(int_maps[0].shape)
     # view_datacube(int_maps, logAmp=True)
     grid(int_maps[::-1][:4], titles=r'$\phi$', annos=['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA'])
     grid(int_maps[::-1][4:], nrows =2, width=1, titles=r'$I$', annos=['Before Coron.', 'After Coron.'], logAmp=True)
@@ -87,7 +88,7 @@ tp.w_bins = 12
 
 
 if __name__ == '__main__':
-    mkid = gpd.run()[0, :]
+    mkid = gpd.take_obs_data()[0, :]
     compare_images(mkid[::2], vmax=200, logAmp=True, vmin=1, title=r'$I (cts)$', annos=['MKIDs 800 nm', '940 nm', '1080 nm', '1220 nm', '1360 nm', '1500 nm'])
     quicklook_im(np.mean(mkid[5:-1], axis=0), anno='MEDIS J Band', vmax=400, axis=None, title=r'$I (cts)$', logAmp=True, label='e')
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9, 3.8))

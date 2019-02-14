@@ -18,36 +18,42 @@ class io_params():
 
     def __init__(self, date='test/'):
         # High Level Paths
-        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
         self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Base path where results are stored (outside repository)
+        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
         self.data_test = os.path.join(self.datadir, date)  # Save results in new sub-directory
-        self.lab_obs_path = '/mnt/kids/'  #
+        # self.lab_obs_path = '/mnt/kids/'  #
 
-        # Chaos Paths
-        self.chaos_fits_dir = 'atmos/180828'  # directory with the FITS Files for Atmosphere created by caos
-        self.atmosdir = os.path.join(self.datadir, self.chaos_fits_dir)  # full path to FITS files
+        # Atmosphere Metadata
+        self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos
+        self.atmosdata = '180828'
+        self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
         self.idl_params = os.path.join(self.datadir, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
-        # Other Misc Params
-        self.obsfile = os.path.join(self.datadir, date, 'r0varyObsfile.h5')  # a h5 file to test?
+        # Aberration Metadata
+        self.aberroot = 'aberrations'
+        self.aberdata = '181201'
+        self.aberdir = os.path.join(self.datadir, self.aberroot, self.aberdata)
+        self.NCPA_meas = os.path.join(self.datadir, self.aberroot, self.aberdata, 'NCPA_meas.pkl') #
+        self.CPA_meas = os.path.join(self.datadir, self.aberroot, self.aberdata, 'CPA_meas.pkl')
+
+        # Unprocessed Photon Science Data
+        self.saveroot = 'science'
+        self.savedata = 'HR8799'
+        self.scidir = os.path.join(self.datadir, self.saveroot,self.savedata)
+        self.hyperFile = os.path.join(self.scidir, 'Hypercube.h5') # a x/y/t/w cube of data
+        self.obsfile = os.path.join(self.scidir, 'r0varyObsfile.h5')  # a photon table with 4 coloumns
+        self.device_params = os.path.join(self.scidir, 'deviceParams.pkl')  # detector metadata
+        self.coron_temp = os.path.join(self.scidir, 'coron_maps/') # required by vortex coron function
+
+        #Post Processing Data
         self.LCmapFile = os.path.join(self.datadir, 'LCmap.pkl')
         self.IratioFile = os.path.join(self.datadir, 'Iratio.pkl')
         self.DSFile = os.path.join(self.datadir, 'DS.pkl')
-        # self.hyperFile = os.path.join(self.datadir,'Hypercube.pkl')
-        self.hyperFile = os.path.join(self.datadir, 'Hypercube.hdf')
-        # self.IQpixel = os.path.join(self.datadir,'./novary64act_medr0_piston.txt')
         self.saveIQ = True
         self.int_maps = os.path.join(self.datadir, 'int_maps.pkl')
         self.IQpixel = os.path.join(self.datadir, './novary64act_medr0_piston.txt')
-        self.device_params = os.path.join(self.datadir, 'deviceParams.pkl')
-        self.NCPA_meas = os.path.join(self.datadir, 'NCPA_meas.pkl')
-        self.CPA_meas = os.path.join(self.datadir, 'CPA_meas.pkl')
-        # self.phase_ideal = os.path.join(self.datadir,'phase_ideal.pkl')
         self.measured_var = os.path.join(self.datadir, 'measured_var.pkl')
-        # self.data = 'data/aberrations'
-        # self.date = '180210/'
-        self.aberdir = os.path.join(self.datadir, 'aberrations/181201/')
-        self.coron_temp = os.path.join(self.datadir, 'processed', date, 'coron_maps/')
+
 
     def update(self, date='test/'):
         self.__init__(date=date)
@@ -89,32 +95,32 @@ class telescope_params():
 
     """
     def __init__(self):
-        self.grid_size = 128 #128            # grid size
+        self.grid_size = 128             # grid size
         # self.lamda = 1        # wavelength (microns)
-        self.nwsamp = 3 # number of wavefronts created in PROPER to sample from
-        self.w_bins = 8 # number of bins in the resultant datacube
+        self.nwsamp = 3  # number of wavefronts created in PROPER to sample from
+        self.w_bins = 8  # number of bins in the resultant datacube
         self.interp_sample = True
         # self.band = np.array([1100,1400]) #J band
-        self.band = np.array([800,1500]) # whole DARKNESS band
-        self.rot_rate = 0#1 # deg/s
+        self.band = np.array([800,1500])  # whole DARKNESS band
+        self.rot_rate = 0  #1 # deg/s
         self.use_spiders = True
         self.use_hex = False
-        self.use_atmos = True # have to for now because ao wfs reads in map produced but not neccessary
-        self.use_ao = True#True
+        self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary
+        self.use_ao = True  # True
         self.quick_ao = True
-        self.ao_act = 60#41 #32
-        self.servo_error= [0,1]#[0,1]#False # No delay and rate of 1/frame_time
+        self.ao_act = 60  # 41 #32
+        self.servo_error = [0,1]  #[0,1] # False # No delay and rate of 1/frame_time
         self.active_null = False
         self.active_converge_steps = 1#10
-        self.active_modulate=False
+        self.active_modulate = False
         # self.null_ao_act=66
         self.wfs_measurement_error = False
         self.piston_error = True
         self.wfs_scale = 3
         # self.occulter_type ='8th_Order'#'GAUSSIAN' None#'SOLID'#
-        self.occulter_type ='Vortex'#'Gaussian'# None#
+        self.occulter_type = 'Vortex'  # 'Gaussian'# None#
         # self.occulter_type = None#
-        self.occult_loc = [0,0]#[3,-5] #correspond to normal x y direction
+        self.occult_loc = [0,0]  # [3,-5] #correspond to normal x y direction
         self.use_apod = True
         self.apod_gaus = 1
         # self.CPA_type = 'Static'#'Quasi'# None
@@ -133,21 +139,16 @@ class telescope_params():
         self.use_zern_ab = False
         self.diam = 5.0 #8.0              # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
-        self.platescale = 13.61 #mas # have to run get_sampling at the focus to find this
-        self.beam_ratio = 25/64.#0.39#0.3#0.25#0.5
-        # self.detector = 'MKIDs'#
-        self.detector = 'ideal'#
+        self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
+        self.beam_ratio = 25/64. # 0.5
+        # self.detector = 'MKIDs'
+        self.detector = 'ideal'
         self.satelite_speck = False
         self.speck_locs = [[50,60]]
         self.speck_phases = [np.pi/2.]
         self.speck_peakIs = [0.05]
-        self.abertime = 0.5  #time scale of optic aberrations
+        self.abertime = 0.5  # time scale of optic aberrations
         self.samp = 0.2#0.125
-        self.rootdir = os.path.realpath(__file__)[:-16]
-        # self.data = 'data/aberrations'
-        # self.date = '180210/'
-        # self.aberdir = os.path.join(self.rootdir,self.data,self.date)
-        self.FPWFSdir = self.rootdir+'/MEDIS/speckle_nulling/speckle_nulling/'
         self.check_args()
         self.pix_shift = [0, 0] # no shift in x or y
 
@@ -163,12 +164,6 @@ class mkid_params():
         # self.interp_sample=True # avoids the quantization error in creating the datacube
         self.response_map = None
         self.wavecal_coeffs = [1./12, -157] #assume linear for now 800nm = -90deg, 1500nm = -30deg
-        self.rootdir = os.path.realpath(__file__)[:-16]#'/Data/PythonProjects/MEDIS/Data'
-        self.data = 'data/obsfiles'
-        # self.date = '180324/'
-        # self.datadir= os.path.join(self.rootdir,self.data, self.date)
-        # self.obsfile = 'r0varyObsfile.h5'
-        # self.proc_dir = 'data/processed'
         self.phase_uncertainty = False#True
         self.phase_background = False
         self.respons_var = False

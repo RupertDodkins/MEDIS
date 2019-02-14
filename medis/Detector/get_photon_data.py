@@ -2,9 +2,7 @@
 
 import os
 import proper
-print(proper.__file__)
 import numpy as np
-np.set_printoptions(threshold=np.inf)
 
 import traceback
 import multiprocessing
@@ -21,12 +19,13 @@ from medis.params import ap,cp,tp,mp,sp,iop,dp
 # import medis.Detector.analysis as ana
 import medis.Detector.MKIDs as MKIDs
 import medis.Detector.pipeline as pipe
-import medis.Telescope.run_system as run_system
+# import medis.Telescope.run_system as run_system
 import medis.Detector.readout as read #import Simulation, handle_output
 import medis.Telescope.telescope_dm as tdm
 import medis.Atmosphere.caos as caos
 
 # def run(verbose=False):
+np.set_printoptions(threshold=np.inf)
 
 
 
@@ -93,11 +92,11 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
             else:
                 r0 = cp.r0s # this is a scalar in this instance
             # dprint((t, r0, 'r0', tp.rot_rate))
-            atmos_map = iop.atmosdir + 'telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
+            atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
             # dprint((atmos_map, iop.atmosdir))
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
             # dprint(tp.occulter_type)
-            datacube, _ = proper.prop_run("medis.Telescope.run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
+            datacube, _ = proper.prop_run('medis.Telescope.run_system', 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
             # view_datacube(datacube, logAmp=True)
             # print np.sum(datacube,axis=(1,2))
 
@@ -184,7 +183,7 @@ def run():
     except RuntimeError:
         pass
     # initialize atmosphere
-    dprint(iop.atmosdir)
+    dprint("Atmosdir = %s " % iop.atmosdir)
     if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
         print("Making New Atmosphere Model")
         caos.make_idl_params()
@@ -200,14 +199,15 @@ def run():
     # if tp.servo_error:
     #     tdm.createObjMapsEmpty()
 
+    if tp.aber_params['CPA'] or tp.aber_params['NCPA']:
+        if not os.path.isdir(iop.aberdir):
+            os.makedirs(iop.aberdir, exist_ok=True)  # Only works in Python >= 3.2
     tdm.initialize_CPA_meas()
 
     if tp.active_null:
         tdm.initialize_NCPA_meas()
 
-    print(iop.atmosdir)
     caos.get_r0s()
-    print(cp.r0s)
     # cp.r0s = cp.r0s[5:]
     # plt.hist(cp.r0s)
     # plt.show()
@@ -240,9 +240,9 @@ def run():
     #     ap.contrast= []
     #     ap.lods = []
 
-    for param in [ap, cp, tp, mp, sp, iop]:
-        print('\n', param)
-        pprint(param.__dict__)
+    # for param in [ap, cp, tp, mp, sp, iop]:
+    #     print('\n', param)
+    #     pprint(param.__dict__)
     tp.check_args()
 
     output = multiprocessing.Queue()
@@ -257,12 +257,11 @@ def run():
     if tp.detector == 'MKIDs':
         hypercube = np.zeros((ap.numframes, tp.w_bins, mp.array_size[1], mp.array_size[0]))
     else:
-        hypercube = np.zeros((ap.numframes,tp.w_bins,tp.grid_size,tp.grid_size))
+        hypercube = np.zeros((ap.numframes, tp.w_bins, tp.grid_size, tp.grid_size))
     # hypercube = []
 
-    dprint(sp.num_processes)
+    #dprint(sp.num_processes)
     for i in range(sp.num_processes):
-        dprint(i)
         p = multiprocessing.Process(target=Simulation, args=(inqueue, output, datacubes,(tp,ap,sp,iop,cp,mp)))
         # p = multiprocessing.Process(target=Simulation, args=(inqueue, output, (dp,cp)))
         jobs.append(p)
@@ -280,7 +279,7 @@ def run():
 
             # dprint('lol')
     else:
-        print('If the code has hung here it probably means it cant read the CPA file at some iter')
+        dprint('If the code has hung here it probably means it cant read the CPA file at some iter')
         for t in range(ap.startframe, ap.startframe+ap.numframes):
             # # print rollout[t]
             # time.sleep(rollout[t])
@@ -336,7 +335,6 @@ def run():
         # print 'line 205', tp.detector
     if sp.return_cube:
         for t in range(ap.numframes):
-            dprint(t)
             datacube = datacubes.get()
             dprint(np.shape(datacube[1]))
             dprint(hypercube.shape)
@@ -358,15 +356,16 @@ def run():
     # pool.close()
     # pool.join()
 
-    print('Done')
+    dprint('Photon Data Run Completed')
     # datacubes = p.map(mp_worker, range(cp.numframes))
     return hypercube
 
 def take_obs_data():
     import time
-    # print os.path.isdir(mp.datadir)
     if not os.path.isdir(iop.datadir):
         os.mkdir(iop.datadir)
+    if not os.path.isdir(iop.scidir):
+        os.makedirs(iop.scidir, exist_ok=True) # Only works in Python >= 3.2
     print('********** Taking Obs Data ***********')
     begin = time.time()
     hypercube = run()

@@ -26,7 +26,7 @@ sp.save_obs = False
 sp.show_cube=False
 ap.companion = True
 sp.get_ints=False
-ap.star_photons = int(1e8) #1e8
+ap.star_photons = int(1e6) #1e8
 # ap.contrast = [10**-2.1,10**-3.1,10**-3.1]  # [0.1,0.1]
 # ap.lods = [[-3.2,3.2],[-3.2,0.3],[-4.2,-6.2]]#[6,-4.5],
 ap.contrast = [10**-3.1,10**-3.1,10**-3.1,10**-4,10**-4,10**-4]  # [0.1,0.1]
@@ -61,8 +61,8 @@ mp.date = 'HR8799niceAberidealPCA72001e8comp/'
 mp.bad_pix = True
 mp.array_size = np.array([146,146])
 iop.update(mp.date)
-sp.num_processes = 3
-num_exp =100
+sp.num_processes = 1
+num_exp =10
 cp.frame_time = 0.05
 date = '180828/'
 dprint((iop.datadir, date))
@@ -73,7 +73,7 @@ tp.band = np.array([700, 1500])
 tp.nwsamp = 4
 tp.w_bins = 16#8
 tp.rot_rate = 0  # deg/s
-tp.pix_shift = None
+# tp.pix_shift = None
 # tp.pix_shift = []
 # for ix in range(-2, 3):
 #     for iy in range(-2, 3):
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     ap.exposure_time = 0.1  # 0.001
 
     ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
-    iop.hyperFile = iop.datadir + 'HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
+    # iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
     dprint(iop.hyperFile)
 
     orig_hyper = read.get_integ_hypercube(plot=False)[:, :]

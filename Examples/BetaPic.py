@@ -1,6 +1,6 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
 import numpy as np
-import copy
+import os
 import matplotlib.pyplot as plt
 from vip_hci import phot, pca
 from medis.params import ap, cp, tp, sp, mp, iop
@@ -9,7 +9,6 @@ from medis.Utils.rawImageIO import clipped_zoom
 import medis.Detector.readout as read
 import medis.Analysis.phot
 import medis.Analysis.stats
-import pandas as pd
 from medis.Utils.misc import dprint
 
 # Global params
@@ -47,12 +46,6 @@ tp.aber_params = {'CPA': True,
                     'Amp': True,
                     'n_surfs': 4,
                     'OOPP': [16,8,8, 4]}#False}#
-mp.date = '180827/'
-import os
-iop.update(mp.date)
-# iop.aberdir = os.path.join(iop.rootdir, 'data/aberrations/180630_30mins')
-cp.date = '1804171hr8m/'
-iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
 sp.num_processes = 40
 tp.occulter_type = '8th_Order'
 
@@ -106,14 +99,13 @@ if __name__ == '__main__':
     # # loop_frames(psf_hyper[::10,0], logAmp=True)
     # # RDI (for SDI)
 
-    iop.hyperFile = iop.datadir + 'BpicSource5.pkl'  # 5
-    # iop.hyperFile = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_1stMKIDs2.pkl'#5
+    iop.hyperFile = iop.datadir + 'BpicSource5.pkl'
+    if not os.path.isdir(iop.hyperFile):
+        os.mkdir(iop.hyperFile)
     simple_hypercube_1 = read.get_integ_hypercube(plot=False)#/ap.numframes
 
     ap.startframe = ap.numframes
-    ap.companion =False
-    iop.hyperFile = iop.datadir + 'BpicRef5.pkl'  # 5
-    # # iop.hyperFile = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_2ndMKIDs2.pkl'#5
+    ap.companion = False
     simple_hypercube_2 = read.get_integ_hypercube(plot=False)#/ap.numframes
     #
     # loop_frames(simple_hypercube_1[:,0], logAmp=True)
