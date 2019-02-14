@@ -63,8 +63,8 @@ def get_packets(datacube, step, dp,mp):
     num_events = int(ap.star_photons * ap.exposure_time * np.sum(datacube))
     dprint((num_events, ap.star_photons, np.sum(datacube), ap.exposure_time))
     if num_events * sp.num_processes > 1.0e9:
-        print(num_events)
-        print('Possibly too many photons for memory. Are you sure you want to do this? Remove exit() if so')
+        dprint(num_events)
+        dprint('Possibly too many photons for memory. Are you sure you want to do this? Remove exit() if so')
         exit()
 
 
