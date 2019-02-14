@@ -403,17 +403,25 @@ def add_single_speck(wfo, iter):
     # wfo.wfarr += wf_temp3.wfarr / 20
 
 def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
+    dprint("Adding Abberations")
+    # print aber_params
+
+    if not os.path.isdir(iop.aberdir):
+        os.mkdir(iop.aberdir)
+
     if aber_params['QuasiStatic'] == False:
         step = 0
     else:
         dprint((iop.aberdir, iop.aberdir[-6:]))
         if iop.aberdir[-6:] != 'quasi/':
             iop.aberdir = iop.aberdir+'quasi/'
-    # print aber_params
+            if os.path.isdir(iop.aberdir) == False:
+                os.mkdir(iop.aberdir)
     phase_maps = np.zeros((aber_params['n_surfs'],tp.grid_size,tp.grid_size))
     amp_maps = np.zeros_like(phase_maps)
 
     shape = wf_array.shape
+    # The For Loop of Horror:
     for iw in range(shape[0]):
         for io in range(shape[1]):
             if aber_params['Phase']:
@@ -444,7 +452,8 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
                 # filename = '%s%s_Amp%f.fits' % (iop.aberdir, Loc, step * cp.frame_time)
                 for surf in range(aber_params['n_surfs']):
                     filename = '%s%s_Amp%f_v%i.fits' % (iop.aberdir, Loc, step * cp.frame_time, surf)
-                    # print filename
+                    if not os.path.isdir(iop.aberdir):
+                        os.mkdir(iop.aberdir)
                     rms_error = np.random.normal(aber_vals['a_amp'][0],aber_vals['a_amp'][1])
                     c_freq = np.random.normal(aber_vals['b'][0],
                                               aber_vals['b'][1])  # correlation frequency (cycles/meter)
@@ -504,7 +513,7 @@ def add_static(wfo, f_lens, loc = 'CPA', type='phase'):
         c_freq = 1  # correlation frequency (cycles/meter)
         high_power = 3.  # high frewquency falloff (r^-high_power)
         prim_map = proper.prop_psd_errormap(wfo, rms_error, c_freq, high_power, FILE=iop.aberdir + loc + '_static_amp.fits', AMPLITUDE=1.0)
-        print('yep')
+
     else:
         prim_map = proper.prop_psd_errormap(wfo, rms_error, c_freq, high_power, FILE=iop.aberdir + loc + '_static_2.fits', TPF=True)
 
@@ -555,6 +564,7 @@ def add_IFS_ab(wfo, f_lens, w):
 
 
 def add_quasi(wfo, f_lens, step):
+    dprint("Including Static Aberations")
     # print 'Including Static Aberations'
     # rms_error = 0.01#500.e-9       # RMS wavefront error in meters
     # c_freq = 20.             # correlation frequency (cycles/meter)
@@ -637,7 +647,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
                             i = 0
                             up = 0
                         elif i <= -50e-6:
-                            dprint('Last found atmos map is %s',atmos_map)
+                            dprint('Last found atmos map is %s' % atmos_map)
                             print('No file found')
                             exit()
 

@@ -58,6 +58,7 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         wf_array = np.empty((len(wsamples), 1 + len(ap.contrast)), dtype=object)
     else:
         wf_array = np.empty((len(wsamples), 1), dtype=object)
+
     beam_ratios = np.zeros_like((wsamples))
     for iw, w in enumerate(wsamples):
         # Define the wavefront

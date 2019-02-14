@@ -33,10 +33,10 @@ tp.aber_params = {'CPA': True,
                     'Amp': False,
                     'n_surfs': 8,
                     'OOPP': [16,8,8,16,4,4,8,16]}#False}#
-mp.date = '180916/'
+#mp.date = '180916/'
 mp.bad_pix = True
 mp.array_size = np.array([80,125])
-iop.update(mp.date)
+#iop.update(mp.date)
 sp.num_processes = 1
 num_exp =1 #5000
 ap.exposure_time = 0.1  # 0.001

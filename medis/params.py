@@ -17,7 +17,8 @@ class io_params():
 
     def __init__(self, date='test/'):
         # High Level Paths
-        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
+        #self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
+        self.rootdir = '/home/captainkay/mazinlab/MKIDSim/'
         self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # Base path where results are stored (outside repository)
         self.data_test = os.path.join(self.datadir, date)  # Save results in new sub-directory
         self.lab_obs_path = '/mnt/kids/'  #
@@ -45,7 +46,7 @@ class io_params():
         self.measured_var = os.path.join(self.datadir, 'measured_var.pkl')
         # self.data = 'data/aberrations'
         # self.date = '180210/'
-        self.aberdir = os.path.join(self.lab_obs_path, 'medis', 'aberrations/181201/')
+        self.aberdir = os.path.join(self.lab_obs_path, 'medis', 'aberrations/')
         self.coron_temp = os.path.join(self.lab_obs_path, date, 'coron_maps/')
         self.FPWFSdir = self.rootdir + 'speckle_nulling/'
 
@@ -103,10 +104,10 @@ class telescope_params():
         self.use_ao = True  # True
         self.quick_ao = True
         self.ao_act = 60  # 41 #32
-        self.servo_error= [0,1]  #[0,1] # False # No delay and rate of 1/frame_time
+        self.servo_error = [0,1]  #[0,1] # False # No delay and rate of 1/frame_time
         self.active_null = False
         self.active_converge_steps = 1#10
-        self.active_modulate=False
+        self.active_modulate = False
         # self.null_ao_act=66
         self.wfs_measurement_error = False
         self.piston_error = True
@@ -145,7 +146,6 @@ class telescope_params():
         self.samp = 0.2#0.125
         # self.data = 'data/aberrations'
         # self.date = '180210/'
-        # self.aberdir = os.path.join(self.rootdir,self.data,self.date)
         self.check_args()
         self.pix_shift = False
 
