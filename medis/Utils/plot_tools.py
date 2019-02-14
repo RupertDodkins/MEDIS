@@ -38,7 +38,7 @@ def grid(datacube, nrows =2, logAmp=False, axis=None, width=None, titles=None, a
     '''axis = anno/None/True'''
     if not width:
         width = len(datacube)//nrows
-    if vmins == None:
+    if vmins is None:
         vmins = len(datacube) * [None]
         vmaxs = len(datacube) * [None]
 
@@ -213,14 +213,19 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
         fig, axes = plt.subplots(nrows=2, ncols=width,figsize=(14,3.4))
     elif width == 2:
         fig, axes = plt.subplots(nrows=2, ncols=width,figsize=(7,3.1))
+    else:
+        # dprint((nrows, width))
+        fig, axes = plt.subplots(nrows=1, ncols=width, figsize=(14, 8))
+        axes = axes.reshape(1, width)
     # maps = len(datacube)
     # print maps, width
+
 
     # norm = np.sum(datacube[0])
     # datacube = datacube/norm
 
     peaks, troughs = [], []
-    # dprint(datacube.shape)
+    dprint((datacube.shape, axes.shape, width))
     # plt.imshow(datacube[0])
     # plt.show()
     for image in datacube:
@@ -254,7 +259,7 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
             print('before', np.min(datacube[m]))
             if np.min(datacube[m]) <= 0.:
                 print('Using SymLogNorm')
-                im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
+                im = ax[m].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                norm=SymLogNorm(linthresh=1e-7), cmap="YlGnBu_r")
                 # datacube[m] = np.abs(datacube[m]) + 1e-20
                 # vmin = 1e-3
@@ -384,12 +389,12 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
     # print peak, trough, 'max'
 
 
-    if vmin != None:
-        if peak >= vmin:
-            vmax = peak
-    else:
-        vmin = np.min(datacube)
-    dprint((vmin, peak))
+    # if vmin != None:
+    #     if peak >= vmin:
+    #         vmax = peak
+    # else:
+    #     vmin = np.min(datacube)
+    dprint((vmin, vmax, peak))
     for w in range(colors):
         ax = fig.add_subplot(height,width,w+1)
         if logAmp:
@@ -399,9 +404,9 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
                                     norm=SymLogNorm(linthresh=1e-5),
                                     cmap="YlGnBu_r")
             else:
-                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin= vmin, vmax = peak, norm= LogNorm(), cmap="YlGnBu_r")
+                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin= vmin, vmax = vmax, norm= LogNorm(), cmap="YlGnBu_r")
         else:
-            im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax = peak, cmap="YlGnBu_r")
+            im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax = vmax, cmap="YlGnBu_r")
         if axis == 'anno':
             annotate_axis(im, ax, datacube.shape[1])
         if axis==None:
@@ -529,13 +534,14 @@ def annotate_axis(im, ax, width):
 def loop_frames(frames, axis=False, circles=None, logAmp=False, vmin=None, vmax = None, show=True):
     fig, ax = plt.subplots()
     ax.set(title='Click to update the data')
+    dprint((vmin, vmax))
     if logAmp:
         if np.min(frames) < 0:
             im = ax.imshow(frames[0],norm=SymLogNorm(linthresh=1e-3), origin='lower', vmin=vmin, vmax = vmax)
         else:
             im = ax.imshow(frames[0],norm= LogNorm(), origin='lower', vmin=vmin, vmax = vmax)
     else:
-        im = ax.imshow(frames[0], origin='lower')
+        im = ax.imshow(frames[0], origin='lower', vmin=vmin, vmax = vmax)
     if axis:
         annotate_axis(im, ax, frames.shape[1])
     cbar = plt.colorbar(im)

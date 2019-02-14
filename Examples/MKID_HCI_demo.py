@@ -1,6 +1,5 @@
 '''Example Code for conducting SDI with MKIDs'''
 
-# import sys
 import os
 import matplotlib as mpl
 mpl.use('Qt5Agg')
@@ -19,8 +18,7 @@ from medis.params import tp, mp, cp, sp, ap, iop
 from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
 from medis.Utils.misc import dprint
 import medis.Detector.readout as read
-from medis.Analysis.phot import get_unoccult_psf
-
+from medis.Analysis.phot import get_unoccult_psf, eval_method
 
 # Parameters specific to this script
 sp.show_wframe = False
@@ -64,7 +62,7 @@ mp.bad_pix = True
 mp.array_size = np.array([146,146])
 iop.update(mp.date)
 sp.num_processes = 3
-num_exp =10
+num_exp =100
 cp.frame_time = 0.05
 date = '180828/'
 dprint((iop.datadir, date))
@@ -199,19 +197,19 @@ if __name__ == '__main__':
     indep_images(maps, logAmp=True)
     plt.show()
     # fast_hyper = fast_hyper[:,:10]
-    method_out = Analysis.phot.eval_method(fast_hyper, pca.pca,psf_template,
+    method_out = eval_method(fast_hyper, pca.pca,psf_template,
                                            np.zeros((fast_hyper.shape[1])), algo_dict,
                                            fwhm=lod, star_phot=star_phot)
     plotdata.append(method_out[0])
     maps.append(method_out[1])
     # #
-    method_out = Analysis.phot.eval_method(med_hyper, pca.pca,psf_template,
+    method_out = eval_method(med_hyper, pca.pca,psf_template,
                                            np.zeros((med_hyper.shape[1])), algo_dict,
                                            fwhm=lod, star_phot=star_phot)
     plotdata.append(method_out[0])
     maps.append(method_out[1])
     #
-    method_out = Analysis.phot.eval_method(slow_hyper, pca.pca,psf_template,
+    method_out = eval_method(slow_hyper, pca.pca,psf_template,
                                            np.zeros((slow_hyper.shape[1])), algo_dict,
                                            fwhm=lod, star_phot=star_phot)
     plotdata.append(method_out[0])

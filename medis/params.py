@@ -46,8 +46,8 @@ class io_params():
         self.measured_var = os.path.join(self.datadir, 'measured_var.pkl')
         # self.data = 'data/aberrations'
         # self.date = '180210/'
-        self.aberdir = os.path.join(self.lab_obs_path, 'medis', 'aberrations/181201/')
-        self.coron_temp = os.path.join(self.lab_obs_path, date, 'coron_maps/')
+        self.aberdir = os.path.join(self.datadir, 'aberrations/181201/')
+        self.coron_temp = os.path.join(self.datadir, 'processed', date, 'coron_maps/')
 
     def update(self, date='test/'):
         self.__init__(date=date)
@@ -149,7 +149,7 @@ class telescope_params():
         # self.aberdir = os.path.join(self.rootdir,self.data,self.date)
         self.FPWFSdir = self.rootdir+'/MEDIS/speckle_nulling/speckle_nulling/'
         self.check_args()
-        self.pix_shift = False
+        self.pix_shift = [0, 0] # no shift in x or y
 
     def check_args(self):
         assert self.occulter_type in [None, 'None', 'Solid', 'Gaussian', '8th_Order', 'Vortex', 'None (Lyot Stop)']

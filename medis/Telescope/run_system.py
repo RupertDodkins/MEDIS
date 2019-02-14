@@ -325,8 +325,8 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         datacube.append(wframes)
 
     datacube = np.array(datacube)
-    # if tp.pix_shift:
-    #     datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)
+    # if tp.pix_shift is not False:
+    datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)
     datacube = np.abs(datacube)
     # #normalize
     # dprint(np.sum(datacube, axis=(1, 2)))
