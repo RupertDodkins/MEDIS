@@ -18,8 +18,8 @@ class io_params():
 
     def __init__(self, testname='test/'):
         # High Level Paths
-        #self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        self.datadir = '/home/captainkay/mazinlab/MKIDSim/'  # personal datadir instead
+        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        #self.datadir = '/home/captainkay/mazinlab/MKIDSim/'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
         self.testdata = os.path.join(self.datadir, testname)  # Save results in new sub-directory
         # self.lab_obs_path = '/mnt/kids/'  #
