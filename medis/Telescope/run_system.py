@@ -253,7 +253,7 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     # quicklook_wf(wf_array[0, 1], show=True)
     # quicklook_wf(wf_array[1, 0], show=True)
 
-    dprint(proper.prop_get_sampling_arcsec(wf_array[0,0]))
+    dprint('Wavefront sampling = %2.8f' % proper.prop_get_sampling_arcsec(wf_array[0,0]))
     # dprint(proper.prop_get_sampling_arcsec(wf_array[0,1]))
 
     #         # exit()

@@ -144,10 +144,8 @@ class telescope_params():
         self.speck_peakIs = [0.05]
         self.abertime = 0.5  # time scale of optic aberrations
         self.samp = 0.2#0.125
-        # self.data = 'data/aberrations'
-        # self.date = '180210/'
         self.check_args()
-        self.pix_shift = False
+        self.pix_shift = [0,0]  # False?
 
     def check_args(self):
         assert self.occulter_type in [None, 'None', 'Solid', 'Gaussian', '8th_Order', 'Vortex', 'None (Lyot Stop)']
@@ -161,12 +159,6 @@ class mkid_params():
         # self.interp_sample=True # avoids the quantization error in creating the datacube
         self.response_map = None
         self.wavecal_coeffs = [1./12, -157] #assume linear for now 800nm = -90deg, 1500nm = -30deg
-        self.rootdir = os.path.realpath(__file__)[:-16]#'/Data/PythonProjects/MEDIS/Data'
-        self.data = 'data/obsfiles'
-        # self.date = '180324/'
-        # self.datadir= os.path.join(self.rootdir,self.data, self.date)
-        # self.obsfile = 'r0varyObsfile.h5'
-        # self.proc_dir = 'data/processed'
         self.phase_uncertainty = False#True
         self.phase_background = False
         self.respons_var = False

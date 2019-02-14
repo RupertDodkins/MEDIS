@@ -3,7 +3,6 @@
 import os
 import proper
 import numpy as np
-np.set_printoptions(threshold=np.inf)
 
 import traceback
 import multiprocessing
@@ -26,6 +25,7 @@ import medis.Telescope.telescope_dm as tdm
 import medis.Atmosphere.caos as caos
 
 # def run(verbose=False):
+np.set_printoptions(threshold=np.inf)
 
 
 
@@ -183,7 +183,7 @@ def run():
     except RuntimeError:
         pass
     # initialize atmosphere
-    dprint(iop.atmosdir)
+    dprint("Atmosdir = %s " % iop.atmosdir)
     if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
         print("Making New Atmosphere Model")
         caos.make_idl_params()
@@ -254,7 +254,7 @@ def run():
     if tp.detector == 'MKIDs':
         hypercube = np.zeros((ap.numframes, tp.w_bins, mp.array_size[1], mp.array_size[0]))
     else:
-        hypercube = np.zeros((ap.numframes,tp.w_bins,tp.grid_size,tp.grid_size))
+        hypercube = np.zeros((ap.numframes, tp.w_bins, tp.grid_size, tp.grid_size))
     # hypercube = []
 
     #dprint(sp.num_processes)
@@ -276,7 +276,7 @@ def run():
 
             # dprint('lol')
     else:
-        print('If the code has hung here it probably means it cant read the CPA file at some iter')
+        dprint('If the code has hung here it probably means it cant read the CPA file at some iter')
         for t in range(ap.startframe, ap.startframe+ap.numframes):
             # # print rollout[t]
             # time.sleep(rollout[t])
@@ -332,7 +332,6 @@ def run():
         # print 'line 205', tp.detector
     if sp.return_cube:
         for t in range(ap.numframes):
-            dprint(t)
             datacube = datacubes.get()
             dprint(np.shape(datacube[1]))
             dprint(hypercube.shape)
@@ -354,13 +353,12 @@ def run():
     # pool.close()
     # pool.join()
 
-    print('Done')
+    dprint('Photon Data Run Completed')
     # datacubes = p.map(mp_worker, range(cp.numframes))
     return hypercube
 
 def take_obs_data():
     import time
-    # print os.path.isdir(mp.datadir)
     if not os.path.isdir(iop.datadir):
         os.mkdir(iop.datadir)
     print('********** Taking Obs Data ***********')

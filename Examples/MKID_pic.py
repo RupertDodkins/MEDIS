@@ -76,7 +76,6 @@ if __name__ == '__main__':
         int_maps = pickle.load(handle)
 
     int_maps = np.array(int_maps)
-    dprint(int_maps[0].shape)
     # view_datacube(int_maps, logAmp=True)
     grid(int_maps[::-1][:4], titles=r'$\phi$', annos=['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA'])
     grid(int_maps[::-1][4:], nrows =2, width=1, titles=r'$I$', annos=['Before Coron.', 'After Coron.'], logAmp=True)

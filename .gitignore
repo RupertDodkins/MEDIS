@@ -79,3 +79,8 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+
+# medis.params.py
+#  added 2/12/19
+/home/captainkay/mazinlab/MKIDSim/MEDIS/medis/params.py
+
