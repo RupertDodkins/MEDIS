@@ -10,48 +10,53 @@ import proper
 import os
 # import vip
 
+
 class io_params():
     """
     Define file tree/structure to import and save data
     """
 
-    def __init__(self, date='test/'):
+    def __init__(self, testname='test/'):
         # High Level Paths
-        #self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
-        self.rootdir = '/home/captainkay/mazinlab/MKIDSim/'
-        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # Base path where results are stored (outside repository)
-        self.data_test = os.path.join(self.datadir, date)  # Save results in new sub-directory
-        self.lab_obs_path = '/mnt/kids/'  #
+        #self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        self.datadir = '/home/captainkay/mazinlab/MKIDSim/'  # personal datadir instead
+        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
+        self.testdata = os.path.join(self.datadir, testname)  # Save results in new sub-directory
+        # self.lab_obs_path = '/mnt/kids/'  #
 
-        # Chaos  Paths
-        self.chaos_fits_dir = '180828/'  # directory with the FITS Files for Atmosphere created by caos
-        self.atmosdir = os.path.join(self.datadir, self.chaos_fits_dir)  # full path to FITS files
-        self.idl_params = os.path.join(self.datadir, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
+        # Atmosphere Metadata
+        self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos
+        self.atmosdata = '180828'
+        self.atmosdir = os.path.join(self.testdata, self.atmosroot, self.atmosdata)  # full path to FITS files
+        self.idl_params = os.path.join(self.testdata, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
-        # Other Misc Params
-        self.obsfile = os.path.join(self.datadir, date, 'r0varyObsfile.h5')  # a h5 file to test?
-        self.LCmapFile = os.path.join(self.datadir, 'LCmap.pkl')
-        self.IratioFile = os.path.join(self.datadir, 'Iratio.pkl')
-        self.DSFile = os.path.join(self.datadir, 'DS.pkl')
-        # self.hyperFile = os.path.join(self.datadir,'Hypercube.pkl')
-        self.hyperFile = os.path.join(self.datadir, 'Hypercube.hdf')
-        # self.IQpixel = os.path.join(self.datadir,'./novary64act_medr0_piston.txt')
+        # Aberration Metadata
+        self.aberroot = 'aberrations'
+        self.aberdata = '181201'
+        self.aberdir = os.path.join(self.testdata, self.aberroot, self.aberdata)
+        self.NCPA_meas = os.path.join(self.testdata, self.aberroot, self.aberdata, 'NCPA_meas.pkl') #
+        self.CPA_meas = os.path.join(self.testdata, self.aberroot, self.aberdata, 'CPA_meas.pkl')
+
+        # Unprocessed Photon Science Data
+        self.sciroot = 'science'
+        self.savedata = 'HR8799'
+        self.scidir = os.path.join(self.testdata, self.sciroot, self.savedata)
+        self.hyperFile = os.path.join(self.scidir, 'Hypercube.h5') # a x/y/t/w cube of data
+        self.obsfile = os.path.join(self.scidir, 'r0varyObsfile.h5')  # a photon table with 4 coloumns
+        self.device_params = os.path.join(self.scidir, 'deviceParams.pkl')  # detector metadata
+        self.coron_temp = os.path.join(self.scidir, 'coron_maps/') # required by vortex coron function
+
+        #Post Processing Data
+        self.LCmapFile = os.path.join(self.testdata, 'LCmap.pkl')
+        self.IratioFile = os.path.join(self.testdata, 'Iratio.pkl')
+        self.DSFile = os.path.join(self.testdata, 'DS.pkl')
         self.saveIQ = True
-        self.int_maps = os.path.join(self.datadir, 'int_maps.pkl')
-        self.IQpixel = os.path.join(self.datadir, './novary64act_medr0_piston.txt')
-        self.device_params = os.path.join(self.datadir, 'deviceParams.pkl')
-        self.NCPA_meas = os.path.join(self.datadir, 'NCPA_meas.pkl')
-        self.CPA_meas = os.path.join(self.datadir, 'CPA_meas.pkl')
-        # self.phase_ideal = os.path.join(self.datadir,'phase_ideal.pkl')
-        self.measured_var = os.path.join(self.datadir, 'measured_var.pkl')
-        # self.data = 'data/aberrations'
-        # self.date = '180210/'
-        self.aberdir = os.path.join(self.lab_obs_path, 'medis', 'aberrations/')
-        self.coron_temp = os.path.join(self.lab_obs_path, date, 'coron_maps/')
-        self.FPWFSdir = self.rootdir + 'speckle_nulling/'
+        self.int_maps = os.path.join(self.testdata, 'int_maps.pkl')
+        self.IQpixel = os.path.join(self.testdata, './novary64act_medr0_piston.txt')
+        self.measured_var = os.path.join(self.testdata, 'measured_var.pkl')
 
-    def update(self, date='test/'):
-        self.__init__(date=date)
+    def update(self, testname='test/'):
+        self.__init__(testname=testname)
 
 
 class astro_params():
