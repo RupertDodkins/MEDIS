@@ -19,7 +19,7 @@ class io_params():
     def __init__(self, testname='test/'):
         # High Level Paths
         self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        #self.datadir = '/home/captainkay/mazinlab/MKIDSim/'  # personal datadir instead
+        #self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
         self.testdata = os.path.join(self.datadir, testname)  # Save results in new sub-directory
         # self.lab_obs_path = '/mnt/kids/'  #
@@ -27,8 +27,8 @@ class io_params():
         # Atmosphere Metadata
         self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos
         self.atmosdata = '180828'
-        self.atmosdir = os.path.join(self.testdata, self.atmosroot, self.atmosdata)  # full path to FITS files
-        self.idl_params = os.path.join(self.testdata, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
+        self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
+        self.idl_params = os.path.join(self.atmosroot, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
         # Aberration Metadata
         self.aberroot = 'aberrations'
@@ -36,6 +36,7 @@ class io_params():
         self.aberdir = os.path.join(self.testdata, self.aberroot, self.aberdata)
         self.NCPA_meas = os.path.join(self.testdata, self.aberroot, self.aberdata, 'NCPA_meas.pkl') #
         self.CPA_meas = os.path.join(self.testdata, self.aberroot, self.aberdata, 'CPA_meas.pkl')
+        self.quasi = os.path.join(self.aberdir, 'quasi/')
 
         # Unprocessed Photon Science Data
         self.sciroot = 'science'
@@ -267,6 +268,27 @@ sp = simulation_params()
 iop = io_params()
 dp = device_params()
 fp = FPWFS_params()
+
+if not os.path.isdir(iop.datadir):
+    os.mkdir(iop.datadir)
+if not os.path.isdir(iop.testdata):
+    os.mkdir(iop.testdata)
+if not os.path.isdir(iop.atmosroot):
+    os.mkdir(iop.atmosroot)
+if not os.path.isdir(iop.atmosdir):
+    os.mkdir(iop.atmosdir)
+absroot = os.path.join(iop.testdata, iop.aberroot)
+if not os.path.isdir(absroot):
+    os.mkdir(absroot)
+if not os.path.isdir(iop.aberdir):
+    os.mkdir(iop.aberdir)
+sciroot = os.path.join(iop.testdata, iop.sciroot)
+if not os.path.isdir(sciroot):
+    os.mkdir(sciroot)
+if not os.path.isdir(iop.scidir):
+    os.mkdir(iop.scidir)
+if not os.path.isdir(iop.quasi):
+    os.mkdir(iop.quasi)
 
 proper.print_it = False
 # proper.prop_init_savestate()

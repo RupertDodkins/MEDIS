@@ -359,8 +359,6 @@ def run():
 
 def take_obs_data():
     import time
-    if not os.path.isdir(iop.datadir):
-        os.mkdir(iop.datadir)
     print('********** Taking Obs Data ***********')
     begin = time.time()
     hypercube = run()
