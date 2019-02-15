@@ -63,6 +63,7 @@ def initialize_CPA_meas():
     CPA_maps = np.zeros((required_nframes,tp.nwsamp, tp.grid_size,tp.grid_size))
 
     # CPA_map = np.zeros((tp.grid_size, tp.grid_size))
+
     with open(iop.CPA_meas, 'wb') as handle:
         pickle.dump((CPA_maps, np.arange(0,-required_nframes,-1)), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -241,9 +242,6 @@ def offset_companion(wf_array, atmos_map):
 def generate_maps2(Loc='CPA'):
     import random
 
-    if not os.path.isdir(iop.aberdir+'/quasi'):
-        os.mkdir(iop.aberdir+'quasi')
-
     print('Generating optic aberration maps using Proper')
     wfo = proper.prop_begin(tp.diam, 1., tp.grid_size, tp.beam_ratio)
     # # rms_error = 5e-6#500.e-9       # RMS wavefront error in meters
@@ -359,8 +357,7 @@ def generate_maps():
     aber_cube = np.sum(abercubes,axis=0)
     plt.plot(aber_cube[:, 20, 20])
     plt.show()
-    if not os.path.isdir(iop.aberdir):
-        os.mkdir(iop.aberdir)
+
     for f in range(0,ap.numframes,1):
         # print 'saving frame #', f
         if f%100==0: misc.progressBar(value = f, endvalue=ap.numframes)
@@ -406,8 +403,6 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
     dprint("Adding Abberations")
     # print aber_params
 
-    if not os.path.isdir(iop.aberdir):
-        os.mkdir(iop.aberdir)
 
     if aber_params['QuasiStatic'] == False:
         step = 0
@@ -415,8 +410,7 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
         dprint((iop.aberdir, iop.aberdir[-6:]))
         if iop.aberdir[-6:] != 'quasi/':
             iop.aberdir = iop.aberdir+'quasi/'
-            if os.path.isdir(iop.aberdir) == False:
-                os.mkdir(iop.aberdir)
+
     phase_maps = np.zeros((aber_params['n_surfs'],tp.grid_size,tp.grid_size))
     amp_maps = np.zeros_like(phase_maps)
 
@@ -431,7 +425,7 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
                         proper.prop_propagate(wf_array[iw,io],f_lens/aber_params['OOPP'][surf])
                     #     quicklook_wf(wfo)
                     if iw == 0 and io == 0:
-                        filename = '%s/%s_Phase%f_v%i.fits' % (iop.aberdir, Loc, step * cp.frame_time, surf)
+                        filename = '%s%s_Phase%f_v%i.fits' % (iop.quasi, Loc, step * cp.frame_time, surf)
                         rms_error = np.random.normal(aber_vals['a'][0], aber_vals['a'][1])
                         # quicklook_wf(wfo)
                         # print rms_error
@@ -451,9 +445,7 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
             if aber_params['Amp']:
                 # filename = '%s%s_Amp%f.fits' % (iop.aberdir, Loc, step * cp.frame_time)
                 for surf in range(aber_params['n_surfs']):
-                    filename = '%s/%s_Amp%f_v%i.fits' % (iop.aberdir, Loc, step * cp.frame_time, surf)
-                    if not os.path.isdir(iop.aberdir):
-                        os.mkdir(iop.aberdir)
+                    filename = '%s%s_Amp%f_v%i.fits' % (iop.quasi, Loc, step * cp.frame_time, surf)
                     rms_error = np.random.normal(aber_vals['a_amp'][0],aber_vals['a_amp'][1])
                     c_freq = np.random.normal(aber_vals['b'][0],
                                               aber_vals['b'][1])  # correlation frequency (cycles/meter)

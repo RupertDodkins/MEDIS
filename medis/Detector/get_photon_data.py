@@ -92,7 +92,7 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
             else:
                 r0 = cp.r0s # this is a scalar in this instance
             # dprint((t, r0, 'r0', tp.rot_rate))
-            atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
+            atmos_map = iop.atmosdir + 'telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
             # dprint((atmos_map, iop.atmosdir))
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
             # dprint(tp.occulter_type)
@@ -199,9 +199,6 @@ def run():
     # if tp.servo_error:
     #     tdm.createObjMapsEmpty()
 
-    if tp.aber_params['CPA'] or tp.aber_params['NCPA']:
-        if not os.path.isdir(iop.aberdir):
-            os.makedirs(iop.aberdir, exist_ok=True)  # Only works in Python >= 3.2
     tdm.initialize_CPA_meas()
 
     if tp.active_null:
@@ -362,10 +359,6 @@ def run():
 
 def take_obs_data():
     import time
-    if not os.path.isdir(iop.datadir):
-        os.mkdir(iop.datadir)
-    if not os.path.isdir(iop.scidir):
-        os.makedirs(iop.scidir, exist_ok=True) # Only works in Python >= 3.2
     print('********** Taking Obs Data ***********')
     begin = time.time()
     hypercube = run()
