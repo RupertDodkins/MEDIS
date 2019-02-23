@@ -362,10 +362,10 @@ def run():
 
 def take_obs_data():
     import time
-    if not os.path.isdir(iop.datadir):
-        os.mkdir(iop.datadir)
-    if not os.path.isdir(iop.scidir):
-        os.makedirs(iop.scidir, exist_ok=True) # Only works in Python >= 3.2
+    # if not os.path.isdir(iop.datadir):
+    #     os.mkdir(iop.datadir)
+    # if not os.path.isdir(iop.scidir):
+    #     os.makedirs(iop.scidir, exist_ok=True) # Only works in Python >= 3.2
     print('********** Taking Obs Data ***********')
     begin = time.time()
     hypercube = run()

@@ -11,55 +11,78 @@ import os
 from pathlib import Path
 # import vip
 
-class io_params():
+
+class IO_params:
     """
     Define file tree/structure to import and save data
     """
 
-    def __init__(self, date='test/'):
+    def __init__(self, testname='test/'):
         # High Level Paths
-        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Base path where results are stored (outside repository)
+        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        #self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
-        self.data_test = os.path.join(self.datadir, date)  # Save results in new sub-directory
+        self.testdata = os.path.join(self.datadir, testname)  # Save results in new sub-directory
         # self.lab_obs_path = '/mnt/kids/'  #
 
         # Atmosphere Metadata
         self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos
         self.atmosdata = '180828'
         self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
-        self.idl_params = os.path.join(self.datadir, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
+        self.idl_params = os.path.join(self.atmosroot, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
         # Aberration Metadata
         self.aberroot = 'aberrations'
         self.aberdata = '181201'
-        self.aberdir = os.path.join(self.datadir, self.aberroot, self.aberdata)
-        self.NCPA_meas = os.path.join(self.datadir, self.aberroot, self.aberdata, 'NCPA_meas.pkl') #
-        self.CPA_meas = os.path.join(self.datadir, self.aberroot, self.aberdata, 'CPA_meas.pkl')
+        self.aberdir = os.path.join(self.testdata, self.aberroot, self.aberdata)
+        self.NCPA_meas = os.path.join(self.testdata, self.aberroot, self.aberdata, 'NCPA_meas.pkl') #
+        self.CPA_meas = os.path.join(self.testdata, self.aberroot, self.aberdata, 'CPA_meas.pkl')
+        self.quasi = os.path.join(self.aberdir, 'quasi/')
 
         # Unprocessed Photon Science Data
-        self.saveroot = 'science'
+        self.sciroot = 'science'
         self.savedata = 'HR8799'
-        self.scidir = os.path.join(self.datadir, self.saveroot,self.savedata)
+        self.scidir = os.path.join(self.testdata, self.sciroot, self.savedata)
         self.hyperFile = os.path.join(self.scidir, 'Hypercube.h5') # a x/y/t/w cube of data
         self.obsfile = os.path.join(self.scidir, 'r0varyObsfile.h5')  # a photon table with 4 coloumns
         self.device_params = os.path.join(self.scidir, 'deviceParams.pkl')  # detector metadata
         self.coron_temp = os.path.join(self.scidir, 'coron_maps/') # required by vortex coron function
 
         #Post Processing Data
-        self.LCmapFile = os.path.join(self.datadir, 'LCmap.pkl')
-        self.IratioFile = os.path.join(self.datadir, 'Iratio.pkl')
-        self.DSFile = os.path.join(self.datadir, 'DS.pkl')
+        self.LCmapFile = os.path.join(self.testdata, 'LCmap.pkl')
+        self.IratioFile = os.path.join(self.testdata, 'Iratio.pkl')
+        self.DSFile = os.path.join(self.testdata, 'DS.pkl')
         self.saveIQ = True
-        self.int_maps = os.path.join(self.datadir, 'int_maps.pkl')
-        self.IQpixel = os.path.join(self.datadir, './novary64act_medr0_piston.txt')
-        self.measured_var = os.path.join(self.datadir, 'measured_var.pkl')
+        self.int_maps = os.path.join(self.testdata, 'int_maps.pkl')
+        self.IQpixel = os.path.join(self.testdata, './novary64act_medr0_piston.txt')
+        self.measured_var = os.path.join(self.testdata, 'measured_var.pkl')
+
+        if not os.path.isdir(self.datadir):
+            os.makedirs(self.datadir, exist_ok=True)
+        if not os.path.isdir(self.testdata):
+            os.makedirs(self.testdata, exist_ok=True)
+        if not os.path.isdir(self.atmosroot):
+            os.makedirs(self.atmosroot, exist_ok=True)
+        if not os.path.isdir(self.atmosdir):
+            os.makedirs(self.atmosdir, exist_ok=True)
+        absroot = os.path.join(self.testdata, self.aberroot)
+        if not os.path.isdir(absroot):
+            os.makedirs(absroot, exist_ok=True)
+        if not os.path.isdir(self.aberdir):
+            os.makedirs(self.aberdir, exist_ok=True)
+        sciroot = os.path.join(self.testdata, self.sciroot)
+        if not os.path.isdir(sciroot):
+            os.makedirs(sciroot, exist_ok=True)
+        if not os.path.isdir(self.scidir):
+            os.makedirs(self.scidir, exist_ok=True)
+        if not os.path.isdir(self.quasi):
+            os.makedirs(self.quasi, exist_ok=True)
+
+    def update(self, testname='test/'):
+        self.__init__(testname=testname)
 
 
-    def update(self, date='test/'):
-        self.__init__(date=date)
-
-
-class astro_params():
+class Astro_params:
     """
     Default parameters for the astronomical system under investigation
 
@@ -77,8 +100,9 @@ class astro_params():
         self.numframes = 5000
 
 
-class caos_params():
+class CAOS_params:
     """
+    #TODO make redundant with new atmosphere model
     Default parameters for the atmosphere
     """
     def __init__(self):
@@ -89,7 +113,7 @@ class caos_params():
         self.scalar_r0 = 'med'
         self.r0s_idx = -1
 
-class telescope_params():
+class Telescope_params:
     """
     This contains most of the parameters you will probably modify when running tests
 
@@ -158,7 +182,7 @@ class telescope_params():
         # assert self.aber_params['NCPA'] in [None, 'Static', 'Quasi', 'Wave', 'Amp']
 
 
-class mkid_params():
+class MKID_params:
     def __init__(self):
         self.bad_pix = False
         # self.interp_sample=True # avoids the quantization error in creating the datacube
@@ -207,14 +231,14 @@ class mkid_params():
         self.nlod = 10 #3 #how many lambda/D do we want to calculate out to
 
 
-class H2RG_params():
+class H2RG_params:
     def __init__(self):
         self.use_readnoise=True
         self.readnoise=30
         self.erate = 1
 
 
-class simulation_params():
+class Simulation_params:
     """
     Default parameters for outputs of the simulation. What plots you want to see etc
 
@@ -233,7 +257,7 @@ class simulation_params():
                           'c':[0]}#False
 
 
-class device_params():
+class Device_params:
     '''
     This is different from MKID_params in that it contains an instance of these random multidimensional parameters
 
@@ -247,7 +271,7 @@ class device_params():
         self.hot_pix = None
 
 
-class FPWFS_params():
+class FPWFS_params:
     '''Replaces the role of M. Bottom's Config file for speckle_killer_v3'''
     def __init__(self):
         self.max_specks = 1
@@ -258,14 +282,14 @@ class FPWFS_params():
         self.controlregion = [40,100,20,60] # y1, y2, x1, x2
 
 
-ap = astro_params()
-cp = caos_params()
-tp = telescope_params()
-mp = mkid_params()
+ap = Astro_params()
+cp = CAOS_params()
+tp = Telescope_params()
+mp = MKID_params()
 hp = H2RG_params()
-sp = simulation_params()
-iop = io_params()
-dp = device_params()
+sp = Simulation_params()
+iop = IO_params()
+dp = Device_params()
 fp = FPWFS_params()
 
 proper.print_it = False
