@@ -312,6 +312,7 @@ def convert_to_wfo(image, wfo):
     return wf_temp
 
 def remove_close_photons(cube):
+    # TODO test this
     print('**** this is untested! ****')
     # ind = np.argsort( photons[0,:] )
     # photons = photons[:,ind]

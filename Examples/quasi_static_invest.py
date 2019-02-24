@@ -8,7 +8,7 @@ from vip_hci import phot, pca
 from medis.params import ap, cp, tp, sp, mp, iop
 from medis.Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
 import medis.Utils.rawImageIO as rawImageIO
-import medis.Telescope.telescope_dm as tdm
+import medis.Telescope.adaptive_optics as ao
 import medis.Detector.readout as read
 import medis.Analysis.phot
 # import medis.Analysis.stats
@@ -59,12 +59,12 @@ lod = 8
 
 plotdata, maps = [], []
 if __name__ == '__main__':
-    print iop.aberdir
+    print(iop.aberdir)
     images=[]
     noises = []
 
     iop.aberdir = os.path.join(iop.rootdir, 'data/aberrations/longquasi3/')
-    # tdm.generate_maps()
+    # ao.generate_maps()
     #
     #
     # for t in np.arange(0,5000,100):

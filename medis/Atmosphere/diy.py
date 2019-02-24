@@ -1,8 +1,9 @@
+'''Place holder for the caos atmosphere map replacement (whatever form that takes)'''
 import sys, os
 from scipy.interpolate import interp1d
 import proper
 
-import medis.Telescope.telescope_dm as tdm
+import medis.Telescope.adaptive_optics as ao
 from medis.Telescope.coronagraph import coronagraph
 import medis.Telescope.FPWFS as FPWFS
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity

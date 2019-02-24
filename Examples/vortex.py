@@ -4,7 +4,7 @@ import numpy as np
 import proper
 import cv2
 from medis.params import ap, tp, iop
-import medis.Telescope.telescope_dm as tdm
+# import medis.Telescope.adaptive_optics as ao
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames
 import medis.Analysis.phot as phot
 
