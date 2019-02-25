@@ -6,6 +6,7 @@ import pickle as pickle
 # import copy
 # from scipy import ndimage
 import proper
+from proper_mod import prop_psd_errormap
 # from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
 import medis.Utils.rawImageIO as rawImageIO
 import medis.Utils.misc as misc
@@ -43,7 +44,6 @@ def abs_zeros(wf_array):
     return wf_array
 
 def generate_maps(Loc='CPA'):
-    # TODO remodify proper to accept phase_history parameter
     # TODO add different timescale aberations
     print('Generating optic aberration maps using Proper')
     wfo = proper.prop_begin(tp.diam, 1., tp.grid_size, tp.beam_ratio)
@@ -58,7 +58,7 @@ def generate_maps(Loc='CPA'):
         perms *= 1e-7
 
         phase = 2 * np.pi * np.random.uniform(size=(tp.grid_size, tp.grid_size)) - np.pi
-        aber_cube[0, surf] =proper.prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True,  PHASE_HISTORY = phase)
+        aber_cube[0, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True,  PHASE_HISTORY = phase)
 
         filename = '%s%s_Phase%f_v%i.fits' % (iop.aberdir+'quasi/', Loc, 0, surf)
         rawImageIO.saveFITS(aber_cube[0, surf], filename)
@@ -68,7 +68,7 @@ def generate_maps(Loc='CPA'):
             perms = np.random.rand(tp.grid_size, tp.grid_size) - 0.5
             perms *= 0.05
             phase += perms
-            aber_cube[a, surf] = proper.prop_psd_errormap(wfo, rms_error, c_freq, high_power,
+            aber_cube[a, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power,
                                  MAP="prim_map",TPF=True, PHASE_HISTORY = phase)
 
             filename = '%s%s_Phase%f_v%i.fits' % (iop.aberdir+'quasi/', Loc, a * cp.frame_time, surf)

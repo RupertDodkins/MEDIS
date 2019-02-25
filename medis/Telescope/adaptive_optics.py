@@ -1,16 +1,10 @@
-# import os
 import numpy as np
-# import matplotlib.pylab as plt
 from scipy import interpolate
 import pickle as pickle
-# import copy
 from scipy import ndimage
 import proper
-# from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
-# import medis.Utils.rawImageIO as rawImageIO
-# import medis.Utils.misc as misc
-from medis.params import tp, cp, mp, ap,iop#, fp
-# from medis.Utils.misc import dprint
+from proper_mod import prop_dm
+from medis.params import tp, cp, mp, ap,iop
 
 def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
     # print 'Including Adaptive Optics'
@@ -79,7 +73,7 @@ def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
         # dmap = proper.prop_dm(wfo, pattern, dm_xc, dm_yc,
         #                       N_ACT_ACROSS_PUPIL=nact, FIT=True)
     # dmap =proper.prop_dm(wfo, dm_map, dm_xc, dm_yc, N_ACT_ACROSS_PUPIL=nact, FIT = True) #<-- here
-    dmap = proper.prop_dm(wfo, dm_map, dm_xc, dm_yc, act_spacing, FIT = True) #<-- here
+    dmap = prop_dm(wfo, dm_map, dm_xc, dm_yc, act_spacing, FIT = True) #<-- here
 
     return
 
@@ -114,7 +108,7 @@ def quick_ao(wf_array, iwf, f_lens, beam_ratios, iter, CPA_maps):
 
             dm_map = -dm_map * proper.prop_get_wavelength(wf_array[iw,io]) / (4 * np.pi)  # <--- here
             # dmap = proper.prop_dm(wfo, dm_map, dm_xc, dm_yc, N_ACT_ACROSS_PUPIL=nact, FIT=True)  # <-- here
-            dmap = proper.prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)  # <-- here
+            dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)  # <-- here
 
     # kludge to help with spiders
     for iw in range(shape[0]):

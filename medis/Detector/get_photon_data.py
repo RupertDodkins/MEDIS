@@ -1,15 +1,15 @@
 """Top level code that takes a atmosphere phase map and propagates a wavefront through the system"""
 
 import os
-import proper
 import numpy as np
-import time
 import traceback
 import multiprocessing
 import glob
 from pprint import pprint
 import random
 import pickle as pickle
+import time
+from proper_mod import prop_run
 from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint
 from medis.params import ap,cp,tp,mp,sp,iop,dp
@@ -18,7 +18,6 @@ import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
 import medis.Atmosphere.caos as caos
-# np.set_printoptions(threshold=np.inf)
 
 sentinel = None
 
@@ -45,7 +44,7 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
                 r0 = cp.r0s # this is a scalar in this instance
             atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
-            datacube, _ = proper.prop_run('medis.Telescope.run_system', 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
+            datacube, _ = prop_run('medis.Telescope.run_system', 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
 
             if tp.detector == 'ideal':
                 image = np.sum(datacube, axis=0)
