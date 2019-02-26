@@ -11,8 +11,8 @@ import os
 # import vip
 
 
-class io_params():
-    """
+class IO_params:
+   """
     Define file tree/structure to import and save data
     """
 
@@ -56,11 +56,34 @@ class io_params():
         self.IQpixel = os.path.join(self.testdata, './novary64act_medr0_piston.txt')
         self.measured_var = os.path.join(self.testdata, 'measured_var.pkl')
 
+
+        if not os.path.isdir(self.datadir):
+            os.makedirs(self.datadir, exist_ok=True)
+        if not os.path.isdir(self.testdata):
+            os.makedirs(self.testdata, exist_ok=True)
+        if not os.path.isdir(self.atmosroot):
+            os.makedirs(self.atmosroot, exist_ok=True)
+        if not os.path.isdir(self.atmosdir):
+            os.makedirs(self.atmosdir, exist_ok=True)
+        absroot = os.path.join(self.testdata, self.aberroot)
+        if not os.path.isdir(absroot):
+            os.makedirs(absroot, exist_ok=True)
+        if not os.path.isdir(self.aberdir):
+            os.makedirs(self.aberdir, exist_ok=True)
+        sciroot = os.path.join(self.testdata, self.sciroot)
+        if not os.path.isdir(sciroot):
+            os.makedirs(sciroot, exist_ok=True)
+        if not os.path.isdir(self.scidir):
+            os.makedirs(self.scidir, exist_ok=True)
+        if not os.path.isdir(self.quasi):
+            os.makedirs(self.quasi, exist_ok=True)
+
     def update(self, testname='test/'):
         self.__init__(testname=testname)
 
 
-class astro_params():
+
+class Astro_params:
     """
     Default parameters for the astronomical system under investigation
 
@@ -78,8 +101,9 @@ class astro_params():
         self.numframes = 5000
 
 
-class caos_params():
+class CAOS_params:
     """
+    #TODO make redundant with new atmosphere model
     Default parameters for the atmosphere
     """
     def __init__(self):
@@ -90,7 +114,7 @@ class caos_params():
         self.scalar_r0 = 'med'
         self.r0s_idx = -1
 
-class telescope_params():
+class Telescope_params:
     """
     This contains most of the parameters you will probably modify when running tests
 
@@ -159,7 +183,7 @@ class telescope_params():
         # assert self.aber_params['NCPA'] in [None, 'Static', 'Quasi', 'Wave', 'Amp']
 
 
-class mkid_params():
+class MKID_params:
     def __init__(self):
         self.bad_pix = False
         # self.interp_sample=True # avoids the quantization error in creating the datacube
@@ -208,14 +232,14 @@ class mkid_params():
         self.nlod = 10 #3 #how many lambda/D do we want to calculate out to
 
 
-class H2RG_params():
+class H2RG_params:
     def __init__(self):
         self.use_readnoise=True
         self.readnoise=30
         self.erate = 1
 
 
-class simulation_params():
+class Simulation_params:
     """
     Default parameters for outputs of the simulation. What plots you want to see etc
 
@@ -234,7 +258,7 @@ class simulation_params():
                           'c':[0]}#False
 
 
-class device_params():
+class Device_params:
     '''
     This is different from MKID_params in that it contains an instance of these random multidimensional parameters
 
@@ -248,7 +272,7 @@ class device_params():
         self.hot_pix = None
 
 
-class FPWFS_params():
+class FPWFS_params:
     '''Replaces the role of M. Bottom's Config file for speckle_killer_v3'''
     def __init__(self):
         self.max_specks = 1
@@ -259,14 +283,14 @@ class FPWFS_params():
         self.controlregion = [40,100,20,60] # y1, y2, x1, x2
 
 
-ap = astro_params()
-cp = caos_params()
-tp = telescope_params()
-mp = mkid_params()
+ap = Astro_params()
+cp = CAOS_params()
+tp = Telescope_params()
+mp = MKID_params()
 hp = H2RG_params()
-sp = simulation_params()
-iop = io_params()
-dp = device_params()
+sp = Simulation_params()
+iop = IO_params()
+dp = Device_params()
 fp = FPWFS_params()
 
 if not os.path.isdir(iop.datadir):
