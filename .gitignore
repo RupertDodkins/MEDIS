@@ -84,5 +84,6 @@ fabric.properties
 #  added 2/12/19
 /home/captainkay/mazinlab/MKIDSim/MEDIS/medis/params.py
 medis.params.py
+$MEDIS_DIR/params.py
 
 
