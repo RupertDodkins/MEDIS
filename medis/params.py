@@ -80,15 +80,6 @@ class IO_params:
         if not os.path.isdir(self.quasi):
             os.makedirs(self.quasi, exist_ok=True)
 
-    # @property
-    # def testname(self):
-    #     return self._testname
-    #
-    # @testname.setter
-    # def testname(self, new_name):
-    #     self._testname = new_name
-    #     IO_params(new_name)
-
     def update(self, new_name):
         self.__init__(testname=new_name)
 
