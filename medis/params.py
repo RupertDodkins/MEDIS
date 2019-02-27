@@ -16,16 +16,16 @@ class IO_params:
     """
     Define file tree/structure to import and save data
     """
-    def __init__(self,testname='example1'):  #
+    def __init__(self, testname='example1'):  # testname should be the name of the particular example you are running, for exmple 'BetaPic' or 'simple_telescope'
         # High Level Paths
         #self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
         self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
-        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
+        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
         # self.lab_obs_path = '/mnt/kids/'  #
 
         # Atmosphere Metadata
         self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos (get this from Rupert, don't recreate this on your own!!)
-        self.atmosdata = '180828'
+        self.atmosdata = '180828'  # folder from Rupert
         self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
         self.idl_params = os.path.join(self.atmosroot, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
