@@ -32,7 +32,7 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
 
         start = time.time()
 
-        for it, t in enumerate(iter(inqueue.get,sentinel)):
+        for it, t in enumerate(iter(inqueue.get, sentinel)):
 
             if cp.vary_r0:
                 # cp.r0s_idx = caos.random_r0walk(cp.r0s_idx, cp.r0s)

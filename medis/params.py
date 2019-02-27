@@ -8,79 +8,89 @@ example module the user is running
 import numpy as np
 import proper
 import os
+from pathlib import Path
 # import vip
 
 
 class IO_params:
-   """
+    """
     Define file tree/structure to import and save data
     """
-
-    def __init__(self, testname='test/'):
+    def __init__(self,testname='example1'):  #
         # High Level Paths
-        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        #self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data'  # personal datadir instead
+        #self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase
-        self.testdata = os.path.join(self.datadir, testname)  # Save results in new sub-directory
         # self.lab_obs_path = '/mnt/kids/'  #
 
         # Atmosphere Metadata
-        self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos
+        self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos (get this from Rupert, don't recreate this on your own!!)
         self.atmosdata = '180828'
         self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
         self.idl_params = os.path.join(self.atmosroot, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
         # Aberration Metadata
         self.aberroot = 'aberrations'
-        self.aberdata = '181201'
-        self.aberdir = os.path.join(self.testdata, self.aberroot, self.aberdata)
-        self.NCPA_meas = os.path.join(self.testdata, self.aberroot, self.aberdata, 'NCPA_meas.pkl') #
-        self.CPA_meas = os.path.join(self.testdata, self.aberroot, self.aberdata, 'CPA_meas.pkl')
+        self.aberdata = 'Palomar'
+        self.aberdir = os.path.join(self.datadir, self.aberroot, self.aberdata)
+        self.NCPA_meas = os.path.join(self.aberdir, 'NCPA_meas.pkl') #
+        self.CPA_meas = os.path.join(self.aberdir, 'CPA_meas.pkl')
         self.quasi = os.path.join(self.aberdir, 'quasi/')
 
         # Unprocessed Photon Science Data
-        self.sciroot = 'science'
-        self.savedata = 'HR8799'
-        self.scidir = os.path.join(self.testdata, self.sciroot, self.savedata)
-        self.hyperFile = os.path.join(self.scidir, 'Hypercube.h5') # a x/y/t/w cube of data
-        self.obsfile = os.path.join(self.scidir, 'r0varyObsfile.h5')  # a photon table with 4 coloumns
-        self.device_params = os.path.join(self.scidir, 'deviceParams.pkl')  # detector metadata
-        self.coron_temp = os.path.join(self.scidir, 'coron_maps/') # required by vortex coron function
+        self.sciroot = 'Observations'
+        self.scidir = os.path.join(self.datadir, self.sciroot)  # self.savedata
+        self.testname = testname  # set this up in the definition line, but can update it with iop.update('newname')
+        self.testdir = os.path.join(self.scidir, self.testname)  # Save results in new sub-directory
+        self.hyperFile = os.path.join(self.testdir, 'Hypercube.h5') # a x/y/t/w cube of data
+        self.obsfile = os.path.join(self.testdir, 'Obsfile.h5')  # a photon table with 4 coloumns
+        self.device_params = os.path.join(self.testdir, 'deviceParams.pkl')  # detector metadata
+        self.coron_temp = os.path.join(self.testdir, 'coron_maps/') # required by vortex coron function
 
         #Post Processing Data
-        self.LCmapFile = os.path.join(self.testdata, 'LCmap.pkl')
-        self.IratioFile = os.path.join(self.testdata, 'Iratio.pkl')
-        self.DSFile = os.path.join(self.testdata, 'DS.pkl')
+        self.LCmapFile = os.path.join(self.testdir, 'LCmap.pkl')
+        self.IratioFile = os.path.join(self.testdir, 'Iratio.pkl')
+        self.DSFile = os.path.join(self.testdir, 'DS.pkl')
         self.saveIQ = True
-        self.int_maps = os.path.join(self.testdata, 'int_maps.pkl')
-        self.IQpixel = os.path.join(self.testdata, './novary64act_medr0_piston.txt')
-        self.measured_var = os.path.join(self.testdata, 'measured_var.pkl')
+        self.int_maps = os.path.join(self.testdir, 'int_maps.pkl')
+        self.IQpixel = os.path.join(self.testdir, './novary64act_medr0_piston.txt')
+        self.measured_var = os.path.join(self.testdir, 'measured_var.pkl')
 
 
         if not os.path.isdir(self.datadir):
             os.makedirs(self.datadir, exist_ok=True)
-        if not os.path.isdir(self.testdata):
-            os.makedirs(self.testdata, exist_ok=True)
+        if not os.path.isdir(self.testdir):
+            os.makedirs(self.testdir, exist_ok=True)
         if not os.path.isdir(self.atmosroot):
             os.makedirs(self.atmosroot, exist_ok=True)
         if not os.path.isdir(self.atmosdir):
             os.makedirs(self.atmosdir, exist_ok=True)
-        absroot = os.path.join(self.testdata, self.aberroot)
+        absroot = os.path.join(self.testdir, self.aberroot)
         if not os.path.isdir(absroot):
             os.makedirs(absroot, exist_ok=True)
         if not os.path.isdir(self.aberdir):
             os.makedirs(self.aberdir, exist_ok=True)
-        sciroot = os.path.join(self.testdata, self.sciroot)
+        sciroot = os.path.join(self.testdir, self.sciroot)
         if not os.path.isdir(sciroot):
             os.makedirs(sciroot, exist_ok=True)
         if not os.path.isdir(self.scidir):
             os.makedirs(self.scidir, exist_ok=True)
+        if not os.path.isdir(self.coron_temp):
+            os.makedirs(self.coron_temp, exist_ok=True)
         if not os.path.isdir(self.quasi):
             os.makedirs(self.quasi, exist_ok=True)
 
-    def update(self, testname='test/'):
-        self.__init__(testname=testname)
+    # @property
+    # def testname(self):
+    #     return self._testname
+    #
+    # @testname.setter
+    # def testname(self, new_name):
+    #     self._testname = new_name
+    #     IO_params(new_name)
 
+    def update(self, new_name):
+        self.__init__(testname=new_name)
 
 
 class Astro_params:
@@ -117,7 +127,6 @@ class CAOS_params:
 class Telescope_params:
     """
     This contains most of the parameters you will probably modify when running tests
-
     """
     def __init__(self):
         self.grid_size = 128 #128            # grid size
@@ -259,11 +268,11 @@ class Simulation_params:
 
 
 class Device_params:
-    '''
+    """
     This is different from MKID_params in that it contains an instance of these random multidimensional parameters
 
     Perhaps it could be part of MKID_params
-    '''
+    """
     def __init__(self):
         self.response_map = None
         self.Rs = None
@@ -273,7 +282,7 @@ class Device_params:
 
 
 class FPWFS_params:
-    '''Replaces the role of M. Bottom's Config file for speckle_killer_v3'''
+    """Replaces the role of M. Bottom's Config file for speckle_killer_v3"""
     def __init__(self):
         self.max_specks = 1
         # self.imparams =
@@ -295,18 +304,18 @@ fp = FPWFS_params()
 
 if not os.path.isdir(iop.datadir):
     os.mkdir(iop.datadir)
-if not os.path.isdir(iop.testdata):
-    os.mkdir(iop.testdata)
+if not os.path.isdir(iop.testdir):
+    os.mkdir(iop.testdir)
 if not os.path.isdir(iop.atmosroot):
     os.mkdir(iop.atmosroot)
 if not os.path.isdir(iop.atmosdir):
     os.mkdir(iop.atmosdir)
-absroot = os.path.join(iop.testdata, iop.aberroot)
+absroot = os.path.join(iop.testdir, iop.aberroot)
 if not os.path.isdir(absroot):
     os.mkdir(absroot)
 if not os.path.isdir(iop.aberdir):
     os.mkdir(iop.aberdir)
-sciroot = os.path.join(iop.testdata, iop.sciroot)
+sciroot = os.path.join(iop.testdir, iop.sciroot)
 if not os.path.isdir(sciroot):
     os.mkdir(sciroot)
 if not os.path.isdir(iop.scidir):
