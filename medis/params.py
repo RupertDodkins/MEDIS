@@ -18,8 +18,8 @@ class IO_params:
     """
     def __init__(self, testname='example1'):  # testname should be the name of the particular example you are running, for exmple 'BetaPic' or 'simple_telescope'
         # High Level Paths
-        #self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
+        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        # self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
         # self.lab_obs_path = '/mnt/kids/'  #
 
@@ -292,27 +292,6 @@ sp = Simulation_params()
 iop = IO_params()
 dp = Device_params()
 fp = FPWFS_params()
-
-if not os.path.isdir(iop.datadir):
-    os.mkdir(iop.datadir)
-if not os.path.isdir(iop.testdir):
-    os.mkdir(iop.testdir)
-if not os.path.isdir(iop.atmosroot):
-    os.mkdir(iop.atmosroot)
-if not os.path.isdir(iop.atmosdir):
-    os.mkdir(iop.atmosdir)
-absroot = os.path.join(iop.testdir, iop.aberroot)
-if not os.path.isdir(absroot):
-    os.mkdir(absroot)
-if not os.path.isdir(iop.aberdir):
-    os.mkdir(iop.aberdir)
-sciroot = os.path.join(iop.testdir, iop.sciroot)
-if not os.path.isdir(sciroot):
-    os.mkdir(sciroot)
-if not os.path.isdir(iop.scidir):
-    os.mkdir(iop.scidir)
-if not os.path.isdir(iop.quasi):
-    os.mkdir(iop.quasi)
 
 proper.print_it = False
 # proper.prop_init_savestate()

@@ -116,6 +116,9 @@ def run():
     # initialize atmosphere
     dprint("Atmosdir = %s " % iop.atmosdir)
     if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
+        print("It looks like you don't have an atmospheric maps. You can either"
+              "get them from Rupert or generate them yourself with caos. Removing exit()")
+        exit()
         print("Making New Atmosphere Model")
         caos.make_idl_params()
         caos.generate_maps()

@@ -129,7 +129,7 @@ dependencies:
     - photutils==0.6
     - pyfits==3.5
     - pyprind==2.11.2
-    - pyproper3==1.0.1
+#    - pyproper3==1.0.1
     - scikit-learn==0.20.2
     - tables==3.4.4
     - vip-hci==0.9.8
