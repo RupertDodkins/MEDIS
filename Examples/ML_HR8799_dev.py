@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
 
     ap.companion = True
-    iop.hyperFile = iop.datadir + 'HR8799_phot_tag%i_tar_%i.pkl' % (num_exp, np.log10(ap.star_photons))
+    iop.obs_seq = iop.datadir + 'HR8799_phot_tag%i_tar_%i.pkl' % (num_exp, np.log10(ap.star_photons))
     dprint(iop.aberdir)
     simple_hypercube_1 = read.get_integ_hypercube(plot=False)[:, :]  # /ap.numframes
 

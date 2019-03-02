@@ -192,7 +192,7 @@ def make_SNR_plot(datacube):
     ax1.legend()
     plt.show()
 
-def get_unoccult_hyper(hyperFile = '/RefPSF_wLyotStop.pkl', numframes=1):
+def get_unoccult_hyper(obs_seq = '/RefPSF_wLyotStop.pkl', numframes=1):
     import copy
     tp_orig = copy.copy(tp)
     ap_orig = copy.copy(ap)
@@ -200,22 +200,22 @@ def get_unoccult_hyper(hyperFile = '/RefPSF_wLyotStop.pkl', numframes=1):
 
     # tp.detector = 'ideal'
     ap.companion = False
-    iop.hyperFile = iop.datadir + hyperFile
+    iop.obs_seq = iop.datadir + obs_seq
     tp.occulter_type = 'None (Lyot Stop)'
     ap.numframes = numframes
     ap.exposure_time = 1e-3
     # tp.nwsamp = 1
     # tp.w_bins = 1
-    print(iop.obsfile, 'obs')
-    hypercube = read.get_integ_hypercube()
+    print(iop.obs_table, 'obs')
+    obs_sequence = read.get_integ_obs_sequence()
     tp.__dict__ = tp_orig.__dict__
     ap.__dict__ = ap_orig.__dict__
     iop.__dict__ = iop_orig.__dict__
 
-    return hypercube
+    return obs_sequence
 
 
-def get_unoccult_perf_psf(plot=False, hyperFile='/IntHyperUnOccult.pkl'):
+def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
     import copy
     tp_orig = copy.copy(tp)
     ap_orig = copy.copy(ap)
@@ -225,7 +225,7 @@ def get_unoccult_perf_psf(plot=False, hyperFile='/IntHyperUnOccult.pkl'):
     ap.companion = False
     # tp.NCPA_type = 'Wave'
 
-    iop.hyperFile = iop.datadir + '/perfIntHyperUnOccult.pkl'
+    iop.obs_seq = iop.datadir + '/perfIntHyperUnOccult.pkl'
     tp.occulter_type = 'None'
     num_exp = 1
     ap.exposure_time = 0.001  # 0.001
@@ -241,9 +241,9 @@ def get_unoccult_perf_psf(plot=False, hyperFile='/IntHyperUnOccult.pkl'):
                         'Amp': False,
                         'n_surfs': 2}
     # Yup this is 'if' is necessary
-    hypercube = read.get_integ_hypercube()
-    # PSF = hypercube[0,0]
-    PSF = (read.take_exposure(hypercube))[0,0]
+    obs_sequence = read.get_integ_obs_sequence()
+    # PSF = obs_sequence[0,0]
+    PSF = (read.take_exposure(obs_sequence))[0,0]
     if plot:
         quicklook_im(PSF)
 
@@ -254,7 +254,7 @@ def get_unoccult_perf_psf(plot=False, hyperFile='/IntHyperUnOccult.pkl'):
 
     return PSF
 
-def get_unoccult_psf(plot=False, hyperFile = '/IntHyperUnOccult.pkl', numframes=1000):
+def get_unoccult_psf(plot=False, obs_seq = '/IntHyperUnOccult.pkl', numframes=1000):
     # import copy
     # tp_orig = copy.copy(tp)
     # ap_orig = copy.copy(ap)
@@ -264,19 +264,19 @@ def get_unoccult_psf(plot=False, hyperFile = '/IntHyperUnOccult.pkl', numframes=
     # ap.companion = False
     # # tp.NCPA_type = 'Wave'
     #
-    # iop.hyperFile = iop.datadir + '/IntHyperUnOccult.pkl'
+    # iop.obs_seq = iop.datadir + '/IntHyperUnOccult.pkl'
     # tp.occulter_type = 'None'
     # num_exp = 1
     # ap.exposure_time = 0.001  # 0.001
     # ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
     # tp.nwsamp = 1
     # # Yup this is 'if' is necessary
-    # hypercube = read.get_integ_hypercube()
-    hypercube = get_unoccult_hyper(hyperFile, numframes=numframes)
-    # PSF = hypercube[0,0]
-    # PSF = (read.take_exposure(hypercube))[0,0]
-    # PSF = (read.take_exposure(hypercube))
-    PSF = hypercube
+    # obs_sequence = read.get_integ_obs_sequence()
+    obs_sequence = get_unoccult_hyper(obs_seq, numframes=numframes)
+    # PSF = obs_sequence[0,0]
+    # PSF = (read.take_exposure(obs_sequence))[0,0]
+    # PSF = (read.take_exposure(obs_sequence))
+    PSF = obs_sequence
     if plot:
         quicklook_im(PSF)
 
@@ -437,16 +437,16 @@ def make_SNR_plot(images, labels):
     plt.show()
 
 
-def SDI_each_exposure(hypercube, binning=10):
-    shape = hypercube.shape
-    timecube = np.zeros_like(hypercube[::binning,0])
+def SDI_each_exposure(obs_sequence, binning=10):
+    shape = obs_sequence.shape
+    timecube = np.zeros_like(obs_sequence[::binning,0])
     dprint(timecube.shape)
-    dprint(hypercube.shape)
-    idx = np.arange(0,len(hypercube),binning)
+    dprint(obs_sequence.shape)
+    idx = np.arange(0,len(obs_sequence),binning)
     for i in range(len(idx)-1):
-        timecube[i] = do_SDI(np.mean(hypercube[idx[i]:idx[i+1]],axis=0), plot=False)
+        timecube[i] = do_SDI(np.mean(obs_sequence[idx[i]:idx[i+1]],axis=0), plot=False)
     # for t in range(shape[0])[:1]:
-    #     timecube[t] = do_SDI(hypercube[t], plot=True)
+    #     timecube[t] = do_SDI(obs_sequence[t], plot=True)
     # loop_frames(timecube)
     return timecube
 
@@ -489,7 +489,7 @@ def make_mosaic_cube(hyper):
     moves = np.shape(tp.pix_shift)[0]
     tp.pix_shift = np.array(tp.pix_shift)
 
-    super_hypercube = np.zeros((hyper.shape[0] // moves, hyper.shape[1], tp.grid_size, tp.grid_size))
+    super_obs_sequence = np.zeros((hyper.shape[0] // moves, hyper.shape[1], tp.grid_size, tp.grid_size))
     st = 0
 
     left = int(np.floor(float(tp.grid_size - mp.array_size[1]) / 2))
@@ -499,9 +499,9 @@ def make_mosaic_cube(hyper):
 
     for t in range(hyper.shape[0]//moves):
         for m in range(moves):
-            super_hypercube[t,:,
+            super_obs_sequence[t,:,
                             left - tp.pix_shift[m][0] : -right - tp.pix_shift[m][0],
                             bottom - tp.pix_shift[m][1] : -top- tp.pix_shift[m][1]] += hyper[st]
             st+=1
 
-    return super_hypercube
+    return super_obs_sequence

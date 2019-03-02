@@ -692,13 +692,13 @@ if __name__ == '__main__':
     #     save_LCmap(LCmap)
     #     print 'Time elapsed: ', end - begin
     #     print '*********************************************'
-    # iop.hyperFile = iop.datadir + '/bunching_mkid3.pkl'
+    # iop.obs_seq = iop.datadir + '/bunching_mkid3.pkl'
     mp.date = '180418mkids/'
     iop.update(mp.date)
-    # iop.hyperFile = iop.datadir + '/bunching_mkid_1hr3.pkl'
+    # iop.obs_seq = iop.datadir + '/bunching_mkid_1hr3.pkl'
     mp.date = '180420/'
     iop.update(mp.date)
-    iop.hyperFile = iop.datadir + '/piston1s3moreWFSerrPistonerr.pkl'
+    iop.obs_seq = iop.datadir + '/piston1s3moreWFSerrPistonerr.pkl'
     bunch_hypercube = read.get_integ_hypercube(plot=False)# / ap.numframes
     print bunch_hypercube.shape
 

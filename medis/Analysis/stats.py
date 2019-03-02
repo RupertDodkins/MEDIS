@@ -185,7 +185,7 @@ def get_LCmap():
 #             # loop_frames(diff_cube[:,0])
 #             print k
 #             k += 1
-#             # diff_cube = np.array([[i-j] for i in simple_hypercube_1[::10,0] for j in simple_hypercube_2[::10,0]])
+#             # diff_cube = np.array([[i-j] for i in simple_obs_sequence_1[::10,0] for j in simple_obs_sequence_2[::10,0]])
 #             dprint(np.shape(diff_cube))
 #             # # quicklook_im(np.mean(diff_cube[:,0],axis=0), logAmp=False)
 #             # quicklook_im(np.mean(diff_cube[:, 0], axis=0), logAmp=True)
@@ -532,14 +532,14 @@ def RDSI_4_VIP(cube, angle_list, verbose, **kwargs):
     # quicklook_im(Lmap)
     return Lmap
 
-# def SDI_each_exposure(hypercube, binning=10):
-#     shape = hypercube.shape
-#     timecube = np.zeros_like(hypercube[0,::binning])
+# def SDI_each_exposure(obs_sequence, binning=10):
+#     shape = obs_sequence.shape
+#     timecube = np.zeros_like(obs_sequence[0,::binning])
 #     dprint(timecube.shape)
-#     dprint(hypercube.shape)
-#     idx = np.arange(0,len(hypercube),binning)
+#     dprint(obs_sequence.shape)
+#     idx = np.arange(0,len(obs_sequence),binning)
 #     for i in range(len(idx)-1):
-#         timecube[i] = phot.do_SDI(np.mean(hypercube[:,idx[i]:idx[i+1]],axis=1), plot=True)
+#         timecube[i] = phot.do_SDI(np.mean(obs_sequence[:,idx[i]:idx[i+1]],axis=1), plot=True)
 #     # for t in range(shape[0])[:1]:
 #     #     timecube[t] = do_SDI(hypercube[t], plot=True)
 #     loop_frames(timecube)
@@ -812,8 +812,8 @@ def get_Iratio(LCmap, xlocs=None, ylocs=None, xinspect=None, yinspect=None, insp
     Iratio *= scale#np.mean(Is)
     return Ic, Is, Iratio, mIratio
 
-def get_unoccult_SSDpsf(plot=False,  hyperFile='/SSDHyperUnOccult.pkl'):
-    hypercube = phot.get_unoccult_hyper(hyperFile, numframes=1000)
+def get_unoccult_SSDpsf(plot=False,  obs_seq='/SSDHyperUnOccult.pkl'):
+    hypercube = phot.get_unoccult_hyper(obs_seq, numframes=1000)
     LCmap = np.transpose(hypercube[:, 0])
     xlocs = list(range(LCmap.shape[0]))
     ylocs = list(range(LCmap.shape[1]))
@@ -824,8 +824,8 @@ def get_unoccult_SSDpsf(plot=False,  hyperFile='/SSDHyperUnOccult.pkl'):
 
     return Iratio
 
-def get_unoccult_DSIpsf(plot=False, hyperFile='/SSDHyperUnOccult.pkl', thresh=1e-6):
-    hypercube = phot.get_unoccult_hyper(hyperFile, numframes=1000)
+def get_unoccult_DSIpsf(plot=False, obs_seq='/SSDHyperUnOccult.pkl', thresh=1e-6):
+    hypercube = phot.get_unoccult_hyper(obs_seq, numframes=1000)
     LCmap = np.transpose(hypercube[:, 0])
     Dmap = get_Dmap(LCmap, thresh)
     if plot:

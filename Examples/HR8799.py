@@ -106,7 +106,7 @@ if __name__ == '__main__':
     # Get unocculted PSF for intensity
     # ap.star_photons = 1e8
     lod = 10
-    psf_template = Analysis.phot.get_unoccult_psf(hyperFile='/IntHyperUnOccult2.pkl', plot=False, numframes=1)
+    psf_template = Analysis.phot.get_unoccult_psf(obs_seq='/IntHyperUnOccult2.pkl', plot=False, numframes=1)
     # psf_template = np.resize(psf_template, (tp.nwsamp, psf_template.shape[0],psf_template.shape[1]))
     # star_phot = np.sum(psf_template)
     # star_phot = phot.contrcurve.aperture_flux(psf_template,[tp.grid_size/2],[tp.grid_size/2],lod,1)[0]*1000#/ap.numframes
@@ -117,14 +117,14 @@ if __name__ == '__main__':
     print psf_template.shape
     # quicklook_im(psf_template)
     #
-    # # iop.hyperFile = iop.datadir + 'IntHyperUnOccult2.pkl'  # 5
+    # # iop.obs_seq = iop.datadir + 'IntHyperUnOccult2.pkl'  # 5
     # # psf_hyper = read.get_integ_hypercube(plot=False)#/ap.numframes
     # # # loop_frames(psf_hyper[::10,0], logAmp=True)
 
-    # iop.hyperFile = iop.datadir + 'HR8799_MKIDs5_nosource.pkl'  # 5
-    # iop.hyperFile = iop.datadir + 'HR8799_MKIDs5.pkl'  # 5
-    iop.hyperFile = iop.datadir + 'HR8799_MKIDs400sstar_realPs1w.pkl'  # 5
-    # iop.hyperFile = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_1stMKIDs2.pkl'#5
+    # iop.obs_seq = iop.datadir + 'HR8799_MKIDs5_nosource.pkl'  # 5
+    # iop.obs_seq = iop.datadir + 'HR8799_MKIDs5.pkl'  # 5
+    iop.obs_seq = iop.datadir + 'HR8799_MKIDs400sstar_realPs1w.pkl'  # 5
+    # iop.obs_seq = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_1stMKIDs2.pkl'#5
     simple_hypercube_1 = read.get_integ_hypercube(plot=False)#/ap.numframes
 
     # loop_frames(simple_hypercube_1[:,0], logAmp=True)
@@ -132,9 +132,9 @@ if __name__ == '__main__':
     # quicklook_im(np.sum(simple_hypercube_1[:100,0],axis=0), logAmp=True)
     ap.startframe = ap.numframes #+3010
     ap.companion =False
-    iop.hyperFile = iop.datadir + 'HR8799_2_MKIDs400sref_realPs1w.pkl'  # 5
-    # iop.hyperFile = iop.datadir + 'HR8799_2_MKIDs5.pkl'  # 5
-    # # iop.hyperFile = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_2ndMKIDs2.pkl'#5
+    iop.obs_seq = iop.datadir + 'HR8799_2_MKIDs400sref_realPs1w.pkl'  # 5
+    # iop.obs_seq = iop.datadir + 'HR8799_2_MKIDs5.pkl'  # 5
+    # # iop.obs_seq = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_2ndMKIDs2.pkl'#5
     simple_hypercube_2 = read.get_integ_hypercube(plot=False)#/ap.numframes
     #
     diff_cube = simple_hypercube_1-simple_hypercube_2

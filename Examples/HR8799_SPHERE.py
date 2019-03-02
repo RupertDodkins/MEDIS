@@ -335,13 +335,13 @@ if __name__ == '__main__':
         ap.companion = False
         # ap.contrast = [10 ** -6.0]  # [0.1,0.1]
         # ap.lods = [[-6, -6]]  # [6,-4.5],
-        # iop.hyperFile = iop.datadir + 'HR8799_SPHERE%i_one_sauce_tar%i.pkl' % (num_exp, np.log10(ap.star_photons))# 5
-        iop.hyperFile = iop.datadir + 'HR8799_SPHERE%inosauce_tar_newaber%i.pkl' % (num_exp, np.log10(ap.star_photons))
+        # iop.obs_seq = iop.datadir + 'HR8799_SPHERE%i_one_sauce_tar%i.pkl' % (num_exp, np.log10(ap.star_photons))# 5
+        iop.obs_seq = iop.datadir + 'HR8799_SPHERE%inosauce_tar_newaber%i.pkl' % (num_exp, np.log10(ap.star_photons))
         simple_hypercube_1 = read.get_integ_hypercube(plot=False)[:, :]  # /ap.numframes
         ap.startframe = ap.numframes + 45
         ap.companion = False
-        iop.hyperFile = iop.datadir + 'HR8799_SPHERE%inosauce_ref_newaber%i.pkl' % (num_exp, np.log10(ap.star_photons))
-        # iop.hyperFile = iop.datadir + 'HR8799_SPHERE%i_one_sauce_ref%i.pkl' % (num_exp, np.log10(ap.star_photons))
+        iop.obs_seq = iop.datadir + 'HR8799_SPHERE%inosauce_ref_newaber%i.pkl' % (num_exp, np.log10(ap.star_photons))
+        # iop.obs_seq = iop.datadir + 'HR8799_SPHERE%i_one_sauce_ref%i.pkl' % (num_exp, np.log10(ap.star_photons))
         simple_hypercube_2 = read.get_integ_hypercube(plot=False)[:, :]  # /ap.numframes
 
         fname = 'eval_meth_out.pkl'
@@ -353,7 +353,7 @@ if __name__ == '__main__':
             # Get unocculted PSF for intensity
             # ap.star_photons = 1e8
             lod = 10
-            psf_template = Analysis.phot.get_unoccult_psf(hyperFile='/RefPSF_wLyotStop.pkl', plot=False, numframes=1)
+            psf_template = Analysis.phot.get_unoccult_psf(obs_seq='/RefPSF_wLyotStop.pkl', plot=False, numframes=1)
             # quicklook_im(psf_template)
             # psf_template = np.resize(psf_template, (tp.nwsamp, psf_template.shape[0],psf_template.shape[1]))
             # star_phot = np.sum(psf_template)
@@ -370,33 +370,33 @@ if __name__ == '__main__':
             # print psf_template.shape
             # # quicklook_im(psf_template)
             # #
-            # # # iop.hyperFile = iop.datadir + 'IntHyperUnOccult2.pkl'  # 5
+            # # # iop.obs_seq = iop.datadir + 'IntHyperUnOccult2.pkl'  # 5
             # # # psf_hyper = read.get_integ_hypercube(plot=False)#/ap.numframes
             # # # # loop_frames(psf_hyper[::10,0], logAmp=True)
             #
-            # # iop.hyperFile = iop.datadir + 'HR8799_MKIDs5_nosource.pkl'  # 5
-            # # iop.hyperFile = iop.datadir + 'HR8799_MKIDs5.pkl'  # 5
-            # # iop.hyperFile = iop.datadir + 'HR8799_MKIDs150sstar_realPs3w_.pkl'  # 5
-            # # iop.hyperFile = iop.datadir + 'HR8799_MEC5000star_nocomp.pkl'  # 5
-            # # iop.hyperFile = iop.datadir + 'HR8799_MEC100star.pkl'  # 5
+            # # iop.obs_seq = iop.datadir + 'HR8799_MKIDs5_nosource.pkl'  # 5
+            # # iop.obs_seq = iop.datadir + 'HR8799_MKIDs5.pkl'  # 5
+            # # iop.obs_seq = iop.datadir + 'HR8799_MKIDs150sstar_realPs3w_.pkl'  # 5
+            # # iop.obs_seq = iop.datadir + 'HR8799_MEC5000star_nocomp.pkl'  # 5
+            # # iop.obs_seq = iop.datadir + 'HR8799_MEC100star.pkl'  # 5
 
-            # # iop.hyperFile = iop.datadir + 'HR8799_SPHERE%i_tar_close_f3_easy_coron_easyAO%i.pkl' % (num_exp, ap.star_photons) # 5
+            # # iop.obs_seq = iop.datadir + 'HR8799_SPHERE%i_tar_close_f3_easy_coron_easyAO%i.pkl' % (num_exp, ap.star_photons) # 5
             # ap.companion=False
-            # iop.hyperFile = iop.datadir + 'HR8799_SPHERE%i_3nosauce_close_f_easy_coron_easyAO%i.pkl' % (num_exp, ap.star_photons) # 5
+            # iop.obs_seq = iop.datadir + 'HR8799_SPHERE%i_3nosauce_close_f_easy_coron_easyAO%i.pkl' % (num_exp, ap.star_photons) # 5
             # # ap.contrast = [10 ** -5.5]  # [0.1,0.1]
             # # ap.lods = [[-6, -6]]  # [6,-4.5],
-            # # iop.hyperFile = iop.datadir + 'HR8799_SPHERE%i_one_sauce%i.pkl' % (num_exp, ap.star_photons) # 5
-            # # # iop.hyperFile = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_1stMKIDs2.pkl'#5
+            # # iop.obs_seq = iop.datadir + 'HR8799_SPHERE%i_one_sauce%i.pkl' % (num_exp, ap.star_photons) # 5
+            # # # iop.obs_seq = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_1stMKIDs2.pkl'#5
             # # # simple_hypercube_1 = read.get_integ_hypercube(plot=False)[:,:,57:201,59:199]#/ap.numframes
             # simple_hypercube_1 = read.get_integ_hypercube(plot=False)[:,:]#/ap.numframes
             # ap.startframe = ap.numframes #+3010
             # ap.companion =False
-            # # # iop.hyperFile = iop.datadir + 'HR8799_2_MKIDs150sref_realPs3w_.pkl'  # 5
-            # # # iop.hyperFile = iop.datadir + 'HR8799_MEC5000ref.pkl'  # 5
-            # # # iop.hyperFile = iop.datadir + 'HR8799_MEC100ref.pkl'  # 5
-            # iop.hyperFile = iop.datadir + 'HR8799_SPHERE%i_ref_close_f3_easy_coron_easyAO%i.pkl' % (num_exp, ap.star_photons) # 5
-            # # # iop.hyperFile = iop.datadir + 'HR8799_2_MKIDs5.pkl'  # 5
-            # # # # iop.hyperFile = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_2ndMKIDs2.pkl'#5
+            # # # iop.obs_seq = iop.datadir + 'HR8799_2_MKIDs150sref_realPs3w_.pkl'  # 5
+            # # # iop.obs_seq = iop.datadir + 'HR8799_MEC5000ref.pkl'  # 5
+            # # # iop.obs_seq = iop.datadir + 'HR8799_MEC100ref.pkl'  # 5
+            # iop.obs_seq = iop.datadir + 'HR8799_SPHERE%i_ref_close_f3_easy_coron_easyAO%i.pkl' % (num_exp, ap.star_photons) # 5
+            # # # iop.obs_seq = iop.datadir + 'HR8799_2_MKIDs5.pkl'  # 5
+            # # # # iop.obs_seq = iop.datadir + 'noWnoRollHyperWcomp1000cont_Aug_2ndMKIDs2.pkl'#5
             # # # simple_hypercube_2 = read.get_integ_hypercube(plot=False)[:,:,57:201,59:199]#/ap.numframes
 
 
@@ -578,12 +578,12 @@ if __name__ == '__main__':
 
     else:
         ap.companion = True
-        iop.hyperFile = iop.datadir + 'HR8799_SPHERE%isauce_tar_%i.pkl' % (num_exp, np.log10(ap.star_photons))
+        iop.obs_seq = iop.datadir + 'HR8799_SPHERE%isauce_tar_%i.pkl' % (num_exp, np.log10(ap.star_photons))
         dprint(iop.aberdir)
         simple_hypercube_1 = read.get_integ_hypercube(plot=False)[:, :]  # /ap.numframes
         ap.startframe = ap.numframes + 45
         ap.companion = False
-        iop.hyperFile = iop.datadir + 'HR8799_SPHERE%isauce_ref_%i.pkl' % (num_exp, np.log10(ap.star_photons))
+        iop.obs_seq = iop.datadir + 'HR8799_SPHERE%isauce_ref_%i.pkl' % (num_exp, np.log10(ap.star_photons))
         simple_hypercube_2 = read.get_integ_hypercube(plot=False)[:, :]  # /ap.numframes
 
         maps = quick_processing(simple_hypercube_1, simple_hypercube_2, plot=True)

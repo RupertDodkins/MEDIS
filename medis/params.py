@@ -42,8 +42,8 @@ class IO_params:
         self.scidir = os.path.join(self.datadir, self.sciroot)  # self.savedata
         self.testname = testname  # set this up in the definition line, but can update it with iop.update('newname')
         self.testdir = os.path.join(self.scidir, self.testname)  # Save results in new sub-directory
-        self.hyperFile = os.path.join(self.testdir, 'Hypercube.h5') # a x/y/t/w cube of data
-        self.obsfile = os.path.join(self.testdir, 'Obsfile.h5')  # a photon table with 4 coloumns
+        self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5') # a x/y/t/w cube of data
+        self.obs_table = os.path.join(self.testdir, 'ObsTable.h5')  # a photon table with 4 coloumns
         self.device_params = os.path.join(self.testdir, 'deviceParams.pkl')  # detector metadata
         self.coron_temp = os.path.join(self.testdir, 'coron_maps/') # required by vortex coron function
 

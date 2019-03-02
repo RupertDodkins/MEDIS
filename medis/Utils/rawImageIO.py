@@ -322,18 +322,18 @@ def scale_image(filename, scalefactor):
 #     return save_tmp
 
 
-# def make_evolving_hypercube(self):
+# def make_evolving_obs_sequence(self):
 #     #creates a hyper cube based on wavelength and speckle evolution only. No rotation
 #     print 'obj/focalplane_%s.fits' % str(5*2 + 70)
 #     read_image()
 
-#     hypercube = np.zeros((w_frames,t_frames,xnum,ynum))
+#     obs_sequence = np.zeros((w_frames,t_frames,xnum,ynum))
 #     for w in range(w_frames):
-#         hypercube[w,:,:,:] = blend_between_frames('obj/focalplane_%s.fits' % (5*w + 70), 'obj1/focalplane_%s.fits' % str(5*w + 70), False, False )
-#         #hypercube[w,:,:,:] = make_rotation_cube()
+#         obs_sequence[w,:,:,:] = blend_between_frames('obj/focalplane_%s.fits' % (5*w + 70), 'obj1/focalplane_%s.fits' % str(5*w + 70), False, False )
+#         #obs_sequence[w,:,:,:] = make_rotation_cube()
 
 #     print "saving"
-#     hdu = pyfits.PrimaryHDU(hypercube)
+#     hdu = pyfits.PrimaryHDU(obs_sequence)
 #     hdulist = pyfits.HDUList([hdu])
 #     fn = '/home/dodkins/Documents/proper/examples/hypercube.fits'
 #     if os.path.isfile(fn)==True:
@@ -342,13 +342,13 @@ def scale_image(filename, scalefactor):
 #         hdulist.writeto(fn)
 #     else: hdulist.writeto(fn)
 
-# def make_rotating_hypercube(self):
+# def make_rotating_obs_sequence(self):
 #     #creates a hyper cube based on wavelength and rotation
 #     wave_slices = 7
 #     time_slices = 41
 
 #     read_image()
-#     hypercube = np.zeros((wave_slices,time_slices,xnum,ynum))
+#     obs_sequence = np.zeros((wave_slices,time_slices,xnum,ynum))
 #     save_tmp= []
 #     #for i,fname in enumerate(files):
 #     #    fits = pyfits.open(fname)
@@ -363,20 +363,20 @@ def scale_image(filename, scalefactor):
 #             print w,t, fname
 #             fits = pyfits.open(fname)
 #             print 'data ', fits[0].data[50,50]
-#             hypercube[w,t,:,:] = fits[0].data
+#             obs_sequence[w,t,:,:] = fits[0].data
 
-#             print 'hypercube ', hypercube[w,t,50,50]
+#             print 'obs_sequence ', obs_sequence[w,t,50,50]
 #             #fits.close()
-#         #read_folder('../hypercube/',100,100,'./hypercube_rotation.fits', savecube=False)
+#         #read_folder('../hypercube/',100,100,'./obs_sequence_rotation.fits', savecube=False)
 
-#     print np.shape(hypercube)
-#     #hypercube = np.zeros((w_frames,t_frames,xnum,ynum))
+#     print np.shape(obs_sequence)
+#     #obs_sequence = np.zeros((w_frames,t_frames,xnum,ynum))
 #     #for w in range(w_frames):
-#     # hypercube[w,:,:,:] = blend_between_frames('obj/focalplane_%s.fits' % (5*w + 70), 'obj1/focalplane_%s.fits' % str(5*w + 70), False, False )
-#         #hypercube[w,:,:,:] = make_rotation_cube()
+#     # obs_sequence[w,:,:,:] = blend_between_frames('obj/focalplane_%s.fits' % (5*w + 70), 'obj1/focalplane_%s.fits' % str(5*w + 70), False, False )
+#         #obs_sequence[w,:,:,:] = make_rotation_cube()
 
 #     print "saving"
-#     hdu = pyfits.PrimaryHDU(hypercube)
+#     hdu = pyfits.PrimaryHDU(obs_sequence)
 #     hdulist = pyfits.HDUList([hdu])
 #     fn = '/home/dodkins/Documents/proper/hypercube/hypercube.fits'
 #     if os.path.isfile(fn)==True:

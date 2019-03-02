@@ -15,37 +15,37 @@ import medis.Analysis.phot as phot
 from medis.Utils.misc import dprint
 # import proper
 #
-# def get_hypercube(plot=False):
+# def get_obs_sequence(plot=False):
 #     print os.path.isfile(binnedHyperCubeFile), binnedHyperCubeFile
 #     if os.path.isfile(binnedHyperCubeFile):
-#         hypercube = read.open_hypercube(HyperCubeFile=binnedHyperCubeFile)
+#         obs_sequence = read.open_obs_sequence(HyperCubeFile=binnedHyperCubeFile)
 #     else:
-#         hypercube = run()
+#         obs_sequence = run()
 #         print 'finished run'
-#         print np.shape(hypercube)
-#         if plot: view_datacube(hypercube[0], logAmp=True)
+#         print np.shape(obs_sequence)
+#         if plot: view_datacube(obs_sequence[0], logAmp=True)
 #
 #         if tp.detector == 'H2RG':
-#             hypercube = H2RG.scale_to_luminos(hypercube)
-#             if plot: view_datacube(hypercube[0], logAmp=True)
+#             obs_sequence = H2RG.scale_to_luminos(obs_sequence)
+#             if plot: view_datacube(obs_sequence[0], logAmp=True)
 #
-#         hypercube = read.take_exposure(hypercube)
+#         obs_sequence = read.take_exposure(obs_sequence)
 #         if tp.detector == 'H2RG':
-#              hypercube = H2RG.add_readnoise(hypercube)
-#              # if plot: view_datacube(hypercube[0], logAmp=True)
+#              obs_sequence = H2RG.add_readnoise(obs_sequence)
+#              # if plot: view_datacube(obs_sequence[0], logAmp=True)
 #
-#         if plot: view_datacube(hypercube[0], logAmp=True)
-#         # datacube = pipe.stack_hypercube(hypercube)
+#         if plot: view_datacube(obs_sequence[0], logAmp=True)
+#         # datacube = pipe.stack_obs_sequence(obs_sequence)
 #         # if plot: view_datacube(datacube, logAmp=True)
-#         read.save_hypercube(hypercube, HyperCubeFile=binnedHyperCubeFile)
-#     # hypercube = take_exposure(hypercube)
-#     print np.shape(hypercube)
-#     # quicklook_im(hypercube[0,0])
-#     # hypercube = H2RG.add_readnoise(hypercube)
-#     if plot: view_datacube(hypercube[0], logAmp=True)
-#     if plot: loop_frames(hypercube[:, 0])
-#     if plot: loop_frames(hypercube[0])
-#     return hypercube
+#         read.save_obs_sequence(obs_sequence, HyperCubeFile=binnedHyperCubeFile)
+#     # obs_sequence = take_exposure(obs_sequence)
+#     print np.shape(obs_sequence)
+#     # quicklook_im(obs_sequence[0,0])
+#     # obs_sequence = H2RG.add_readnoise(obs_sequence)
+#     if plot: view_datacube(obs_sequence[0], logAmp=True)
+#     if plot: loop_frames(obs_sequence[:, 0])
+#     if plot: loop_frames(obs_sequence[0])
+#     return obs_sequence
 # debug_program()
 
 # mp.date = '180411/'
@@ -105,7 +105,7 @@ mp.pix_yield = 0.8
 
 
 
-# binnedHyperCubeFile = os.path.join(mp.rootdir,mp.proc_dir, mp.date, './BinH2RG_with_coron_hyper.pkl')
+# binnedobs_sequenceFile = os.path.join(mp.rootdir,mp.proc_dir, mp.date, './BinH2RG_with_coron_hyper.pkl')
 # iop.hyperFile = iop.datadir + '/BinH2RG_with_coron_hyper.pkl'
 
 # iop.hyperFile = iop.datadir + '/SDIHyper2.pkl'
@@ -117,22 +117,22 @@ scale_list = tp.band[0]/wsamples
 
 
 if __name__ == '__main__':
-    hypercube = read.get_integ_hypercube(plot=False)
+    obs_sequence = read.get_integ_obs_sequence(plot=False)
 
     import matplotlib.pyplot as plt
 
-    # psf_template = hypercube[0,0,20:31,98:109]
+    # psf_template = obs_sequence[0,0,20:31,98:109]
     # print scale_list[5], 'SL'
 
-    # quicklook_im(hypercube[0,0])
+    # quicklook_im(obs_sequence[0,0])
     # quicklook_im(psf_template)
 
     from vip_hci import phot, pca
     star_phot = phot.contrcurve.aperture_flux(psf_template,[64],[64],8,1)
-    star_phots = np.ones((hypercube.shape[1]))*star_phot
+    star_phots = np.ones((obs_sequence.shape[1]))*star_phot
     print star_phots, 'star_phots'
     algo_dict = {'scale_list':scale_list}
-    # res_throug = phot.contrcurve.throughput(hypercube[0], angle_list=np.zeros((len(hypercube[0]))), psf_template=psf_template, fwhm=10, pxscale=0.13,
+    # res_throug = phot.contrcurve.throughput(obs_sequence[0], angle_list=np.zeros((len(hypercube[0]))), psf_template=psf_template, fwhm=10, pxscale=0.13,
     #                         algo = pca.pca,full_output=True, **algo_dict)
     # print res_throug[3].shape
     # loop_frames(res_throug[3][0])

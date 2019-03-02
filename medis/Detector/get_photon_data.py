@@ -23,7 +23,7 @@ sentinel = None
 
 def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_changeme):
     """
-
+    generates observation sequence by calling optics_propagate in time series
 
     is the time loop wrapper for optics_propagate
     this is where the observation sequence is generated (timeseries of observations by the detector)
@@ -128,9 +128,8 @@ def run_medis():
     initialize different sub-processes, such as atmosphere and aberration maps, MKID device parameters
     sets up the multiprocessing features
     returns the observation sequence created by gen_timeseries
-
     
-    :return: hypercube
+    :return: obs_sequence
     """
     # Printing Params
     # for param in [ap, cp, tp, mp, sp, iop]:

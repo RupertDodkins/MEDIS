@@ -72,7 +72,7 @@ if __name__ == '__main__':
     rad_samp = np.linspace(0,tp.platescale/1000.*40,40)
     # print rad_samp
     # # Get unocculted PSF for intensity
-    psf_template = Analysis.phot.get_unoccult_psf(hyperFile='/IntHyperUnOccult.pkl', plot=False)
+    psf_template = Analysis.phot.get_unoccult_psf(obs_seq='/IntHyperUnOccult.pkl', plot=False)
     # # star_phot = np.sum(psf_template)
     star_phot = phot.contrcurve.aperture_flux(psf_template,[64],[64],lod,1)[0]/ap.numframes * 500
     psf_template = psf_template[:-1,:-1]
@@ -93,12 +93,12 @@ if __name__ == '__main__':
     # ap_orig = copy.copy(ap)
     # ap.numframes= ap.numframes/ 2
     # ap.companion = False
-    # iop.hyperFile = iop.datadir + '/RDIrefHyper.pkl'
+    # iop.obs_seq = iop.datadir + '/RDIrefHyper.pkl'
     # ref_hypercube = read.get_integ_hypercube(plot=False)#/ap.numframes
     # ap.startframe=ap.numframes
     # # ap.companion = True
     # ap.companion = False
-    # iop.hyperFile = iop.datadir + '/RDItarHyper.pkl'
+    # iop.obs_seq = iop.datadir + '/RDItarHyper.pkl'
     # RDI_hypercube = read.get_integ_hypercube(plot=False)#/ap.numframes
     # # ap.numframes = ap.numframes * 2
     # ap.__dict__ = ap_orig.__dict__
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     # #
     # # ADI
     # tp.rot_rate = 4.5  # deg/s
-    # iop.hyperFile = iop.datadir + '/ADIHyper.pkl'
+    # iop.obs_seq = iop.datadir + '/ADIHyper.pkl'
     # ADI_hypercube = read.get_integ_hypercube(plot=False)#/ap.numframes
     # # star_phots =  np.ones((len(ADI_hypercube))) * star_phot
     # algo_dict = {}
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     # # SDI
     # tp.rot_rate = 0  # deg/s
     # tp.nwsamp = 8
-    # iop.hyperFile = iop.datadir + '/SDIHyper.pkl'
+    # iop.obs_seq = iop.datadir + '/SDIHyper.pkl'
     # wsamples = np.linspace(tp.band[0], tp.band[1], tp.nwsamp)
     # scale_list = tp.band[0] / wsamples
     # SDI_hypercube = read.get_integ_hypercube(plot=False)
@@ -163,12 +163,12 @@ if __name__ == '__main__':
     # quicklook_im(method_out[1], axis=None, title=r'  DS$ / I^{*}$', anno='DISI')
 
     # # Integration
-    # iop.hyperFile = iop.datadir + '/noWnoRollHyperWcomp1000cont3.pkl'
+    # iop.obs_seq = iop.datadir + '/noWnoRollHyperWcomp1000cont3.pkl'
     # simple_hypercube = read.get_integ_hypercube(plot=False)#/ap.numframes
     # quicklook_im(np.sum(simple_hypercube[:,0], axis=0), axis=None, title=r'  $I_r / I^{*}$', anno='DSI')
     #
     # # DSI
-    # iop.hyperFile = iop.datadir + '/nomodulate.pkl'
+    # iop.obs_seq = iop.datadir + '/nomodulate.pkl'
     # tp.active_modulate = False
     # simple_hypercube = read.get_integ_hypercube(plot=False)#/ap.numframes
     # angle_list = np.zeros((len(simple_hypercube)))
@@ -207,7 +207,7 @@ if __name__ == '__main__':
 
     conv_steps = 110
     # DSI
-    iop.hyperFile = iop.datadir + '/modulate.pkl'
+    iop.obs_seq = iop.datadir + '/modulate.pkl'
     # tp.active_modulate = True
     simple_hypercube = read.get_integ_hypercube(plot=False)#/ap.numframes
     print 'star_phot', star_phot
@@ -274,7 +274,7 @@ if __name__ == '__main__':
     #
     # # SSD
     # angle_list = np.zeros((len(simple_hypercube)))
-    # iop.hyperFile = iop.datadir + '/noWnoRollHyperWcomp1000cont2.pkl'
+    # iop.obs_seq = iop.datadir + '/noWnoRollHyperWcomp1000cont2.pkl'
     # simple_hypercube = read.get_integ_hypercube(plot=False)#\ap.numframes
     # algo_dict = {}
     # method_out = eval_method(simple_hypercube[:,0], Analysis.stats.SSD_4_VIP,angle_list, algo_dict)
@@ -282,7 +282,7 @@ if __name__ == '__main__':
     # maps.append(method_out[1])
     # quicklook_im(method_out[1])
     #
-    # iop.hyperFile = iop.datadir + '/noWnoRollHyperWcomp1000cont3.pkl'
+    # iop.obs_seq = iop.datadir + '/noWnoRollHyperWcomp1000cont3.pkl'
     # simple_hypercube = read.get_integ_hypercube(plot=False)
     LCmap = np.transpose(simple_hypercube[conv_steps:,0])
     SSD_maps = Analysis.stats.get_Iratio(LCmap, xlocs, ylocs, range(63,66), range(63,66), True)

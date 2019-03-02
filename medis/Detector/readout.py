@@ -372,17 +372,17 @@ def save_hypercube_hdf5(hypercube, HyperCubeFile = 'hyper.hdf'):
 
 def get_integ_hypercube(plot=False):
     import medis.Detector.get_photon_data as gpd
-    print(os.path.isfile(iop.hyperFile), iop.hyperFile)
+    print(os.path.isfile(iop.obs_seq), iop.obs_seq)
     print(ap.numframes)
 
 
-    if os.path.isfile(iop.hyperFile):
-        if iop.hyperFile[-3:] == '.h5':
+    if os.path.isfile(iop.obs_seq):
+        if iop.obs_seq[-3:] == '.h5':
         # try:
-            hypercube = open_hypercube_hdf5(HyperCubeFile=iop.hyperFile)
+            hypercube = open_hypercube_hdf5(HyperCubeFile=iop.obs_seq)
         else:
         # except:
-            hypercube = open_hypercube(HyperCubeFile=iop.hyperFile)
+            hypercube = open_hypercube(HyperCubeFile=iop.obs_seq)
     else:
 
         # hypercube = gpd.run()
@@ -406,9 +406,9 @@ def get_integ_hypercube(plot=False):
              # if plot: view_datacube(hypercube[0], logAmp=True)
 
         if plot: view_datacube(hypercube[0], logAmp=True)
-        # save_hypercube(hypercube, HyperCubeFile=iop.hyperFile)
-        dprint(iop.hyperFile)
-        save_hypercube_hdf5(hypercube, HyperCubeFile=iop.hyperFile)
+        # save_hypercube(hypercube, HyperCubeFile=iop.obs_seq)
+        dprint(iop.obs_seq)
+        save_hypercube_hdf5(hypercube, HyperCubeFile=iop.obs_seq)
     # print np.shape(hypercube)
 
     if plot: loop_frames(hypercube[:, 0])

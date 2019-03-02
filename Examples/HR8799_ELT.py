@@ -338,8 +338,8 @@ if __name__ == '__main__':
         iop.device_params = orig_device_params[:-4] + 'py%.2fR%i.pkl' % (mp.pix_yield, mp.R_mean)
         # ap.contrast = [10 ** -6.0]  # [0.1,0.1]
         # ap.lods = [[-6, -6]]  # [6,-4.5],
-        # iop.hyperFile = iop.datadir + 'HR8799_SPHERE%i_one_sauce_tar%i.pkl' % (num_exp, np.log10(ap.star_photons))# 5
-        iop.hyperFile = iop.datadir + 'HR8799_SPHERE%inosauce_tar_newaber%iPs%i.pkl' % (num_exp, np.log10(ap.star_photons), mp.array_size[0])
+        # iop.obs_seq = iop.datadir + 'HR8799_SPHERE%i_one_sauce_tar%i.pkl' % (num_exp, np.log10(ap.star_photons))# 5
+        iop.obs_seq = iop.datadir + 'HR8799_SPHERE%inosauce_tar_newaber%iPs%i.pkl' % (num_exp, np.log10(ap.star_photons), mp.array_size[0])
         simple_hypercube_1 = read.get_integ_hypercube(plot=False)[:, :]  # /ap.numframes
         ap.startframe = ap.numframes + 45
         ap.companion = False
