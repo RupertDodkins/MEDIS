@@ -2,7 +2,7 @@ import sys
 import numpy as np
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
 from medis.params import tp, mp, cp, sp, ap, iop
-from get_photon_data import run
+from get_photon_data import run_medis
 import get_photon_data as gpd
 from medis.Utils.plot_tools import view_datacube
 import medis.Utils.rawImageIO as rawImageIO
@@ -78,7 +78,7 @@ def star_throughput():
 
         # tp.band[0] = 860
         tp.occulter_type = 'None'
-        ref = gpd.run()[0, 0]
+        ref = gpd.run_medis()[0, 0]
         # ref_phot = phot.aper_phot(ref, 0, lods[0])
         ref_tot = np.sum(ref)
         # # mask = np.int_(phot.aperture(76, 52, 6))
@@ -88,7 +88,7 @@ def star_throughput():
         rad_int = np.zeros((4, 64))
         for i in range(1,4):#range(4):
             tp.occulter_type = occulter_types[i]  # 'Gaussian'
-            occult = gpd.run()[0, 0]
+            occult = gpd.run_medis()[0, 0]
             # datacube[i]/ref_phot
             # phot.coron_4_VIP(datacube[i],ref)
             for r in range(64):
@@ -143,7 +143,7 @@ def exo_through():
             # if ap.companion == True:
 
         tp.occulter_type = 'None'
-        ref = gpd.run()[0, 0]
+        ref = gpd.run_medis()[0, 0]
         # ref = np.transpose(ref)
         injected = np.zeros((len(ap.contrast)))
         for io in range(len(ap.contrast)):
@@ -157,7 +157,7 @@ def exo_through():
 
         for i in range(0, 4):
             tp.occulter_type = occulter_types[i]  # 'Gaussian'
-            occult = gpd.run()[0, 0]
+            occult = gpd.run_medis()[0, 0]
             recovered = np.zeros((len(ap.contrast)))
             for io in range(len(ap.contrast)):
                 x, y = get_xy(ap.lods[io])
@@ -245,9 +245,9 @@ if __name__ == '__main__':
 # tp.use_ao=True
 # for act in acts:
 #     tp.ao_act = act
-#     if __name__ == '__main__': datacube.append(gpd.run()[0])
+#     if __name__ == '__main__': datacube.append(gpd.run_medis()[0])
 #
 
 
 # if __name__ == '__main__':
-#     hypercube = gpd.run()
+#     hypercube = gpd.run_medis()

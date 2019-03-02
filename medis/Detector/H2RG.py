@@ -36,7 +36,7 @@ def get_ref_psf():
     ap.numframes = 1
 
     print(tp.occulter_type)
-    hypercube = run()
+    hypercube = run_medis()
     frame = hypercube[0,0]
     quicklook_im(frame)
     with open('ref_psf.pkl', 'wb') as handle:
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     if os.path.isfile(H2RGhyperCubeFile):
         hypercube = read.open_hypercube(HyperCubeFile = H2RGhyperCubeFile)
     else:
-        hypercube = gpd.run()
+        hypercube = gpd.run_medis()
         print('finished run')
         print(np.shape(hypercube))
         hypercube = read.take_exposure(hypercube)

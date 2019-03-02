@@ -1,11 +1,11 @@
 import sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
 from medis.params import tp, mp, cp, sp, ap
-from get_photon_data import run
+from get_photon_data import run_medis
 from medis.Utils.plot_tools import view_datacube, quicklook_im
 import numpy as np
 import matplotlib.pyplot as plt
-from get_photon_data import run
+from get_photon_data import run_medis
 import medis.Atmosphere.caos as caos
 
 tp.detector = 'ideal'#
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     for r0 in r0s:
         cp.r0s_idx = np.where(r0 == all_r0s)[0][0]
         print cp.r0s_idx, 'here'
-        hypercube = run()
+        hypercube = run_medis()
         # hypercube = np.array(hypercube)
         # print hypercube.shape
         image = hypercube[0,0]
@@ -56,7 +56,7 @@ tp.CPA_type = None#'Quasi'# None
 
 
 if __name__ == '__main__':
-    hypercube = run()
+    hypercube = run_medis()
     image = hypercube[0, 0]
     # quicklook_im(image)
     datacube.append((image))

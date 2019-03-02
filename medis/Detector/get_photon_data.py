@@ -121,7 +121,17 @@ def wait_until(somepredicate, timeout, period=0.25, *args, **kwargs):
     time.sleep(period)
   return False
 
-def run():
+def run_medis():
+    """
+    main script to organize calls to various aspects of the simulation
+
+    initialize different sub-processes, such as atmosphere and aberration maps, MKID device parameters
+    sets up the multiprocessing features
+    returns the observation sequence created by gen_timeseries
+
+    
+    :return: hypercube
+    """
     # Printing Params
     # for param in [ap, cp, tp, mp, sp, iop]:
     # TODO change this to a logging function
@@ -250,7 +260,7 @@ def run():
     if sp.return_cube:
         for t in range(ap.numframes):
             spectralcube = spectralcubes_queue.get()
-            hypercube[spectralcube[0]-ap.startframe] = spectralcube[1]#should be in the right order now because of the identifier
+            hypercube[spectralcube[0]-ap.startframe] = spectralcube[1]  # should be in the right order now because of the identifier
 
     for i, p in enumerate(jobs):
         p.join()
@@ -268,7 +278,7 @@ def take_obs_data():
     import time
     print('********** Taking Obs Data ***********')
     begin = time.time()
-    hypercube = run()
+    hypercube = run_medis()
     end = time.time()
     print('Time elapsed: ', end - begin)
     print('*************************************')
@@ -277,6 +287,6 @@ def take_obs_data():
 if __name__ == '__main__':
     import time
     begin = time.time()
-    run()
+    run_medis()
     end = time.time()
     print(end-begin)

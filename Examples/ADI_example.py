@@ -7,7 +7,7 @@ import cPickle as pickle
 import os
 from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images
 from medis.Utils.misc import debug_program
-from medis.Detector.get_photon_data import run
+from medis.Detector.get_photon_data import run_medis
 import medis.Detector.readout as read
 import medis.Detector.H2RG as H2RG
 from medis.Utils.rawImageIO import clipped_zoom

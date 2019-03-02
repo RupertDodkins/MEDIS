@@ -1,7 +1,7 @@
 import sys
 sys.path.append('D:/dodkins/MEDIS/MEDIS')
 from medis.params import tp, mp, cp,sp
-from get_photon_data import run
+from get_photon_data import run_medis
 from medis.Utils.plot_tools import view_datacube
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,9 +23,9 @@ if __name__ == '__main__':
     for nf in num_frames:
         # image = np.zeros((tp.grid_size,tp.grid_size))
         # for f in range(nf):
-            # image += run()[0]
+            # image += run_medis()[0]
         cp.numframes = nf
-        hypercube = run()
+        hypercube = run_medis()
         # hypercube = np.array(hypercube)
         image = np.sum(hypercube,axis=0)/nf
         datacube.append(image[0])
