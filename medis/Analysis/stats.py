@@ -813,8 +813,8 @@ def get_Iratio(LCmap, xlocs=None, ylocs=None, xinspect=None, yinspect=None, insp
     return Ic, Is, Iratio, mIratio
 
 def get_unoccult_SSDpsf(plot=False,  obs_seq='/SSDHyperUnOccult.pkl'):
-    hypercube = phot.get_unoccult_hyper(obs_seq, numframes=1000)
-    LCmap = np.transpose(hypercube[:, 0])
+    obs_sequence = phot.get_unoccult_hyper(obs_seq, numframes=1000)
+    LCmap = np.transpose(obs_sequence[:, 0])
     xlocs = list(range(LCmap.shape[0]))
     ylocs = list(range(LCmap.shape[1]))
     images = get_Iratio(LCmap, xlocs, ylocs, xinspect=None, yinspect=None, inspect=None)
@@ -825,8 +825,8 @@ def get_unoccult_SSDpsf(plot=False,  obs_seq='/SSDHyperUnOccult.pkl'):
     return Iratio
 
 def get_unoccult_DSIpsf(plot=False, obs_seq='/SSDHyperUnOccult.pkl', thresh=1e-6):
-    hypercube = phot.get_unoccult_hyper(obs_seq, numframes=1000)
-    LCmap = np.transpose(hypercube[:, 0])
+    obs_sequence = phot.get_unoccult_hyper(obs_seq, numframes=1000)
+    LCmap = np.transpose(obs_sequence[:, 0])
     Dmap = get_Dmap(LCmap, thresh)
     if plot:
         quicklook_im(Dmap)

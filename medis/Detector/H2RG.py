@@ -12,23 +12,23 @@ import matplotlib.pyplot as plt
 H2RGhyperCubeFile = './BinnedH2RGhyper.pkl'
 # tp.occulter_type = None  #
 
-def scale_to_luminos(hypercube):
+def scale_to_luminos(obs_sequence):
     scale_factor = ap.star_photons*1000*ap.exposure_time#/(tp.grid_size**2)
     print(scale_factor)
-    hypercube *= scale_factor*np.ones((tp.grid_size,tp.grid_size))
-    return hypercube
+    obs_sequence *= scale_factor*np.ones((tp.grid_size,tp.grid_size))
+    return obs_sequence
 
-def add_readnoise(hypercube, std=30):
-    # hypercube += 6000*np.ones_like((hypercube))*np.random.random() - 30
-    hypercube += np.random.normal(0,std,(hypercube.shape[0],hypercube.shape[1],hypercube.shape[2],hypercube.shape[3]))
-    # hypercube = np.abs(hypercube)
-    return hypercube
+def add_readnoise(obs_sequence, std=30):
+    # obs_sequence += 6000*np.ones_like((obs_sequence))*np.random.random() - 30
+    obs_sequence += np.random.normal(0,std,(obs_sequence.shape[0],obs_sequence.shape[1],obs_sequence.shape[2],obs_sequence.shape[3]))
+    # obs_sequence = np.abs(obs_sequence)
+    return obs_sequence
 
-def add_darkcurrent(hypercube):
+def add_darkcurrent(obs_sequence):
     erate = 1
     dark_e = erate*num_exp*ap.exposure_time
-    hypercube += dark_e*np.ones_like((hypercube))*np.random.random()*2 - erate
-    return hypercube
+    obs_sequence += dark_e*np.ones_like((obs_sequence))*np.random.random()*2 - erate
+    return obs_sequence
 
 
 
@@ -36,8 +36,8 @@ def get_ref_psf():
     ap.numframes = 1
 
     print(tp.occulter_type)
-    hypercube = run_medis()
-    frame = hypercube[0,0]
+    obs_sequence = run_medis()
+    frame = obs_sequence[0,0]
     quicklook_im(frame)
     with open('ref_psf.pkl', 'wb') as handle:
         pickle.dump(frame, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -77,20 +77,20 @@ if __name__ == '__main__':
     ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
     print(ap.numframes)
 
-    print(os.path.isfile(H2RGhyperCubeFile), H2RGhyperCubeFile)
-    if os.path.isfile(H2RGhyperCubeFile):
-        hypercube = read.open_hypercube(HyperCubeFile = H2RGhyperCubeFile)
+    print(os.path.isfile(H2RGobs_sequenceFile), H2RGobs_sequenceFile)
+    if os.path.isfile(H2RGobs_sequenceFile):
+        obs_sequence = read.open_obs_sequence(obs_sequenceFile = H2RGobs_sequenceFile)
     else:
-        hypercube = gpd.run_medis()
+        obs_sequence = gpd.run_medis()
         print('finished run')
-        print(np.shape(hypercube))
-        hypercube = read.take_exposure(hypercube)
+        print(np.shape(obs_sequence))
+        obs_sequence = read.take_exposure(obs_sequence)
         print('here')
-        read.save_hypercube(hypercube, HyperCubeFile = H2RGhyperCubeFile)
+        read.save_obs_sequence(obs_sequence, HyperCubeFile = H2RGhyperCubeFile)
         print('here')
-    # hypercube = take_exposure(hypercube)
-    print(np.shape(hypercube[0,3]), np.shape(hypercube))
-    loop_frames(hypercube[:,0])
+    # obs_sequence = take_exposure(obs_sequence)
+    print(np.shape(obs_sequence[0,3]), np.shape(obs_sequence))
+    loop_frames(obs_sequence[:,0])
 
     print('here')
-    loop_frames(hypercube[0])
+    loop_frames(obs_sequence[0])

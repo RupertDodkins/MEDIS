@@ -319,11 +319,11 @@ def make_SNR_plot(images, labels):
     ax1.legend()
     plt.show()
 
-def SDI_each_exposure(hypercube):
-    shape = hypercube.shape
-    timecube = np.zeros_like(hypercube[0])
+def SDI_each_exposure(obs_sequence):
+    shape = obs_sequence.shape
+    timecube = np.zeros_like(obs_sequence[0])
     for t in range(shape[0])[:1]:
-        timecube[t] = do_SDI(hypercube[t], plot=True)
+        timecube[t] = do_SDI(obs_sequence[t], plot=True)
     # loop_frames(timecube)
     return timecube
 

@@ -132,9 +132,10 @@ def run_medis():
     :return: obs_sequence
     """
     # Printing Params
+    dprint("Checking Params Info-print params from here (turn on/off)")
+
     # for param in [ap, cp, tp, mp, sp, iop]:
     # TODO change this to a logging function
-        dprint("Checking Params Info-print params from here (turn on/off)")
     #     print('\n', param)
     #     pprint(param.__dict__)
     # tp.check_args()
@@ -195,9 +196,9 @@ def run_medis():
         proc.start()
 
     if tp.detector == 'MKIDs':
-        hypercube = np.zeros((ap.numframes, tp.w_bins, mp.array_size[1], mp.array_size[0]))
+        obs_sequence = np.zeros((ap.numframes, tp.w_bins, mp.array_size[1], mp.array_size[0]))
     else:
-        hypercube = np.zeros((ap.numframes, tp.w_bins, tp.grid_size, tp.grid_size))
+        obs_sequence = np.zeros((ap.numframes, tp.w_bins, tp.grid_size, tp.grid_size))
 
     for i in range(sp.num_processes):
         p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, photon_table_queue, spectralcubes_queue,(tp,ap,sp,iop,cp,mp)))
@@ -259,7 +260,7 @@ def run_medis():
     if sp.return_cube:
         for t in range(ap.numframes):
             spectralcube = spectralcubes_queue.get()
-            hypercube[spectralcube[0]-ap.startframe] = spectralcube[1]  # should be in the right order now because of the identifier
+            obs_sequence[spectralcube[0]-ap.startframe] = spectralcube[1]  # should be in the right order now because of the identifier
 
     for i, p in enumerate(jobs):
         p.join()
@@ -268,20 +269,20 @@ def run_medis():
     spectralcubes_queue.put(None)
     if sp.save_obs and tp.detector=='MKIDs':
         proc.join()
-    hypercube = np.array(hypercube)
+    obs_sequence = np.array(obs_sequence)
 
     dprint('Photon Data Run Completed')
-    return hypercube
+    return obs_sequence
 
 def take_obs_data():
     import time
     print('********** Taking Obs Data ***********')
     begin = time.time()
-    hypercube = run_medis()
+    obs_sequence = run_medis()
     end = time.time()
     print('Time elapsed: ', end - begin)
     print('*************************************')
-    return hypercube
+    return obs_sequence
 
 if __name__ == '__main__':
     import time

@@ -216,12 +216,12 @@ def make_datacube(cube, size):
     #     plt.imshow(np.log10(phase_map), origin='lower', interpolation='none')
     return datacube
 
-def scale_to_luminos(hypercube):
-    hypercube *= ap.star_photons*np.ones((tp.grid_size,tp.grid_size))
-    return hypercube
+def scale_to_luminos(obs_sequence):
+    obs_sequence *= ap.star_photons*np.ones((tp.grid_size,tp.grid_size))
+    return obs_sequence
 
-def stack_hypercube(hypercube):
+def stack_obs_sequence(obs_sequence):
     '''Similar to take_exposure but makes a single frame for the intension of doing SDI rather than applying noise etc'''
-    # datacube = np.zeros((1, hypercube.shape[1],hypercube.shape[2], hypercube.shape[3]))
-    datacube = np.sum(hypercube, axis=0)
+    # datacube = np.zeros((1, obs_sequence.shape[1],obs_sequence.shape[2], obs_sequence.shape[3]))
+    datacube = np.sum(obs_sequence, axis=0)
     return datacube

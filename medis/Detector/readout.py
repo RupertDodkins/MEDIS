@@ -313,7 +313,7 @@ def convert_to_wfo(image, wfo):
 
 def remove_close_photons(cube):
     # TODO test this
-    print('**** this is untested! ****')
+    dprint('**** this is untested! ****')
     # ind = np.argsort( photons[0,:] )
     # photons = photons[:,ind]
     image = np.zeros((mp.xnum,mp.ynum))
@@ -332,33 +332,33 @@ def remove_close_photons(cube):
     exit()
     return photons
 
-def take_exposure(hypercube):
-    # dprint(np.sum(hypercube))
+def take_exposure(obs_sequence):
+    # dprint(np.sum(obs_sequence))
     # dprint((ap.exposure_time, cp.frame_time))
     factor = ap.exposure_time/ cp.frame_time
     num_exp = int(ap.numframes/factor)
     # print factor, num_exp
-    downsample_cube = np.zeros((num_exp,hypercube.shape[1],hypercube.shape[2], hypercube.shape[3]))
+    downsample_cube = np.zeros((num_exp,obs_sequence.shape[1],obs_sequence.shape[2], obs_sequence.shape[3]))
     # print ap.numframes, factor, num_exp
     for i in range(num_exp):
-        # print np.shape(downsample_cube[i]), np.shape(hypercube), np.shape(np.sum(hypercube[i * factor : (i + 1) * factor], axis=0))
-        downsample_cube[i] = np.sum(hypercube[int(i*factor):int((i+1)*factor)],axis=0)#/float(factor)
+        # print np.shape(downsample_cube[i]), np.shape(obs_sequence), np.shape(np.sum(obs_sequence[i * factor : (i + 1) * factor], axis=0))
+        downsample_cube[i] = np.sum(obs_sequence[int(i*factor):int((i+1)*factor)],axis=0)#/float(factor)
     return downsample_cube
 
-def med_collapse(hypercube):
-    downsample_cube = np.median(hypercube,axis=0)
+def med_collapse(obs_sequence):
+    downsample_cube = np.median(obs_sequence,axis=0)
     return downsample_cube
 
 
-def save_hypercube(hypercube, HyperCubeFile = 'hyper.pkl'):
+def save_obs_sequence(obs_sequence, HyperCubeFile = 'hyper.pkl'):
     print(HyperCubeFile)
-    # quicklook_im(hypercube[-1,0])
-    # print hypercube.shape, 'saving'
+    # quicklook_im(obs_sequence[-1,0])
+    # print obs_sequence.shape, 'saving'
     with open(HyperCubeFile, 'wb') as handle:
-        pickle.dump(hypercube, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(obs_sequence, handle, protocol=pickle.HIGHEST_PROTOCOL)
     with open(HyperCubeFile, 'rb') as handle:
-        hypercube = pickle.load(handle)
-    # quicklook_im(hypercube[-1, 0])
+        obs_sequence = pickle.load(handle)
+    # quicklook_im(obs_sequence[-1, 0])
     # HyperCubeFile = HyperCubeFile[:-3]+'npy'
     # np.save(HyperCubeFile, hypercube)
 
