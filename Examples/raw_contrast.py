@@ -17,7 +17,7 @@ plt.register_cmap(name='plasma', cmap=cmaps.plasma)
 from medis.params import ap,cp,tp,mp
 import medis.Detector.analysis as ana
 import medis.Detector.MKIDs as MKIDs
-import medis.Telescope.run_system as run_system 
+import medis.Telescope.optics_propagate as optics_propagate
 
 # tp.nwsamp = 1
 tp.occulter_type =None# None#
@@ -36,7 +36,7 @@ if tp.use_atmos and glob.glob(iop.atmosdir+'*.fits') == []:
 for t in range(1):
     print 'propagating frame:', t
     kwargs = {'iter':t, 'atmos_map': iop.atmosdir+'telz%f.fits' % (t*mp.frame_time)}
-    no_occult = proper.prop_run("run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE = False, PHASE_OFFSET = 1 )[0][0]
+    no_occult = proper.prop_run("optics_propagate", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE = False, PHASE_OFFSET = 1 )[0][0]
 
 tp.occult_loc = (4,-6) #opposit sense to normal x y direction
 tp.occulter_type ='GAUSSIAN'# None#
@@ -44,7 +44,7 @@ tp.occulter_type ='GAUSSIAN'# None#
 for t in range(1):
     print 'propagating frame:', t
     kwargs = {'iter':t, 'atmos_map': iop.atmosdir+'telz%f.fits' % (t*mp.frame_time)}
-    occult = proper.prop_run("run_system", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE = False, PHASE_OFFSET = 1 )[0][0]
+    occult = proper.prop_run("optics_propagate", 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE = False, PHASE_OFFSET = 1 )[0][0]
 
 print np.shape(no_occult)
 plt.imshow(no_occult,cmap="Blues_r")

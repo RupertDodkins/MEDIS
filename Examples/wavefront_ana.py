@@ -92,7 +92,7 @@ sp.show_wframe = False  # 'continuous'
 # mp.date = 'placeholder/'
 # mp.datadir = os.path.join(mp.rootdir, mp.data, mp.date)
 
-# place in run_system where you need it
+# place in optics_propagate where you need it
 # with open('wavefront50novaryaoacthigh.txt', 'a') as the_file:
 #     complex_pix = wf.wfarr[50, 50]
 #     the_file.write('%f, %f\n' % (np.real(complex_pix), np.imag(complex_pix)))

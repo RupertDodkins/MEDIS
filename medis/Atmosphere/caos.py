@@ -44,6 +44,8 @@ def gen_maps_r0():
     print(R0s)
     # plt.plot(np.histogram(R0s)[1][:-1], np.histogram(R0s)[0])
     # plt.show()
+    # TODO Fix hard-coded path, maybe add setting in params.py
+    dprint('If you get to here, there is some hard-coded stuff Rupert probably needs to fix')
     fullfilename = '/Data/PythonProjects/MEDIS/caos_pse/work_caos/Projects/ATMOS_test/atm_00001.sav'
     cp.numframes = 10000
     cp.show_caosparams = False  # for control over all other variables
@@ -85,10 +87,10 @@ def get_r0s():
 
 
 def generate_maps():
-    print('If "generate_maps" fails, make sure you have run caos_env.sh first')
+    dprint('If "generate_maps" fails, make sure you have run caos_env.sh first')
     idl = pidly.IDL('/Local/bin/idl')
     idl.pro(cp.script)
-    print('Generated maps using CAOS')
+    dprint('Generated maps using CAOS')
     # scale_phasemaps()
     # filename = '/Data/PythonProjects/MEDIS/data/atmos/180208/telz0.fits'
     # scidata, hdr = rawImageIO.read_image(filename, prob_map=False)
@@ -105,7 +107,7 @@ def scale_phasemaps():
     scalefactor = 5.19751 #np.pi * 1e-6 / np.max(np.abs(scidata))  # *0.8 * 4./3 #kludge for now until you include AO etc
     # print filenames
     # # print 'Stretching the phase maps to size (%i,%i)' % (size,size)
-    print('Scaling the phase maps by a factor %s' % scalefactor)
+    dprint('Scaling the phase maps by a factor %s' % scalefactor)
     p = multiprocessing.Pool(10)
     for ifn, filename in enumerate(filenames):
         if ifn % 10 == 0: misc.progressBar(value=ifn, endvalue=len(filenames))

@@ -20,8 +20,15 @@ def iter_func(wavefronts, func, *args, **kwargs):
             func(wavefronts[iw, iwf], *args, **kwargs)
 
 
-def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
+def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         # possible rename to optics_propagate
+    """
+    propagates instantaneous complex E-field through the optical system
 
+    uses PyPROPER3 to generate the complex E-field at the source, then propagates it through atmosphere, then telescope, to the focal plane
+    the AO simulator happens here
+    this does not include the observation of the wavefront by the detector
+    creates single spectral cube at instantaneous time
+    """
     dprint("Running System")
     passpara = PASSVALUE['params']
     ap.__dict__ = passpara[0].__dict__
@@ -56,6 +63,7 @@ def run_system(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
 
     iter_func(wf_array, proper.prop_circular_aperture, **{'radius':tp.diam/2})
     if tp.use_atmos:
+        # TODO is there a name hack in here? seems like an error...
         aber.add_atmos(wf_array, *(tp.f_lens, w, PASSVALUE['atmos_map']))
 
     wf_array = aber.abs_zeros(wf_array)

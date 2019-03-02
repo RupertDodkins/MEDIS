@@ -45,7 +45,7 @@ def abs_zeros(wf_array):
 
 def generate_maps(Loc='CPA'):
     # TODO add different timescale aberations
-    print('Generating optic aberration maps using Proper')
+    dprint('Generating optic aberration maps using Proper')
     wfo = proper.prop_begin(tp.diam, 1., tp.grid_size, tp.beam_ratio)
     aber_cube = np.zeros((ap.numframes, tp.aber_params['n_surfs'], tp.grid_size, tp.grid_size))
     for surf in range(tp.aber_params['n_surfs']):
@@ -167,7 +167,7 @@ def add_zern_ab(wfo):
 
 
 def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
-    dprint("Adding Atmosphere")
+    dprint("Adding Atmosphere--from the abberations module")
     obj_map = None
     samp = proper.prop_get_sampling(wf_array[0,0])*tp.band[0]*1e-9/w
 

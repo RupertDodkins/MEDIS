@@ -21,7 +21,21 @@ import medis.Atmosphere.caos as caos
 
 sentinel = None
 
-def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
+def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_changeme):
+    """
+
+
+    is the time loop wrapper for optics_propagate
+    this is where the observation sequence is generated (timeseries of observations by the detector)
+    thus, where the detector observes the wavefront created by optics_propagate (for MKIDs, the probability distribution)
+
+    :param inqueue: time index for parallelization (used by multiprocess)
+    :param photon_table_queue: multiprocess que containing photon packets
+    :param spectralcube_queue: series of intensity images (spectral image cube) in the multiprocessing format
+    :param xxx_todo_changeme:
+    :return:
+    """
+    # TODO change this name
     (tp,ap,sp,iop,cp,mp) = xxx_todo_changeme
 
     try:
@@ -45,22 +59,22 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
 
             atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
-            datacube, _ = prop_run('medis.Telescope.run_system', 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
+            spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
 
             if tp.detector == 'ideal':
-                image = np.sum(datacube, axis=0)
-                vmin = np.min(datacube)*10
-                # cube = ideal.assign_calibtime(datacube,PASSVALUE['iter'])
+                image = np.sum(spectralcube, axis=0)
+                vmin = np.min(spectralcube)*10
+                # cube = ideal.assign_calibtime(spectralcube,PASSVALUE['iter'])
                 # cube = rawImageIO.arange_into_cube(packets, value='phase')
                 # rawImageIO.make_phase_map(cube, plot=True)
                 # return ''
             elif tp.detector == 'H2RG':
 
-                image = np.sum(datacube, axis=0)
-                vmin = np.min(datacube)*10
+                image = np.sum(spectralcube, axis=0)
+                vmin = np.min(spectralcube)*10
             elif tp.detector == 'MKIDs':
 
-                packets = read.get_packets(datacube, t, dp, mp)
+                packets = read.get_packets(spectralcube, t, dp, mp)
 
                 if sp.show_wframe or sp.show_cube or sp.return_cube:
                     cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
@@ -71,12 +85,12 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
                     image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
 
                 if sp.show_cube or sp.return_cube:
-                    datacube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], tp.w_bins))
+                    spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], tp.w_bins))
 
 
                 if sp.save_obs:
                     command = read.get_obs_command(packets,t)
-                    output.put(command)
+                    photon_table_queue.put(command)
 
                 vmin = 0.9
 
@@ -84,10 +98,10 @@ def Simulation(inqueue, output, datacubes, xxx_todo_changeme):
                 quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
 
             if sp.show_cube:
-                view_datacube(datacube, logAmp=True, vmin=vmin)
+                view_datacube(spectralcube, logAmp=True, vmin=vmin)
 
             if sp.return_cube:
-                datacubes.put((t,datacube))
+                spectralcubes_queue.put((t,spectralcube))
 
             now = time.time()
             elapsed = float(now - start) / 60.
@@ -108,6 +122,14 @@ def wait_until(somepredicate, timeout, period=0.25, *args, **kwargs):
   return False
 
 def run():
+    # Printing Params
+    # for param in [ap, cp, tp, mp, sp, iop]:
+    # TODO change this to a logging function
+        dprint("Checking Params Info-print params from here (turn on/off)")
+    #     print('\n', param)
+    #     pprint(param.__dict__)
+    # tp.check_args()
+
     try:
         multiprocessing.set_start_method('spawn')
     except RuntimeError:
@@ -116,10 +138,10 @@ def run():
     # initialize atmosphere
     dprint("Atmosdir = %s " % iop.atmosdir)
     if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
-        print("It looks like you don't have an atmospheric maps. You can either"
+        dprint("It looks like you don't have an atmospheric maps. You can either"
               "get them from Rupert or generate them yourself with caos. Removing exit()")
         exit()
-        print("Making New Atmosphere Model")
+        dprint("Making New Atmosphere Model")
         caos.make_idl_params()
         caos.generate_maps()
 
@@ -149,22 +171,18 @@ def run():
     else:
         cp.r0s = cp.r0s[cp.r0s_idx]  # the r0 at the index cp.r0s_idx in params will be used throughout
 
-    # initialize detector
+    # initialize MKIDs
     if tp.detector == 'MKIDs' and not os.path.isfile(iop.device_params):
         MKIDs.initialize()
 
-    for param in [ap, cp, tp, mp, sp, iop]:
-        print('\n', param)
-        pprint(param.__dict__)
-    tp.check_args()
 
-    output = multiprocessing.Queue()
+    photon_table_queue = multiprocessing.Queue()
     inqueue = multiprocessing.Queue()
-    datacubes = multiprocessing.Queue()
+    spectralcubes_queue = multiprocessing.Queue()
     jobs = []
 
     if sp.save_obs and tp.detector=='MKIDs':
-        proc = multiprocessing.Process(target=read.handle_output, args=(output, iop.obsfile))
+        proc = multiprocessing.Process(target=read.handle_output, args=(photon_table_queue, iop.obsfile))
         proc.start()
 
     if tp.detector == 'MKIDs':
@@ -173,7 +191,7 @@ def run():
         hypercube = np.zeros((ap.numframes, tp.w_bins, tp.grid_size, tp.grid_size))
 
     for i in range(sp.num_processes):
-        p = multiprocessing.Process(target=Simulation, args=(inqueue, output, datacubes,(tp,ap,sp,iop,cp,mp)))
+        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, photon_table_queue, spectralcubes_queue,(tp,ap,sp,iop,cp,mp)))
         jobs.append(p)
         p.start()
 
@@ -231,14 +249,14 @@ def run():
         inqueue.put(sentinel)
     if sp.return_cube:
         for t in range(ap.numframes):
-            datacube = datacubes.get()
-            hypercube[datacube[0]-ap.startframe] = datacube[1]#should be in the right order now because of the identifier
+            spectralcube = spectralcubes_queue.get()
+            hypercube[spectralcube[0]-ap.startframe] = spectralcube[1]#should be in the right order now because of the identifier
 
     for i, p in enumerate(jobs):
         p.join()
 
-    output.put(None)
-    datacubes.put(None)
+    photon_table_queue.put(None)
+    spectralcubes_queue.put(None)
     if sp.save_obs and tp.detector=='MKIDs':
         proc.join()
     hypercube = np.array(hypercube)
