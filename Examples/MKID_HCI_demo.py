@@ -24,13 +24,14 @@ from medis.Analysis.phot import get_unoccult_psf, eval_method
 sp.show_wframe = False
 sp.save_obs = False
 sp.show_cube=False
+sp.num_processes = 1
+
 ap.companion = True
 sp.get_ints=False
-ap.star_photons = int(1e6) #1e8
-# ap.contrast = [10**-2.1,10**-3.1,10**-3.1]  # [0.1,0.1]
-# ap.lods = [[-3.2,3.2],[-3.2,0.3],[-4.2,-6.2]]#[6,-4.5],
-ap.contrast = [10**-3.1,10**-3.1,10**-3.1,10**-4,10**-4,10**-4]  # [0.1,0.1]
-ap.lods = [[-1.6,0.0],[-3.2,0.0],[-5,0.0],[1.6,0.0],[3.2,0.0],[5,0.0]]#[6,-4.5],
+ap.star_photons = int(1e6)
+ap.contrast = [10**-3.1,10**-3.1,10**-3.1,10**-4,10**-4,10**-4]
+ap.lods = [[-1.6,0.0],[-3.2,0.0],[-5,0.0],[1.6,0.0],[3.2,0.0],[5,0.0]]
+
 tp.diam=8.
 tp.grid_size=148
 tp.beam_ratio =0.5
@@ -54,34 +55,21 @@ tp.aber_vals = {'a': [5e-18, 1e-19],#'a': [5e-17, 1e-18],
                 'b': [2.0, 0.2],
                 'c': [3.1, 0.5],
                 'a_amp': [0.05, 0.01]}
-# mp.date = '181203compBright1sLessOOPP/'
-# mp.date = 'HR8799niceAberMKIDsPCA7200nocomp/'
-mp.date = 'HR8799niceAberidealPCA72001e8comp/'
-# mp.date = 'just2'
-mp.bad_pix = True
-mp.array_size = np.array([146,146])
-iop.update(mp.date)
-sp.num_processes = 1
-num_exp =10
-cp.frame_time = 0.05
-date = '180828/'
-dprint((iop.datadir, date))
-iop.atmosdir= os.path.join(iop.datadir,'atmos',date)
-
 tp.piston_error = False
 tp.band = np.array([700, 1500])
 tp.nwsamp = 4
 tp.w_bins = 16#8
 tp.rot_rate = 0  # deg/s
-# tp.pix_shift = None
-# tp.pix_shift = []
-# for ix in range(-2, 3):
-#     for iy in range(-2, 3):
-#         print(ix, iy, ix * 15, iy * 15)
-#         tp.pix_shift.append([ix * 15, iy * 15])
-# tp.pix_shift = np.array(tp.pix_shift)
+# tp.pix_shift = [[0,0],[20,20]]
 
-lod = 6
+mp.bad_pix = True
+mp.array_size = np.array([146,146])
+iop.update('HR8799niceAberidealPCA72001e8comp/')
+num_exp =10
+cp.frame_time = 0.05
+date = '180828/'
+dprint((iop.datadir, date))
+iop.atmosdir= os.path.join(iop.datadir,'atmos',date)
 
 mp.phase_uncertainty =True
 mp.phase_background=False
@@ -97,6 +85,15 @@ mp.bg_mean = -10
 mp.bg_sig = 40
 mp.pix_yield = 0.9#0.7 # check dis
 
+lod = 6
+
+# tp.pix_shift = None
+# tp.pix_shift = []
+# for ix in range(-2, 3):
+#     for iy in range(-2, 3):
+#         print(ix, iy, ix * 15, iy * 15)
+#         tp.pix_shift.append([ix * 15, iy * 15])
+# tp.pix_shift = np.array(tp.pix_shift)
 
 # if __name__ == '__main__':
 #     if os.path.exists(iop.int_maps):

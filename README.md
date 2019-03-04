@@ -17,7 +17,7 @@ The version here may change as the code continues to be tested. If you notice th
 ################################################################################################
 You will also have to install a modified verision of PROPER. Go to the MEDIS/Proper folder and run
 
-python setup.py install --prefix=/path/to/anaconda3/envs/lib/python3.6/site-pacakges/
+python setup.py install --prefix=/path/to/anaconda3/envs/medis/lib/python3.6/site-pacakges/
 
 #############################################################################################################
 

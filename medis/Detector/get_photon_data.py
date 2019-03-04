@@ -128,7 +128,7 @@ def run_medis():
     initialize different sub-processes, such as atmosphere and aberration maps, MKID device parameters
     sets up the multiprocessing features
     returns the observation sequence created by gen_timeseries
-    
+
     :return: obs_sequence
     """
     # Printing Params
@@ -281,7 +281,7 @@ def take_obs_data():
     obs_sequence = run_medis()
     end = time.time()
     print('Time elapsed: ', end - begin)
-    print('*************************************')
+    print('**************************************')
     return obs_sequence
 
 if __name__ == '__main__':
