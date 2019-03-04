@@ -1,15 +1,8 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
-import sys
-sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
 from medis.params import ap, cp, tp, sp, iop
 from medis.Utils.plot_tools import loop_frames, quicklook_im, compare_images
-# from medis.Utils.misc import debug_program
-# from Examples.get_photon_data import run
 import medis.Detector.readout as read
-# import medis.Detector.H2RG as H2RG
-# import medis.Detector.pipeline as pipe
-# import matplotlib.pyplot as plt
 
 sp.save_obs = False
 sp.show_cube = False
@@ -18,10 +11,8 @@ sp.show_wframe = False
 ap.companion=True
 sp.num_processes = 1
 ap.contrast = [0.01]
-iop.date = '180407/'
-iop.update(iop.date)
+iop.update('HCI_compare')
 tp.detector = 'ideal'
-tp.NCPA_type = 'Static'
 tp.check_args()
 num_exp = 1
 ap.exposure_time = 0.01
