@@ -1,5 +1,3 @@
-import sys
-sys.path.append('D:/dodkins/MEDIS/MEDIS')
 from medis.params import tp, mp, sp, cp, ap
 import matplotlib.pyplot as plt
 from get_photon_data import run
@@ -29,9 +27,7 @@ ap.numframes = int(num_exp * ap.exposure_time/cp.frame_time)
 sp.num_processes = 1
 if __name__ == '__main__':
     hypercube = run()
-    print np.shape(hypercube)
     hypercube = read.take_exposure(hypercube)
-    print np.shape(hypercube[0,3]), np.shape(hypercube)
     loop_frames(hypercube[:,0])
     plt.close()
     loop_frames(hypercube[0])

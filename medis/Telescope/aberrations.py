@@ -103,7 +103,7 @@ def circularise(prim_map):
     return new_prim
 
 def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
-    dprint("Adding Abberations")
+    #dprint("Adding Abberations")
 
     if aber_params['QuasiStatic'] == False:
         step = 0
@@ -140,7 +140,6 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
                 # quicklook_im(phase_maps[0]*1e9, logAmp=False, colormap="jet", show=True, axis=None, title='nm', pupil=True)
 
             if aber_params['Amp']:
-                # filename = '%s%s_Amp%f.fits' % (iop.aberdir, Loc, step * cp.frame_time)
                 for surf in range(aber_params['n_surfs']):
                     filename = '%s%s_Amp%f_v%i.fits' % (iop.quasi, Loc, step * cp.frame_time, surf)
                     rms_error = np.random.normal(aber_vals['a_amp'][0],aber_vals['a_amp'][1])
@@ -154,7 +153,7 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
                     if iw == 0 and io == 0:
                         if iw == 0 and io == 0:
                             amp_maps[surf] = proper.prop_psd_errormap(wf_array[0, 0], rms_error, c_freq, high_power,
-                                                                        FILE=filename, TPF=True)
+                                                                      FILE=filename, TPF=True)
                         else:
                             proper.prop_multiply(wf_array[iw, io], amp_maps[surf])
                     if aber_params['OOPP']:
@@ -163,17 +162,17 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
 
 
 def add_zern_ab(wfo):
-    proper.prop_zernikes( wfo, [2,3,4], np.array([175,150,200])*1.0e-9 )
+    proper.prop_zernikes(wfo, [2,3,4], np.array([175,150,200])*1.0e-9)
 
 
 def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
     dprint("Adding Atmosphere--from the abberations module")
     obj_map = None
-    samp = proper.prop_get_sampling(wf_array[0,0])*tp.band[0]*1e-9/w
+    samp = proper.prop_get_sampling(wf_array[0, 0])*tp.band[0]*1e-9/w
 
     shape = wf_array.shape
     if tp.piston_error:
-        pist_error = np.random.lognormal(0,0.5,1)
+        pist_error = np.random.lognormal(0, 0.5, 1)
         pist_error = 1.1*pist_error/6.9
     else:
         pist_error = 0
@@ -181,7 +180,8 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
         for io in range(shape[1]):
             if iw == 0 and io == 0:
                 try:
-                    obj_map = proper.prop_errormap(wf_array[0,0], atmos_map, MULTIPLY = (1+pist_error)/3, WAVEFRONT=True, MAP = "obj_map", SAMPLING=tp.samp)# )
+                    obj_map = proper.prop_errormap(wf_array[0, 0], atmos_map,
+                                                   MULTIPLY=(1+pist_error)/3, WAVEFRONT=True, MAP="obj_map", SAMPLING=tp.samp)
                 except IOError:
                     print('*** Using exception hack for name rounding error ***')
                     i = 0
@@ -202,7 +202,8 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
                             print('No file found')
                             exit()
 
-                    obj_map = proper.prop_errormap(wf_array[0,0], atmos_map, MULTIPLY=(1+pist_error)/2, WAVEFRONT=True, MAP = "obj_map", SAMPLING=tp.samp)
+                    obj_map = proper.prop_errormap(wf_array[0,0], atmos_map,
+                                                   MULTIPLY=(1+pist_error)/2, WAVEFRONT=True, MAP="obj_map", SAMPLING=tp.samp)
             else:
                 proper.prop_add_phase(wf_array[iw,io], obj_map)
 

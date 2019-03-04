@@ -30,7 +30,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
     thus, where the detector observes the wavefront created by optics_propagate (for MKIDs, the probability distribution)
 
     :param inqueue: time index for parallelization (used by multiprocess)
-    :param photon_table_queue: multiprocess que containing photon packets
+    :param photon_table_queue: photon table (list of photon packets) in the multiprocessing format
     :param spectralcube_queue: series of intensity images (spectral image cube) in the multiprocessing format
     :param xxx_todo_changeme:
     :return:

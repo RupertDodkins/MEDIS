@@ -169,13 +169,13 @@ class Telescope_params:
         # self.detector = 'MKIDs'#
         self.detector = 'ideal'#
         self.satelite_speck = False
-        self.speck_locs = [[50,60]]
+        self.speck_locs = [[50, 60]]
         self.speck_phases = [np.pi/2.]
         self.speck_peakIs = [0.05]
         self.abertime = 0.5  # time scale of optic aberrations
         self.samp = 0.2#0.125
         self.check_args()
-        self.pix_shift = [0,0]  # False?
+        self.pix_shift = [0, 0]  # False?
 
     def check_args(self):
         assert self.occulter_type in [None, 'None', 'Solid', 'Gaussian', '8th_Order', 'Vortex', 'None (Lyot Stop)']

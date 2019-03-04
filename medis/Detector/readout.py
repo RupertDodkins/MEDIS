@@ -1,11 +1,7 @@
 '''This code makes the formats the photon data products'''
 import numpy as np
-import os
 from copy import copy
-# import glob
-# import multiprocessing
 import tables as pt
-# import matplotlib.pyplot as plt
 import pickle as pickle
 from medis.params import ap, cp, tp, mp, iop, hp, sp
 from . import MKIDs
@@ -21,7 +17,7 @@ from medis.Utils.misc import dprint
 
 
 def get_packets(datacube, step, dp,mp):
-    # print 'Detecting photons with an MKID array'
+    # dprint 'Detecting photons with an MKID array'
 
     # quicklook_im(dp.response_map)
     # quicklook_im(datacube)
@@ -48,7 +44,7 @@ def get_packets(datacube, step, dp,mp):
         top = int(np.floor(float(tp.grid_size-mp.array_size[1])/2))
         bottom = int(np.ceil(float(tp.grid_size-mp.array_size[1])/2))
 
-        print(left, right, top, bottom)
+        dprint(left, right, top, bottom)
         datacube = datacube[:,bottom:-top,left:-right]
     # loop_frames(datacube)
     # quicklook_im(datacube[2], logAmp=False, vmax = 0.001, vmin=1e-8)
@@ -63,8 +59,8 @@ def get_packets(datacube, step, dp,mp):
     num_events = int(ap.star_photons * ap.exposure_time * np.sum(datacube))
     dprint((num_events, ap.star_photons, np.sum(datacube), ap.exposure_time))
     if num_events * sp.num_processes > 1.0e9:
-        print(num_events)
-        print('Possibly too many photons for memory. Are you sure you want to do this? Remove exit() if so')
+        dprint(num_events)
+        dprint('Possibly too many photons for memory. Are you sure you want to do this? Remove exit() if so')
         exit()
 
 
@@ -362,16 +358,17 @@ def save_obs_sequence(obs_sequence, HyperCubeFile = 'hyper.pkl'):
     # HyperCubeFile = HyperCubeFile[:-3]+'npy'
     # np.save(HyperCubeFile, hypercube)
 
-def save_hypercube_hdf5(hypercube, HyperCubeFile = 'hyper.hdf'):
+def save_hypercube_hdf5(obs_sequence, HyperCubeFile = 'hyper.hdf'):
     f = pt.open_file(HyperCubeFile, 'w')
     # atom = pt.Atom.from_dtype(hypercube.dtype)
     # ds = f.createCArray(f.root, 'data', atom, hypercube.shape)
-    ds = f.create_array(f.root, 'data', hypercube)
+    ds = f.create_array(f.root, 'data', obs_sequence)
     # ds[:] = hypercube
     f.close()
 
 def get_integ_hypercube(plot=False):
     import medis.Detector.get_photon_data as gpd
+    import os
     print(os.path.isfile(iop.obs_seq), iop.obs_seq)
     print(ap.numframes)
 
