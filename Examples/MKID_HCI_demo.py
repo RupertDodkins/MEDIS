@@ -120,7 +120,7 @@ if __name__ == '__main__':
     plotdata, maps = [], []
 
     print(ap.__dict__)
-    psf_template = get_unoccult_psf(hyperFile='/IntHyperUnOccult.h5', plot=False, numframes=1)
+    psf_template = get_unoccult_psf(obs_seq='/IntHyperUnOccult.h5', plot=False, numframes=1)
     psf_template = psf_template[0,:,1:,1:]
     dprint((tp.grid_size//2, psf_template.shape))
     # quicklook_im(np.sum(psf_template,axis=0))
@@ -134,9 +134,9 @@ if __name__ == '__main__':
 
     ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
     # iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
-    dprint(iop.hyperFile)
+    dprint(iop.obs_seq)
 
-    orig_hyper = read.get_integ_hypercube(plot=False)[:, :]
+    orig_hyper = read.get_integ_obs_sequence(plot=False)[:, :]
 
     # fast_hyper = fast_hyper[:100]
     # ap.numframes = int(100 * ap.exposure_time / cp.frame_time)

@@ -362,7 +362,7 @@ def save_obs_sequence(obs_sequence, HyperCubeFile = 'hyper.pkl'):
     # HyperCubeFile = HyperCubeFile[:-3]+'npy'
     # np.save(HyperCubeFile, hypercube)
 
-def save_hypercube_hdf5(hypercube, HyperCubeFile = 'hyper.hdf'):
+def save_obs_sequence_hdf5(hypercube, HyperCubeFile = 'hyper.hdf'):
     f = pt.open_file(HyperCubeFile, 'w')
     # atom = pt.Atom.from_dtype(hypercube.dtype)
     # ds = f.createCArray(f.root, 'data', atom, hypercube.shape)
@@ -370,7 +370,7 @@ def save_hypercube_hdf5(hypercube, HyperCubeFile = 'hyper.hdf'):
     # ds[:] = hypercube
     f.close()
 
-def get_integ_hypercube(plot=False):
+def get_integ_obs_sequence(plot=False):
     import medis.Detector.get_photon_data as gpd
     print(os.path.isfile(iop.obs_seq), iop.obs_seq)
     print(ap.numframes)
@@ -379,10 +379,10 @@ def get_integ_hypercube(plot=False):
     if os.path.isfile(iop.obs_seq):
         if iop.obs_seq[-3:] == '.h5':
         # try:
-            obs_sequence = open_hypercube_hdf5(HyperCubeFile=iop.obs_seq)
+            obs_sequence = open_obs_sequence_hdf5(HyperCubeFile=iop.obs_seq)
         else:
         # except:
-            obs_sequence = open_hypercube(HyperCubeFile=iop.obs_seq)
+            obs_sequence = open_obs_sequence(HyperCubeFile=iop.obs_seq)
     else:
 
         # obs_sequence = gpd.run()
@@ -423,7 +423,7 @@ def open_obs_sequence(HyperCubeFile = 'hyper.pkl'):
     # hypercube = np.load(HyperCubeFile)
     return hypercube
 
-def open_hypercube_hdf5(HyperCubeFile = 'hyper.h5'):
+def open_obs_sequence_hdf5(HyperCubeFile = 'hyper.h5'):
     # hdf5_path = "my_data.hdf5"
     read_hdf5_file = pt.open_file(HyperCubeFile, mode='r')
     # Here we slice [:] all the data back into memory, then operate on it
