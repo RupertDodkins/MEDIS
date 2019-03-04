@@ -134,8 +134,8 @@ def run_medis():
     # Printing Params
     dprint("Checking Params Info-print params from here (turn on/off)")
 
-    # for param in [ap, cp, tp, mp, sp, iop]:
     # TODO change this to a logging function
+    # for param in [ap, cp, tp, mp, sp, iop]:
     #     print('\n', param)
     #     pprint(param.__dict__)
     # tp.check_args()

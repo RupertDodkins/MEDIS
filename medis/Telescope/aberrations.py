@@ -199,7 +199,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
                             up = 0
                         elif i <= -50e-6:
                             dprint('Last found atmos map is %s' % atmos_map)
-                            print('No file found')
+                            print('No file found. Is your frame cadence too short for the atmosphere maps you have?')
                             exit()
 
                     obj_map = proper.prop_errormap(wf_array[0,0], atmos_map,

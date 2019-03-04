@@ -102,11 +102,11 @@ if __name__ == '__main__':
     iop.hyperFile = iop.datadir + 'BpicSource5.pkl'
     if not os.path.isdir(iop.hyperFile):
         os.mkdir(iop.hyperFile)
-    simple_hypercube_1 = read.get_integ_hypercube(plot=False)#/ap.numframes
+    simple_hypercube_1 = read.get_integ_obs_sequence(plot=False)#/ap.numframes
 
     ap.startframe = ap.numframes
     ap.companion = False
-    simple_hypercube_2 = read.get_integ_hypercube(plot=False)#/ap.numframes
+    simple_hypercube_2 = read.get_integ_obs_sequence(plot=False)#/ap.numframes
     #
     # loop_frames(simple_hypercube_1[:,0], logAmp=True)
     # loop_frames(simple_hypercube_2[:,0], logAmp=True)

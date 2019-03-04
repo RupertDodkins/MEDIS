@@ -29,13 +29,13 @@ def get_packets(datacube, step, dp,mp):
     # view_datacube(datacube)
     # dprint((datacube.shape, np.sum(datacube)))
     # loop_frames(datacube)
-    if tp.pix_shift is not None:
+    # if tp.pix_shift is not None:
 
-        moves = np.shape(tp.pix_shift)[0]
+    moves = np.shape(tp.pix_shift)[0]
 
-        iteration = step % moves
-        datacube = np.roll(np.roll(datacube, tp.pix_shift[iteration][0], 1),
-                           tp.pix_shift[iteration][1], 2)
+    iteration = step % moves
+    datacube = np.roll(np.roll(datacube, tp.pix_shift[iteration][0], 1),
+                       tp.pix_shift[iteration][1], 2)
 
     if (mp.array_size != datacube[0].shape + np.array([1,1])).all():
         left = int(np.floor(float(tp.grid_size-mp.array_size[0])/2))
