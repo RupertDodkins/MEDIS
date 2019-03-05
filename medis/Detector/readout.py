@@ -362,6 +362,19 @@ def save_obs_sequence_hdf5(obs_sequence, HyperCubeFile = 'hyper.hdf'):
     f.close()
 
 def get_integ_obs_sequence(plot=False):
+    """
+    Weird wrapper for running an example.
+
+    This code basically just checks to see if there is already
+    a observation sequence saved with the output of the run in the
+    location specified by the iop. If none exists, it passes all
+    the parameters to get_photon_data.
+
+    :param plot: Flag, do you want plots or not
+    :return: the obs_sequence (timeseries of data cubes)
+        data is saved in location specified in iop
+        data can be saved as obs_table (photon table) if detector type is MKIDs
+    """
     import medis.Detector.get_photon_data as gpd
     import os
     dprint(os.path.isfile(iop.obs_seq), iop.obs_seq)
