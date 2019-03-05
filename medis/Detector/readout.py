@@ -11,7 +11,7 @@ from . import temporal as temp
 from . import spectral as spec
 # import medis.Detector.readout as read
 # import matplotlib.pyplot as plt
-# from . import H2RG
+from . import H2RG
 from medis.Utils.misc import dprint
 
 
@@ -317,7 +317,7 @@ def remove_close_photons(cube):
             events = np.array(cube[x][y])
             print(events, np.shape(events))
             try:
-                diff = events[0,0] - np.roll(events[0,0],1)
+                diff = events[0,0] - np.roll(events[0,0], 1)
                 print(x, y, diff)
             except IndexError:
                 pass
@@ -328,13 +328,9 @@ def remove_close_photons(cube):
     return photons
 
 def take_exposure(obs_sequence):
-    # dprint(np.sum(obs_sequence))
-    # dprint((ap.exposure_time, cp.frame_time))
     factor = ap.exposure_time/ cp.frame_time
     num_exp = int(ap.numframes/factor)
-    # print factor, num_exp
     downsample_cube = np.zeros((num_exp,obs_sequence.shape[1],obs_sequence.shape[2], obs_sequence.shape[3]))
-    # print ap.numframes, factor, num_exp
     for i in range(num_exp):
         # print np.shape(downsample_cube[i]), np.shape(obs_sequence), np.shape(np.sum(obs_sequence[i * factor : (i + 1) * factor], axis=0))
         downsample_cube[i] = np.sum(obs_sequence[int(i*factor):int((i+1)*factor)],axis=0)#/float(factor)
@@ -368,7 +364,7 @@ def save_obs_sequence_hdf5(obs_sequence, HyperCubeFile = 'hyper.hdf'):
 def get_integ_obs_sequence(plot=False):
     import medis.Detector.get_photon_data as gpd
     import os
-    print(os.path.isfile(iop.obs_seq), iop.obs_seq)
+    dprint(os.path.isfile(iop.obs_seq), iop.obs_seq)
     print(ap.numframes)
 
 
@@ -387,8 +383,9 @@ def get_integ_obs_sequence(plot=False):
         if plot:
             loop_frames(obs_sequence[:,0])
             loop_frames(obs_sequence[0])
-        print('finished run')
-        print(np.shape(obs_sequence))
+        print('*********RUN COMPLETE!**************')
+        dprint(np.shape(obs_sequence))
+        f"Data saved: {HyperCubeFile}"
         if plot: view_datacube(obs_sequence[0], logAmp=True)
 
         if tp.detector == 'H2RG':
