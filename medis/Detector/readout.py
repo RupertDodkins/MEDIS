@@ -363,7 +363,7 @@ def save_obs_sequence_hdf5(obs_sequence, HyperCubeFile = 'hyper.hdf'):
 
 def get_integ_obs_sequence(plot=False):
     """
-    Weird wrapper for running an example.
+    slightly awkward wrapper for running an observation
 
     This code basically just checks to see if there is already
     a observation sequence saved with the output of the run in the
@@ -423,20 +423,20 @@ def get_integ_obs_sequence(plot=False):
 
 def open_obs_sequence(HyperCubeFile = 'hyper.pkl'):
     with open(HyperCubeFile, 'rb') as handle:
-        hypercube =pickle.load(handle)
+        obs_sequence =pickle.load(handle)
     # quicklook_im(hypercube[-1, 0])
     # HyperCubeFile = HyperCubeFile[:-3]+'npy'
     # hypercube = np.load(HyperCubeFile)
-    return hypercube
+    return obs_sequence
 
 def open_obs_sequence_hdf5(HyperCubeFile = 'hyper.h5'):
     # hdf5_path = "my_data.hdf5"
     read_hdf5_file = pt.open_file(HyperCubeFile, mode='r')
     # Here we slice [:] all the data back into memory, then operate on it
-    hypercube = read_hdf5_file.root.data[:]
+    obs_sequence = read_hdf5_file.root.data[:]
     # hdf5_clusters = read_hdf5_file.root.clusters[:]
     read_hdf5_file.close()
-    return hypercube
+    return obs_sequence
 
 
 
