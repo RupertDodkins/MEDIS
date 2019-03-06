@@ -164,9 +164,6 @@ def run_medis():
     # if tp.servo_error:
     #     aber.createObjMapsEmpty()
 
-    if tp.aber_params['CPA'] or tp.aber_params['NCPA']:
-        if not os.path.isdir(iop.aberdir):
-            os.makedirs(iop.aberdir, exist_ok=True)  # Only works in Python >= 3.2
     aber.initialize_CPA_meas()
 
     if tp.active_null:

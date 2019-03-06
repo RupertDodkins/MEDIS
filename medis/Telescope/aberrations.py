@@ -176,6 +176,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
         pist_error = 1.1*pist_error/6.9
     else:
         pist_error = 0
+
     for iw in range(shape[0]):
         for io in range(shape[1]):
             if iw == 0 and io == 0:

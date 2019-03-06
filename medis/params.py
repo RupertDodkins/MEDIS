@@ -18,8 +18,8 @@ class IO_params:
     """
     def __init__(self, testname='example1'):  # testname should be the name of the particular example you are running, for exmple 'BetaPic' or 'simple_telescope'
         # High Level Paths
-        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        # self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
+        # self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
         # self.lab_obs_path = '/mnt/kids/'  #
 
@@ -93,12 +93,12 @@ class Astro_params:
     def __init__(self):
         # Total number of photons on the array for a timestep shared between all wavelengths
         self.star_photons = int(1e5) # # A 5 apparent mag star 1e6 cts/cm^2/s
-        self.companion=True
+        self.companion = True
         self.contrast = [0.05]
-        self.C_spec = 1.5 #the gradient of the increase in contrast towards shorter wavelengths
-        self.lods = [[-1.0, 1.0]] # initial location (no rotation)
+        self.C_spec = 1.5  # the gradient of the increase in contrast towards shorter wavelengths
+        self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
         self.exposure_time = 0.001
-        self.startframe=0 # useful for things like RDI
+        self.startframe = 0  # useful for things like RDI
         self.numframes = 5000
 
 
@@ -108,8 +108,8 @@ class CAOS_params:
     Default parameters for the atmosphere
     """
     def __init__(self):
-        self.show_caosparams= True # for control over all other variables
-        self.frame_time = 0.001 # this is the maximum frame rate of the simulation
+        self.show_caosparams= True  # for control over all other variables
+        self.frame_time = 0.001  # this is the maximum frame rate of the simulation
         self.vary_r0 = False
         self.r0s = []
         self.scalar_r0 = 'med'
@@ -120,16 +120,15 @@ class Telescope_params:
     This contains most of the parameters you will probably modify when running tests
     """
     def __init__(self):
-        self.grid_size = 128 #128            # grid size
-        # self.lamda = 1        # wavelength (microns)
+        self.grid_size = 128  # creates a nxn array (of samples of the wavefront ~= # pixels)
         self.nwsamp = 3  # number of wavefronts created in PROPER to sample from
+        self.band = np.array([800, 1500])  # wavelength range in nm
+                                           # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
         self.w_bins = 8  # number of bins in the resultant datacube
         self.interp_sample = True
-        # self.band = np.array([1100,1400]) #J band
-        self.band = np.array([800,1500])  # whole DARKNESS band
         self.rot_rate = 0  #1 # deg/s
         self.use_spiders = True
-        self.use_hex = False
+        self.use_hex = False  # include abberations from hexagonal segmented mirror shape of primary
         self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary
         self.use_ao = True  # True
         self.quick_ao = True
@@ -151,18 +150,18 @@ class Telescope_params:
         # self.CPA_type = 'Static'#'Quasi'# None
         # self.NCPA_type = 'Static'#'Wave'# #None
         self.aber_params = {'CPA': True,
-                          'NCPA': True,
-                          'QuasiStatic': False,  # or 'Static'
-                          'Phase': True,
-                          'Amp': False,
-                            'n_surfs':2,
-                            'OOPP':[8,4]} # fraction of a focal length where mirror(s) is located
+                            'NCPA': True,
+                            'QuasiStatic': False,  # or 'Static'
+                            'Phase': True,
+                            'Amp': False,
+                            'n_surfs': 2,
+                            'OOPP': [8,4]} # fraction of a focal length where mirror(s) is located
         self.aber_vals = {'a': [7.2e-17, 3e-17],
-                        'b': [0.8, 0.2],
-                        'c': [3.1,0.5],
-                          'a_amp':[0.05,0.01]}
+                           'b': [0.8, 0.2],
+                           'c': [3.1,0.5],
+                           'a_amp': [0.05,0.01]}
         self.use_zern_ab = False
-        self.diam = 5.0 #8.0              # telescope diameter in meters
+        self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
         self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
         self.beam_ratio = 25/64.#0.39#0.3#0.25#0.5
@@ -234,8 +233,8 @@ class MKID_params:
 
 class H2RG_params:
     def __init__(self):
-        self.use_readnoise=True
-        self.readnoise=30
+        self.use_readnoise = True
+        self.readnoise = 30
         self.erate = 1
 
 
@@ -253,9 +252,9 @@ class Simulation_params:
         self.vmin = None
         self.variable = None
         self.save_obs = True
-        self.return_cube=True
-        self.get_ints = {'w':[0],
-                          'c':[0]}#False
+        self.return_cube = True
+        self.get_ints = {'w': [0],
+                         'c': [0]}  # False
 
 
 class Device_params:

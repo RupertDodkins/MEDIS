@@ -22,14 +22,14 @@ def iter_func(wavefronts, func, *args, **kwargs):
 
 def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         # possible rename to optics_propagate
     """
-    propagates instantaneous complex E-field through the optical system
+    propagates instantaneous complex E-field through the optical system in loop over wavelength range
 
     uses PyPROPER3 to generate the complex E-field at the source, then propagates it through atmosphere, then telescope, to the focal plane
     the AO simulator happens here
     this does not include the observation of the wavefront by the detector
-    creates single spectral cube at instantaneous time
+    :returns spectral cube at instantaneous time
     """
-    dprint("Running System")
+    dprint("Propagating Wavefront Through Telescope")
     passpara = PASSVALUE['params']
     ap.__dict__ = passpara[0].__dict__
     tp.__dict__ = passpara[1].__dict__
@@ -44,14 +44,16 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
     else:
         wf_array = np.empty((len(wsamples), 1), dtype=object)
 
+    # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
     beam_ratios = np.zeros_like((wsamples))
     for iw, w in enumerate(wsamples):
-        # Define the wavefront
+        # Initialize the wavefront at entrance pupil
         beam_ratios[iw] = tp.beam_ratio * tp.band[0] / w * 1e-9
         wfp = proper.prop_begin(tp.diam, w, tp.grid_size, beam_ratios[iw])
 
         wfs = [wfp]
         names = ['primary']
+        # Initiate wavefronts for companion(s)
         if ap.companion:
             for id in range(len(ap.contrast)):
                 wfc = proper.prop_begin(tp.diam, w, tp.grid_size, beam_ratios[iw])
@@ -61,7 +63,15 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
         for io, (iwf, wf) in enumerate(zip(names, wfs)):
             wf_array[iw, io] = wf
 
+    # Defines aperture (before primary)
     iter_func(wf_array, proper.prop_circular_aperture, **{'radius':tp.diam/2})
+
+    # Pass through a mini-atmosphere inside the telescope baffle
+    #  The atmospheric model used here (as of 3/5/19) uses different scale heights,
+    #  wind speeds, etc to generate an atmosphere, but then flattens it all into
+    #  a single phase mask. The phase mask is a real-valued delay lenghts across
+    #  the array from infinity. The delay length thus corresponds to a different
+    #  phase offset at a particular frequency.
     if tp.use_atmos:
         # TODO is there a name hack in here? seems like an error...
         aber.add_atmos(wf_array, *(tp.f_lens, w, PASSVALUE['atmos_map']))
@@ -81,13 +91,12 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
     if tp.use_hex:
         fo.add_hex(wf_array)
 
-    iter_func(wf_array,proper.prop_define_entrance)  # normalizes the intensity
+    iter_func(wf_array, proper.prop_define_entrance)  # normalizes the intensity
 
     if wf_array.shape[1] >=1:
         fo.offset_companion(wf_array[:,1:], PASSVALUE['atmos_map'], )
 
     if tp.aber_params['CPA']:
-
         aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='CPA')
         iter_func(wf_array, proper.prop_circular_aperture, **{'radius': tp.diam / 2})
         iter_func(wf_array, fo.add_spiders, tp.diam, legs=False)
@@ -144,19 +153,21 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
         from medis.Telescope.coronagraph import apodization
         iter_func(wf_array, apodization, True)
 
+    # First Optic (primary mirror)
     iter_func(wf_array, fo.prop_mid_optics, tp.f_lens)
-
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
 
+    # Caronagraph
     iter_func(wf_array, coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
 
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
 
+    #
     shape = wf_array.shape
     for iw in range(shape[0]):
         wframes = np.zeros((tp.grid_size, tp.grid_size))
         for io in range(shape[1]):
-            (wframe, sampling) = proper.prop_end(wf_array[iw,io])
+            (wframe, sampling) = proper.prop_end(wf_array[iw, io])
 
             wframes += wframe
 
