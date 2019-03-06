@@ -1,6 +1,5 @@
 import numpy as np
 rom medis.params import tp, mp, cp, sp, ap, iop
-from get_photon_data import run_medis
 import get_photon_data as gpd
 from medis.Utils.plot_tools import view_datacube
 import medis.Utils.rawImageIO as rawImageIO

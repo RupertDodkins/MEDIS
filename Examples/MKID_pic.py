@@ -10,6 +10,9 @@ from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, com
 import pickle
 from medis.Utils.misc import dprint
 
+# Rename Data Directory
+iop.update("MKID_pic")
+
 sp.show_wframe = False
 sp.save_obs = False
 sp.show_cube=False

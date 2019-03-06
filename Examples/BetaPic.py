@@ -10,6 +10,10 @@ import medis.Analysis.phot
 import medis.Analysis.stats
 from medis.Utils.misc import dprint
 
+
+# Rename Data Directory
+iop.update("BetaPic")
+
 # Global params
 sp.save_obs = False
 sp.show_cube = False

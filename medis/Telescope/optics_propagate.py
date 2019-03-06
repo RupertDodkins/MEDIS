@@ -29,7 +29,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
     this does not include the observation of the wavefront by the detector
     :returns spectral cube at instantaneous time
     """
-    dprint("Propagating Wavefront Through Telescope")
+    #dprint("Propagating Wavefront Through Telescope")
     passpara = PASSVALUE['params']
     ap.__dict__ = passpara[0].__dict__
     tp.__dict__ = passpara[1].__dict__

@@ -377,7 +377,7 @@ def get_integ_obs_sequence(plot=False):
     """
     import medis.Detector.get_photon_data as gpd
     import os
-    dprint(os.path.isfile(iop.obs_seq), iop.obs_seq)
+    dprint(iop.obs_seq)
     print(ap.numframes)
 
 

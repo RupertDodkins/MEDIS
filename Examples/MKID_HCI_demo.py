@@ -2,23 +2,23 @@
 
 import os
 import matplotlib as mpl
-mpl.use('Qt5Agg')
 import numpy as np
-# sys.path.append(os.environ['MEDIS_DIR'])
-
 import matplotlib.pyplot as plt
-
 from matplotlib.colors import LogNorm
 from vip_hci import phot, pca
 from statsmodels.tsa.stattools import acf
-# import pickle
-# import medis
 from medis.params import tp, mp, cp, sp, ap, iop
 # import medis.Detector.get_photon_data as gpd
 from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
 from medis.Utils.misc import dprint
 import medis.Detector.readout as read
 from medis.Analysis.phot import get_unoccult_psf, eval_method
+
+
+mpl.use('Qt5Agg')
+
+# Renaming obs_sequence directory location
+iop.update('HR8799niceAberidealPCA72001e8comp/')
 
 # Parameters specific to this script
 sp.show_wframe = False
@@ -64,12 +64,11 @@ tp.rot_rate = 0  # deg/s
 
 mp.bad_pix = True
 mp.array_size = np.array([146,146])
-iop.update('HR8799niceAberidealPCA72001e8comp/')
 num_exp =10
 cp.frame_time = 0.05
-date = '180828/'
-dprint((iop.datadir, date))
-iop.atmosdir= os.path.join(iop.datadir,'atmos',date)
+# date = '180828/'
+# dprint((iop.datadir, date))
+# iop.atmosdir= os.path.join(iop.datadir,'atmos',date)
 
 mp.phase_uncertainty =True
 mp.phase_background=False

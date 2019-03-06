@@ -1,6 +1,4 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
-import sys
-sys.path.append('D:/dodkins/MEDIS/MEDIS')
 import numpy as np
 import copy
 import matplotlib.pyplot as plt
@@ -13,6 +11,9 @@ import medis.Analysis.phot
 import medis.Analysis.stats
 import pandas as pd
 from medis.Utils.misc import dprint
+
+# Rename Data Directory
+iop.update("HR8799_demo")
 
 # Global params
 sp.save_obs = False
@@ -45,11 +46,11 @@ tp.aber_params = {'CPA': True,
                     'Amp': False,
                     'n_surfs': 4,
                     'OOPP': [16,8,8, 4]}#False}#
-mp.date = '180416mkids/'
-cp.date = '1804171hr8m/'
-import os
-iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
-iop.update(mp.date)
+# mp.date = '180416mkids/'
+# cp.date = '1804171hr8m/'
+# import os
+# iop.atmosdir= os.path.join(cp.rootdir,cp.data,cp.date)
+# iop.update(mp.date)
 sp.num_processes = 48
 # tp.occulter_type = '8th_Order'
 tp.occulter_type = 'Vortex'
@@ -113,7 +114,7 @@ if __name__ == '__main__':
 
 
     rad_samp = np.linspace(0,tp.platescale/1000.*40,40)
-    print rad_samp
+    print(rad_samp)
     # Get unocculted PSF for intensity
     psf_template = Analysis.phot.get_unoccult_psf(hyperFile='/IntHyperUnOccult.pkl', plot=False)
     # star_phot = np.sum(psf_template)
@@ -125,13 +126,15 @@ if __name__ == '__main__':
     # ap.contrast = [1e-5, 1e-6]  # [0.1,0.1]
     # ap.lods = [[-2.5, 2.5], [-4.5, 4.5]]
     tp.detector =  'MKIDs'  #'ideal'#
-    iop.hyperFile = iop.datadir + 'small_no_source_tar_500.pkl'
-    simple_hypercube_1 = read.get_integ_hypercube(plot=False)#/ap.numframes
+    # iop.obs_seq = iop.datadir + 'small_no_source_tar_500.pkl'
+    iop.obs_seq = iop.testdir + 'small_no_source_tar_500.pkl'
+    simple_hypercube_1 = read.get_integ_obs_sequence(plot=False)#/ap.numframes
 
     ap.startframe = ap.numframes
     ap.companion =False
-    iop.hyperFile = iop.datadir + 'small_no_source_ref_500.pkl'  # 5
-    simple_hypercube_2 = read.get_integ_hypercube(plot=False)#/ap.numframes
+    # iop.hyperFile = iop.datadir + 'small_no_source_ref_500.pkl'  # 5
+    iop.hyperFile = iop.testdir + 'small_no_source_ref_500.pkl'  # 5
+    simple_hypercube_2 = read.get_integ_obs_sequence(plot=False)#/ap.numframes
 
 
     def RDI(simple_hypercube_1, simple_hypercube_2, psf_template):

@@ -1,9 +1,6 @@
 from proper_mod import prop_run
 import proper
-import sys
-import os
 import numpy as np
-# sys.path.append(os.environ['MEDIS_DIR'])
 from medis.Utils.plot_tools import quicklook_wf, quicklook_im
 
 

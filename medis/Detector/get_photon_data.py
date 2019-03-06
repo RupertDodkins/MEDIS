@@ -73,7 +73,6 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
                 image = np.sum(spectralcube, axis=0)
                 vmin = np.min(spectralcube)*10
             elif tp.detector == 'MKIDs':
-
                 packets = read.get_packets(spectralcube, t, dp, mp)
 
                 if sp.show_wframe or sp.show_cube or sp.return_cube:
@@ -272,6 +271,12 @@ def run_medis():
     return obs_sequence
 
 def take_obs_data():
+    """
+    Wrapper for run_medis that measures computational time to run the code
+
+    # TODO see if this wrapper can be incorporated elsewhere, probably in get_integ_obs_sequence
+    :return: the obs_sequence created from the simulation
+    """
     import time
     print('********** Taking Obs Data ***********')
     begin = time.time()
