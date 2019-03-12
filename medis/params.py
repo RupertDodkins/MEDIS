@@ -97,7 +97,7 @@ class Astro_params:
         self.contrast = [0.05]
         self.C_spec = 1.5 #the gradient of the increase in contrast towards shorter wavelengths
         self.lods = [[-1.0, 1.0]] # initial location (no rotation)
-        self.exposure_time = 0.001
+        self.exposure_time = 0.01
         self.startframe=0 # useful for things like RDI
         self.numframes = 5000
 
@@ -109,7 +109,7 @@ class CAOS_params:
     """
     def __init__(self):
         self.show_caosparams= True # for control over all other variables
-        self.frame_time = 0.001 # this is the maximum frame rate of the simulation
+        self.frame_time = 0.01 # this is the maximum frame rate of the simulation
         self.vary_r0 = False
         self.r0s = []
         self.scalar_r0 = 'med'
@@ -254,9 +254,9 @@ class Simulation_params:
         self.variable = None
         self.save_obs = True
         self.return_cube=True
-        self.get_ints = {'w':[0],
-                          'c':[0]}#False
-
+        # self.get_ints = {'w':[0],
+        #                   'c':[0]}#False
+        self.get_ints = False
 
 class Device_params:
     """
