@@ -12,7 +12,7 @@ from medis.Utils.misc import dprint
 
 
 # Rename Data Directory
-iop.update("BetaPic")
+iop.update("BetaPic/")
 
 # Global params
 sp.save_obs = False

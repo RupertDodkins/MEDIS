@@ -11,7 +11,7 @@ import pickle
 from medis.Utils.misc import dprint
 
 # Rename Data Directory
-iop.update("MKID_pic")
+iop.update("MKID_pic/")
 
 sp.show_wframe = False
 sp.save_obs = False

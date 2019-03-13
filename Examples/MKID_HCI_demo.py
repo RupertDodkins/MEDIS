@@ -18,7 +18,7 @@ from medis.Analysis.phot import get_unoccult_psf, eval_method
 mpl.use('Qt5Agg')
 
 # Renaming obs_sequence directory location
-iop.update('HR8799niceAberidealPCA72001e8comp/')
+iop.update('HCIdemo/')
 
 # Parameters specific to this script
 sp.show_wframe = False
