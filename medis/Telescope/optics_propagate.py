@@ -25,6 +25,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
     propagates instantaneous complex E-field through the optical system in loop over wavelength range
 
     uses PyPROPER3 to generate the complex E-field at the source, then propagates it through atmosphere, then telescope, to the focal plane
+    currently: optics system "hard coded" as single aperture and lens
     the AO simulator happens here
     this does not include the observation of the wavefront by the detector
     :returns spectral cube at instantaneous time
@@ -93,12 +94,17 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
 
     iter_func(wf_array, proper.prop_define_entrance)  # normalizes the intensity
 
+    # Both offsets and scales the companion wavefront
     if wf_array.shape[1] >=1:
         fo.offset_companion(wf_array[:,1:], PASSVALUE['atmos_map'], )
 
+    # Abberations before AO
     if tp.aber_params['CPA']:
         aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='CPA')
         iter_func(wf_array, proper.prop_circular_aperture, **{'radius': tp.diam / 2})
+        # TODO check this was resolved and spiders can be applied earlier up the chain
+        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
+        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
         iter_func(wf_array, fo.add_spiders, tp.diam, legs=False)
         wf_array = aber.abs_zeros(wf_array)
         if sp.get_ints: get_intensity(wf_array, sp, phase=True)
@@ -132,6 +138,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
     # if tp.active_modulate:
     #     fpwfs.modulate(wf, w, PASSVALUE['iter'])
 
+    # Abberations after the AO Loop
     if tp.aber_params['NCPA']:
         aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='NCPA')
         iter_func(wf_array, proper.prop_circular_aperture, **{'radius': tp.diam / 2})
@@ -142,13 +149,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
     if tp.use_zern_ab:
         iter_func(wf_array, aber.add_zern_ab)
 
-    # TODO check this was resolved and spiders can be applied earlier up the chain
-    # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
-    # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
-    # if tp.use_spiders:
-    #     iter_func(wf_array, fo.add_spiders, tp.diam)
-    #         fo.prop_mid_optics(wf, tp.f_lens)
-
+    
     if tp.use_apod:
         from medis.Telescope.coronagraph import apodization
         iter_func(wf_array, apodization, True)
