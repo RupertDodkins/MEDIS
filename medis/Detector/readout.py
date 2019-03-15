@@ -1,4 +1,14 @@
-'''This code makes the formats the photon data products'''
+'''
+reads, formats, and saves data products, including obs_sequence
+
+This module is really two different modules, smushed together.
+The first part of the module has something to do with a readout system.
+  It has the relevant code to convert from a obs_sequence to a  photon list, for the case of MKIDs
+The second half of the module has little/nothing to do with a readout system
+  This deals with reading, opening, and saving obs_sequences, either hdf5 or ?? format
+
+
+'''
 import numpy as np
 from copy import copy
 import tables as pt
@@ -9,11 +19,14 @@ import proper
 from medis.Utils.plot_tools import view_datacube, loop_frames, quicklook_im
 from . import temporal as temp
 from . import spectral as spec
-# import medis.Detector.readout as read
 # import matplotlib.pyplot as plt
 from . import H2RG
 from medis.Utils.misc import dprint
 
+
+####################################################################################################
+## Modules Relating to Formatting Data in Photon Lists ##
+####################################################################################################
 
 def get_packets(datacube, step, dp,mp):
     # print 'Detecting photons with an MKID array'
@@ -34,8 +47,9 @@ def get_packets(datacube, step, dp,mp):
     moves = np.shape(tp.pix_shift)[0]
 
     iteration = step % moves
-    datacube = np.roll(np.roll(datacube, tp.pix_shift[iteration][0], 1),
-                       tp.pix_shift[iteration][1], 2)
+    # datacube = np.roll(np.roll(datacube, tp.pix_shift[iteration][0], 1),
+    #                    tp.pix_shift[iteration][1], 2)
+    datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)
 
     if (mp.array_size != datacube[0].shape + np.array([1,1])).all():
         left = int(np.floor(float(tp.grid_size-mp.array_size[0])/2))
@@ -43,7 +57,7 @@ def get_packets(datacube, step, dp,mp):
         top = int(np.floor(float(tp.grid_size-mp.array_size[1])/2))
         bottom = int(np.ceil(float(tp.grid_size-mp.array_size[1])/2))
 
-        dprint(left, right, top, bottom)
+        dprint(f"left={left},right={right},top={top},bottom={bottom}")
         datacube = datacube[:,bottom:-top,left:-right]
     # loop_frames(datacube)
     # quicklook_im(datacube[2], logAmp=False, vmax = 0.001, vmin=1e-8)
@@ -54,14 +68,13 @@ def get_packets(datacube, step, dp,mp):
     # if mp.hot_pix:
     #     datacube = MKIDs.add_hot_pix(datacube, dp, step)
 
-
     num_events = int(ap.star_photons * ap.exposure_time * np.sum(datacube))
-    dprint((num_events, ap.star_photons, np.sum(datacube), ap.exposure_time))
+    dprint(f"# events ={num_events}, star photons = {ap.star_photons}, "
+           f"sum(datacube) = {np.sum(datacube),}, Exposure Time ={ap.exposure_time}")
     if num_events * sp.num_processes > 1.0e9:
         dprint(num_events)
         dprint('Possibly too many photons for memory. Are you sure you want to do this? Remove exit() if so')
         exit()
-
 
     # if datacube.shape[2] != mp.array_size[0]-1:
     #     import scipy
@@ -79,7 +92,6 @@ def get_packets(datacube, step, dp,mp):
         # loop_frames(datacube)
 
     photons = temp.sample_cube(datacube, num_events)
-    # dprint((num_events, photons.shape))
 
     if mp.hot_pix:
         hot_photons = MKIDs.get_hot_packets(dp)
@@ -117,7 +129,6 @@ def get_packets(datacube, step, dp,mp):
     if mp.phase_uncertainty:
         photons = MKIDs.apply_phase_distort_array(photons, dp.sigs)
     thresh = dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])] < -1 * photons[1]
-    # dprint('here')
     photons = photons[:,thresh]
 
     packets = np.transpose(photons)
@@ -327,18 +338,11 @@ def remove_close_photons(cube):
     exit()
     return photons
 
-def take_exposure(obs_sequence):
-    factor = ap.exposure_time/ cp.frame_time
-    num_exp = int(ap.numframes/factor)
-    downsample_cube = np.zeros((num_exp,obs_sequence.shape[1],obs_sequence.shape[2], obs_sequence.shape[3]))
-    for i in range(num_exp):
-        # print np.shape(downsample_cube[i]), np.shape(obs_sequence), np.shape(np.sum(obs_sequence[i * factor : (i + 1) * factor], axis=0))
-        downsample_cube[i] = np.sum(obs_sequence[int(i*factor):int((i+1)*factor)],axis=0)#/float(factor)
-    return downsample_cube
 
-def med_collapse(obs_sequence):
-    downsample_cube = np.median(obs_sequence,axis=0)
-    return downsample_cube
+
+####################################################################################################
+## Functions Relating to Reading, Loading, and Saving Data ##
+####################################################################################################
 
 
 def save_obs_sequence(obs_sequence, HyperCubeFile = 'hyper.pkl'):
@@ -391,14 +395,14 @@ def get_integ_obs_sequence(plot=False):
     else:
 
         # obs_sequence = gpd.run()
-        obs_sequence = gpd.take_obs_data()
-        dprint(np.sum(obs_sequence))
+        obs_sequence = gpd.run_medis()
+        dprint(f"Length of obs_sequence = {np.sum(obs_sequence)}")
         if plot:
             loop_frames(obs_sequence[:,0])
             loop_frames(obs_sequence[0])
         print('*********RUN COMPLETE!**************')
-        dprint(np.shape(obs_sequence))
-        f"Data saved: {HyperCubeFile}"
+        dprint(f"Shape of obs_sequence = {np.shape(obs_sequence)}")
+        dprint(f"Data saved: {HyperCubeFile}")
         if plot: view_datacube(obs_sequence[0], logAmp=True)
 
         if tp.detector == 'H2RG':
@@ -413,6 +417,7 @@ def get_integ_obs_sequence(plot=False):
 
         if plot: view_datacube(obs_sequence[0], logAmp=True)
         # save_obs_sequence(obs_sequence, HyperCubeFile=iop.obs_seq)
+        dprint("Saving as hdf5 file:")
         dprint(iop.obs_seq)
         save_obs_sequence_hdf5(obs_sequence, HyperCubeFile=iop.obs_seq)
     # print np.shape(obs_sequence)
@@ -438,7 +443,18 @@ def open_obs_sequence_hdf5(HyperCubeFile = 'hyper.h5'):
     read_hdf5_file.close()
     return obs_sequence
 
+def take_exposure(obs_sequence):
+    factor = ap.exposure_time/ cp.frame_time
+    num_exp = int(ap.numframes/factor)
+    downsample_cube = np.zeros((num_exp,obs_sequence.shape[1],obs_sequence.shape[2], obs_sequence.shape[3]))
+    for i in range(num_exp):
+        # print np.shape(downsample_cube[i]), np.shape(obs_sequence), np.shape(np.sum(obs_sequence[i * factor : (i + 1) * factor], axis=0))
+        downsample_cube[i] = np.sum(obs_sequence[int(i*factor):int((i+1)*factor)],axis=0)#/float(factor)
+    return downsample_cube
 
+def med_collapse(obs_sequence):
+    downsample_cube = np.median(obs_sequence,axis=0)
+    return downsample_cube
 
 
 

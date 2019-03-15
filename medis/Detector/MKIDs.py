@@ -2,30 +2,19 @@
 e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines'''
 
 import numpy as np
-import os
 from matplotlib import pyplot as plt
-import sys
 from .distribution import *
 from medis.params import mp, ap, tp, iop, dp
 from medis.Utils.plot_tools import quicklook_im, loop_frames
 from medis.Utils.misc import dprint
 from . import spectral as spec
-import math
-# import cubes
 import random
 import pickle as pickle
 
-# class device_params():
-#     '''A object which contains the calculated parameters of the array'''
-#     def __init__(self):
-#         self.response_map = None
-#         self.Rs = None
-#         self.sigs = None
-#         self.basesDeg = None
-#         self.hot_pix = None
+
 def initialize():
     # dp = device_params()
-    dprint(dp.hot_pix)
+    dprint(f"dp.hot_pix set to {dp.hot_pix}")
     dp.response_map = array_response(plot=False)
     if mp.pix_yield == 1:
         mp.bad_pix =False
@@ -39,7 +28,7 @@ def initialize():
     # quicklook_im(dp.response_map)
     dp.Rs = assign_spectral_res(plot=False)
     dp.sigs = get_R_hyper(dp.Rs, plot=False)
-    dprint(dp.sigs.shape)
+    dprint(f"dp.sigs.shape ={ dp.sigs.shape}")
     # get_phase_distortions(plot=True)
     if mp.phase_background:
         dp.basesDeg = assign_phase_background(plot=False)
@@ -55,7 +44,7 @@ def truncate_array(frames):
     orig_shape = np.shape(frames)[1:3]
 
     diff = orig_shape - mp.array_size
-    print(orig_shape, mp.array_size, diff)
+    dprint(f"orig_shape = {orig_shape,}, mp.arrray_size = { mp.array_size}, diff = {diff}")
     resid = np.array([np.int_(np.ceil(diff/2.)), np.int_(np.floor(diff/2.))])
 
     if len(np.shape(frames)) == 4:
@@ -86,7 +75,7 @@ def array_response(plot=False):
 def assign_spectral_res(plot=False):
     print('Assigning each pixel a spectral resolution (at 800nm)')
     dist = Distribution(gaussian(0.5, 0.25, np.linspace(-0.2, 1.2, mp.res_elements)), interpolation=True)
-    dprint(mp.R_mean)
+    dprint(f"Mean R = {mp.R_mean}")
     Rs = (dist(mp.array_size[0]*mp.array_size[1])[0]/float(mp.res_elements)-0.5)*mp.R_sig + mp.R_mean#
     if plot:
         plt.xlabel('R')
@@ -176,7 +165,7 @@ def apply_phase_distort_array(photons, sigs):
     distortion = np.random.normal(np.zeros((photons[1].shape[0])),
                                   sigs[idx,np.int_(photons[3]), np.int_(photons[2])])
     # dprint((distortion[:25], distortion.shape,sigs[idx,np.int_(photons[3]), np.int_(photons[2])].shape))
-    good_pix = np.logical_and(photons[1]!=0, idx < len(sigs))
+    good_pix = np.logical_and(photons[1] != 0, idx < len(sigs))
     photons[1][good_pix] += distortion[good_pix]
 
     return photons
@@ -241,15 +230,16 @@ def create_bad_pix(responsivities, plot=False):
 
     bad_ind = random.sample(list(range(mp.array_size[0]*mp.array_size[1])), amount)
 
-    dprint((len(bad_ind), mp.array_size[0]*mp.array_size[1], mp.pix_yield, amount))
+    dprint(f"Bad indices = {len(bad_ind)}, # MKID pix = { mp.array_size[0]*mp.array_size[1]}, "
+           f"Pixel Yield = { mp.pix_yield}, amount?? = {amount}")
 
     # bad_y = random.sample(y, amount)
     bad_y = np.int_(np.floor(bad_ind/mp.array_size[1]))
-    bad_x = bad_ind%mp.array_size[1]
+    bad_x = bad_ind % mp.array_size[1]
 
-    print(responsivities.shape)
+    dprint(f"responsivity shape  = {responsivities.shape}")
 
-    responsivities[bad_x, bad_y]=0
+    responsivities[bad_x, bad_y] = 0
     if plot:
         plt.imshow(responsivities)
         plt.show()
@@ -272,9 +262,9 @@ def create_bad_pix_center(responsivities):
 
 def get_hot_packets(dp):
 
-    photons = np.zeros((3,dp.hot_per_step))
-    phases = np.random.uniform(-120,0,dp.hot_per_step)
-    photons[0,:] = phases
+    photons = np.zeros((3, dp.hot_per_step))
+    phases = np.random.uniform(-120, 0, dp.hot_per_step)
+    photons[0, :] = phases
     # dprint((photons[:,0:],np.transpose(dp.hot_locs)*np.ones((dp.hot_per_step,2))))
     photons[1:,:] = dp.hot_locs
     # dprint(photons)

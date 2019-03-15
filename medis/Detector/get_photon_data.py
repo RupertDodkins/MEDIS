@@ -5,7 +5,6 @@ import numpy as np
 import traceback
 import multiprocessing
 import glob
-from pprint import pprint
 import random
 import pickle as pickle
 import time
@@ -132,12 +131,15 @@ def run_medis():
     """
     # Printing Params
     dprint("Checking Params Info-print params from here (turn on/off)")
-
     # TODO change this to a logging function
     # for param in [ap, cp, tp, mp, sp, iop]:
     #     print('\n', param)
     #     pprint(param.__dict__)
     # tp.check_args()
+
+    import time
+    begin = time.time()
+    print('********** Taking Obs Data ***********')
 
     try:
         multiprocessing.set_start_method('spawn')
@@ -145,17 +147,17 @@ def run_medis():
         pass
 
     # initialize atmosphere
-    dprint("Atmosdir = %s " % iop.atmosdir)
+    print("Atmosdir = %s " % iop.atmosdir)
     if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
         dprint("It looks like you don't have an atmospheric maps. You can either"
-              "get them from Rupert or generate them yourself with caos. Removing exit()")
+                                            "get them from Rupert or generate them yourself with caos. Removing exit()")
         exit()
         dprint("Making New Atmosphere Model")
         caos.make_idl_params()
         caos.generate_maps()
 
     # initialize telescope
-    if (tp.aber_params['QuasiStatic'] == True) and glob.glob(iop.aberdir + 'quasi/*.fits') == []:
+    if (tp.aber_params['QuasiStatic'] is True) and glob.glob(iop.aberdir + 'quasi/*.fits') == []:
         aber.generate_maps()
         if tp.aber_params['NCPA']:
             aber.generate_maps(Loc='NCPA')
@@ -181,13 +183,12 @@ def run_medis():
     if tp.detector == 'MKIDs' and not os.path.isfile(iop.device_params):
         MKIDs.initialize()
 
-
     photon_table_queue = multiprocessing.Queue()
     inqueue = multiprocessing.Queue()
     spectralcubes_queue = multiprocessing.Queue()
     jobs = []
 
-    if sp.save_obs and tp.detector=='MKIDs':
+    if sp.save_obs and tp.detector == 'MKIDs':
         proc = multiprocessing.Process(target=read.handle_output, args=(photon_table_queue, iop.obsfile))
         proc.start()
 
@@ -263,32 +264,23 @@ def run_medis():
 
     photon_table_queue.put(None)
     spectralcubes_queue.put(None)
-    if sp.save_obs and tp.detector=='MKIDs':
+    if sp.save_obs and tp.detector == 'MKIDs':
         proc.join()
     obs_sequence = np.array(obs_sequence)
 
+
     dprint('Photon Data Run Completed')
-    return obs_sequence
-
-def take_obs_data():
-    """
-    Wrapper for run_medis that measures computational time to run the code
-
-    # TODO see if this wrapper can be incorporated elsewhere, probably in get_integ_obs_sequence
-    :return: the obs_sequence created from the simulation
-    """
-    import time
-    print('********** Taking Obs Data ***********')
-    begin = time.time()
-    obs_sequence = run_medis()
-    end = time.time()
-    print('Time elapsed: ', end - begin)
+    finish = time.time()
+    if sp.timing is True:
+        print('Time elapsed: ', finish - begin)
     print('**************************************')
     return obs_sequence
 
+#def take_obs_data():
+
+
 if __name__ == '__main__':
-    import time
-    begin = time.time()
+    sp.timing = True
     run_medis()
-    end = time.time()
-    print(end-begin)
+
+

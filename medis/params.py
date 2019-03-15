@@ -84,6 +84,26 @@ class IO_params:
         self.__init__(testname=new_name)
 
 
+class Simulation_params:
+    """
+    Default parameters for outputs of the simulation. What plots you want to see etc
+
+    """
+    def __init__(self):
+        self.timing = True  # True will print timing statements in run_medis()
+        self.num_processes = 1 #multiprocessing.cpu_count()
+        self.show_wframe = False
+        self.show_cube = True
+        self.cbar = None
+        self.vmax = None
+        self.vmin = None
+        self.variable = None
+        self.save_obs = True
+        self.return_cube = True
+        self.get_ints = {'w': [0],
+                         'c': [0]}  # False
+
+
 class Astro_params:
     """
     Default parameters for the astronomical system under investigation
@@ -114,6 +134,14 @@ class CAOS_params:
         self.r0s = []
         self.scalar_r0 = 'med'
         self.r0s_idx = -1
+
+        # Settings Taken from MKID_params that seem to be relevant here:
+        # wind_speed = 5. # m/s
+        # atm_scale = 512.
+        # atm_size = 1. # m
+        # atm_spat_rate = 1. # pix shift
+        # frame_time = 0.001#atm_size*atm_spat_rate/(wind_speed*atm_scale) # 0.0004
+
 
 class Telescope_params:
     """
@@ -176,6 +204,10 @@ class Telescope_params:
         self.check_args()
         self.pix_shift = [0, 0]  # False?
 
+        # ct_rate = 1.e6 # G type star 10ly away gives 1e6 cts/cm^2/s
+        # dish_area = 20. # Palomar is 20 m^2 including hole.
+        # total_ct_rate = ct_rate * dish_area/1e-4
+
     def check_args(self):
         assert self.occulter_type in [None, 'None', 'Solid', 'Gaussian', '8th_Order', 'Vortex', 'None (Lyot Stop)']
         # assert self.aber_params['CPA'] in [None, 'Static', 'Quasi', 'Wave', 'Amp', 'test','Both','Phase']
@@ -187,34 +219,26 @@ class MKID_params:
         self.bad_pix = False
         # self.interp_sample=True # avoids the quantization error in creating the datacube
         self.response_map = None
-        self.wavecal_coeffs = [1./12, -157] #assume linear for now 800nm = -90deg, 1500nm = -30deg
-        self.phase_uncertainty = False#True
+        self.wavecal_coeffs = [1./12, -157]  # assume linear for now 800nm = -90deg, 1500nm = -30deg
+        self.phase_uncertainty = False  # True
         self.phase_background = False
         self.respons_var = False
-        self.remove_close= False
+        self.remove_close = False
         self.array_size = np.array([129,129])#np.array([125,80])#np.array([125,125])#
         # self.total_pix = self.array_size[0] * self.array_size[1]
-        self.pix_yield=0.9
+        self.pix_yield = 0.9
         self.hot_pix = 0
+        self.hot_bright = 1000
         # self.wave_coeffs = [0.1,-200]
         self.threshold_phase = 0#-30 # quite close to 0, basically all photons will be detected.
 
-        # ct_rate = 1.e6 # G type star 10ly away gives 1e6 cts/cm^2/s
-        # dish_area = 20. # Palomar is 20 m^2 including hole. 
-        # total_ct_rate = ct_rate * dish_area/1e-4
-        self.max_count = 2500. # cts/s
+        self.max_count = 2500.  # cts/s
         self.dead_time = 1./self.max_count
         self.bin_time = 2e-3 # minimum time to bin counts for stat-based analysis
         # self.frame_time = 0.001#atm_size*atm_spat_rate/(wind_speed*atm_scale) # 0.0004
         self.total_int = 1 #second
         self.frame_int = 1./20
         self.t_frames = int(self.total_int/self.frame_int)
-        # wind_speed = 5. # m/s
-        # atm_scale = 512.
-        # atm_size = 1. # m
-        # atm_spat_rate = 1. # pix shift
-        # frame_time = 0.001#atm_size*atm_spat_rate/(wind_speed*atm_scale) # 0.0004
-        # self.directory='/home/dodkins/PythonProjects/MEDIS/Data/'
         # self.xnum= self.array_size[0]
         # self.ynum= self.array_size[1]
 
@@ -227,8 +251,8 @@ class MKID_params:
         self.R_mean = 50
         self.R_sig = 2
 
-        self.lod = 8 #8 pixels in these upsampled images = one lambda/d
-        self.nlod = 10 #3 #how many lambda/D do we want to calculate out to
+        self.lod = 8  # 8 pixels in these upsampled images = one lambda/d
+        self.nlod = 10  # 3 #how many lambda/D do we want to calculate out to
 
 
 class H2RG_params:
@@ -236,25 +260,6 @@ class H2RG_params:
         self.use_readnoise = True
         self.readnoise = 30
         self.erate = 1
-
-
-class Simulation_params:
-    """
-    Default parameters for outputs of the simulation. What plots you want to see etc
-
-    """
-    def __init__(self):
-        self.num_processes = 1 #multiprocessing.cpu_count()
-        self.show_wframe = False
-        self.show_cube = True
-        self.cbar = None
-        self.vmax = None
-        self.vmin = None
-        self.variable = None
-        self.save_obs = True
-        self.return_cube = True
-        self.get_ints = {'w': [0],
-                         'c': [0]}  # False
 
 
 class Device_params:
