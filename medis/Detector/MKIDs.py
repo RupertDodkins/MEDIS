@@ -51,7 +51,7 @@ def truncate_array(frames):
         frames = frames[:,:,resid[0,0]:orig_shape[0]-resid[1,0], resid[0,1]:orig_shape[1]-resid[1,1]]
     else:
         frames = frames[:,resid[0,0]:orig_shape[0]-resid[1,0], resid[0,1]:orig_shape[1]-resid[1,1]]
-    print(np.shape(frames))
+    print(f"Frame shape = {np.shape(frames)}")
 
     # frames = frames[:, :, 22:-23]
     return frames

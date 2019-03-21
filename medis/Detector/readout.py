@@ -264,7 +264,7 @@ def handle_output(output, filename):
 def write_obs(packets):
     '''Saving the packets in a pseudo h5 obsfile'''
     packets = np.array(packets)
-    print(np.shape(packets))
+    print(f"Shape of Packets is {np.shape(packets)}")
     num_processes = 4  # mp.cpu_count()
 
     # time = step*mp.frame_time
@@ -381,20 +381,18 @@ def get_integ_obs_sequence(plot=False):
     """
     import medis.Detector.get_photon_data as gpd
     import os
-    dprint((os.path.isfile(iop.obs_seq), iop.obs_seq))
-    print(ap.numframes)
+    print('Checking for Existing Dataset')
+    print(f"File found = {os.path.isfile(iop.obs_seq)} at {iop.obs_seq}")
+
 
 
     if os.path.isfile(iop.obs_seq):
         if iop.obs_seq[-3:] == '.h5':
-        # try:
             obs_sequence = open_obs_sequence_hdf5(HyperCubeFile=iop.obs_seq)
         else:
-        # except:
             obs_sequence = open_obs_sequence(HyperCubeFile=iop.obs_seq)
     else:
-
-        # obs_sequence = gpd.run()
+        print('Creating new Obs Sequence')
         obs_sequence = gpd.run_medis()
         dprint(f"Length of obs_sequence = {np.sum(obs_sequence)}")
         if plot:

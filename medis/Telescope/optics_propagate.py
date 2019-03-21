@@ -20,7 +20,7 @@ def iter_func(wavefronts, func, *args, **kwargs):
             func(wavefronts[iw, iwf], *args, **kwargs)
 
 
-def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         # possible rename to optics_propagate
+def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     """
     propagates instantaneous complex E-field through the optical system in loop over wavelength range
 
@@ -30,7 +30,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
     this does not include the observation of the wavefront by the detector
     :returns spectral cube at instantaneous time
     """
-    #dprint("Propagating Wavefront Through Telescope")
+    print("Propagating Broadband Wavefront Through Telescope")
     passpara = PASSVALUE['params']
     ap.__dict__ = passpara[0].__dict__
     tp.__dict__ = passpara[1].__dict__
@@ -131,7 +131,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
         #     # dprint((r0, 'r0'))
         #     # if iw == np.ceil(tp.nwsamp/2):
         #     ao.wfs_measurement(wf, PASSVALUE['iter'], iw, r0=r0)  # , obj_map, tp.wfs_scale)
-        print('This need to be updated to the parrallel implementation')
+        dprint('This needs to be updated to the parrallel implementation')
         exit()
 
     # TODO Verify this
@@ -149,7 +149,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0         
     if tp.use_zern_ab:
         iter_func(wf_array, aber.add_zern_ab)
 
-    
     if tp.use_apod:
         from medis.Telescope.coronagraph import apodization
         iter_func(wf_array, apodization, True)
