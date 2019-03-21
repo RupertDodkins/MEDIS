@@ -150,7 +150,7 @@ def run_medis():
     print("Atmosdir = %s " % iop.atmosdir)
     if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
         dprint("It looks like you don't have an atmospheric maps. You can either"
-                                            "get them from Rupert or generate them yourself with caos. Removing exit()")
+                    "get them from Rupert or generate them yourself with caos. Removing exit()")
         exit()
         dprint("Making New Atmosphere Model")
         caos.make_idl_params()
