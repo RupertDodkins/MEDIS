@@ -1,6 +1,6 @@
 from .temporal import *
 import numpy as np
-from medis.params import mp, tp
+from medis.params import mp, ap
 from medis.Utils.misc import dprint
 np.set_printoptions(threshold=np.inf)
 

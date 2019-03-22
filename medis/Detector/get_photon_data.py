@@ -106,7 +106,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
         elapsed = float(now - start) / 60.
         each_iter = float(elapsed) / (it + 1)
 
-        dprint('%.2f minutes elapsed, each time step took %.2f minutes' % elapsed, each_iter) #* ap.numframes/sp.num_processes TODO change to log #
+        dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #
 
     except Exception as e:
         traceback.print_exc()
@@ -136,7 +136,6 @@ def run_medis():
     # for param in [ap, cp, tp, mp, sp, iop]:
     #     print('\n', param)
     #     pprint(param.__dict__)
-    # tp.check_args()
 
     import time
     begin = time.time()
@@ -273,11 +272,9 @@ def run_medis():
     dprint('MEDIS Data Run Completed')
     finish = time.time()
     if sp.timing is True:
-        print('Time elapsed: %.2f minutes', (finish - begin)/60)
+        print(f'Time elapsed: {(finish-begin)/60:.2f} minutes')
     print('**************************************')
     return obs_sequence
-
-#def take_obs_data():
 
 
 if __name__ == '__main__':

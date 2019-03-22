@@ -43,6 +43,9 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
     datacube = []
 
+    # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
+    # each field in the wf_array is the complex E-field at that wavelength, scaled by the contrast
+    # the E-field size is given by (ap.grid_size x ap.grid_size)
     if ap.companion:
         wf_array = np.empty((len(wsamples), 1 + len(ap.contrast)), dtype=object)
     else:
@@ -78,10 +81,10 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     #  the array from infinity. The delay length thus corresponds to a different
     #  phase offset at a particular frequency.
     if tp.use_atmos:
-        # TODO is this supposed to be in the for loop?
+        # TODO is this supposed to be in the for loop over w?
         aber.add_atmos(wf_array, *(tp.f_lens, w, PASSVALUE['atmos_map']))
 
-    wf_array = aber.abs_zeros(wf_array)
+    wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
 
     if tp.rot_rate:
         iter_func(wf_array, aber.rotate_atmos, *(PASSVALUE['atmos_map']))
@@ -89,9 +92,9 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     if tp.use_spiders:
         iter_func(wf_array, fo.add_spiders, tp.diam)
         wf_array = aber.abs_zeros(wf_array)
-        #if sp.get_ints: get_intensity(wf_array, sp, phase=True)
+        if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
-    wf_array = aber.abs_zeros(wf_array)
+    wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
 
     if tp.use_hex:
         fo.add_hex(wf_array)
@@ -150,6 +153,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         wf_array = aber.abs_zeros(wf_array)
         if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
+    # Low-order aberrations
     if tp.use_zern_ab:
         iter_func(wf_array, aber.add_zern_ab)
 
@@ -161,12 +165,10 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     iter_func(wf_array, fo.prop_mid_optics, tp.f_lens)
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
 
-    # Caronagraph
+    # Coronagraph
     iter_func(wf_array, coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
-
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
 
-    #
     shape = wf_array.shape
     for iw in range(shape[0]):
         wframes = np.zeros((ap.grid_size, ap.grid_size))
@@ -178,8 +180,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         datacube.append(wframes)
 
     datacube = np.array(datacube)
-    datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)
-    datacube = np.abs(datacube)
+    datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)  # cirshift array for off-axis observing
+    datacube = np.abs(datacube)  # get intensity from datacube
 
     # Interpolating spectral cube from ap.nwsamp discreet wavelengths to ap.w_bins
     if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:

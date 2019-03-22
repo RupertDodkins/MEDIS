@@ -12,7 +12,7 @@ plt.register_cmap(name='inferno', cmap=cmaps.plasma)
 plt.register_cmap(name='magma', cmap=cmaps.plasma)
 from matplotlib.colors import LogNorm, SymLogNorm
 import matplotlib.ticker as ticker
-from medis.params import tp, sp, iop
+from medis.params import tp, sp, iop, ap
 from medis.Utils.misc import dprint
 
 # MEDIUM_SIZE = 17

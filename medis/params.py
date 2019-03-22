@@ -119,7 +119,7 @@ class Astro_params:
         self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
         self.exposure_time = 0.001
         self.startframe = 0  # useful for things like RDI
-        self.numframes = 5000
+        self.numframes = 5000  # number of timesteps in the simulation
 
         # Wavelength and Wavefront Array Settings
         # In optics_propagate(), proper initially takes N  discreet wavelengths evenly spaced in ap.band, where N is
@@ -162,7 +162,6 @@ class Telescope_params:
     This contains most of the parameters you will probably modify when running tests
     """
     def __init__(self):
-
         # Foreoptics + AO Settings
         self.pix_shift = [0, 0]  # False?  Shifts the central star to off-axis (circular shift) (mimics conex mirror)
         self.rot_rate = 0  #1 # deg/s
@@ -239,8 +238,8 @@ class MKID_params:
         self.array_size = np.array([129,129])#np.array([125,80])#np.array([125,125])#
         # self.total_pix = self.array_size[0] * self.array_size[1]
         self.pix_yield = 0.9
-        self.hot_pix = 0
-        self.hot_bright = 1000
+        self.hot_pix = 0  # Number of hot pixels
+        self.hot_bright = 1000  # How many counts does a hot pixel register
         # self.wave_coeffs = [0.1,-200]
         self.threshold_phase = 0#-30 # quite close to 0, basically all photons will be detected.
 
