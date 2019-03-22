@@ -30,18 +30,16 @@ tp.ao_act = 50
 tp.detector = 'ideal'
 tp.use_atmos = True
 tp.use_zern_ab = True
-tp.occulter_type = 'Vortex'#'None'
+tp.occulter_type = 'Vortex'  # 'None'
 tp.aber_params = {'CPA': True,
-                    'NCPA': True,
-                    'QuasiStatic': False,  # or Static
-                    'Phase': True,
-                    'Amp': False,
-                    'n_surfs': 8,
-                    'OOPP': [16,8,8,16,4,4,8,16]}#False}#
-#mp.date = '180916/'
+                  'NCPA': True,
+                  'QuasiStatic': False,  # or Static
+                  'Phase': True,
+                  'Amp': False,
+                  'n_surfs': 8,
+                  'OOPP': [16,8,8,16,4,4,8,16]}#False}#
 mp.bad_pix = True
 mp.array_size = np.array([80,125])
-#iop.update(mp.date)
 sp.num_processes = 1
 num_exp =10 #5000
 ap.exposure_time = 0.1  # 0.001

@@ -10,7 +10,7 @@ from proper_mod import prop_psd_errormap
 # from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
 import medis.Utils.rawImageIO as rawImageIO
 import medis.Utils.misc as misc
-from medis.params import tp, cp, mp, ap,iop#, fp
+from medis.params import tp, cp, mp, ap, iop
 from medis.Utils.misc import dprint
 
 class error_params():
@@ -22,16 +22,18 @@ def initialize_CPA_meas():
     required_servo = int(tp.servo_error[0])
     required_band = int(tp.servo_error[1])
     required_nframes = required_servo + required_band + 1
-    CPA_maps = np.zeros((required_nframes,ap.nwsamp, ap.grid_size,ap.grid_size))
+    CPA_maps = np.zeros((required_nframes, ap.nwsamp, ap.grid_size, ap.grid_size))
 
     with open(iop.CPA_meas, 'wb') as handle:
         pickle.dump((CPA_maps, np.arange(0,-required_nframes,-1)), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+
 def initialize_NCPA_meas():
     Imaps = np.zeros((4, ap.grid_size, ap.grid_size))
-    phase_map = np.zeros((tp.ao_act,tp.ao_act))#np.zeros((ap.grid_size,ap.grid_size))
+    phase_map = np.zeros((tp.ao_act,tp.ao_act))  # np.zeros((ap.grid_size,ap.grid_size))
     with open(iop.NCPA_meas, 'wb') as handle:
         pickle.dump((Imaps, phase_map, 0), handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 
 def abs_zeros(wf_array):
     """zeros everything outside the pupil"""
@@ -43,6 +45,7 @@ def abs_zeros(wf_array):
             wf_array[iw,io].wfarr[bad_locs] = 0 +0j
 
     return wf_array
+
 
 def generate_maps(Loc='CPA'):
     # TODO add different timescale aberations
@@ -85,6 +88,7 @@ def generate_maps(Loc='CPA'):
     #         rawImageIO.saveFITS(aber_cube[f, surf], '%stelz%f.fits' % (iop.aberdir, f*cp.frame_time))
             # quicklook_im(aber_cube[f], logAmp=False, show=True)
 
+
 def circularise(prim_map):
     # TODO test this
     x = np.linspace(-1,1,128) * np.ones((128,128))
@@ -102,6 +106,7 @@ def circularise(prim_map):
     new_prim = proper.prop_shift_center(new_prim)
     new_prim = np.transpose(new_prim)
     return new_prim
+
 
 def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
     #dprint("Adding Abberations")

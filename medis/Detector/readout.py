@@ -174,7 +174,6 @@ def remove_close_photons(cube):
     return photons
 
 
-
 ####################################################################################################
 ## Functions Relating to Reading, Loading, and Saving Data ##
 ####################################################################################################
@@ -267,6 +266,7 @@ def open_obs_sequence(HyperCubeFile = 'hyper.pkl'):
     # hypercube = np.load(HyperCubeFile)
     return obs_sequence
 
+
 def open_obs_sequence_hdf5(HyperCubeFile = 'hyper.h5'):
     # hdf5_path = "my_data.hdf5"
     read_hdf5_file = pt.open_file(HyperCubeFile, mode='r')
@@ -275,6 +275,7 @@ def open_obs_sequence_hdf5(HyperCubeFile = 'hyper.h5'):
     # hdf5_clusters = read_hdf5_file.root.clusters[:]
     read_hdf5_file.close()
     return obs_sequence
+
 
 def take_exposure(obs_sequence):
     factor = ap.exposure_time/ cp.frame_time

@@ -193,6 +193,7 @@ def apply_phase_distort(phase, loc, sigs):
 #     phase = mp.potench_R_matrix[Rindx]
 #     # return phase
 
+
 def assign_phase_background(plot=False):
     print('assigning each pixel a baseline phase')
     dist = Distribution(gaussian(0.5, 0.25, np.linspace(-0.2, 1.2, mp.res_elements)), interpolation=True)
@@ -205,6 +206,7 @@ def assign_phase_background(plot=False):
     # plt.imshow(basesDeg)
     # plt.show()
     return basesDeg
+
 
 # def get_phase_background(R, samples=1):
 #     #dist = Distribution(gaussian(bg_mean*response, bg_sig, np.linspace(bg_mean-bg_sig, bg_mean+bg_sig, res_elements)), interpolation=False)
@@ -222,6 +224,7 @@ def assign_phase_background(plot=False):
 #     # plt.plot(dist(1000)[0]* -bg_sig/1000.)
 #     # plt.show()
 #     return phase[0]
+
 
 def create_bad_pix(responsivities, plot=False):
     x = np.arange(mp.array_size[0])
@@ -246,6 +249,7 @@ def create_bad_pix(responsivities, plot=False):
 
     return responsivities
 
+
 def create_bad_pix_center(responsivities):
     res_elements=mp.array_size[0]
     # responsivities = np.zeros()
@@ -260,6 +264,7 @@ def create_bad_pix_center(responsivities):
 
     return responsivities
 
+
 def get_hot_packets(dp):
 
     photons = np.zeros((3, dp.hot_per_step))
@@ -270,6 +275,7 @@ def get_hot_packets(dp):
     # dprint(photons)
 
     return photons
+
 
 # def add_hot_pix(datacube, dp, step, plot=False):
 #     # if dp.hot_pix == None:
@@ -319,6 +325,7 @@ def create_hot_pix(mp):
 
     return [bad_x, bad_y]
 
+
 def remove_bad(frame, response):
     bad_map = np.ones((ap.grid_size,ap.grid_size))
     bad_map[response[:-1,:-1]==0] = 0
@@ -326,6 +333,7 @@ def remove_bad(frame, response):
     # quicklook_im(bad_map, logAmp =False)
     frame = frame*bad_map
     return frame
+
 
 # def remap_image(datacube):
 #     print datacube.shape, mp.array_size
