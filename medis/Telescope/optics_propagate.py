@@ -20,7 +20,7 @@ def iter_func(wavefronts, func, *args, **kwargs):
             func(wavefronts[iw, iwf], *args, **kwargs)
 
 
-def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
+def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     """
     propagates instantaneous complex E-field through the optical system in loop over wavelength range
 
@@ -77,7 +77,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     # Pass through a mini-atmosphere inside the telescope baffle
     #  The atmospheric model used here (as of 3/5/19) uses different scale heights,
     #  wind speeds, etc to generate an atmosphere, but then flattens it all into
-    #  a single phase mask. The phase mask is a real-valued delay lenghts across
+    #  a single phase mask. The phase mask is a real-valued delay lengths across
     #  the array from infinity. The delay length thus corresponds to a different
     #  phase offset at a particular frequency.
     if tp.use_atmos:

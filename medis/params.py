@@ -18,8 +18,8 @@ class IO_params:
     """
     def __init__(self, testname='example1'):  # testname should be the name of the particular example you are running, for exmple 'BetaPic' or 'simple_telescope'
         # High Level Paths
-        # self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
+        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        # self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
         # self.lab_obs_path = '/mnt/kids/'  #
 
@@ -95,6 +95,7 @@ class Simulation_params:
         self.show_wframe = False
         self.show_cube = True
         self.cbar = None
+        self.fig = None
         self.vmax = None
         self.vmin = None
         self.variable = None
@@ -117,7 +118,7 @@ class Astro_params:
         self.contrast = [0.05]
         self.C_spec = 1.5  # the gradient of the increase in contrast towards shorter wavelengths
         self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
-        self.exposure_time = 0.001
+        self.exposure_time = 0.01
         self.startframe = 0  # useful for things like RDI
         self.numframes = 5000  # number of timesteps in the simulation
 
@@ -143,7 +144,7 @@ class CAOS_params:
     """
     def __init__(self):
         self.show_caosparams= True  # for control over all other variables
-        self.frame_time = 0.001  # this is the maximum frame rate of the simulation
+        self.frame_time = 0.01  # this is the maximum frame rate of the simulation
         self.vary_r0 = False
         self.r0s = []
         self.scalar_r0 = 'med'
@@ -171,7 +172,7 @@ class Telescope_params:
         self.use_ao = True  # True
         self.quick_ao = True
         self.ao_act = 60  # 41 #32
-        self.servo_error = [0,1]  #[0,1] # False # No delay and rate of 1/frame_time
+        self.servo_error = [0, 1]  #[0,1] # False # No delay and rate of 1/frame_time
         self.active_null = False
         self.active_converge_steps = 1#10
         self.active_modulate = False

@@ -180,40 +180,19 @@ def make_phase_map(cube, plot=False):
 
 def make_datacube(cube, size):
     # print 'Making an xyw cube'
-    # datacube = np.zeros((ap.nwsamp,size[0],size[1]))
     datacube = np.zeros((size[2],size[1],size[0]))
     phase_band = spec.phase_cal(ap.band)
-    # dprint(phase_band)
-    # bins = np.linspace(phase_band[0], phase_band[1], ap.nwsamp+1)
     bins = np.linspace(phase_band[0], phase_band[1], size[2]+1)
-    # dprint(bins)
-    # print np.array(cube[64][64])[0]
-    # for i in range(-5,5):
-    #     print i, np.array(cube[64][64+i])
-    # if cube[64][64+3] != []:
-    #     plt.hist(np.array(cube[64][65])[:,0])
-    #     plt.show()
+
     for x in range(size[1]):
         for y in range(size[0]):
             if cube[x][y] == []:
-                # datacube[:,x,y] = np.zeros((ap.nwsamp))
-                datacube[:,x,y] = np.zeros((size[2]))
+                datacube[:, x, y] = np.zeros((size[2]))
             else:
-                # print np.array(cube[x][y])[:,0], np.histogram(np.array(cube[x][y])[:,0], bins=bins)
-                # plt.figure()
-                # plt.hist(np.array(cube[x][y])[:,0], bins=bins)
-
                 datacube[:,x,y]=np.histogram(np.array(cube[x][y])[:,1], bins=bins)[0]#[::-1]
-                # print x, y, np.array(cube[x][y])[:,0], len(np.where(np.array(cube[x][y])[:,0]<phase_band[0])[0]),
                 datacube[0, x, y] += len(np.where(np.array(cube[x][y])[:,1]<phase_band[0])[0])
-                # print len(np.where(np.array(cube[x][y])[:,0]>phase_band[1])[0])
                 datacube[-1, x, y] += len(np.where(np.array(cube[x][y])[:,1]>phase_band[1])[0])
-                # plt.figure()
-                # plt.plot(datacube[:,x,y])
-                # plt.show()
-    # if plot:
-    #     plt.figure()
-    #     plt.imshow(np.log10(phase_map), origin='lower', interpolation='none')
+
     return datacube
 
 def scale_to_luminos(obs_sequence):

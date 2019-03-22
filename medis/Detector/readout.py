@@ -31,25 +31,9 @@ from medis.Utils.misc import dprint
 def get_packets(datacube, step, dp,mp):
     # print 'Detecting photons with an MKID array'
 
-    # quicklook_im(dp.response_map)
-    # quicklook_im(datacube)
-
-    # dprint((mp.bad_pix, mp.R_mean))
-    # if mp.bad_pix == True:
-    #     datacube = MKIDs.remove_bad(datacube, dp.response_map)
-
-    # quicklook_im(dp.response_map)
-    # view_datacube(datacube)
-    # dprint((datacube.shape, np.sum(datacube)))
-    # loop_frames(datacube)
-    # if tp.pix_shift is not None:
-
     moves = np.shape(tp.pix_shift)[0]
 
     iteration = step % moves
-    # datacube = np.roll(np.roll(datacube, tp.pix_shift[iteration][0], 1),
-    #                    tp.pix_shift[iteration][1], 2)
-    datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)
 
     if (mp.array_size != datacube[0].shape + np.array([1,1])).all():
         left = int(np.floor(float(ap.grid_size-mp.array_size[0])/2))
@@ -84,12 +68,7 @@ def get_packets(datacube, step, dp,mp):
     #     #                                                                                  np.arange(mp.array_size),
     #     #                                                                                  np.arange(mp.array_size)))
     #     # loop_frames(datacube)
-    #     dprint((mp.array_size[0]-1)/datacube.shape[2])
-    #     flux = np.sum(datacube)
     #     datacube = scipy.ndimage.zoom(datacube, (1, (mp.array_size[0]-1)/datacube.shape[2], (mp.array_size[0]-1)/datacube.shape[2]))
-    #     datacube = np.abs(datacube)
-    #     datacube = datacube*flux/np.sum(datacube)
-        # loop_frames(datacube)
 
     photons = temp.sample_cube(datacube, num_events)
 
@@ -98,34 +77,8 @@ def get_packets(datacube, step, dp,mp):
         photons = np.hstack((photons, hot_photons))
     photons = spec.calibrate_phase(photons)
 
-
     photons = temp.assign_calibtime(photons, step)
 
-    # locs = []
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 32, photons[3, :] == 54))[0]))
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 33, photons[3, :] == 54))[0]))
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 34, photons[3, :] == 54))[0]))
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 32, photons[3, :] == 55))[0]))
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 33, photons[3, :] == 55))[0]))
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 34, photons[3, :] == 55))[0]))
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 32, photons[3, :] == 56))[0]))
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 33, photons[3, :] == 56))[0]))
-    # locs = np.hstack((locs,np.where(np.logical_and(photons[2, :] == 34, photons[3, :] == 56))[0]))
-    # locs = np.int_(locs)
-    # bins = np.linspace(-100,-10,25)
-    # fig, ax = plt.subplots()
-    # ax.tick_params(direction='in', which='both', right=True, top=True, width=1, length=3)
-    # # ax.tick_params(which='minor',length=2)
-    # ax.set_xlabel('Phase (deg)')
-    # ax.hist(photons[1,locs], bins=bins, alpha=0.5, label='Seed')
-    # # plt.show()
-    # # print photons[:,:5], np.shape(photons)
-
-    # if mp.phase_background:
-    #     pix_background = dp.basesDeg
-    # else:
-    #     pix_background = 0
-    pix_phase = photons[1]
     if mp.phase_uncertainty:
         photons = MKIDs.apply_phase_distort_array(photons, dp.sigs)
     thresh = dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])] < -1 * photons[1]
@@ -133,115 +86,11 @@ def get_packets(datacube, step, dp,mp):
 
     packets = np.transpose(photons)
 
-    # packets=[]
-    # for ip, photon in enumerate(photons.T):
-    #     if ip%1e6 ==0: misc.progressBar(value = ip, endvalue=num_events)
-    #
-    #     # R = mp.Rs[int(photon[2]), int(photon[3])]
-    #     if mp.phase_background:
-    #         pix_background = dp.basesDeg[int(photon[3]), int(photon[2])]
-    #     else:
-    #         pix_background = 0
-    #     # pix_background = MKIDs.get_phase_background(R, 1)
-    #     pix_phase = photon[1]
-    #     # if mp.respons_var:
-    #     #     pix_phase *= dp.response_map[int(photon[2]), int(photon[3])]
-    #     if mp.phase_uncertainty:
-    #         pix_phase = MKIDs.apply_phase_distort(pix_phase, [int(photon[3]), int(photon[2])], dp.sigs)
-    #     # print pix_response
-    #     # pixId = np.arange(mp.total_pix).reshape(int(photon[1]), int(photon[2]))[int(photon[1]), int(photon[2])]
-    #     # pixId = int(photon[1]) * mp.xnum + int(photon[2])
-    #     # if pix_background + pix_phase < mp.threshold_phase:#photon[3]
-    #     if pix_background < -1*pix_phase:# < mp.threshold_phase:#photon[3]
-    #         #print 'photon detected'
-    #         packet = [pix_background, pix_phase, photon[0], photon[3], photon[2]]
-    #         # print packet
-    #         packets.append(packet)
-    #
-    # packets = np.array(packets)
-
-
-    # print packets[:5]
-    # print packets[np.where(np.logical_and(packets[:,3] == 64, packets[:,4]==64)),1]
-    # plt.hist(packets[np.where(np.logical_and(packets[:,3] == 32, packets[:,4]==54)),1][0])
-    # plt.show()
-
-
-    # phase_band = spec.phase_cal(ap.band)
-    # # dprint(phase_band)
-    # psamps = np.linspace(phase_band[0],phase_band[1],12)
-    # # dprint(dp.sigs.shape)
-    # # dprint(psamps)
-    # p_widths = np.mean(dp.sigs[:,32:34,54:56], axis=(1,2))
-    # # dprint(p_widths)
-    # from distribution import gaussian2
-    # ax.hist(packets[locs,1], bins=bins, alpha=0.5, label='Measured')
-    # for ip, (psamp, p_width) in enumerate(zip(psamps,p_widths)):
-    #     x = np.linspace(-100,-10,100)
-    #     ax.plot(x, 2000*gaussian2(x,p_width,psamp), linestyle='--', c='#d62728', alpha=0.5, label='Spec. Res.')
-    #     if ip == 0:
-    #         ax.legend()
-    # MEDIUM_SIZE = 17
-    # plt.rc('font', size=MEDIUM_SIZE)  # controls default text sizes
-    # plt.show()
-
-
-    # # bins = np.linspace(phase_band[0], phase_band[1], ap.nwsamp+1)
-    # band = phase_band[1] - phase_band[0]
-    # bins = np.linspace(phase_band[0], phase_band[1], 10 + 1)
-    # plt.hist(packets[:,1], bins=100)
-    # plt.figure()
-    # plt.hist(packets[:,1], bins=bins)
-    # plt.plot(bins[:-1],np.histogram(packets[:,1], bins=bins)[0])
-    # plt.show()
     dprint("Completed Readout Loop")
     return packets
 
-# def make_packet(basesDeg, phases, timestamp, pixId, xCoord, yCoord):
-# # def make_packet(loc,toa,p=80):
-#     # '''If used alone assumes 100% QE '''
-#     # packet = np.append(loc,[toa,p], axis=0)
-#     # packet {'loc': loc, 'toa': toa, 'phase': p, 'bg', p/10}
-#     packet = {'basesDeg':basesDeg, 'phases':phases, 'timestamp':timestamp, 'pixId':pixId, 'xCoord':xCoord, 'yCoord':yCoord}
-#     return packet
-
-# def detector(datacube, t):
-#     if tp.detector == 'MKIDs':
-#         packets = get_packets(datacube, t)
-#         print np.shape(packets)
-#
-#         # if tp.save_obs:
-#         #     write_obs(packets)
-#         command = get_obs_command(packets)
-#
-#         if tp.show_wframe:
-#             cube = pipe.arange_into_cube(packets)
-#             # # if mp.remove_close:
-#             # #     timecube = read.remove_close_photons(cube)
-#             image = pipe.make_intensity_map(cube)
-#             quicklook_im(image, logAmp=True, show=tp.show_wframe)
-#         # # # packets = rawImageIO.arange_into_packets(cube)
-#         # # # wfo = read.convert_to_wfo(image, wfo)
-#         # datacube = pipe.make_datacube(cube)
-#         return command
-#
-#     elif tp.detector == 'ideal':
-#         # print 'Detecting photons with an ideal array'
-#         if tp.show_wframe:
-#             quicklook_im(datacube[0], logAmp=True, show=tp.show_wframe)
-#         # cube = ideal.assign_calibtime(datacube,PASSVALUE['iter'])
-#         # cube = rawImageIO.arange_into_cube(packets, value='phase')
-#         # rawImageIO.make_phase_map(cube, plot=True)
-#         return None
-
 def get_obs_command(packets, t):
 
-    # time = packets[0,2]
-
-    command = []
-    # command.append(('createGroup', ('/', 't%s' % time)))
-    # command.append(('createArray', ('/t%s' % time, 'p%s' % time, packets)))
-    # print packets[:5]
     # command.append(('createArray', ('/', 'p%i' % t, packets)))
     command = ('createArray', ('/', 'p%i' % t, packets))
     return command
@@ -278,7 +127,7 @@ def write_obs(packets):
     #     d = np.load(obs)
     # return packets['image']
     # # with open('obs.pkl', 'ab') as obs:
-    # #     cPickle.dump(packets, obs) 
+    # #     cPickle.dump(packets, obs)
 
 
     # pixIds = np.int_(packets[:,3]) * mp.xnum + np.int_(packets[:,4])
@@ -293,22 +142,8 @@ def write_obs(packets):
     #     h5file.close()
     # else:
     #     with h5py.File(filename, 'a') as hf:
-    #         # print hf["photons"][:5]
     #         hf["photons"].resize((hf["photons"].shape[0] + len(packets)), axis = 0)
     #         hf["photons"][-len(packets):] = packets
-
-
-    # clear the file
-
-    # def run(num_simulations):
-    # hdf = pt.openFile('simulation.h5', mode='w')
-    # hdf.close()
-    # time=packets[0,2]
-    # pool = mp.Pool(num_processes)
-    # pool.apply_async(Simulation, (time, ), callback=handle_output)
-    # pool.close()
-    # pool.join()
-    # print 'Done'
 
 
 def convert_to_wfo(image, wfo):

@@ -94,6 +94,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
                 vmin = 0.9
 
             if sp.show_wframe:
+                dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
                 quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
 
             if sp.show_cube:

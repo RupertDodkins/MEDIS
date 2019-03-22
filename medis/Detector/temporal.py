@@ -89,8 +89,6 @@ def create_PDFs(frames):
 
 def sample_cube(datacube, num_events):
     # print 'creating photon data from reference cube'
-    # print np.shape(datacube), num_events
-
 
     # dist = Distribution(datacube, interpolation=mp.interp_sample)
     # if mp.interp_sample:
@@ -104,7 +102,6 @@ def sample_cube(datacube, num_events):
     dist = Distribution(datacube, interpolation=True)
 
     photons = dist(num_events)
-    # print np.shape(photons)
     # photons[1:3] = np.round_(photons[1:3])
     return photons
 
