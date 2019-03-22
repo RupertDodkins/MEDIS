@@ -56,9 +56,9 @@ tp.aber_vals = {'a': [5e-18, 1e-19],#'a': [5e-17, 1e-18],
                 'c': [3.1, 0.5],
                 'a_amp': [0.05, 0.01]}
 tp.piston_error = False
-tp.band = np.array([700, 1500])
-tp.nwsamp = 4
-tp.w_bins = 16#8
+ap.band = np.array([700, 1500])
+ap.nwsamp = 4
+ap.w_bins = 16#8
 tp.rot_rate = 0  # deg/s
 # tp.pix_shift = [[0,0],[20,20]]
 
@@ -124,8 +124,8 @@ if __name__ == '__main__':
     dprint((tp.grid_size//2, psf_template.shape))
     # quicklook_im(np.sum(psf_template,axis=0))
     star_phot = phot.contrcurve.aperture_flux(np.sum(psf_template,axis=0),[mp.array_size[0]//2],[mp.array_size[0]//2],lod,1)[0]#/1e4#/ap.numframes * 500
-    wsamples = np.linspace(tp.band[0], tp.band[1], tp.w_bins)
-    scale_list = wsamples/(tp.band[1]-tp.band[0])
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
+    scale_list = wsamples/(ap.band[1]-ap.band[0])
     # scale_list = scale_list[::-1]
     algo_dict = {'scale_list': scale_list}
 

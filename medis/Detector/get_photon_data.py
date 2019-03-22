@@ -58,7 +58,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
 
             atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
-            spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, tp.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
+            spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
 
             if tp.detector == 'ideal':
                 image = np.sum(spectralcube, axis=0)
@@ -82,9 +82,9 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
                 if sp.show_wframe:
                     image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
 
-                # Interpolating spectral cube from tp.nwsamp discreet wavelengths
+                # Interpolating spectral cube from ap.nwsamp discreet wavelengths
                 if sp.show_cube or sp.return_cube:
-                    spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], tp.w_bins))
+                    spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
 
 
                 if sp.save_obs:
@@ -194,9 +194,9 @@ def run_medis():
         proc.start()
 
     if tp.detector == 'MKIDs':
-        obs_sequence = np.zeros((ap.numframes, tp.w_bins, mp.array_size[1], mp.array_size[0]))
+        obs_sequence = np.zeros((ap.numframes, ap.w_bins, mp.array_size[1], mp.array_size[0]))
     else:
-        obs_sequence = np.zeros((ap.numframes, tp.w_bins, tp.grid_size, tp.grid_size))
+        obs_sequence = np.zeros((ap.numframes, ap.w_bins, ap.grid_size, ap.grid_size))
 
     # Sending Queues to gen_timeseries
     for i in range(sp.num_processes):

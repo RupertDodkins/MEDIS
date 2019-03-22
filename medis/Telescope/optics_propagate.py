@@ -40,7 +40,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     iop.__dict__ = passpara[2].__dict__
     sp.__dict__ = passpara[3].__dict__
 
-    wsamples = np.linspace(tp.band[0], tp.band[1], tp.nwsamp) / 1e9
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
     datacube = []
 
     if ap.companion:
@@ -52,15 +52,15 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     beam_ratios = np.zeros_like((wsamples))
     for iw, w in enumerate(wsamples):
         # Initialize the wavefront at entrance pupil
-        beam_ratios[iw] = tp.beam_ratio * tp.band[0] / w * 1e-9
-        wfp = proper.prop_begin(tp.diam, w, tp.grid_size, beam_ratios[iw])
+        beam_ratios[iw] = tp.beam_ratio * ap.band[0] / w * 1e-9
+        wfp = proper.prop_begin(tp.diam, w, ap.grid_size, beam_ratios[iw])
 
         wfs = [wfp]
         names = ['primary']
         # Initiate wavefronts for companion(s)
         if ap.companion:
             for id in range(len(ap.contrast)):
-                wfc = proper.prop_begin(tp.diam, w, tp.grid_size, beam_ratios[iw])
+                wfc = proper.prop_begin(tp.diam, w, ap.grid_size, beam_ratios[iw])
                 wfs.append(wfc)
                 names.append('companion_%i' % id)
 
@@ -133,7 +133,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         #     # quicklook_wf(wf, show=True)
         #     r0 = float(PASSVALUE['atmos_map'][-10:-5])
         #     # dprint((r0, 'r0'))
-        #     # if iw == np.ceil(tp.nwsamp/2):
+        #     # if iw == np.ceil(ap.nwsamp/2):
         #     ao.wfs_measurement(wf, PASSVALUE['iter'], iw, r0=r0)  # , obj_map, tp.wfs_scale)
         dprint('This needs to be updated to the parallel implementation')
         exit()
@@ -181,14 +181,15 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)
     datacube = np.abs(datacube)
 
-    if tp.interp_sample and tp.nwsamp>1 and tp.nwsamp<tp.w_bins:
-        wave_samps = np.linspace(0, 1, tp.nwsamp)
+    # Interpolating spectral cube from ap.nwsamp discreet wavelengths to ap.w_bins
+    if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:
+        wave_samps = np.linspace(0, 1, ap.nwsamp)
         f_out = interp1d(wave_samps, datacube, axis=0)
-        new_heights = np.linspace(0, 1, tp.w_bins)
+        new_heights = np.linspace(0, 1, ap.w_bins)
         datacube = f_out(new_heights)
 
     # TODO is this still neccessary?
-    # datacube = np.transpose(np.transpose(datacube) / np.sum(datacube, axis=(1, 2)))/float(tp.nwsamp)
+    # datacube = np.transpose(np.transpose(datacube) / np.sum(datacube, axis=(1, 2)))/float(ap.nwsamp)
 
     print('Finished datacube at single timestep')
 

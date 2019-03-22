@@ -52,10 +52,10 @@ def get_packets(datacube, step, dp,mp):
     datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)
 
     if (mp.array_size != datacube[0].shape + np.array([1,1])).all():
-        left = int(np.floor(float(tp.grid_size-mp.array_size[0])/2))
-        right = int(np.ceil(float(tp.grid_size-mp.array_size[0])/2))
-        top = int(np.floor(float(tp.grid_size-mp.array_size[1])/2))
-        bottom = int(np.ceil(float(tp.grid_size-mp.array_size[1])/2))
+        left = int(np.floor(float(ap.grid_size-mp.array_size[0])/2))
+        right = int(np.ceil(float(ap.grid_size-mp.array_size[0])/2))
+        top = int(np.floor(float(ap.grid_size-mp.array_size[1])/2))
+        bottom = int(np.ceil(float(ap.grid_size-mp.array_size[1])/2))
 
         dprint(f"left={left},right={right},top={top},bottom={bottom}")
         datacube = datacube[:,bottom:-top,left:-right]
@@ -167,7 +167,7 @@ def get_packets(datacube, step, dp,mp):
     # plt.show()
 
 
-    # phase_band = spec.phase_cal(tp.band)
+    # phase_band = spec.phase_cal(ap.band)
     # # dprint(phase_band)
     # psamps = np.linspace(phase_band[0],phase_band[1],12)
     # # dprint(dp.sigs.shape)
@@ -186,7 +186,7 @@ def get_packets(datacube, step, dp,mp):
     # plt.show()
 
 
-    # # bins = np.linspace(phase_band[0], phase_band[1], tp.nwsamp+1)
+    # # bins = np.linspace(phase_band[0], phase_band[1], ap.nwsamp+1)
     # band = phase_band[1] - phase_band[0]
     # bins = np.linspace(phase_band[0], phase_band[1], 10 + 1)
     # plt.hist(packets[:,1], bins=100)

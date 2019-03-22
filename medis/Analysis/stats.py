@@ -213,7 +213,7 @@ def get_LCmap():
 
 def get_LmapBB(LCmap, threshold=0, binning=100, plot=False, verb_output=False):
     dprint(LCmap.shape)
-    # mask = phot.aperture(tp.grid_size/2,tp.grid_size/2,9)
+    # mask = phot.aperture(ap.grid_size/2,ap.grid_size/2,9)
     # mask = mask==0 #flip the zeros and ones
     # add_rc = np.ones((mp.array_size[0],mp.array_size[1])) # add row col of ones to mask
     # add_rc[:-1,:-1] = mask
@@ -248,7 +248,7 @@ def get_LmapBB(LCmap, threshold=0, binning=100, plot=False, verb_output=False):
 
 def get_Dmap(LCmap, threshold=1, binning=10, plot=False, verb_output=False):
     dprint(LCmap.shape)
-    # mask = phot.aperture(tp.grid_size/2,tp.grid_size/2,9)
+    # mask = phot.aperture(ap.grid_size/2,ap.grid_size/2,9)
     # mask = mask==0 #flip the zeros and ones
     # add_rc = np.ones((mp.array_size[0],mp.array_size[1])) # add row col of ones to mask
     # add_rc[:-1,:-1] = mask
@@ -479,8 +479,8 @@ def effint_4_VIP(cube, angle_list, verbose, **kwargs):
 
 def SDI_4_VIP(cube, angle_list, verbose, **kwargs):
     dprint(cube.shape)
-    wsamples = np.linspace(tp.band[0], tp.band[1], tp.w_bins)
-    scale_list = tp.band[0]/wsamples
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
+    scale_list = ap.band[0]/wsamples
     cube = np.mean(cube, axis=1)/ap.exposure_time
     # SDI = phot.SDI_each_exposure(cube, binning=len(cube))[0]
     print(len(angle_list))
@@ -547,8 +547,8 @@ def RDSI_4_VIP(cube, angle_list, verbose, **kwargs):
 
 def SDI_RDI_4_VIP(cube, angle_list, verbose, **kwargs):
     from vip_hci import pca
-    wsamples = np.linspace(tp.band[0], tp.band[1], tp.w_bins)
-    scale_list = tp.band[0]/wsamples
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
+    scale_list = ap.band[0]/wsamples
     # cube = np.mean(cube, axis=1)/ap.exposure_time
 
     SDI_tar = pca.pca(np.mean(cube, axis=1)/ap.exposure_time, angle_list=np.zeros((cube.shape[0])), scale_list=scale_list,
@@ -662,8 +662,8 @@ def RDI_DSI_BB_4_VIP(cube, angle_list, verbose, **kwargs):
 
 def SDI_RDI_DSI_4_VIP(cube, angle_list, verbose, **kwargs):
     from vip_hci import pca
-    wsamples = np.linspace(tp.band[0], tp.band[1], tp.w_bins)
-    scale_list = tp.band[0]/wsamples
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
+    scale_list = ap.band[0]/wsamples
     # cube = np.mean(cube, axis=1)/ap.exposure_time
 
     # SDI_tar = pca.pca(np.mean(cube, axis=1)/ap.exposure_time, angle_list=np.zeros((cube.shape[0])), scale_list=scale_list,

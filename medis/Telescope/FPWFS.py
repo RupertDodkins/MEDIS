@@ -19,7 +19,7 @@ import copy
 from configobj import ConfigObj
 from validate import Validator
 
-controlregion = np.zeros((tp.grid_size, tp.grid_size))
+controlregion = np.zeros((ap.grid_size, ap.grid_size))
 controlregion[fp.controlregion[0]:fp.controlregion[1], fp.controlregion[2]:fp.controlregion[3]] = 1
 
 def add_single_speck(wfo, iter):
@@ -53,7 +53,7 @@ def speckle_killer(wf, phase_map):
     null_map = np.zeros((tp.ao_act,tp.ao_act))
     for speck in fps:
         print(speck)
-        kvecx, kvecy = DM.convert_pixels_kvecs(speck[0],speck[1],tp.grid_size/2,tp.grid_size/2,angle=0,lambdaoverd=fp.lod )
+        kvecx, kvecy = DM.convert_pixels_kvecs(speck[0],speck[1],ap.grid_size/2,ap.grid_size/2,angle=0,lambdaoverd=fp.lod )
         dm_phase = phase_map[speck[1],speck[0]]
         s_amp = proper.prop_get_amplitude(wf)[speck[1],speck[0]]*5.3
 
@@ -92,11 +92,11 @@ def active_null(wf, iter, w):
         pickle.dump((Imaps, null_map, iter+1), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 def piston_refbeam(wf, iter, w):
-    beam_ratio = 0.7 * tp.band[0] / w * 1e-9
-    wf_ref = proper.prop_begin(tp.diam, w, tp.grid_size, beam_ratio)
+    beam_ratio = 0.7 * ap.band[0] / w * 1e-9
+    wf_ref = proper.prop_begin(tp.diam, w, ap.grid_size, beam_ratio)
     proper.prop_define_entrance(wf_ref)
     phase_mod = iter%4 * w/4#np.pi/2
-    obj_map = np.ones((tp.grid_size,tp.grid_size))*phase_mod
+    obj_map = np.ones((ap.grid_size,ap.grid_size))*phase_mod
     proper.prop_add_phase(wf_ref, obj_map)
     wf_ref.wfarr = wf.wfarr + wf_ref.wfarr
     Imap =proper.prop_shift_center(np.abs(wf_ref.wfarr) ** 2)
@@ -110,7 +110,7 @@ def measure_phase(Imaps):
     return phase_map
 
 def modulate(wfo, w, iter):
-    # phase_mod = np.ones((tp.grid_size,tp.grid_size))*(iter%4) * w/4.
+    # phase_mod = np.ones((ap.grid_size,ap.grid_size))*(iter%4) * w/4.
     # phase_arr = proper.prop_get_phase(wfo)
     # phase_mod[phase_arr == 0] = 0
     # proper.prop_add_phase(wfo, phase_mod)

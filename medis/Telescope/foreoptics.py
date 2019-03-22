@@ -13,7 +13,7 @@ from medis.params import tp, cp, mp, ap,iop#, fp
 # from medis.Utils.misc import dprint
 
 def offset_companion(wf_array, atmos_map):
-    cont_scaling = np.linspace(1./ap.C_spec, 1, tp.nwsamp)
+    cont_scaling = np.linspace(1./ap.C_spec, 1, ap.nwsamp)
     shape = wf_array.shape
     for iw in range(shape[0]):
         for io in range(shape[1]):

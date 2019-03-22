@@ -21,10 +21,10 @@ from vip_hci import phot, metrics
 # import MKIDs
 
 def annuli(inner, outer):
-    mask = aperture(np.floor(tp.grid_size / 2) - 1, np.floor(tp.grid_size / 2), outer)
+    mask = aperture(np.floor(ap.grid_size / 2) - 1, np.floor(ap.grid_size / 2), outer)
 
     if inner > 0:
-        in_mask = aperture(np.floor(tp.grid_size / 2) - 1, np.floor(tp.grid_size / 2), inner)
+        in_mask = aperture(np.floor(ap.grid_size / 2) - 1, np.floor(ap.grid_size / 2), inner)
         in_mask[in_mask == 0] = -1
         in_mask[in_mask == 1] = 0
         in_mask[in_mask == -1] = 1
@@ -32,7 +32,7 @@ def annuli(inner, outer):
     return mask
 
 def aper_phot(image, inner, outer, plot=False):
-    # mask = aperture(np.floor(tp.grid_size / 2) - 1, np.floor(tp.grid_size / 2), outer)
+    # mask = aperture(np.floor(ap.grid_size / 2) - 1, np.floor(ap.grid_size / 2), outer)
     mask = aperture(np.floor(image.shape[0] / 2 - 0.5), np.floor(image.shape[1] / 2 - 0.5), outer, image, plot=plot)
     # image = image * mask
     if inner > 0:
@@ -60,14 +60,14 @@ def aper_phot(image, inner, outer, plot=False):
 
 #     return image
 
-def aperture(startpx, startpy, radius, image=np.zeros((tp.grid_size,tp.grid_size)), plot=False):
+def aperture(startpx, startpy, radius, image=np.zeros((ap.grid_size,ap.grid_size)), plot=False):
     r = radius
     length = 2 * r
     height = length
     allx = np.arange(startpx - int(np.ceil(length / 2.0)), startpx + int(np.floor(length / 2.0)) + 1)
     ally = np.arange(startpy - int(np.ceil(height / 2.0)), startpy + int(np.floor(height / 2.0)) + 1)
     # mask=np.zeros((xnum,ynum))
-    # mask = np.zeros((tp.grid_size, tp.grid_size))
+    # mask = np.zeros((ap.grid_size, ap.grid_size))
     mask = np.zeros_like(image)
 
     for x in allx:
@@ -126,8 +126,8 @@ def mask_companion(image, startpx, startpy, radius):
 
 
 def do_SDI(datacube, plot=False):
-    wsamples = np.linspace(tp.band[0], tp.band[1], tp.w_bins)
-    scale_list = tp.band[0] / wsamples
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
+    scale_list = ap.band[0] / wsamples
     # print scale_list
     from vip_hci import pca
     dprint((datacube.shape, scale_list.shape))
@@ -204,8 +204,8 @@ def get_unoccult_hyper(obs_seq = '/RefPSF_wLyotStop.pkl', numframes=1):
     tp.occulter_type = 'None (Lyot Stop)'
     ap.numframes = numframes
     ap.exposure_time = 1e-3
-    # tp.nwsamp = 1
-    # tp.w_bins = 1
+    # ap.nwsamp = 1
+    # ap.w_bins = 1
     print(iop.obs_table, 'obs')
     obs_sequence = read.get_integ_obs_sequence()
     tp.__dict__ = tp_orig.__dict__
@@ -231,7 +231,7 @@ def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
     ap.exposure_time = 0.001  # 0.001
     ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
     tp.use_atmos = False
-    tp.nwsamp = 1
+    ap.nwsamp = 1
     tp.CPA_type = None#'Quasi'# None
     tp.NCPA_type = None#'Wave'# #None
     tp.aber_params = {'CPA': False,
@@ -269,7 +269,7 @@ def get_unoccult_psf(plot=False, obs_seq = '/IntHyperUnOccult.pkl', numframes=10
     # num_exp = 1
     # ap.exposure_time = 0.001  # 0.001
     # ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
-    # tp.nwsamp = 1
+    # ap.nwsamp = 1
     # # Yup this is 'if' is necessary
     # obs_sequence = read.get_integ_obs_sequence()
     obs_sequence = get_unoccult_hyper(obs_seq, numframes=numframes)
@@ -489,13 +489,13 @@ def make_mosaic_cube(hyper):
     moves = np.shape(tp.pix_shift)[0]
     tp.pix_shift = np.array(tp.pix_shift)
 
-    super_obs_sequence = np.zeros((hyper.shape[0] // moves, hyper.shape[1], tp.grid_size, tp.grid_size))
+    super_obs_sequence = np.zeros((hyper.shape[0] // moves, hyper.shape[1], ap.grid_size, ap.grid_size))
     st = 0
 
-    left = int(np.floor(float(tp.grid_size - mp.array_size[1]) / 2))
-    right = int(np.ceil(float(tp.grid_size - mp.array_size[1]) / 2))
-    top = int(np.floor(float(tp.grid_size - mp.array_size[0]) / 2))
-    bottom = int(np.ceil(float(tp.grid_size - mp.array_size[0]) / 2))
+    left = int(np.floor(float(ap.grid_size - mp.array_size[1]) / 2))
+    right = int(np.ceil(float(ap.grid_size - mp.array_size[1]) / 2))
+    top = int(np.floor(float(ap.grid_size - mp.array_size[0]) / 2))
+    bottom = int(np.ceil(float(ap.grid_size - mp.array_size[0]) / 2))
 
     for t in range(hyper.shape[0]//moves):
         for m in range(moves):

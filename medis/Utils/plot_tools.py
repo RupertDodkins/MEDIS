@@ -334,13 +334,13 @@ def get_intensity(wf_array, sp, logAmp=True, show=False, save=True, phase=False)
             ax1.imshow(after_dm, origin='lower', cmap="YlGnBu_r")
         ax2.imshow(phase_afterdm, origin='lower', cmap="YlGnBu_r")#, vmin=-0.5, vmax=0.5)
 
-        ax3.plot(after_dm[int(tp.grid_size/2)])
-        ax3.plot(np.sum(np.eye(tp.grid_size)*after_dm,axis=1))
+        ax3.plot(after_dm[int(ap.grid_size/2)])
+        ax3.plot(np.sum(np.eye(ap.grid_size)*after_dm,axis=1))
 
         # plt.plot(np.sum(after_dm,axis=1)/after_dm[128,128])
 
-        ax4.plot(phase_afterdm[int(tp.grid_size/2)])
-        # ax4.plot(np.sum(np.eye(tp.grid_size)*phase_afterdm,axis=1))
+        ax4.plot(phase_afterdm[int(ap.grid_size/2)])
+        # ax4.plot(np.sum(np.eye(ap.grid_size)*phase_afterdm,axis=1))
         plt.xlim([0,proper.prop_get_gridsize(wfo)])
         fig.set_tight_layout(True)
 
@@ -351,7 +351,7 @@ def get_intensity(wf_array, sp, logAmp=True, show=False, save=True, phase=False)
         ws = sp.get_ints['w']
         cs = sp.get_ints['c']
 
-        int_maps = np.empty((0,tp.grid_size,tp.grid_size))
+        int_maps = np.empty((0,ap.grid_size,ap.grid_size))
         for iw in ws:
             for iwf in cs:
                 # int_maps.append(proper.prop_shift_center(np.abs(wf_array[iw, iwf].wfarr) ** 2))
@@ -443,7 +443,7 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
 
     if pupil:
         import medis.Analysis.phot
-        image = image * Analysis.phot.aperture(tp.grid_size / 2, tp.grid_size / 2, tp.grid_size / 2)
+        image = image * Analysis.phot.aperture(ap.grid_size / 2, ap.grid_size / 2, ap.grid_size / 2)
 
     if show!='continuous':
         fig = plt.figure()
@@ -599,13 +599,13 @@ def quicklook_wf(wfo, logAmp=True, show=True):
         ax1.imshow(after_dm, origin='lower', cmap="YlGnBu_r")
     ax2.imshow(phase_afterdm, origin='lower', cmap="YlGnBu_r")#, vmin=-0.5, vmax=0.5)
 
-    ax3.plot(after_dm[int(tp.grid_size/2)])
-    ax3.plot(np.sum(np.eye(tp.grid_size)*after_dm,axis=1))
+    ax3.plot(after_dm[int(ap.grid_size/2)])
+    ax3.plot(np.sum(np.eye(ap.grid_size)*after_dm,axis=1))
 
     # plt.plot(np.sum(after_dm,axis=1)/after_dm[128,128])
 
-    ax4.plot(phase_afterdm[int(tp.grid_size/2)])
-    # ax4.plot(np.sum(np.eye(tp.grid_size)*phase_afterdm,axis=1))
+    ax4.plot(phase_afterdm[int(ap.grid_size/2)])
+    # ax4.plot(np.sum(np.eye(ap.grid_size)*phase_afterdm,axis=1))
     plt.xlim([0,proper.prop_get_gridsize(wfo)])
     fig.set_tight_layout(True)
     if show==True:
@@ -633,13 +633,13 @@ def quicklook_IQ(wfo, logAmp=False, show=True):
         ax1.imshow(I, origin='lower', cmap="YlGnBu_r")
     ax2.imshow(Q, origin='lower', cmap="YlGnBu_r")  # , vmin=-0.5, vmax=0.5)
 
-    ax3.plot(I[int(tp.grid_size / 2)])
-    ax3.plot(np.sum(np.eye(tp.grid_size) * I, axis=1))
+    ax3.plot(I[int(ap.grid_size / 2)])
+    ax3.plot(np.sum(np.eye(ap.grid_size) * I, axis=1))
 
     # plt.plot(np.sum(after_dm,axis=1)/after_dm[128,128])
 
-    ax4.plot(Q[int(tp.grid_size / 2)])
-    # ax4.plot(np.sum(np.eye(tp.grid_size)*phase_afterdm,axis=1))
+    ax4.plot(Q[int(ap.grid_size / 2)])
+    # ax4.plot(np.sum(np.eye(ap.grid_size)*phase_afterdm,axis=1))
     plt.xlim([0, proper.prop_get_gridsize(wfo)])
     fig.set_tight_layout(True)
     if show == True:

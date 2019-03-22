@@ -365,18 +365,18 @@ def speck_killing_loop(wfo):
     use_centoffs = config['NULLING']['cent_off']
     
     #bgds = flh.setup_bgd_dict(config) 
-    fake_bgds = {'bkgd':np.zeros((tp.grid_size, tp.grid_size)), 
-            'masterflat':np.ones((tp.grid_size, tp.grid_size)),
-            'badpix': np.zeros((tp.grid_size, tp.grid_size))}
+    fake_bgds = {'bkgd':np.zeros((ap.grid_size, ap.grid_size)),
+            'masterflat':np.ones((ap.grid_size, ap.grid_size)),
+            'badpix': np.zeros((ap.grid_size, ap.grid_size))}
     print("WARNING: USING FAKE BGDS")
     bgds = fake_bgds.copy() 
     # controlregion = pf.open(tp.FPWFSdir+config['CONTROLREGION']['filename'])[0].data
-    # controlregion = controlregion[512-int(tp.grid_size/2):512+int(tp.grid_size/2), 512-int(tp.grid_size/2):512+int(tp.grid_size/2)]
+    # controlregion = controlregion[512-int(ap.grid_size/2):512+int(ap.grid_size/2), 512-int(ap.grid_size/2):512+int(ap.grid_size/2)]
     # controlregion = np.roll(controlregion, 15)
     # controlregion[:,0:70] = 0
     # controlregion[:80] = 0
     # controlregion[-80:] = 0
-    controlregion = np.zeros((tp.grid_size, tp.grid_size))
+    controlregion = np.zeros((ap.grid_size, ap.grid_size))
     controlregion[50:80,35:50] = 1
     boarder = get_ctrlrgnBoarder(controlregion)
 
@@ -389,7 +389,7 @@ def speck_killing_loop(wfo):
     # initial_flatmap = ao.grab_current_flatmap()
     # initial_centoffs= ao.grab_current_centoffs()
     
-    defaultim = np.ones((tp.grid_size, tp.grid_size) )
+    defaultim = np.ones((ap.grid_size, ap.grid_size) )
 
     vertsx = config['CONTROLREGION']['verticesx']
     vertsy = config['CONTROLREGION']['verticesy']
@@ -450,21 +450,21 @@ def speck_killing_loop(wfo):
 
     print(configfilename)
     result_imagecube =  output_imagecube(
-                           N_iterations, tp.grid_size, 
+                           N_iterations, ap.grid_size,
                            filepath = os.path.join(cubeoutputdir,
                                         'test_'+ tstamp+'.fits'),
                            comment = 'fun', 
                            configfile = configfilename)
     
     clean_imagecube=  output_imagecube(
-                           N_iterations, tp.grid_size, 
+                           N_iterations, ap.grid_size,
                            filepath = os.path.join(cubeoutputdir,
                                         'test_clean_'+ tstamp+'.fits'),
                            comment = 'fun', 
                            configfile = configfilename)
     
     cal_imagecube = output_imagecube(
-                            4, tp.grid_size, 
+                            4, ap.grid_size,
                            filepath = os.path.join(cubeoutputdir,
                                          'test_cals_'+ tstamp+'.fits'),
                            comment = 'fun', 
@@ -620,7 +620,7 @@ def speck_killing_loop(wfo):
             w2.set_data(np.log(np.abs(phaseim*controlregion)))
             w2.autoscale();plt.draw();plt.pause(0.02) 
             
-            # w4.set_data(range(128), np.sum(np.eye(tp.grid_size)*proper.prop_get_amplitude(wf_temp),axis=1))#ax4.plot(range(128),  proper.prop_get_amplitude(wf_temp)[20])#np.abs(field_im[20]))#+boarder)
+            # w4.set_data(range(128), np.sum(np.eye(ap.grid_size)*proper.prop_get_amplitude(wf_temp),axis=1))#ax4.plot(range(128),  proper.prop_get_amplitude(wf_temp)[20])#np.abs(field_im[20]))#+boarder)
             w4.set_data(list(range(128)), proper.prop_get_amplitude(wf_temp)[64])  # ax4.plot(range(128),  proper.prop_get_amplitude(wf_temp)[20])#np.abs(field_im[20]))#+boarder)
             ax4.set_xlim([0,128])
             ax4.set_ylim([0,0.2])

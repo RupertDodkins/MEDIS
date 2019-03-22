@@ -48,9 +48,9 @@ ap.exposure_time = 0.1  # 0.001
 cp.frame_time = 0.1
 ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
 tp.piston_error = True
-tp.band = np.array([800, 1500])
-tp.nwsamp = 4
-tp.w_bins = 4
+ap.band = np.array([800, 1500])
+ap.nwsamp = 4
+ap.w_bins = 4
 tp.rot_rate = 0  # deg/s
 tp.pix_shift = [30,0]
 lod = 8
@@ -89,7 +89,7 @@ if __name__ == '__main__':
     plt.show(block=True)
 
 tp.detector = 'MKIDs'
-tp.w_bins = 12
+ap.w_bins = 12
 
 
 if __name__ == '__main__':

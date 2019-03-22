@@ -67,8 +67,8 @@ mp.R_mean = 25
 tp.piston_error = True
 xlocs = range(0, 128)  # range(0,128)#65
 ylocs = range(0, 128)  # range(0,128)#85
-tp.band = np.array([800, 1500])
-tp.nwsamp = 8 #30
+ap.band = np.array([800, 1500])
+ap.nwsamp = 8 #30
 tp.rot_rate = 0  # deg/s
 theta = 45
 lod = 8
@@ -134,11 +134,11 @@ if __name__ == '__main__':
 
 
     #
-    # wsamples = np.linspace(tp.band[0], tp.band[1], tp.nwsamp)
-    # # scale_list = tp.band[0] / wsamples
-    # scale_list = wsamples / tp.band[0]
+    # wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp)
+    # # scale_list = ap.band[0] / wsamples
+    # scale_list = wsamples / ap.band[0]
     #
-    # angle_list = np.zeros((tp.nwsamp))
+    # angle_list = np.zeros((ap.nwsamp))
     # print np.mean(diff_cube, axis=0).shape
     # static_psf = pca.pca(np.mean(diff_cube, axis=0), angle_list=angle_list, scale_list=scale_list,
     #                      mask_center_px=None, full_output=True)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     # # loop_frames(np.mean(diff_cube, axis=1), logAmp=False)
     # quicklook_im(diff_cube[0,0], logAmp=False)
     # # scale_list = np.linspace(scale_list[-1],scale_list[0],8)
-    # scale_list = tp.band[1] / wsamples
+    # scale_list = ap.band[1] / wsamples
     # # scale_list = scale_list[::-1]
     # print scale_list, len(static_psf)
     # loop_frames(static_psf[0], logAmp=False)
@@ -165,7 +165,7 @@ if __name__ == '__main__':
     #
     # import scipy.ndimage
     #
-    # static_cube = np.zeros((tp.nwsamp, mp.array_size[0], mp.array_size[1]))
+    # static_cube = np.zeros((ap.nwsamp, mp.array_size[0], mp.array_size[1]))
     #
     # ref_vals = np.max(np.mean(diff_cube, axis=0), axis=(1, 2))
     # # loop_frames(simple_hypercube[:,0], logAmp=False)
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     # # loop_frames(static_psf[0,:], logAmp=False)
     # # loop_frames(simple_hypercube[0], logAmp=False)
     # # loop_frames(simple_hypercube[:,0], logAmp=False)
-    # static_cube = np.resize(static_cube, (ap.numframes-2, tp.nwsamp, mp.array_size[0], mp.array_size[1]))
+    # static_cube = np.resize(static_cube, (ap.numframes-2, ap.nwsamp, mp.array_size[0], mp.array_size[1]))
     # diff_cube -= static_cube
     # loop_frames(np.mean(diff_cube,axis=0), logAmp=False)
     # quicklook_im(np.mean(diff_cube,axis=(0,1)), logAmp=False)

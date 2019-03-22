@@ -76,8 +76,8 @@ def wave_cal(phase):
     return wave
 
 def wave_idx(wavelength):
-    m = float(tp.w_bins-1)/(tp.band[1] - tp.band[0])
-    c = -m*tp.band[0]
+    m = float(ap.w_bins-1)/(ap.band[1] - ap.band[0])
+    c = -m*ap.band[0]
     idx = wavelength*m + c
     # return np.int_(idx)
     return np.int_(np.round(idx))
@@ -90,8 +90,8 @@ def assign_phase(photons, wavelengths):
 def calibrate_phase(photons):
     photons = np.array(photons)
     # print photons[0,:5]
-    c = tp.band[0]
-    m = (tp.band[1] - tp.band[0])/tp.w_bins
+    c = ap.band[0]
+    m = (ap.band[1] - ap.band[0])/ap.w_bins
     wavelengths = photons[0]*m + c
     # dprint(wavelengths[:5])
     # photons[0] = wavelengths*mp.wavecal_coeffs[0] + mp.wavecal_coeffs[1]

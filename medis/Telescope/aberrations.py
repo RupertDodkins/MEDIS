@@ -15,20 +15,20 @@ from medis.Utils.misc import dprint
 
 class error_params():
     def __init__(self):
-        tp.Imaps = np.zeros((4, tp.grid_size, tp.grid_size))
-        tp.phase_map = np.zeros((tp.grid_size, tp.grid_size))
+        tp.Imaps = np.zeros((4, ap.grid_size, ap.grid_size))
+        tp.phase_map = np.zeros((ap.grid_size, ap.grid_size))
 
 def initialize_CPA_meas():
     required_servo = int(tp.servo_error[0])
     required_band = int(tp.servo_error[1])
     required_nframes = required_servo + required_band + 1
-    CPA_maps = np.zeros((required_nframes,tp.nwsamp, tp.grid_size,tp.grid_size))
+    CPA_maps = np.zeros((required_nframes,ap.nwsamp, ap.grid_size,ap.grid_size))
 
     with open(iop.CPA_meas, 'wb') as handle:
         pickle.dump((CPA_maps, np.arange(0,-required_nframes,-1)), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 def initialize_NCPA_meas():
-    Imaps = np.zeros((4, tp.grid_size, tp.grid_size))
+    Imaps = np.zeros((4, ap.grid_size, ap.grid_size))
     phase_map = np.zeros((tp.ao_act,tp.ao_act))#np.zeros((tp.grid_size,tp.grid_size))
     with open(iop.NCPA_meas, 'wb') as handle:
         pickle.dump((Imaps, phase_map, 0), handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -181,11 +181,11 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
     # TODO get rid of this hack
     # The sampling keyward should be passed to proper.prop_errormap. This keyword scales the atmosphere map in the fits
     #  file to the same grid spacing as the wf_array. The sampling is defined in the Proper manual (pg36), and should
-    #  be wavelength dependent. However, Rupert moved away from this to hard-code a tp.samp parameter, which is now
+    #  be wavelength dependent. However, Rupert moved away from this to hard-code a ap.samp parameter, which is now
     #  common to all wavelengths. Rupert can then tune this parameter. Not mathematically sound, but is a hack that
     #  works reasonably well for now (probably?)
     # dprint(f"Adding Atmosphere--at wavelength {w*1e9} nm")
-    #samp = proper.prop_get_sampling(wf_array[0, 0])*tp.band[0]*1e-9/w  # <--This looks good!?!
+    #samp = proper.prop_get_sampling(wf_array[0, 0])*ap.band[0]*1e-9/w  # <--This looks good!?!
 
     shape = wf_array.shape
 
@@ -193,7 +193,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
         for io in range(shape[1]):
             if iw == 0 and io == 0:
                 try:
-                    obj_map = proper.prop_errormap(wf_array[0, 0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=tp.samp)
+                    obj_map = proper.prop_errormap(wf_array[0, 0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=ap.samp)
                 except IOError:
                     print('*** Using exception hack for name rounding error ***')
                     i = 0
@@ -214,7 +214,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
                             print('No file found. Is your frame cadence too short for the atmosphere maps you have?')
                             exit()
 
-                    obj_map = proper.prop_errormap(wf_array[0,0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=tp.samp)
+                    obj_map = proper.prop_errormap(wf_array[0,0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=ap.samp)
             else:
                 proper.prop_add_phase(wf_array[iw,io], obj_map)
 

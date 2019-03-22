@@ -121,6 +121,20 @@ class Astro_params:
         self.startframe = 0  # useful for things like RDI
         self.numframes = 5000
 
+        # Wavelength and Wavefront Array Settings
+        # In optics_propagate(), proper initially takes N  discreet wavelengths evenly spaced in ap.band, where N is
+        # given by ap.nwsamp. Later, in gen_timeseries(), the 3rd axis of the spectral cube is interpolated so that
+        # there are ap.w_bins over the range in ap.band.
+        self.nwsamp = 3  # initial number of wavefronts in spectral cube (later sampled by MKID detector)
+        self.w_bins = 8  # final number of wavefronts in spectral cube after interpolation
+        self.band = np.array([800, 1500])  # wavelength range in nm
+        # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
+        self.samp = 0.2  # 0.125  This is a hacked parameter, to scale the atmos fits files to the wf_array
+        self.grid_size = 128  # creates a nxn array (of samples of the wavefront)
+        # must be bigger than the beam size to avoid FT effects at edges; must be factor of 2
+        # NOT the size of your detector/# of pixels
+        self.interp_sample = True  # Set to interpolate wavelengths from ap.nwsamp to ap.w_bins
+
 
 class CAOS_params:
     """
@@ -148,21 +162,9 @@ class Telescope_params:
     This contains most of the parameters you will probably modify when running tests
     """
     def __init__(self):
-        # Wavelength and Wavefront Array Settings
-        # In optics_propagate(), proper initially takes N  discreet wavelengths evenly spaced in tp.band, where N is
-        # given by tp.nwsamp. Later, in gen_timeseries(), the 3rd axis of the spectral cube is interpolated so that
-        # there are tp.w_bins over the range in tp.band.
-        self.nwsamp = 3  # initial number of wavefronts in spectral cube (later sampled by MKID detector)
-        self.w_bins = 8  # final number of wavefronts in spectral cube after interpolation
-        self.band = np.array([800, 1500])  # wavelength range in nm
-                                           # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
-        self.samp = 0.2  # 0.125  This is a hacked parameter, to scale the atmos fits files to the wf_array
-        self.grid_size = 128  # creates a nxn array (of samples of the wavefront)
-                              # --must be bigger than the beam size to avoid FT effects at edges
-        self.interp_sample = True
-        self.pix_shift = [0, 0]  # False?
 
         # Foreoptics + AO Settings
+        self.pix_shift = [0, 0]  # False?  Shifts the central star to off-axis (circular shift) (mimics conex mirror)
         self.rot_rate = 0  #1 # deg/s
         self.use_spiders = True
         self.use_hex = False  # include aberrations from hexagonal segmented mirror shape of primary
@@ -185,6 +187,7 @@ class Telescope_params:
 
         # Aberrations
         self.abertime = 0.5  # time scale of optic aberrations in seconds
+        self.use_zern_ab = False
         self.aber_params = {'CPA': True,
                             'NCPA': True,
                             'QuasiStatic': False,  # or 'Static'
@@ -198,7 +201,6 @@ class Telescope_params:
                            'a_amp': [0.05,0.01]}
 
         # Optics + Detector
-        self.use_zern_ab = False
         self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
         self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this

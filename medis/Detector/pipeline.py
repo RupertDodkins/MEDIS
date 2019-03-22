@@ -180,11 +180,11 @@ def make_phase_map(cube, plot=False):
 
 def make_datacube(cube, size):
     # print 'Making an xyw cube'
-    # datacube = np.zeros((tp.nwsamp,size[0],size[1]))
+    # datacube = np.zeros((ap.nwsamp,size[0],size[1]))
     datacube = np.zeros((size[2],size[1],size[0]))
-    phase_band = spec.phase_cal(tp.band)
+    phase_band = spec.phase_cal(ap.band)
     # dprint(phase_band)
-    # bins = np.linspace(phase_band[0], phase_band[1], tp.nwsamp+1)
+    # bins = np.linspace(phase_band[0], phase_band[1], ap.nwsamp+1)
     bins = np.linspace(phase_band[0], phase_band[1], size[2]+1)
     # dprint(bins)
     # print np.array(cube[64][64])[0]
@@ -196,7 +196,7 @@ def make_datacube(cube, size):
     for x in range(size[1]):
         for y in range(size[0]):
             if cube[x][y] == []:
-                # datacube[:,x,y] = np.zeros((tp.nwsamp))
+                # datacube[:,x,y] = np.zeros((ap.nwsamp))
                 datacube[:,x,y] = np.zeros((size[2]))
             else:
                 # print np.array(cube[x][y])[:,0], np.histogram(np.array(cube[x][y])[:,0], bins=bins)
@@ -217,7 +217,7 @@ def make_datacube(cube, size):
     return datacube
 
 def scale_to_luminos(obs_sequence):
-    obs_sequence *= ap.star_photons*np.ones((tp.grid_size,tp.grid_size))
+    obs_sequence *= ap.star_photons*np.ones((ap.grid_size,ap.grid_size))
     return obs_sequence
 
 def stack_obs_sequence(obs_sequence):

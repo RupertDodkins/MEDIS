@@ -94,9 +94,9 @@ def sample_cube(datacube, num_events):
 
     # dist = Distribution(datacube, interpolation=mp.interp_sample)
     # if mp.interp_sample:
-    #     wave_samps = np.linspace(0, 1, tp.nwsamp)
+    #     wave_samps = np.linspace(0, 1, ap.nwsamp)
     #     f_out = interp1d(wave_samps, datacube, axis=0)
-    #     new_heights = np.linspace(0, 1, tp.w_bins)
+    #     new_heights = np.linspace(0, 1, ap.w_bins)
     #     datacube = f_out(new_heights)
     #     dprint(datacube.shape)
 

@@ -90,13 +90,13 @@ def assign_spectral_res(plot=False):
 def get_R_hyper(Rs, plot=False):
     # '''Each pixel of the array has a matrix of probabilities that depends on the input wavelength'''
     print('Creating a cube of R standard deviations')
-    m = (-1*Rs/10)/(tp.band[1] - tp.band[0]) # looses R of 10% over the 700 band
+    m = (-1*Rs/10)/(ap.band[1] - ap.band[0]) # looses R of 10% over the 700 band
     # plt.plot(m[0])
     # plt.show()
-    c = Rs-m*tp.band[0] # each c depends on the R @ 800
+    c = Rs-m*ap.band[0] # each c depends on the R @ 800
     # plt.plot(c)
     # plt.show()
-    waves = np.ones((np.shape(m)[1],np.shape(m)[0],tp.w_bins))*np.linspace(tp.band[0],tp.band[1],tp.w_bins)
+    waves = np.ones((np.shape(m)[1],np.shape(m)[0],ap.w_bins))*np.linspace(ap.band[0],ap.band[1],ap.w_bins)
     waves = np.transpose(waves) # make a tensor of 128x128x10 where every 10 vector is 800... 1500
     R_spec = m* waves + c # 128x128x10 tensor is now lots of simple linear lines e.g. 50,49,.. 45
     # probs = np.ones((np.shape(R_spec)[0],np.shape(R_spec)[1],np.shape(R_spec)[2],
@@ -320,7 +320,7 @@ def create_hot_pix(mp):
     return [bad_x, bad_y]
 
 def remove_bad(frame, response):
-    bad_map = np.ones((tp.grid_size,tp.grid_size))
+    bad_map = np.ones((ap.grid_size,ap.grid_size))
     bad_map[response[:-1,:-1]==0] = 0
     # quicklook_im(response, logAmp =False)
     # quicklook_im(bad_map, logAmp =False)

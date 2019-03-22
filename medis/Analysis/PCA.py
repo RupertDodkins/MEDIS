@@ -1,7 +1,7 @@
 
 def do_SDI(datacube, plot=False):
-    wsamples = np.linspace(tp.band[0], tp.band[1], tp.nwsamp)
-    scale_list = tp.band[0]/wsamples
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp)
+    scale_list = ap.band[0]/wsamples
     print scale_list
     fr_pca1 = np.abs(vip.pca.pca(datacube, angle_list = np.zeros((len(scale_list))), scale_list=scale_list, mask_center_px=None))
     if plot:
