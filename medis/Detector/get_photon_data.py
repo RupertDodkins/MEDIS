@@ -82,6 +82,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
                 if sp.show_wframe:
                     image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
 
+                # Interpolating spectral cube from tp.nwsamp discreet wavelengths
                 if sp.show_cube or sp.return_cube:
                     spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], tp.w_bins))
 
@@ -105,7 +106,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
         elapsed = float(now - start) / 60.
         each_iter = float(elapsed) / (it + 1)
 
-        dprint('%.2f minutes elapsed, each time step took %.2f minutes' % (elapsed, each_iter )) #* ap.numframes/sp.num_processes TODO change to log #
+        dprint('%.2f minutes elapsed, each time step took %.2f minutes' % elapsed, each_iter) #* ap.numframes/sp.num_processes TODO change to log #
 
     except Exception as e:
         traceback.print_exc()

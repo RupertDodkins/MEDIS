@@ -172,28 +172,28 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
 
     :param wf_array:
     :param f_lens:
-    :param w:
+    :param w: discreet wavelength
     :param atmos_map:
     :param correction:
     :return:
     """
-    dprint(f"Adding Atmosphere--at wavelength {w*1e9} nm")
     obj_map = None
-    samp = proper.prop_get_sampling(wf_array[0, 0])*tp.band[0]*1e-9/w
+    # TODO get rid of this hack
+    # The sampling keyward should be passed to proper.prop_errormap. This keyword scales the atmosphere map in the fits
+    #  file to the same grid spacing as the wf_array. The sampling is defined in the Proper manual (pg36), and should
+    #  be wavelength dependent. However, Rupert moved away from this to hard-code a tp.samp parameter, which is now
+    #  common to all wavelengths. Rupert can then tune this parameter. Not mathematically sound, but is a hack that
+    #  works reasonably well for now (probably?)
+    # dprint(f"Adding Atmosphere--at wavelength {w*1e9} nm")
+    #samp = proper.prop_get_sampling(wf_array[0, 0])*tp.band[0]*1e-9/w  # <--This looks good!?!
 
     shape = wf_array.shape
-    if tp.piston_error:
-        pist_error = np.random.lognormal(0, 0.5, 1)
-        pist_error = 1.1*pist_error/6.9
-    else:
-        pist_error = 0
 
     for iw in range(shape[0]):
         for io in range(shape[1]):
             if iw == 0 and io == 0:
                 try:
-                    obj_map = proper.prop_errormap(wf_array[0, 0], atmos_map,
-                                                   MULTIPLY=(1+pist_error)/3, WAVEFRONT=True, MAP="obj_map", SAMPLING=tp.samp)
+                    obj_map = proper.prop_errormap(wf_array[0, 0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=tp.samp)
                 except IOError:
                     print('*** Using exception hack for name rounding error ***')
                     i = 0
@@ -214,8 +214,7 @@ def add_atmos(wf_array, f_lens, w, atmos_map, correction=False):
                             print('No file found. Is your frame cadence too short for the atmosphere maps you have?')
                             exit()
 
-                    obj_map = proper.prop_errormap(wf_array[0,0], atmos_map,
-                                                   MULTIPLY=(1+pist_error)/2, WAVEFRONT=True, MAP="obj_map", SAMPLING=tp.samp)
+                    obj_map = proper.prop_errormap(wf_array[0,0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=tp.samp)
             else:
                 proper.prop_add_phase(wf_array[iw,io], obj_map)
 

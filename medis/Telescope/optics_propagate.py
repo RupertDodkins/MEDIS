@@ -33,6 +33,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     :returns spectral cube at instantaneous time
     """
     print("Propagating Broadband Wavefront Through Telescope")
+    # Getting Parameters-import statements weren't working
     passpara = PASSVALUE['params']
     ap.__dict__ = passpara[0].__dict__
     tp.__dict__ = passpara[1].__dict__
@@ -77,7 +78,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     #  the array from infinity. The delay length thus corresponds to a different
     #  phase offset at a particular frequency.
     if tp.use_atmos:
-        # TODO is there a name hack in here? seems like an error...
+        # TODO is this supposed to be in the for loop?
         aber.add_atmos(wf_array, *(tp.f_lens, w, PASSVALUE['atmos_map']))
 
     wf_array = aber.abs_zeros(wf_array)

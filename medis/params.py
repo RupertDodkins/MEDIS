@@ -148,12 +148,21 @@ class Telescope_params:
     This contains most of the parameters you will probably modify when running tests
     """
     def __init__(self):
-        self.grid_size = 128  # creates a nxn array (of samples of the wavefront ~= # pixels)
-        self.nwsamp = 3  # number of wavefronts created in PROPER to sample from
+        # Wavelength and Wavefront Array Settings
+        # In optics_propagate(), proper initially takes N  discreet wavelengths evenly spaced in tp.band, where N is
+        # given by tp.nwsamp. Later, in gen_timeseries(), the 3rd axis of the spectral cube is interpolated so that
+        # there are tp.w_bins over the range in tp.band.
+        self.nwsamp = 3  # initial number of wavefronts in spectral cube (later sampled by MKID detector)
+        self.w_bins = 8  # final number of wavefronts in spectral cube after interpolation
         self.band = np.array([800, 1500])  # wavelength range in nm
                                            # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
-        self.w_bins = 8  # number of spectral bins over the band (tp.band)
+        self.samp = 0.2  # 0.125  This is a hacked parameter, to scale the atmos fits files to the wf_array
+        self.grid_size = 128  # creates a nxn array (of samples of the wavefront)
+                              # --must be bigger than the beam size to avoid FT effects at edges
         self.interp_sample = True
+        self.pix_shift = [0, 0]  # False?
+
+        # Foreoptics + AO Settings
         self.rot_rate = 0  #1 # deg/s
         self.use_spiders = True
         self.use_hex = False  # include aberrations from hexagonal segmented mirror shape of primary
@@ -169,14 +178,13 @@ class Telescope_params:
         self.wfs_measurement_error = False
         self.piston_error = True
         self.wfs_scale = 3
-        # self.occulter_type ='8th_Order'#'GAUSSIAN' None#'SOLID'#
-        self.occulter_type = 'Vortex'  # 'Gaussian'# None#
-        # self.occulter_type = None#
+        self.occulter_type = 'Vortex'  # 'Gaussian'# None# '8th_Order'#'GAUSSIAN' None#'SOLID'#
         self.occult_loc = [0,0]  # [3,-5] #correspond to normal x y direction
         self.use_apod = True
         self.apod_gaus = 1
-        # self.CPA_type = 'Static'#'Quasi'# None
-        # self.NCPA_type = 'Static'#'Wave'# #None
+
+        # Aberrations
+        self.abertime = 0.5  # time scale of optic aberrations in seconds
         self.aber_params = {'CPA': True,
                             'NCPA': True,
                             'QuasiStatic': False,  # or 'Static'
@@ -188,21 +196,23 @@ class Telescope_params:
                            'b': [0.8, 0.2],
                            'c': [3.1,0.5],
                            'a_amp': [0.05,0.01]}
+
+        # Optics + Detector
         self.use_zern_ab = False
         self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
         self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
         self.beam_ratio = 25/64.#0.39#0.3#0.25#0.5
-        # self.detector = 'MKIDs'#
-        self.detector = 'ideal'#
+        self.detector = 'ideal'  # 'MKIDs'
+
+        # Speckles
         self.satelite_speck = False
         self.speck_locs = [[50, 60]]
         self.speck_phases = [np.pi/2.]
         self.speck_peakIs = [0.05]
-        self.abertime = 0.5  # time scale of optic aberrations
-        self.samp = 0.2#0.125
+
+
         self.check_args()
-        self.pix_shift = [0, 0]  # False?
 
         # ct_rate = 1.e6 # G type star 10ly away gives 1e6 cts/cm^2/s
         # dish_area = 20. # Palomar is 20 m^2 including hole.
