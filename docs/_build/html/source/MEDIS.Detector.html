@@ -1,0 +1,677 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>medis.Detector package &mdash; MEDIS 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MEDIS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">medis.Detector package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-medis.Detector.H2RG">medis.Detector.H2RG module</a></li>
+<li><a class="reference internal" href="#module-medis.Detector.MKIDs">medis.Detector.MKIDs module</a></li>
+<li><a class="reference internal" href="#medis-detector-analysis-module">medis.Detector.analysis module</a></li>
+<li><a class="reference internal" href="#module-medis.Detector.distribution">medis.Detector.distribution module</a></li>
+<li><a class="reference internal" href="#module-medis.Detector.get_photon_data">medis.Detector.get_photon_data module</a></li>
+<li><a class="reference internal" href="#medis-detector-ideal-module">medis.Detector.ideal module</a></li>
+<li><a class="reference internal" href="#module-medis.Detector.pipeline">medis.Detector.pipeline module</a></li>
+<li><a class="reference internal" href="#module-medis.Detector.readout">medis.Detector.readout module</a></li>
+<li><a class="reference internal" href="#module-medis.Detector.spectral">medis.Detector.spectral module</a></li>
+<li><a class="reference internal" href="#module-medis.Detector.temporal">medis.Detector.temporal module</a></li>
+<li><a class="reference internal" href="#module-medis.Detector">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MEDIS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>medis.Detector package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/medis.Detector.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="medis-detector-package">
+<h1>medis.Detector package<a class="headerlink" href="#medis-detector-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.Detector.H2RG">
+<span id="medis-detector-h2rg-module"></span><h2>medis.Detector.H2RG module<a class="headerlink" href="#module-medis.Detector.H2RG" title="Permalink to this headline">¶</a></h2>
+<p>This code handles the relevant functionality of a Hawaii 2RG camera</p>
+<dl class="function">
+<dt id="medis.Detector.H2RG.add_darkcurrent">
+<code class="descclassname">medis.Detector.H2RG.</code><code class="descname">add_darkcurrent</code><span class="sig-paren">(</span><em>obs_sequence</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.H2RG.add_darkcurrent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.H2RG.add_readnoise">
+<code class="descclassname">medis.Detector.H2RG.</code><code class="descname">add_readnoise</code><span class="sig-paren">(</span><em>obs_sequence</em>, <em>std=30</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.H2RG.add_readnoise" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.H2RG.get_ref_psf">
+<code class="descclassname">medis.Detector.H2RG.</code><code class="descname">get_ref_psf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.H2RG.get_ref_psf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.H2RG.scale_to_luminos">
+<code class="descclassname">medis.Detector.H2RG.</code><code class="descname">scale_to_luminos</code><span class="sig-paren">(</span><em>obs_sequence</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.H2RG.scale_to_luminos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Detector.MKIDs">
+<span id="medis-detector-mkids-module"></span><h2>medis.Detector.MKIDs module<a class="headerlink" href="#module-medis.Detector.MKIDs" title="Permalink to this headline">¶</a></h2>
+<p>This code handles the MKID-related distortions to the ideal wavefront
+e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines</p>
+<dl class="function">
+<dt id="medis.Detector.MKIDs.apply_phase_distort">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">apply_phase_distort</code><span class="sig-paren">(</span><em>phase</em>, <em>loc</em>, <em>sigs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.apply_phase_distort" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.apply_phase_distort_array">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">apply_phase_distort_array</code><span class="sig-paren">(</span><em>photons</em>, <em>sigs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.apply_phase_distort_array" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.array_response">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">array_response</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.array_response" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.assign_phase_background">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">assign_phase_background</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.assign_phase_background" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.assign_spectral_res">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">assign_spectral_res</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.assign_spectral_res" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.create_bad_pix">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">create_bad_pix</code><span class="sig-paren">(</span><em>responsivities</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.create_bad_pix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.create_bad_pix_center">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">create_bad_pix_center</code><span class="sig-paren">(</span><em>responsivities</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.create_bad_pix_center" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.create_hot_pix">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">create_hot_pix</code><span class="sig-paren">(</span><em>mp</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.create_hot_pix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.get_R_hyper">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">get_R_hyper</code><span class="sig-paren">(</span><em>Rs</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.get_R_hyper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.get_hot_packets">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">get_hot_packets</code><span class="sig-paren">(</span><em>dp</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.get_hot_packets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.initialize">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">initialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.remove_bad">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">remove_bad</code><span class="sig-paren">(</span><em>frame</em>, <em>response</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.remove_bad" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.MKIDs.truncate_array">
+<code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">truncate_array</code><span class="sig-paren">(</span><em>frames</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.truncate_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make non-square array</p>
+</dd></dl>
+
+</div>
+<div class="section" id="medis-detector-analysis-module">
+<h2>medis.Detector.analysis module<a class="headerlink" href="#medis-detector-analysis-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.Detector.distribution">
+<span id="medis-detector-distribution-module"></span><h2>medis.Detector.distribution module<a class="headerlink" href="#module-medis.Detector.distribution" title="Permalink to this headline">¶</a></h2>
+<p>All credit for this function goes to Eelco Hoogendoom at
+stackoverflow.com/questions/21100716/fast-arbitrary-distribution-random-sampling</p>
+<dl class="class">
+<dt id="medis.Detector.distribution.Distribution">
+<em class="property">class </em><code class="descclassname">medis.Detector.distribution.</code><code class="descname">Distribution</code><span class="sig-paren">(</span><em>pdf</em>, <em>sort=True</em>, <em>interpolation=True</em>, <em>transform=&lt;function Distribution.&lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.distribution.Distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>draws samples from a one dimensional probability distribution,
+by means of inversion of a discrete inverstion of a cumulative density function</p>
+<p>the pdf can be sorted first to prevent numerical error in the cumulative sum
+this is set as default; for big density functions with high contrast,
+it is absolutely necessary, and for small density functions,
+the overhead is minimal</p>
+<p>a call to this distibution object returns indices into density array</p>
+<dl class="attribute">
+<dt id="medis.Detector.distribution.Distribution.ndim">
+<code class="descname">ndim</code><a class="headerlink" href="#medis.Detector.distribution.Distribution.ndim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Detector.distribution.Distribution.sum">
+<code class="descname">sum</code><a class="headerlink" href="#medis.Detector.distribution.Distribution.sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>cached sum of all pdf values; the pdf need not sum to one, and is imlpicitly normalized</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.distribution.MR">
+<code class="descclassname">medis.Detector.distribution.</code><code class="descname">MR</code><span class="sig-paren">(</span><em>I</em>, <em>Ic</em>, <em>Is</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.distribution.MR" title="Permalink to this definition">¶</a></dt>
+<dd><p>modified rician distribution</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.distribution.bessel">
+<code class="descclassname">medis.Detector.distribution.</code><code class="descname">bessel</code><span class="sig-paren">(</span><em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.distribution.bessel" title="Permalink to this definition">¶</a></dt>
+<dd><p>modified zero order besset=l</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.distribution.gaussian">
+<code class="descclassname">medis.Detector.distribution.</code><code class="descname">gaussian</code><span class="sig-paren">(</span><em>mu</em>, <em>sig</em>, <em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.distribution.gaussian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.distribution.gaussian2">
+<code class="descclassname">medis.Detector.distribution.</code><code class="descname">gaussian2</code><span class="sig-paren">(</span><em>x</em>, <em>sig</em>, <em>mu</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.distribution.gaussian2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.distribution.lognorm">
+<code class="descclassname">medis.Detector.distribution.</code><code class="descname">lognorm</code><span class="sig-paren">(</span><em>x</em>, <em>mu</em>, <em>sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.distribution.lognorm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.distribution.poisson">
+<code class="descclassname">medis.Detector.distribution.</code><code class="descname">poisson</code><span class="sig-paren">(</span><em>lamda</em>, <em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.distribution.poisson" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Detector.get_photon_data">
+<span id="medis-detector-get-photon-data-module"></span><h2>medis.Detector.get_photon_data module<a class="headerlink" href="#module-medis.Detector.get_photon_data" title="Permalink to this headline">¶</a></h2>
+<p>Top level code that takes a atmosphere phase map and propagates a wavefront through the system</p>
+<dl class="function">
+<dt id="medis.Detector.get_photon_data.gen_timeseries">
+<code class="descclassname">medis.Detector.get_photon_data.</code><code class="descname">gen_timeseries</code><span class="sig-paren">(</span><em>inqueue</em>, <em>photon_table_queue</em>, <em>spectralcubes_queue</em>, <em>xxx_todo_changeme</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.get_photon_data.gen_timeseries" title="Permalink to this definition">¶</a></dt>
+<dd><p>generates observation sequence by calling optics_propagate in time series</p>
+<p>is the time loop wrapper for optics_propagate
+this is where the observation sequence is generated (timeseries of observations by the detector)
+thus, where the detector observes the wavefront created by optics_propagate (for MKIDs, the probability distribution)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inqueue</strong> – time index for parallelization (used by multiprocess)</li>
+<li><strong>photon_table_queue</strong> – photon table (list of photon packets) in the multiprocessing format</li>
+<li><strong>spectralcube_queue</strong> – series of intensity images (spectral image cube) in the multiprocessing format</li>
+<li><strong>xxx_todo_changeme</strong> – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.get_photon_data.run_medis">
+<code class="descclassname">medis.Detector.get_photon_data.</code><code class="descname">run_medis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.get_photon_data.run_medis" title="Permalink to this definition">¶</a></dt>
+<dd><p>main script to organize calls to various aspects of the simulation</p>
+<p>initialize different sub-processes, such as atmosphere and aberration maps, MKID device parameters
+sets up the multiprocessing features
+returns the observation sequence created by gen_timeseries</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">obs_sequence</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.get_photon_data.wait_until">
+<code class="descclassname">medis.Detector.get_photon_data.</code><code class="descname">wait_until</code><span class="sig-paren">(</span><em>somepredicate</em>, <em>timeout</em>, <em>period=0.25</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.get_photon_data.wait_until" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="medis-detector-ideal-module">
+<h2>medis.Detector.ideal module<a class="headerlink" href="#medis-detector-ideal-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.Detector.pipeline">
+<span id="medis-detector-pipeline-module"></span><h2>medis.Detector.pipeline module<a class="headerlink" href="#module-medis.Detector.pipeline" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Detector.pipeline.arange_into_cube">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">arange_into_cube</code><span class="sig-paren">(</span><em>packets</em>, <em>size</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.arange_into_cube" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.get_intensity_dist">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">get_intensity_dist</code><span class="sig-paren">(</span><em>inten</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.get_intensity_dist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.get_lightcurve">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">get_lightcurve</code><span class="sig-paren">(</span><em>packets</em>, <em>xloc</em>, <em>yloc</em>, <em>start</em>, <em>end</em>, <em>bin_time=0.01</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.get_lightcurve" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.isolate_interval">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">isolate_interval</code><span class="sig-paren">(</span><em>packets</em>, <em>times</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.isolate_interval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.make_datacube">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">make_datacube</code><span class="sig-paren">(</span><em>cube</em>, <em>size</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.make_datacube" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.make_intensity_map">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">make_intensity_map</code><span class="sig-paren">(</span><em>cube</em>, <em>size</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.make_intensity_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.make_intensity_map_packets">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">make_intensity_map_packets</code><span class="sig-paren">(</span><em>packets</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.make_intensity_map_packets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.make_phase_map">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">make_phase_map</code><span class="sig-paren">(</span><em>cube</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.make_phase_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.read_obs">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">read_obs</code><span class="sig-paren">(</span><em>max_photons=100000000.0</em>, <em>start=0</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.read_obs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.scale_to_luminos">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">scale_to_luminos</code><span class="sig-paren">(</span><em>obs_sequence</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.scale_to_luminos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.pipeline.stack_obs_sequence">
+<code class="descclassname">medis.Detector.pipeline.</code><code class="descname">stack_obs_sequence</code><span class="sig-paren">(</span><em>obs_sequence</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.pipeline.stack_obs_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to take_exposure but makes a single frame for the intension of doing SDI rather than applying noise etc</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-medis.Detector.readout">
+<span id="medis-detector-readout-module"></span><h2>medis.Detector.readout module<a class="headerlink" href="#module-medis.Detector.readout" title="Permalink to this headline">¶</a></h2>
+<p>reads, formats, and saves data products, including obs_sequence</p>
+<p>This module is really two different modules, smushed together.
+The first part of the module has something to do with a readout system.</p>
+<blockquote>
+<div>It has the relevant code to convert from a obs_sequence to a  photon list, for the case of MKIDs</div></blockquote>
+<dl class="docutils">
+<dt>The second half of the module has little/nothing to do with a readout system</dt>
+<dd>This deals with reading, opening, and saving obs_sequences, either hdf5 or ?? format</dd>
+</dl>
+<dl class="function">
+<dt id="medis.Detector.readout.convert_to_wfo">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">convert_to_wfo</code><span class="sig-paren">(</span><em>image</em>, <em>wfo</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.convert_to_wfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.get_integ_obs_sequence">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">get_integ_obs_sequence</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.get_integ_obs_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>slightly awkward wrapper for running an observation</p>
+<p>This code basically just checks to see if there is already
+a observation sequence saved with the output of the run in the
+location specified by the iop. If none exists, it passes all
+the parameters to get_photon_data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plot</strong> – Flag, do you want plots or not</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the obs_sequence (timeseries of data cubes)
+data is saved in location specified in iop
+data can be saved as obs_table (photon table) if detector type is MKIDs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.get_obs_command">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">get_obs_command</code><span class="sig-paren">(</span><em>packets</em>, <em>t</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.get_obs_command" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.get_packets">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">get_packets</code><span class="sig-paren">(</span><em>datacube</em>, <em>step</em>, <em>dp</em>, <em>mp</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.get_packets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.handle_output">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">handle_output</code><span class="sig-paren">(</span><em>output</em>, <em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.handle_output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.med_collapse">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">med_collapse</code><span class="sig-paren">(</span><em>obs_sequence</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.med_collapse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.open_obs_sequence">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">open_obs_sequence</code><span class="sig-paren">(</span><em>HyperCubeFile='hyper.pkl'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.open_obs_sequence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.open_obs_sequence_hdf5">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">open_obs_sequence_hdf5</code><span class="sig-paren">(</span><em>HyperCubeFile='hyper.h5'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.open_obs_sequence_hdf5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.remove_close_photons">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">remove_close_photons</code><span class="sig-paren">(</span><em>cube</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.remove_close_photons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.save_obs_sequence">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">save_obs_sequence</code><span class="sig-paren">(</span><em>obs_sequence</em>, <em>HyperCubeFile='hyper.pkl'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.save_obs_sequence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.save_obs_sequence_hdf5">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">save_obs_sequence_hdf5</code><span class="sig-paren">(</span><em>obs_sequence</em>, <em>HyperCubeFile='hyper.hdf'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.save_obs_sequence_hdf5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.take_exposure">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">take_exposure</code><span class="sig-paren">(</span><em>obs_sequence</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.take_exposure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.write_obs">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">write_obs</code><span class="sig-paren">(</span><em>packets</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.write_obs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saving the packets in a pseudo h5 obsfile</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-medis.Detector.spectral">
+<span id="medis-detector-spectral-module"></span><h2>medis.Detector.spectral module<a class="headerlink" href="#module-medis.Detector.spectral" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Detector.spectral.assign_phase">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">assign_phase</code><span class="sig-paren">(</span><em>photons</em>, <em>wavelengths</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.assign_phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.calibrate_phase">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">calibrate_phase</code><span class="sig-paren">(</span><em>photons</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.calibrate_phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.change_spec_prof">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">change_spec_prof</code><span class="sig-paren">(</span><em>frames</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.change_spec_prof" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.eff_filter">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">eff_filter</code><span class="sig-paren">(</span><em>cube</em>, <em>start=0.8</em>, <em>exp=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.eff_filter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.phase_cal">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">phase_cal</code><span class="sig-paren">(</span><em>wavelengths</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.phase_cal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wavelength in nm</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.planck">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">planck</code><span class="sig-paren">(</span><em>T</em>, <em>l</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.planck" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.read_hyper_images">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">read_hyper_images</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.read_hyper_images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.read_single_wavelength">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">read_single_wavelength</code><span class="sig-paren">(</span><em>location</em>, <em>wavelength</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.read_single_wavelength" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.wave_cal">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">wave_cal</code><span class="sig-paren">(</span><em>phase</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.wave_cal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.spectral.wave_idx">
+<code class="descclassname">medis.Detector.spectral.</code><code class="descname">wave_idx</code><span class="sig-paren">(</span><em>wavelength</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.spectral.wave_idx" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Detector.temporal">
+<span id="medis-detector-temporal-module"></span><h2>medis.Detector.temporal module<a class="headerlink" href="#module-medis.Detector.temporal" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Detector.temporal.assign_calibtime">
+<code class="descclassname">medis.Detector.temporal.</code><code class="descname">assign_calibtime</code><span class="sig-paren">(</span><em>photons</em>, <em>step</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.temporal.assign_calibtime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.temporal.create_PDFs">
+<code class="descclassname">medis.Detector.temporal.</code><code class="descname">create_PDFs</code><span class="sig-paren">(</span><em>frames</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.temporal.create_PDFs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.temporal.downsample">
+<code class="descclassname">medis.Detector.temporal.</code><code class="descname">downsample</code><span class="sig-paren">(</span><em>LCmap</em>, <em>factor=2</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.temporal.downsample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.temporal.eff_exposure">
+<code class="descclassname">medis.Detector.temporal.</code><code class="descname">eff_exposure</code><span class="sig-paren">(</span><em>cube</em>, <em>start=0</em>, <em>exp=0.2</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.temporal.eff_exposure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.temporal.plot_pix_hist">
+<code class="descclassname">medis.Detector.temporal.</code><code class="descname">plot_pix_hist</code><span class="sig-paren">(</span><em>frames</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.temporal.plot_pix_hist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.temporal.sample_cube">
+<code class="descclassname">medis.Detector.temporal.</code><code class="descname">sample_cube</code><span class="sig-paren">(</span><em>datacube</em>, <em>num_events</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.temporal.sample_cube" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.temporal.show_time_spat">
+<code class="descclassname">medis.Detector.temporal.</code><code class="descname">show_time_spat</code><span class="sig-paren">(</span><em>frames</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.temporal.show_time_spat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.temporal.uniform_cube">
+<code class="descclassname">medis.Detector.temporal.</code><code class="descname">uniform_cube</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.temporal.uniform_cube" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Detector">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-medis.Detector" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Rupert Dodkins, Kristina Davis
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

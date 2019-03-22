@@ -1,0 +1,415 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>medis.Telescope package &mdash; MEDIS 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MEDIS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">medis.Telescope package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-medis.Telescope.FPWFS">medis.Telescope.FPWFS module</a></li>
+<li><a class="reference internal" href="#module-medis.Telescope.aberrations">medis.Telescope.aberrations module</a></li>
+<li><a class="reference internal" href="#module-medis.Telescope.adaptive_optics">medis.Telescope.adaptive_optics module</a></li>
+<li><a class="reference internal" href="#module-medis.Telescope.coronagraph">medis.Telescope.coronagraph module</a></li>
+<li><a class="reference internal" href="#module-medis.Telescope.foreoptics">medis.Telescope.foreoptics module</a></li>
+<li><a class="reference internal" href="#module-medis.Telescope.optics_propagate">medis.Telescope.optics_propagate module</a></li>
+<li><a class="reference internal" href="#module-medis.Telescope">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MEDIS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>medis.Telescope package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/medis.Telescope.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="medis-telescope-package">
+<h1>medis.Telescope package<a class="headerlink" href="#medis-telescope-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.Telescope.FPWFS">
+<span id="medis-telescope-fpwfs-module"></span><h2>medis.Telescope.FPWFS module<a class="headerlink" href="#module-medis.Telescope.FPWFS" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Telescope.FPWFS.active_null">
+<code class="descclassname">medis.Telescope.FPWFS.</code><code class="descname">active_null</code><span class="sig-paren">(</span><em>wf</em>, <em>iter</em>, <em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.FPWFS.active_null" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.FPWFS.add_single_speck">
+<code class="descclassname">medis.Telescope.FPWFS.</code><code class="descname">add_single_speck</code><span class="sig-paren">(</span><em>wfo</em>, <em>iter</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.FPWFS.add_single_speck" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.FPWFS.add_speckles">
+<code class="descclassname">medis.Telescope.FPWFS.</code><code class="descname">add_speckles</code><span class="sig-paren">(</span><em>wfo</em>, <em>pair=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.FPWFS.add_speckles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.FPWFS.measure_phase">
+<code class="descclassname">medis.Telescope.FPWFS.</code><code class="descname">measure_phase</code><span class="sig-paren">(</span><em>Imaps</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.FPWFS.measure_phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.FPWFS.modulate">
+<code class="descclassname">medis.Telescope.FPWFS.</code><code class="descname">modulate</code><span class="sig-paren">(</span><em>wfo</em>, <em>w</em>, <em>iter</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.FPWFS.modulate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.FPWFS.piston_refbeam">
+<code class="descclassname">medis.Telescope.FPWFS.</code><code class="descname">piston_refbeam</code><span class="sig-paren">(</span><em>wf</em>, <em>iter</em>, <em>w</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.FPWFS.piston_refbeam" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.FPWFS.speckle_killer">
+<code class="descclassname">medis.Telescope.FPWFS.</code><code class="descname">speckle_killer</code><span class="sig-paren">(</span><em>wf</em>, <em>phase_map</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.FPWFS.speckle_killer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Telescope.aberrations">
+<span id="medis-telescope-aberrations-module"></span><h2>medis.Telescope.aberrations module<a class="headerlink" href="#module-medis.Telescope.aberrations" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Telescope.aberrations.abs_zeros">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">abs_zeros</code><span class="sig-paren">(</span><em>wf_array</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.abs_zeros" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.aberrations.add_aber">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">add_aber</code><span class="sig-paren">(</span><em>wf_array</em>, <em>f_lens</em>, <em>aber_params</em>, <em>aber_vals</em>, <em>step=0</em>, <em>Loc='CPA'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.add_aber" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.aberrations.add_atmos">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">add_atmos</code><span class="sig-paren">(</span><em>wf_array</em>, <em>f_lens</em>, <em>w</em>, <em>atmos_map</em>, <em>correction=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.add_atmos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.aberrations.add_zern_ab">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">add_zern_ab</code><span class="sig-paren">(</span><em>wfo</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.add_zern_ab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.aberrations.circularise">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">circularise</code><span class="sig-paren">(</span><em>prim_map</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.circularise" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="medis.Telescope.aberrations.error_params">
+<em class="property">class </em><code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">error_params</code><a class="headerlink" href="#medis.Telescope.aberrations.error_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.aberrations.generate_maps">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">generate_maps</code><span class="sig-paren">(</span><em>Loc='CPA'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.generate_maps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.aberrations.initialize_CPA_meas">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">initialize_CPA_meas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.initialize_CPA_meas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.aberrations.initialize_NCPA_meas">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">initialize_NCPA_meas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.initialize_NCPA_meas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.aberrations.rotate_atmos">
+<code class="descclassname">medis.Telescope.aberrations.</code><code class="descname">rotate_atmos</code><span class="sig-paren">(</span><em>wf</em>, <em>atmos_map</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.aberrations.rotate_atmos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Telescope.adaptive_optics">
+<span id="medis-telescope-adaptive-optics-module"></span><h2>medis.Telescope.adaptive_optics module<a class="headerlink" href="#module-medis.Telescope.adaptive_optics" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Telescope.adaptive_optics.adaptive_optics">
+<code class="descclassname">medis.Telescope.adaptive_optics.</code><code class="descname">adaptive_optics</code><span class="sig-paren">(</span><em>wfo</em>, <em>iwf</em>, <em>iw</em>, <em>f_lens</em>, <em>beam_ratio</em>, <em>iter</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.adaptive_optics.adaptive_optics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.adaptive_optics.flat_outside">
+<code class="descclassname">medis.Telescope.adaptive_optics.</code><code class="descname">flat_outside</code><span class="sig-paren">(</span><em>wf_array</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.adaptive_optics.flat_outside" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.adaptive_optics.quick_ao">
+<code class="descclassname">medis.Telescope.adaptive_optics.</code><code class="descname">quick_ao</code><span class="sig-paren">(</span><em>wf_array</em>, <em>iwf</em>, <em>f_lens</em>, <em>beam_ratios</em>, <em>iter</em>, <em>CPA_maps</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.adaptive_optics.quick_ao" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.adaptive_optics.quick_wfs">
+<code class="descclassname">medis.Telescope.adaptive_optics.</code><code class="descname">quick_wfs</code><span class="sig-paren">(</span><em>wf_vec</em>, <em>iter</em>, <em>r0</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.adaptive_optics.quick_wfs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.adaptive_optics.wfs_measurement">
+<code class="descclassname">medis.Telescope.adaptive_optics.</code><code class="descname">wfs_measurement</code><span class="sig-paren">(</span><em>wfo</em>, <em>iter</em>, <em>iw</em>, <em>r0</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.adaptive_optics.wfs_measurement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Telescope.coronagraph">
+<span id="medis-telescope-coronagraph-module"></span><h2>medis.Telescope.coronagraph module<a class="headerlink" href="#module-medis.Telescope.coronagraph" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Telescope.coronagraph.apodization">
+<code class="descclassname">medis.Telescope.coronagraph.</code><code class="descname">apodization</code><span class="sig-paren">(</span><em>wf</em>, <em>RAVC=False</em>, <em>phase_apodizer_file=0</em>, <em>amplitude_apodizer_file=0</em>, <em>apodizer_misalignment=0</em>, <em>Debug_print=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.coronagraph.apodization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.coronagraph.circular_apodization">
+<code class="descclassname">medis.Telescope.coronagraph.</code><code class="descname">circular_apodization</code><span class="sig-paren">(</span><em>wf</em>, <em>radius</em>, <em>t_in</em>, <em>t_out</em>, <em>xc=0.0</em>, <em>yc=0.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.coronagraph.circular_apodization" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.coronagraph.coronagraph">
+<code class="descclassname">medis.Telescope.coronagraph.</code><code class="descname">coronagraph</code><span class="sig-paren">(</span><em>wfo</em>, <em>f_lens</em>, <em>occulter_type</em>, <em>occult_loc</em>, <em>diam</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.coronagraph.coronagraph" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.coronagraph.lyotstop">
+<code class="descclassname">medis.Telescope.coronagraph.</code><code class="descname">lyotstop</code><span class="sig-paren">(</span><em>wf</em>, <em>RAVC=None</em>, <em>APP=None</em>, <em>get_pupil='no'</em>, <em>dnpup=50</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.coronagraph.lyotstop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a Lyot stop, or an APP.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.coronagraph.readfield">
+<code class="descclassname">medis.Telescope.coronagraph.</code><code class="descname">readfield</code><span class="sig-paren">(</span><em>path</em>, <em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.coronagraph.readfield" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.coronagraph.vortex">
+<code class="descclassname">medis.Telescope.coronagraph.</code><code class="descname">vortex</code><span class="sig-paren">(</span><em>wfo</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.coronagraph.vortex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.coronagraph.writefield">
+<code class="descclassname">medis.Telescope.coronagraph.</code><code class="descname">writefield</code><span class="sig-paren">(</span><em>path</em>, <em>filename</em>, <em>field</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.coronagraph.writefield" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Telescope.foreoptics">
+<span id="medis-telescope-foreoptics-module"></span><h2>medis.Telescope.foreoptics module<a class="headerlink" href="#module-medis.Telescope.foreoptics" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Telescope.foreoptics.add_hex">
+<code class="descclassname">medis.Telescope.foreoptics.</code><code class="descname">add_hex</code><span class="sig-paren">(</span><em>wfo</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.foreoptics.add_hex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.foreoptics.add_spiders">
+<code class="descclassname">medis.Telescope.foreoptics.</code><code class="descname">add_spiders</code><span class="sig-paren">(</span><em>wfo</em>, <em>diam</em>, <em>legs=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.foreoptics.add_spiders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.foreoptics.do_apod">
+<code class="descclassname">medis.Telescope.foreoptics.</code><code class="descname">do_apod</code><span class="sig-paren">(</span><em>wfo</em>, <em>grid_size</em>, <em>beam_ratio</em>, <em>apod_gaus</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.foreoptics.do_apod" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.foreoptics.offset_companion">
+<code class="descclassname">medis.Telescope.foreoptics.</code><code class="descname">offset_companion</code><span class="sig-paren">(</span><em>wf_array</em>, <em>atmos_map</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.foreoptics.offset_companion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.foreoptics.prop_mid_optics">
+<code class="descclassname">medis.Telescope.foreoptics.</code><code class="descname">prop_mid_optics</code><span class="sig-paren">(</span><em>wfo</em>, <em>f_lens</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.foreoptics.prop_mid_optics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Telescope.optics_propagate">
+<span id="medis-telescope-optics-propagate-module"></span><h2>medis.Telescope.optics_propagate module<a class="headerlink" href="#module-medis.Telescope.optics_propagate" title="Permalink to this headline">¶</a></h2>
+<p>This code handles most of the telescope optics based functionality</p>
+<dl class="function">
+<dt id="medis.Telescope.optics_propagate.iter_func">
+<code class="descclassname">medis.Telescope.optics_propagate.</code><code class="descname">iter_func</code><span class="sig-paren">(</span><em>wavefronts</em>, <em>func</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.optics_propagate.iter_func" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Telescope.optics_propagate.optics_propagate">
+<code class="descclassname">medis.Telescope.optics_propagate.</code><code class="descname">optics_propagate</code><span class="sig-paren">(</span><em>empty_lamda</em>, <em>grid_size</em>, <em>PASSVALUE</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Telescope.optics_propagate.optics_propagate" title="Permalink to this definition">¶</a></dt>
+<dd><p>propagates instantaneous complex E-field through the optical system in loop over wavelength range</p>
+<p>uses PyPROPER3 to generate the complex E-field at the source, then propagates it through atmosphere, then telescope, to the focal plane
+currently: optics system “hard coded” as single aperture and lens
+the AO simulator happens here
+this does not include the observation of the wavefront by the detector
+:returns spectral cube at instantaneous time</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-medis.Telescope">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-medis.Telescope" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Rupert Dodkins, Kristina Davis
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

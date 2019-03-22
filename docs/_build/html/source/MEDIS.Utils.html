@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>medis.Utils package &mdash; MEDIS 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MEDIS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">medis.Utils package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-medis.Utils.colormaps">medis.Utils.colormaps module</a></li>
+<li><a class="reference internal" href="#module-medis.Utils.images2gif">medis.Utils.images2gif module</a><ul>
+<li><a class="reference internal" href="#acknowledgements">Acknowledgements</a></li>
+<li><a class="reference internal" href="#usefull-links">Usefull links</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-medis.Utils.misc">medis.Utils.misc module</a></li>
+<li><a class="reference internal" href="#module-medis.Utils.plot_tools">medis.Utils.plot_tools module</a></li>
+<li><a class="reference internal" href="#module-medis.Utils.rawImageIO">medis.Utils.rawImageIO module</a></li>
+<li><a class="reference internal" href="#module-medis.Utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MEDIS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>medis.Utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/medis.Utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="medis-utils-package">
+<h1>medis.Utils package<a class="headerlink" href="#medis-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.Utils.colormaps">
+<span id="medis-utils-colormaps-module"></span><h2>medis.Utils.colormaps module<a class="headerlink" href="#module-medis.Utils.colormaps" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.Utils.images2gif">
+<span id="medis-utils-images2gif-module"></span><h2>medis.Utils.images2gif module<a class="headerlink" href="#module-medis.Utils.images2gif" title="Permalink to this headline">¶</a></h2>
+<p>Module images2gif</p>
+<p>Provides functionality for reading and writing animated GIF images.
+Use writeGif to write a series of numpy arrays or PIL images as an
+animated GIF. Use readGif to read an animated gif as a series of numpy
+arrays.</p>
+<p>Note that since July 2004, all patents on the LZW compression patent have
+expired. Therefore the GIF format may now be used freely.</p>
+<div class="section" id="acknowledgements">
+<h3>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h3>
+<p>Many thanks to Ant1 for:
+* noting the use of “palette=PIL.Image.ADAPTIVE”, which significantly</p>
+<blockquote>
+<div>improves the results.</div></blockquote>
+<ul class="simple">
+<li>the modifications to save each image with its own palette, or optionally
+the global palette (if its the same).</li>
+</ul>
+<p>Many thanks to Marius van Voorden for porting the NeuQuant quantization
+algorithm of Anthony Dekker to Python (See the NeuQuant class for its
+license).</p>
+<p>Many thanks to Alex Robinson for implementing the concept of subrectangles,
+which (depening on image content) can give a very significant reduction in
+file size.</p>
+<p>This code is based on gifmaker (in the scripts folder of the source
+distribution of PIL)</p>
+</div>
+<div class="section" id="usefull-links">
+<h3>Usefull links<a class="headerlink" href="#usefull-links" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://tronche.com/computer-graphics/gif/">http://tronche.com/computer-graphics/gif/</a></li>
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Graphics_Interchange_Format">http://en.wikipedia.org/wiki/Graphics_Interchange_Format</a></li>
+<li><a class="reference external" href="http://www.w3.org/Graphics/GIF/spec-gif89a.txt">http://www.w3.org/Graphics/GIF/spec-gif89a.txt</a></li>
+</ul>
+</div></blockquote>
+<dl class="class">
+<dt id="medis.Utils.images2gif.GifWriter">
+<em class="property">class </em><code class="descclassname">medis.Utils.images2gif.</code><code class="descname">GifWriter</code><a class="headerlink" href="#medis.Utils.images2gif.GifWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that contains methods for helping write the animated GIF file.</p>
+<dl class="method">
+<dt id="medis.Utils.images2gif.GifWriter.convertImagesToPIL">
+<code class="descname">convertImagesToPIL</code><span class="sig-paren">(</span><em>images</em>, <em>nq=0</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.GifWriter.convertImagesToPIL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert images to Paletted PIL images, which can then be
+written to a single animaged GIF.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.GifWriter.getAppExt">
+<code class="descname">getAppExt</code><span class="sig-paren">(</span><em>loops=float('inf')</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.GifWriter.getAppExt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Application extention. This part specifies the amount of loops.
+If loops is 0 or inf, it goes on infinitely.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.GifWriter.getGraphicsControlExt">
+<code class="descname">getGraphicsControlExt</code><span class="sig-paren">(</span><em>duration=0.1</em>, <em>dispose=2</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.GifWriter.getGraphicsControlExt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Graphics Control Extension. A sort of header at the start of
+each image. Specifies duration and transparancy.</p>
+<blockquote>
+<div><ul class="simple">
+<li>0 - No disposal specified.</li>
+<li>1 - Do not dispose. The graphic is to be left in place.</li>
+<li>2 - Restore to background color. The area used by the graphic
+must be restored to the background color.</li>
+<li>3 - Restore to previous. The decoder is required to restore the
+area overwritten by the graphic with what was there prior to
+rendering the graphic.</li>
+<li>4-7 -To be defined.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.GifWriter.getImageDescriptor">
+<code class="descname">getImageDescriptor</code><span class="sig-paren">(</span><em>im</em>, <em>xy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.GifWriter.getImageDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used for the local color table properties per image.
+Otherwise global color table applies to all frames irrespective of
+whether additional colors comes in play that require a redefined
+palette. Still a maximum of 256 color per frame, obviously.</p>
+<p>Written by Ant1 on 2010-08-22
+Modified by Alex Robinson in Janurari 2011 to implement subrectangles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.GifWriter.getSubRectangles">
+<code class="descname">getSubRectangles</code><span class="sig-paren">(</span><em>ims</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.GifWriter.getSubRectangles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the minimal rectangles that need updating each frame.
+Returns a two-element tuple containing the cropped images and a
+list of x-y positions.</p>
+<p>Calculating the subrectangles takes extra time, obviously. However,
+if the image sizes were reduced, the actual writing of the GIF
+goes faster. In some cases applying this method produces a GIF faster.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.GifWriter.getheaderAnim">
+<code class="descname">getheaderAnim</code><span class="sig-paren">(</span><em>im</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.GifWriter.getheaderAnim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get animation header. To replace PILs getheader()[0]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.GifWriter.handleSubRectangles">
+<code class="descname">handleSubRectangles</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.GifWriter.handleSubRectangles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle the sub-rectangle stuff. If the rectangles are given by the
+user, the values are checked. Otherwise the subrectangles are
+calculated automatically.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.GifWriter.writeGifToFile">
+<code class="descname">writeGifToFile</code><span class="sig-paren">(</span><em>fp</em>, <em>images</em>, <em>durations</em>, <em>loops</em>, <em>xys</em>, <em>disposes</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.GifWriter.writeGifToFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a set of images writes the bytes to the specified stream.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="medis.Utils.images2gif.NeuQuant">
+<em class="property">class </em><code class="descclassname">medis.Utils.images2gif.</code><code class="descname">NeuQuant</code><span class="sig-paren">(</span><em>image</em>, <em>samplefac=10</em>, <em>colors=256</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>samplefac should be an integer number of 1 or higher, 1
+being the highest quality, but the slowest performance.
+With avalue of 10, one tenth of all pixels are used during
+training. This value seems a nice tradeof between speed
+and quality.</p>
+<p>colors is the amount of colors to reduce the image to. This
+should best be a power of two.</p>
+<p>See also:
+<a class="reference external" href="http://members.ozemail.com.au/~dekker/NEUQUANT.HTML">http://members.ozemail.com.au/~dekker/NEUQUANT.HTML</a></p>
+<p>Copyright (c) 1994 Anthony Dekker
+Ported to python by Marius van Voorden in 2010</p>
+<p>NEUQUANT Neural-Net quantization algorithm by Anthony Dekker, 1994.
+See “Kohonen neural networks for optimal colour quantization”
+in “network: Computation in Neural Systems” Vol. 5 (1994) pp 351-367.
+for a discussion of the algorithm.
+See also  <a class="reference external" href="http://members.ozemail.com.au/~dekker/NEUQUANT.HTML">http://members.ozemail.com.au/~dekker/NEUQUANT.HTML</a></p>
+<p>Any party obtaining a copy of these files from the author, directly or
+indirectly, is granted, free of charge, a full and unrestricted irrevocable,
+world-wide, paid up, royalty-free, nonexclusive right and license to deal
+in this software and documentation files (the “Software”), including without
+limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons who receive
+copies from any such party to do so, with the only requirement being
+that this copyright notice remain intact.</p>
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.ALPHABIASSHIFT">
+<code class="descname">ALPHABIASSHIFT</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.ALPHABIASSHIFT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.BETA">
+<code class="descname">BETA</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.BETA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.BETAGAMMA">
+<code class="descname">BETAGAMMA</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.BETAGAMMA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.BGCOLOR">
+<code class="descname">BGCOLOR</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.BGCOLOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.CUTNETSIZE">
+<code class="descname">CUTNETSIZE</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.CUTNETSIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.GAMMA">
+<code class="descname">GAMMA</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.GAMMA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.INITALPHA">
+<code class="descname">INITALPHA</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.INITALPHA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.INITBIASRADIUS">
+<code class="descname">INITBIASRADIUS</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.INITBIASRADIUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.INITRAD">
+<code class="descname">INITRAD</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.INITRAD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.MAXNETPOS">
+<code class="descname">MAXNETPOS</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.MAXNETPOS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.MAXPRIME">
+<code class="descname">MAXPRIME</code><em class="property"> = 503</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.MAXPRIME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.NCYCLES">
+<code class="descname">NCYCLES</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.NCYCLES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.NETSIZE">
+<code class="descname">NETSIZE</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.NETSIZE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.PRIME1">
+<code class="descname">PRIME1</code><em class="property"> = 499</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.PRIME1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.PRIME2">
+<code class="descname">PRIME2</code><em class="property"> = 491</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.PRIME2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.PRIME3">
+<code class="descname">PRIME3</code><em class="property"> = 487</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.PRIME3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.PRIME4">
+<code class="descname">PRIME4</code><em class="property"> = 503</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.PRIME4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.RADIUSBIAS">
+<code class="descname">RADIUSBIAS</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.RADIUSBIAS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.RADIUSBIASSHIFT">
+<code class="descname">RADIUSBIASSHIFT</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.RADIUSBIASSHIFT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.RADIUSDEC">
+<code class="descname">RADIUSDEC</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.RADIUSDEC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.SPECIALS">
+<code class="descname">SPECIALS</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.SPECIALS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.a_s">
+<code class="descname">a_s</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.a_s" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.alterneigh">
+<code class="descname">alterneigh</code><span class="sig-paren">(</span><em>alpha</em>, <em>rad</em>, <em>i</em>, <em>b</em>, <em>g</em>, <em>r</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.alterneigh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.altersingle">
+<code class="descname">altersingle</code><span class="sig-paren">(</span><em>alpha</em>, <em>i</em>, <em>b</em>, <em>g</em>, <em>r</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.altersingle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move neuron i towards biased (b,g,r) by factor alpha</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.bias">
+<code class="descname">bias</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.bias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.colormap">
+<code class="descname">colormap</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.colormap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.contest">
+<code class="descname">contest</code><span class="sig-paren">(</span><em>b</em>, <em>g</em>, <em>r</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.contest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for biased BGR values
+Finds closest neuron (min dist) and updates self.freq
+finds best neuron (min dist-self.bias) and returns position
+for frequently chosen neurons, self.freq[i] is high and self.bias[i] is negative
+self.bias[i] = self.GAMMA*((1/self.NETSIZE)-self.freq[i])</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.convert">
+<code class="descname">convert</code><span class="sig-paren">(</span><em>*color</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.convert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.fix">
+<code class="descname">fix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.fix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.freq">
+<code class="descname">freq</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.freq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.geta">
+<code class="descname">geta</code><span class="sig-paren">(</span><em>alpha</em>, <em>rad</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.geta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.inxbuild">
+<code class="descname">inxbuild</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.inxbuild" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.inxsearch">
+<code class="descname">inxsearch</code><span class="sig-paren">(</span><em>r</em>, <em>g</em>, <em>b</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.inxsearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for BGR values 0..255 and return colour index</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.learn">
+<code class="descname">learn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.learn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.netindex">
+<code class="descname">netindex</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.netindex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.network">
+<code class="descname">network</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.network" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.paletteImage">
+<code class="descname">paletteImage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.paletteImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>PIL weird interface for making a paletted image: create an image which
+already has the palette, and use that in Image.quantize. This function
+returns this palette image.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.pimage">
+<code class="descname">pimage</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.pimage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.pixels">
+<code class="descname">pixels</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.pixels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.quantize">
+<code class="descname">quantize</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.quantize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use a kdtree to quickly find the closest palette colors for the pixels</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.quantize_with_scipy">
+<code class="descname">quantize_with_scipy</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.quantize_with_scipy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.quantize_without_scipy">
+<code class="descname">quantize_without_scipy</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.quantize_without_scipy" title="Permalink to this definition">¶</a></dt>
+<dd><p>” This function can be used if no scipy is availabe.
+It’s 7 times slower though.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="medis.Utils.images2gif.NeuQuant.samplefac">
+<code class="descname">samplefac</code><em class="property"> = None</em><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.samplefac" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.setUpArrays">
+<code class="descname">setUpArrays</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.setUpArrays" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.setconstants">
+<code class="descname">setconstants</code><span class="sig-paren">(</span><em>samplefac</em>, <em>colors</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.setconstants" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.specialFind">
+<code class="descname">specialFind</code><span class="sig-paren">(</span><em>b</em>, <em>g</em>, <em>r</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.specialFind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.Utils.images2gif.NeuQuant.writeColourMap">
+<code class="descname">writeColourMap</code><span class="sig-paren">(</span><em>rgb</em>, <em>outstream</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.NeuQuant.writeColourMap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.images2gif.checkImages">
+<code class="descclassname">medis.Utils.images2gif.</code><code class="descname">checkImages</code><span class="sig-paren">(</span><em>images</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.checkImages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check numpy images and correct intensity range etc.
+The same for all movie formats.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.images2gif.get_cKDTree">
+<code class="descclassname">medis.Utils.images2gif.</code><code class="descname">get_cKDTree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.get_cKDTree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.images2gif.intToBin">
+<code class="descclassname">medis.Utils.images2gif.</code><code class="descname">intToBin</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.intToBin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Integer to two bytes</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.images2gif.readGif">
+<code class="descclassname">medis.Utils.images2gif.</code><code class="descname">readGif</code><span class="sig-paren">(</span><em>filename</em>, <em>asNumpy=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.readGif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read images from an animated GIF file.  Returns a list of numpy
+arrays, or, if asNumpy is false, a list if PIL images.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.images2gif.writeGif">
+<code class="descclassname">medis.Utils.images2gif.</code><code class="descname">writeGif</code><span class="sig-paren">(</span><em>filename</em>, <em>images</em>, <em>duration=0.1</em>, <em>repeat=True</em>, <em>dither=False</em>, <em>nq=0</em>, <em>subRectangles=True</em>, <em>dispose=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.images2gif.writeGif" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>writeGif(filename, images, duration=0.1, repeat=True, dither=False,</dt>
+<dd>nq=0, subRectangles=True, dispose=None)</dd>
+</dl>
+<p>Write an animated gif from the specified images.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>string</em>) – The name of the file to write the image to.</li>
+<li><strong>images</strong> (<em>list</em>) – Should be a list consisting of PIL images or numpy arrays.
+The latter should be between 0 and 255 for integer types, and
+between 0 and 1 for float types.</li>
+<li><strong>duration</strong> (<em>scalar</em><em> or </em><em>list of scalars</em>) – The duration for all frames, or (if a list) for each frame.</li>
+<li><strong>repeat</strong> (<em>bool</em><em> or </em><em>integer</em>) – The amount of loops. If True, loops infinitetely.</li>
+<li><strong>dither</strong> (<em>bool</em>) – Whether to apply dithering</li>
+<li><strong>nq</strong> (<em>integer</em>) – If nonzero, applies the NeuQuant quantization algorithm to create
+the color palette. This algorithm is superior, but slower than
+the standard PIL algorithm. The value of nq is the quality
+parameter. 1 represents the best quality. 10 is in general a
+good tradeoff between quality and speed. When using this option,
+better results are usually obtained when subRectangles is False.</li>
+<li><strong>subRectangles</strong> (<em>False</em><em>, </em><em>True</em><em>, or </em><em>a list of 2-element tuples</em>) – Whether to use sub-rectangles. If True, the minimal rectangle that
+is required to update each frame is automatically detected. This
+can give significant reductions in file size, particularly if only
+a part of the image changes. One can also give a list of x-y
+coordinates if you want to do the cropping yourself. The default
+is True.</li>
+<li><strong>dispose</strong> (<em>int</em>) – How to dispose each frame. 1 means that each frame is to be left
+in place. 2 means the background color should be restored after
+each frame. 3 means the decoder should restore the previous frame.
+If subRectangles==False, the default is 2, otherwise it is 1.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-medis.Utils.misc">
+<span id="medis-utils-misc-module"></span><h2>medis.Utils.misc module<a class="headerlink" href="#module-medis.Utils.misc" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.Utils.misc.debug_program">
+<code class="descclassname">medis.Utils.misc.</code><code class="descname">debug_program</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.misc.debug_program" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.misc.dprint">
+<code class="descclassname">medis.Utils.misc.</code><code class="descname">dprint</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.misc.dprint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.misc.progressBar">
+<code class="descclassname">medis.Utils.misc.</code><code class="descname">progressBar</code><span class="sig-paren">(</span><em>value</em>, <em>endvalue</em>, <em>bar_length=20</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.misc.progressBar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.misc.savelog">
+<code class="descclassname">medis.Utils.misc.</code><code class="descname">savelog</code><span class="sig-paren">(</span><em>ap</em>, <em>cp</em>, <em>tp</em>, <em>sp</em>, <em>mp</em>, <em>iop</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.misc.savelog" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Utils.plot_tools">
+<span id="medis-utils-plot-tools-module"></span><h2>medis.Utils.plot_tools module<a class="headerlink" href="#module-medis.Utils.plot_tools" title="Permalink to this headline">¶</a></h2>
+<p>Quick plotting tools go here</p>
+<dl class="function">
+<dt id="medis.Utils.plot_tools.add_subplot_axes">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">add_subplot_axes</code><span class="sig-paren">(</span><em>ax</em>, <em>rect</em>, <em>axisbg='w'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.add_subplot_axes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.annotate_axis">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">annotate_axis</code><span class="sig-paren">(</span><em>im</em>, <em>ax</em>, <em>width</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.annotate_axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.compare_images">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">compare_images</code><span class="sig-paren">(</span><em>datacube</em>, <em>logAmp=False</em>, <em>axis=None</em>, <em>width=None</em>, <em>title=None</em>, <em>annos=None</em>, <em>scale=1</em>, <em>max_scale=0.05</em>, <em>vmin=None</em>, <em>vmax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.compare_images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.fmt">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">fmt</code><span class="sig-paren">(</span><em>x</em>, <em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.fmt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.get_intensity">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">get_intensity</code><span class="sig-paren">(</span><em>wf_array</em>, <em>sp</em>, <em>logAmp=True</em>, <em>show=False</em>, <em>save=True</em>, <em>phase=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.get_intensity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.grid">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">grid</code><span class="sig-paren">(</span><em>datacube</em>, <em>nrows=2</em>, <em>logAmp=False</em>, <em>axis=None</em>, <em>width=None</em>, <em>titles=None</em>, <em>annos=None</em>, <em>scale=1</em>, <em>vmins=None</em>, <em>vmaxs=None</em>, <em>show=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.grid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.indep_images">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">indep_images</code><span class="sig-paren">(</span><em>datacube</em>, <em>logAmp=False</em>, <em>axis=None</em>, <em>width=None</em>, <em>titles=None</em>, <em>annos=None</em>, <em>scale=1</em>, <em>vmins=None</em>, <em>vmaxs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.indep_images" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.initialize_GUI">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">initialize_GUI</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.initialize_GUI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.loop_frames">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">loop_frames</code><span class="sig-paren">(</span><em>frames</em>, <em>axis=False</em>, <em>circles=None</em>, <em>logAmp=False</em>, <em>vmin=None</em>, <em>vmax=None</em>, <em>show=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.loop_frames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.quicklook_IQ">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">quicklook_IQ</code><span class="sig-paren">(</span><em>wfo</em>, <em>logAmp=False</em>, <em>show=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.quicklook_IQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.quicklook_im">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">quicklook_im</code><span class="sig-paren">(</span><em>image</em>, <em>logAmp=False</em>, <em>show=True</em>, <em>vmin=None</em>, <em>vmax=None</em>, <em>axis=False</em>, <em>anno=None</em>, <em>annos=None</em>, <em>title=None</em>, <em>pupil=False</em>, <em>colormap='YlGnBu_r'</em>, <em>mark_star=False</em>, <em>label=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.quicklook_im" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.quicklook_wf">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">quicklook_wf</code><span class="sig-paren">(</span><em>wfo</em>, <em>logAmp=True</em>, <em>show=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.quicklook_wf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.plot_tools.view_datacube">
+<code class="descclassname">medis.Utils.plot_tools.</code><code class="descname">view_datacube</code><span class="sig-paren">(</span><em>datacube</em>, <em>show=True</em>, <em>logAmp=False</em>, <em>axis=True</em>, <em>vmin=None</em>, <em>vmax=None</em>, <em>width=5</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.plot_tools.view_datacube" title="Permalink to this definition">¶</a></dt>
+<dd><p>axis = anno/None/True</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-medis.Utils.rawImageIO">
+<span id="medis-utils-rawimageio-module"></span><h2>medis.Utils.rawImageIO module<a class="headerlink" href="#module-medis.Utils.rawImageIO" title="Permalink to this headline">¶</a></h2>
+<p>This script contains the functions for FITS file and raw image manipulations</p>
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.add_header">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">add_header</code><span class="sig-paren">(</span><em>self</em>, <em>fromfile='telescope_obj1.fits'</em>, <em>tofile='telescope_obj_p0.fits'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.add_header" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.clipped_zoom">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">clipped_zoom</code><span class="sig-paren">(</span><em>img</em>, <em>zoom_factor</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.clipped_zoom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.get_MR_pdf">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">get_MR_pdf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.get_MR_pdf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.load_wf">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">load_wf</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.load_wf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.read_folder">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">read_folder</code><span class="sig-paren">(</span><em>wvlFrames_dir='/Volumes/Data2/dodkins/FITS files/Wvl Frames (corrected) 26th March/'</em>, <em>width=147</em>, <em>height=144</em>, <em>out_folder='../FITS files/neb-20141021-cube.fits'</em>, <em>savecube=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.read_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Created on Tue Nov 13 15:05:36 2012
+&#64;author: stuart
+Problem from SunPy mailing list. Save a MASSIVE array to a fits file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.read_image">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">read_image</code><span class="sig-paren">(</span><em>filename='focalplane_1.fits'</em>, <em>prob_map=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.read_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.resize_image">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">resize_image</code><span class="sig-paren">(</span><em>image</em>, <em>newsize=(125</em>, <em>125)</em>, <em>warn=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.resize_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.saveFITS">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">saveFITS</code><span class="sig-paren">(</span><em>image</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.saveFITS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.save_wf">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">save_wf</code><span class="sig-paren">(</span><em>wf</em>, <em>filename</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.save_wf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.Utils.rawImageIO.scale_image">
+<code class="descclassname">medis.Utils.rawImageIO.</code><code class="descname">scale_image</code><span class="sig-paren">(</span><em>filename</em>, <em>scalefactor</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Utils.rawImageIO.scale_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.Utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-medis.Utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Rupert Dodkins, Kristina Davis
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

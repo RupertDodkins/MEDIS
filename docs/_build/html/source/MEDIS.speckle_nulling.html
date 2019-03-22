@@ -1,0 +1,1328 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>medis.speckle_nulling package &mdash; MEDIS 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MEDIS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">medis.speckle_nulling package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-calib-scc-v0-module">medis.speckle_nulling.Calib_SCC_V0 module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.Calib_SCC_grid_V0">medis.speckle_nulling.Calib_SCC_grid_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-calibration-scc-v0-module">medis.speckle_nulling.Calibration_SCC_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-correction-loop-v0-module">medis.speckle_nulling.Correction_Loop_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-correction-loop-may-rg-module">medis.speckle_nulling.Correction_loop_may_RG module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-correction-loop-may-v1-module">medis.speckle_nulling.Correction_loop_may_V1 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-est-scc-v0-module">medis.speckle_nulling.Est_SCC_V0 module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.Estimation_1ref">medis.speckle_nulling.Estimation_1ref module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-images-from-cube-v0-module">medis.speckle_nulling.Images_from_cube_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-images-from-cube-may-v0-module">medis.speckle_nulling.Images_from_cube_may_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-images-from-cube-may-v1-module">medis.speckle_nulling.Images_from_cube_may_V1 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-interaction-matrix-v0-module">medis.speckle_nulling.Interaction_matrix_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-interaction-matrix-v1-module">medis.speckle_nulling.Interaction_matrix_V1 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-interaction-matrix-may-v1-module">medis.speckle_nulling.Interaction_matrix_may_V1 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-main-module">medis.speckle_nulling.MAIN module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-mainloop-module">medis.speckle_nulling.MAINLOOP module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-main-backup-module">medis.speckle_nulling.MAIN_backup module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-main-scc-v0-module">medis.speckle_nulling.Main_SCC_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-pid-module">medis.speckle_nulling.PID module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.SaveFits">medis.speckle_nulling.SaveFits module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.Take_image_SCC">medis.speckle_nulling.Take_image_SCC module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-take-images-v0-module">medis.speckle_nulling.Take_images_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-take-images-may-v0-module">medis.speckle_nulling.Take_images_may_V0 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-take-images-may-v1-module">medis.speckle_nulling.Take_images_may_V1 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-add-test-speckles-module">medis.speckle_nulling.add_test_speckles module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-add-waffle-module">medis.speckle_nulling.add_waffle module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-add-waffle-simple-module">medis.speckle_nulling.add_waffle_simple module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-calibrate-dm-intensity-module">medis.speckle_nulling.calibrate_dm_intensity module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-calibrate-dm-intensity-backup-module">medis.speckle_nulling.calibrate_dm_intensity_backup module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-define-control-annulus-module">medis.speckle_nulling.define_control_annulus module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-define-control-annulus-auto-module">medis.speckle_nulling.define_control_annulus_auto module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-define-control-region-module">medis.speckle_nulling.define_control_region module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.detect_speckles">medis.speckle_nulling.detect_speckles module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.dm_functions">medis.speckle_nulling.dm_functions module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-dm-registration-module">medis.speckle_nulling.dm_registration module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.flatmapfunctions">medis.speckle_nulling.flatmapfunctions module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-get-center-and-rotation-module">medis.speckle_nulling.get_center_and_rotation module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-qacits-control-module">medis.speckle_nulling.qacits_control module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-qacits-control-calib-module">medis.speckle_nulling.qacits_control_calib module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-qacits-control-init-module">medis.speckle_nulling.qacits_control_init module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-qacits-control-v2-module">medis.speckle_nulling.qacits_control_v2 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-qacits-test-module">medis.speckle_nulling.qacits_test module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.shift">medis.speckle_nulling.shift module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.sn_filehandling">medis.speckle_nulling.sn_filehandling module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.sn_hardware">medis.speckle_nulling.sn_hardware module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-sn-hardware-backup-no-pexpect-module">medis.speckle_nulling.sn_hardware_backup_no_pexpect module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.sn_math">medis.speckle_nulling.sn_math module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.sn_preprocessing">medis.speckle_nulling.sn_preprocessing module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.sn_processing">medis.speckle_nulling.sn_processing module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-speckle-killer-module">medis.speckle_nulling.speckle_killer module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-speckle-killer-fullaperture-module">medis.speckle_nulling.speckle_killer_fullaperture module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-speckle-killer-fullaperture-v2-module">medis.speckle_nulling.speckle_killer_fullaperture_v2 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-speckle-killer-v2-module">medis.speckle_nulling.speckle_killer_v2 module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling.speckle_killer_v3">medis.speckle_nulling.speckle_killer_v3 module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-take-flats-and-darks-module">medis.speckle_nulling.take_flats_and_darks module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-take-flats-and-darks-old-module">medis.speckle_nulling.take_flats_and_darks_old module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-temp-convert-centoffs-flatmaps-module">medis.speckle_nulling.temp_convert_centoffs_flatmaps module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-test-module">medis.speckle_nulling.test module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-test-add-and-subtract-module">medis.speckle_nulling.test_add_and_subtract module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-testmain-module">medis.speckle_nulling.testmain module</a></li>
+<li><a class="reference internal" href="#medis-speckle-nulling-timeout-module">medis.speckle_nulling.timeout module</a></li>
+<li><a class="reference internal" href="#module-medis.speckle_nulling">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MEDIS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>medis.speckle_nulling package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/medis.speckle_nulling.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="medis-speckle-nulling-package">
+<h1>medis.speckle_nulling package<a class="headerlink" href="#medis-speckle-nulling-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-calib-scc-v0-module">
+<h2>medis.speckle_nulling.Calib_SCC_V0 module<a class="headerlink" href="#medis-speckle-nulling-calib-scc-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling.Calib_SCC_grid_V0">
+<span id="medis-speckle-nulling-calib-scc-grid-v0-module"></span><h2>medis.speckle_nulling.Calib_SCC_grid_V0 module<a class="headerlink" href="#module-medis.speckle_nulling.Calib_SCC_grid_V0" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu Apr 16 10:49:08 2015</p>
+<p>&#64;author: J-R</p>
+<dl class="function">
+<dt id="medis.speckle_nulling.Calib_SCC_grid_V0.calib_SCC_grid">
+<code class="descclassname">medis.speckle_nulling.Calib_SCC_grid_V0.</code><code class="descname">calib_SCC_grid</code><span class="sig-paren">(</span><em>freq</em>, <em>ampl</em>, <em>nb_im</em>, <em>initial_flatmap</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.Calib_SCC_grid_V0.calib_SCC_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a frequency or a combination of frequencies with</p>
+</dd></dl>
+
+</div>
+<div class="section" id="medis-speckle-nulling-calibration-scc-v0-module">
+<h2>medis.speckle_nulling.Calibration_SCC_V0 module<a class="headerlink" href="#medis-speckle-nulling-calibration-scc-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-correction-loop-v0-module">
+<h2>medis.speckle_nulling.Correction_Loop_V0 module<a class="headerlink" href="#medis-speckle-nulling-correction-loop-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-correction-loop-may-rg-module">
+<h2>medis.speckle_nulling.Correction_loop_may_RG module<a class="headerlink" href="#medis-speckle-nulling-correction-loop-may-rg-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-correction-loop-may-v1-module">
+<h2>medis.speckle_nulling.Correction_loop_may_V1 module<a class="headerlink" href="#medis-speckle-nulling-correction-loop-may-v1-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-est-scc-v0-module">
+<h2>medis.speckle_nulling.Est_SCC_V0 module<a class="headerlink" href="#medis-speckle-nulling-est-scc-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling.Estimation_1ref">
+<span id="medis-speckle-nulling-estimation-1ref-module"></span><h2>medis.speckle_nulling.Estimation_1ref module<a class="headerlink" href="#module-medis.speckle_nulling.Estimation_1ref" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu Apr 16 22:02:51 2015</p>
+<p>&#64;author: J-R</p>
+<dl class="function">
+<dt id="medis.speckle_nulling.Estimation_1ref.Estimation_1ref">
+<code class="descclassname">medis.speckle_nulling.Estimation_1ref.</code><code class="descname">Estimation_1ref</code><span class="sig-paren">(</span><em>Image_freq</em>, <em>Filtre_Image</em>, <em>Filtre_Fourier</em>, <em>ray</em>, <em>Alpha</em>, <em>Xi</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.Estimation_1ref.Estimation_1ref" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="medis-speckle-nulling-images-from-cube-v0-module">
+<h2>medis.speckle_nulling.Images_from_cube_V0 module<a class="headerlink" href="#medis-speckle-nulling-images-from-cube-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-images-from-cube-may-v0-module">
+<h2>medis.speckle_nulling.Images_from_cube_may_V0 module<a class="headerlink" href="#medis-speckle-nulling-images-from-cube-may-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-images-from-cube-may-v1-module">
+<h2>medis.speckle_nulling.Images_from_cube_may_V1 module<a class="headerlink" href="#medis-speckle-nulling-images-from-cube-may-v1-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-interaction-matrix-v0-module">
+<h2>medis.speckle_nulling.Interaction_matrix_V0 module<a class="headerlink" href="#medis-speckle-nulling-interaction-matrix-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-interaction-matrix-v1-module">
+<h2>medis.speckle_nulling.Interaction_matrix_V1 module<a class="headerlink" href="#medis-speckle-nulling-interaction-matrix-v1-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-interaction-matrix-may-v1-module">
+<h2>medis.speckle_nulling.Interaction_matrix_may_V1 module<a class="headerlink" href="#medis-speckle-nulling-interaction-matrix-may-v1-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-main-module">
+<h2>medis.speckle_nulling.MAIN module<a class="headerlink" href="#medis-speckle-nulling-main-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-mainloop-module">
+<h2>medis.speckle_nulling.MAINLOOP module<a class="headerlink" href="#medis-speckle-nulling-mainloop-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-main-backup-module">
+<h2>medis.speckle_nulling.MAIN_backup module<a class="headerlink" href="#medis-speckle-nulling-main-backup-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-main-scc-v0-module">
+<h2>medis.speckle_nulling.Main_SCC_V0 module<a class="headerlink" href="#medis-speckle-nulling-main-scc-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-pid-module">
+<h2>medis.speckle_nulling.PID module<a class="headerlink" href="#medis-speckle-nulling-pid-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling.SaveFits">
+<span id="medis-speckle-nulling-savefits-module"></span><h2>medis.speckle_nulling.SaveFits module<a class="headerlink" href="#module-medis.speckle_nulling.SaveFits" title="Permalink to this headline">¶</a></h2>
+<p>Created on Wed Nov 12 16:13:08 2014</p>
+<p>&#64;author: dpickel</p>
+<dl class="function">
+<dt id="medis.speckle_nulling.SaveFits.SaveFits">
+<code class="descclassname">medis.speckle_nulling.SaveFits.</code><code class="descname">SaveFits</code><span class="sig-paren">(</span><em>path</em>, <em>A</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.SaveFits.SaveFits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.speckle_nulling.Take_image_SCC">
+<span id="medis-speckle-nulling-take-image-scc-module"></span><h2>medis.speckle_nulling.Take_image_SCC module<a class="headerlink" href="#module-medis.speckle_nulling.Take_image_SCC" title="Permalink to this headline">¶</a></h2>
+<p>Created on Fri Apr 17 10:33:30 2015</p>
+<p>&#64;author: J-R</p>
+<dl class="function">
+<dt id="medis.speckle_nulling.Take_image_SCC.Take_image_SCC">
+<code class="descclassname">medis.speckle_nulling.Take_image_SCC.</code><code class="descname">Take_image_SCC</code><span class="sig-paren">(</span><em>Map_to_apply</em>, <em>nb_im</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.Take_image_SCC.Take_image_SCC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="medis-speckle-nulling-take-images-v0-module">
+<h2>medis.speckle_nulling.Take_images_V0 module<a class="headerlink" href="#medis-speckle-nulling-take-images-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-take-images-may-v0-module">
+<h2>medis.speckle_nulling.Take_images_may_V0 module<a class="headerlink" href="#medis-speckle-nulling-take-images-may-v0-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-take-images-may-v1-module">
+<h2>medis.speckle_nulling.Take_images_may_V1 module<a class="headerlink" href="#medis-speckle-nulling-take-images-may-v1-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-add-test-speckles-module">
+<h2>medis.speckle_nulling.add_test_speckles module<a class="headerlink" href="#medis-speckle-nulling-add-test-speckles-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-add-waffle-module">
+<h2>medis.speckle_nulling.add_waffle module<a class="headerlink" href="#medis-speckle-nulling-add-waffle-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-add-waffle-simple-module">
+<h2>medis.speckle_nulling.add_waffle_simple module<a class="headerlink" href="#medis-speckle-nulling-add-waffle-simple-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-calibrate-dm-intensity-module">
+<h2>medis.speckle_nulling.calibrate_dm_intensity module<a class="headerlink" href="#medis-speckle-nulling-calibrate-dm-intensity-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-calibrate-dm-intensity-backup-module">
+<h2>medis.speckle_nulling.calibrate_dm_intensity_backup module<a class="headerlink" href="#medis-speckle-nulling-calibrate-dm-intensity-backup-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-define-control-annulus-module">
+<h2>medis.speckle_nulling.define_control_annulus module<a class="headerlink" href="#medis-speckle-nulling-define-control-annulus-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-define-control-annulus-auto-module">
+<h2>medis.speckle_nulling.define_control_annulus_auto module<a class="headerlink" href="#medis-speckle-nulling-define-control-annulus-auto-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-define-control-region-module">
+<h2>medis.speckle_nulling.define_control_region module<a class="headerlink" href="#medis-speckle-nulling-define-control-region-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling.detect_speckles">
+<span id="medis-speckle-nulling-detect-speckles-module"></span><h2>medis.speckle_nulling.detect_speckles module<a class="headerlink" href="#module-medis.speckle_nulling.detect_speckles" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.boundary">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">boundary</code><span class="sig-paren">(</span><em>binaryimage</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.boundary" title="Permalink to this definition">¶</a></dt>
+<dd><p>pass a binary image, it will return an image of the boundaries.
+this is useful when you pass the controlregion</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.colorfulcontours">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">colorfulcontours</code><span class="sig-paren">(</span><em>im</em>, <em>contourlist</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.colorfulcontours" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.create_speckle_aperture">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">create_speckle_aperture</code><span class="sig-paren">(</span><em>im</em>, <em>cx</em>, <em>cy</em>, <em>rad</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.create_speckle_aperture" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.create_speckle_mask">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">create_speckle_mask</code><span class="sig-paren">(</span><em>image</em>, <em>pos</em>, <em>cx</em>, <em>cy</em>, <em>speckle_rad</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.create_speckle_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a binary map with ones in the region of the speckle (circle of radius speckle_rad)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.detect_speckles">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">detect_speckles</code><span class="sig-paren">(</span><em>image</em>, <em>configfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.detect_speckles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of contours defining the speckles</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.detect_speckles2">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">detect_speckles2</code><span class="sig-paren">(</span><em>image</em>, <em>configfile=None</em>, <em>speckle_positions=None</em>, <em>configspecfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.detect_speckles2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a orderdered (brighter to fainter) list of pixels at speckle centers</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.detect_speckles3">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">detect_speckles3</code><span class="sig-paren">(</span><em>image</em>, <em>configfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.detect_speckles3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an image and detect the peaks usingthe local maximum filter.
+Returns a boolean mask of the peaks (i.e. 1 when
+the pixel’s value is the neighborhood maximum, 0 otherwise)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.filtercontours">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">filtercontours</code><span class="sig-paren">(</span><em>image</em>, <em>contours</em>, <em>N=60</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.filtercontours" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the top N brightest contours</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.get_speckle_photometry">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">get_speckle_photometry</code><span class="sig-paren">(</span><em>image</em>, <em>aperture_mask</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.get_speckle_photometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the integrated flux of the speckle defined in the area of aperture mask</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.get_speckle_photometry_old">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">get_speckle_photometry_old</code><span class="sig-paren">(</span><em>image</em>, <em>aperture_mask</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.get_speckle_photometry_old" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the integrated flux of the speckle defined in the area of aperture mask</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.get_speckle_spatial_freq">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">get_speckle_spatial_freq</code><span class="sig-paren">(</span><em>image</em>, <em>pos</em>, <em>cx</em>, <em>cy</em>, <em>lambdaoverd</em>, <em>angle=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.get_speckle_spatial_freq" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns the spatial frequency of the speckle defined in the area of aperture mask</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.detect_speckles.threshold">
+<code class="descclassname">medis.speckle_nulling.detect_speckles.</code><code class="descname">threshold</code><span class="sig-paren">(</span><em>image</em>, <em>region</em>, <em>method='mean'</em>, <em>window=5</em>, <em>offset=-3</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.detect_speckles.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses an adaptive threshold to separate a region into two
+parts of zeros and ones.  options:
+method: mean, gaussian
+window: 5
+offset: -3</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-medis.speckle_nulling.dm_functions">
+<span id="medis-speckle-nulling-dm-functions-module"></span><h2>medis.speckle_nulling.dm_functions module<a class="headerlink" href="#module-medis.speckle_nulling.dm_functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.amplitudemodel">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">amplitudemodel</code><span class="sig-paren">(</span><em>counts</em>, <em>k_rad</em>, <em>a=0</em>, <em>b=0</em>, <em>c=0</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.amplitudemodel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Radial dependence of spot calibration</p>
+<p>amplitude = sqrt(counts/(a*k_rad**2 + b*k_rad + c))</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.annularmask">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">annularmask</code><span class="sig-paren">(</span><em>N</em>, <em>inner</em>, <em>outer</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.annularmask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.circularmask">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">circularmask</code><span class="sig-paren">(</span><em>N</em>, <em>rad</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.circularmask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.convert_kvecs_pixels">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">convert_kvecs_pixels</code><span class="sig-paren">(</span><em>kx</em>, <em>ky</em>, <em>centerx=None</em>, <em>centery=None</em>, <em>angle=None</em>, <em>lambdaoverd=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.convert_kvecs_pixels" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts wavevector space to pixel space</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.convert_pixels_kvecs">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">convert_pixels_kvecs</code><span class="sig-paren">(</span><em>pixelsx</em>, <em>pixelsy</em>, <em>centerx=None</em>, <em>centery=None</em>, <em>angle=None</em>, <em>lambdaoverd=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.convert_pixels_kvecs" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts pixel space to wavevector space</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.intensitymodel">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">intensitymodel</code><span class="sig-paren">(</span><em>amp</em>, <em>k_rad</em>, <em>a=0</em>, <em>b=0</em>, <em>c=0</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.intensitymodel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Radial dependence of spot calibration</p>
+<p>intensity = amp**2*(a*k_rad**2 + b*k_rad + c)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.make_speckle_kxy">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">make_speckle_kxy</code><span class="sig-paren">(</span><em>kx</em>, <em>ky</em>, <em>amp</em>, <em>dm_phase</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.make_speckle_kxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>given an kx and ky wavevector,
+generates a NxN flatmap that has
+a speckle at that position</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.make_speckle_xy">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">make_speckle_xy</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em>, <em>amps</em>, <em>phases</em>, <em>centerx=None</em>, <em>centery=None</em>, <em>angle=None</em>, <em>lambdaoverd=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.make_speckle_xy" title="Permalink to this definition">¶</a></dt>
+<dd><p>given an x and y pixel position,
+generates a NxN flatmap that has
+a speckle at that position</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.make_speckle_xy_old">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">make_speckle_xy_old</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em>, <em>amps</em>, <em>phases</em>, <em>centerx=None</em>, <em>centery=None</em>, <em>angle=None</em>, <em>lambdaoverd=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.make_speckle_xy_old" title="Permalink to this definition">¶</a></dt>
+<dd><p>given an x and y pixel position,
+generates a NxN flatmap that has
+a speckle at that position</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.dm_functions.text_to_flatmap">
+<code class="descclassname">medis.speckle_nulling.dm_functions.</code><code class="descname">text_to_flatmap</code><span class="sig-paren">(</span><em>text</em>, <em>amplitude</em>, <em>x=15</em>, <em>y=15</em>, <em>N=66</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.dm_functions.text_to_flatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="medis-speckle-nulling-dm-registration-module">
+<h2>medis.speckle_nulling.dm_registration module<a class="headerlink" href="#medis-speckle-nulling-dm-registration-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling.flatmapfunctions">
+<span id="medis-speckle-nulling-flatmapfunctions-module"></span><h2>medis.speckle_nulling.flatmapfunctions module<a class="headerlink" href="#module-medis.speckle_nulling.flatmapfunctions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.add_waffle">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">add_waffle</code><span class="sig-paren">(</span><em>twodflatmap</em>, <em>amp</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.add_waffle" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds a waffle pattern of amplitude amp to an array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.add_waffle_to_flatmap">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">add_waffle_to_flatmap</code><span class="sig-paren">(</span><em>newflatmapfile</em>, <em>flatmapfile</em>, <em>amp</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.add_waffle_to_flatmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>adds a waffle pattern of amplitude amp to a 3388x1 flatmap</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.convert_flatmap_centoffs">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">convert_flatmap_centoffs</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.convert_flatmap_centoffs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.convert_hodm_telem">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">convert_hodm_telem</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.convert_hodm_telem" title="Permalink to this definition">¶</a></dt>
+<dd><p>same as matlab function, converts 66x66 to 3389x1 and vice versa</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.get_gains">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">get_gains</code><span class="sig-paren">(</span><em>gainfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.get_gains" title="Permalink to this definition">¶</a></dt>
+<dd><p>loads the gain file into a numpy array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.load_centoff_file">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">load_centoff_file</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.load_centoff_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.load_flatmap">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">load_flatmap</code><span class="sig-paren">(</span><em>fmapfile</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.load_flatmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>loads a flatmap file into an array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.make_centoff_file">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">make_centoff_file</code><span class="sig-paren">(</span><em>x</em>, <em>fname='test_centoff'</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.make_centoff_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.flatmapfunctions.make_hmap">
+<code class="descclassname">medis.speckle_nulling.flatmapfunctions.</code><code class="descname">make_hmap</code><span class="sig-paren">(</span><em>fname</em>, <em>mapp</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.flatmapfunctions.make_hmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>write an hmap to file fname</p>
+</dd></dl>
+
+</div>
+<div class="section" id="medis-speckle-nulling-get-center-and-rotation-module">
+<h2>medis.speckle_nulling.get_center_and_rotation module<a class="headerlink" href="#medis-speckle-nulling-get-center-and-rotation-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-qacits-control-module">
+<h2>medis.speckle_nulling.qacits_control module<a class="headerlink" href="#medis-speckle-nulling-qacits-control-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-qacits-control-calib-module">
+<h2>medis.speckle_nulling.qacits_control_calib module<a class="headerlink" href="#medis-speckle-nulling-qacits-control-calib-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-qacits-control-init-module">
+<h2>medis.speckle_nulling.qacits_control_init module<a class="headerlink" href="#medis-speckle-nulling-qacits-control-init-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-qacits-control-v2-module">
+<h2>medis.speckle_nulling.qacits_control_v2 module<a class="headerlink" href="#medis-speckle-nulling-qacits-control-v2-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-qacits-test-module">
+<h2>medis.speckle_nulling.qacits_test module<a class="headerlink" href="#medis-speckle-nulling-qacits-test-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling.shift">
+<span id="medis-speckle-nulling-shift-module"></span><h2>medis.speckle_nulling.shift module<a class="headerlink" href="#module-medis.speckle_nulling.shift" title="Permalink to this headline">¶</a></h2>
+<p>Created on Thu Apr 16 10:15:11 2015</p>
+<p>&#64;author: J-R</p>
+<dl class="function">
+<dt id="medis.speckle_nulling.shift.shift">
+<code class="descclassname">medis.speckle_nulling.shift.</code><code class="descname">shift</code><span class="sig-paren">(</span><em>image</em>, <em>shift_x</em>, <em>shift_y</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.shift.shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a shifted image</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-medis.speckle_nulling.sn_filehandling">
+<span id="medis-speckle-nulling-sn-filehandling-module"></span><h2>medis.speckle_nulling.sn_filehandling module<a class="headerlink" href="#module-medis.speckle_nulling.sn_filehandling" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="medis.speckle_nulling.sn_filehandling.Printer">
+<em class="property">class </em><code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">Printer</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.Printer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Print things to stdout on one line dynamically</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="medis.speckle_nulling.sn_filehandling.Timer">
+<em class="property">class </em><code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">Timer</code><span class="sig-paren">(</span><em>imax</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.Timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Time something like a for loop
+only argument is max_iterations
+Ex:
+tt = Timer(100)
+for i in range(100):</p>
+<blockquote>
+<div>Printer(tt.timeleft())</div></blockquote>
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_filehandling.Timer.timeelapsed">
+<code class="descname">timeelapsed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.Timer.timeelapsed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_filehandling.Timer.timeleft">
+<code class="descname">timeleft</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.Timer.timeleft" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.check_equal">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">check_equal</code><span class="sig-paren">(</span><em>iterator</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.check_equal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.check_exptime">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">check_exptime</code><span class="sig-paren">(</span><em>filelist</em>, <em>t=1416</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.check_exptime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.dictfromfile">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">dictfromfile</code><span class="sig-paren">(</span><em>filename</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.dictfromfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Usage: dict = dictfromfile(“myfile.txt”, delim=” “)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.diffheadervals">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">diffheadervals</code><span class="sig-paren">(</span><em>db</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.diffheadervals" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a list of header keys which
+have the different values in the db</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.ds9">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">ds9</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.ds9" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.find_all_fits">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">find_all_fits</code><span class="sig-paren">(</span><em>rootdir</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.find_all_fits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.float_if_possible">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">float_if_possible</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.float_if_possible" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.floatdict">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">floatdict</code><span class="sig-paren">(</span><em>dicty</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.floatdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts values in dictionary to floats</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.formatnum">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">formatnum</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.formatnum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.formattoarray">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">formattoarray</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.formattoarray" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.get_latest_file">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">get_latest_file</code><span class="sig-paren">(</span><em>filetype=None</em>, <em>directory=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.get_latest_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.get_latest_fitsfile">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">get_latest_fitsfile</code><span class="sig-paren">(</span><em>directory</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.get_latest_fitsfile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.get_paths_conf">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">get_paths_conf</code><span class="sig-paren">(</span><em>configobj</em>, <em>directory=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.get_paths_conf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.get_paths_dir">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">get_paths_dir</code><span class="sig-paren">(</span><em>directory</em>, <em>numstr</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.get_paths_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.int_if_possible">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">int_if_possible</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.int_if_possible" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.intdict">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">intdict</code><span class="sig-paren">(</span><em>dicty</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.intdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts values in dictionary to integers</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.parsenums">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">parsenums</code><span class="sig-paren">(</span><em>linestring</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.parsenums" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts strings like ‘1-10; 15-17’ into a list of ph0001.fits, ph0002.fits, etc</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.sameheadervals">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">sameheadervals</code><span class="sig-paren">(</span><em>db</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.sameheadervals" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a list of header keys which
+all have the same values in the db</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.setup_bgd_dict">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">setup_bgd_dict</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.setup_bgd_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>creates a dictionary of ‘bkgd’, ‘masterflat’, ‘badpix’ with the correct images as the values.  this makes for easy ‘dereferencing’ when using equalize_image(image, <a href="#id1"><span class="problematic" id="id2">**</span></a>bgd)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.stripheader">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">stripheader</code><span class="sig-paren">(</span><em>header</em>, <em>keys</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.stripheader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.validate">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">validate</code><span class="sig-paren">(</span><em>databasesubset</em>, <em>fieldstocheck=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>&gt;&gt;&gt;validate(db[db[‘Type’]==’flats’], [‘FILTER’,’T_INT’])
+checks to see if all files of type flats in the db have the
+same t_int and filter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.write2columnfile">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">write2columnfile</code><span class="sig-paren">(</span><em>A</em>, <em>B</em>, <em>filename='twocols.txt'</em>, <em>header=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.write2columnfile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_filehandling.writeout">
+<code class="descclassname">medis.speckle_nulling.sn_filehandling.</code><code class="descname">writeout</code><span class="sig-paren">(</span><em>data</em>, <em>outputfile</em>, <em>header=None</em>, <em>comment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_filehandling.writeout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.speckle_nulling.sn_hardware">
+<span id="medis-speckle-nulling-sn-hardware-module"></span><h2>medis.speckle_nulling.sn_hardware module<a class="headerlink" href="#module-medis.speckle_nulling.sn_hardware" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="medis.speckle_nulling.sn_hardware.ao">
+<em class="property">class </em><code class="descclassname">medis.speckle_nulling.sn_hardware.</code><code class="descname">ao</code><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.ao" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>the DM optics</p>
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.ao.getstatus">
+<code class="descname">getstatus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.ao.getstatus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.ao.grab_current_centoffs">
+<code class="descname">grab_current_centoffs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.ao.grab_current_centoffs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.ao.grab_current_flatmap">
+<code class="descname">grab_current_flatmap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.ao.grab_current_flatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.ao.load_new_flatmap">
+<code class="descname">load_new_flatmap</code><span class="sig-paren">(</span><em>fmap</em>, <em>wfo</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.ao.load_new_flatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.ao.safesend2">
+<code class="descname">safesend2</code><span class="sig-paren">(</span><em>thing</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.ao.safesend2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.ao.warn">
+<code class="descname">warn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.ao.warn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="medis.speckle_nulling.sn_hardware.camera">
+<em class="property">class </em><code class="descclassname">medis.speckle_nulling.sn_hardware.</code><code class="descname">camera</code><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.camera" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>simulator for the MKID array</p>
+<p>add links to the detector degradation code here</p>
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.camera.take_src_return_imagedata">
+<code class="descname">take_src_return_imagedata</code><span class="sig-paren">(</span><em>wfo</em>, <em>exptime=4</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.camera.take_src_return_imagedata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="medis.speckle_nulling.sn_hardware.fake_p3k">
+<em class="property">class </em><code class="descclassname">medis.speckle_nulling.sn_hardware.</code><code class="descname">fake_p3k</code><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_p3k" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.fake_p3k.getstatus">
+<code class="descname">getstatus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_p3k.getstatus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.fake_p3k.grab_current_centoffs">
+<code class="descname">grab_current_centoffs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_p3k.grab_current_centoffs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.fake_p3k.grab_current_flatmap">
+<code class="descname">grab_current_flatmap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_p3k.grab_current_flatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.fake_p3k.load_new_flatmap">
+<code class="descname">load_new_flatmap</code><span class="sig-paren">(</span><em>fmap</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_p3k.load_new_flatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.fake_p3k.safesend2">
+<code class="descname">safesend2</code><span class="sig-paren">(</span><em>thing</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_p3k.safesend2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.fake_p3k.warn">
+<code class="descname">warn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_p3k.warn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="medis.speckle_nulling.sn_hardware.fake_pharo">
+<em class="property">class </em><code class="descclassname">medis.speckle_nulling.sn_hardware.</code><code class="descname">fake_pharo</code><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_pharo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>a fake PHARO simulator; returns a random image from
+fake_data.fits plus some random noise</p>
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.fake_pharo.get_image">
+<code class="descname">get_image</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_pharo.get_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.sn_hardware.fake_pharo.take_src_return_imagedata">
+<code class="descname">take_src_return_imagedata</code><span class="sig-paren">(</span><em>exptime=4</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_hardware.fake_pharo.take_src_return_imagedata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="medis-speckle-nulling-sn-hardware-backup-no-pexpect-module">
+<h2>medis.speckle_nulling.sn_hardware_backup_no_pexpect module<a class="headerlink" href="#medis-speckle-nulling-sn-hardware-backup-no-pexpect-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling.sn_math">
+<span id="medis-speckle-nulling-sn-math-module"></span><h2>medis.speckle_nulling.sn_math module<a class="headerlink" href="#module-medis.speckle_nulling.sn_math" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.fitgaussian">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">fitgaussian</code><span class="sig-paren">(</span><em>xxx_todo_changeme</em>, <em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.fitgaussian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.gausspsf2d">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">gausspsf2d</code><span class="sig-paren">(</span><em>npix</em>, <em>fwhm</em>, <em>normalize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.gausspsf2d" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>npix</strong> (<em>int</em>) – Number of pixels for each dimension.
+Just one number to make all sizes equal.</li>
+<li><strong>fwhm</strong> (<em>float</em>) – FWHM (pixels) in each dimension.
+Single number to make all the same.</li>
+<li><strong>normalize</strong> (<em>bool</em><em>, </em><em>optional</em>) – Normalized so total PSF is 1.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>psf</strong> – Gaussian point spread function.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array_like</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.ideal2dpsf">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">ideal2dpsf</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em>, <em>xc</em>, <em>yc</em>, <em>pix=25</em>, <em>lambdaoverd=90.7</em>, <em>aoverA=0.32</em>, <em>fudgefactor=2.15</em>, <em>amp=1</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.ideal2dpsf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.image_centroid_gaussian1">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">image_centroid_gaussian1</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.image_centroid_gaussian1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.point_in_poly">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">point_in_poly</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>poly</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.point_in_poly" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.points_in_poly">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">points_in_poly</code><span class="sig-paren">(</span><em>xvals</em>, <em>yvals</em>, <em>polyvertices</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.points_in_poly" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.robust_mean">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">robust_mean</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.robust_mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.robust_std">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">robust_std</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.robust_std" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.robust_var">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">robust_var</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.robust_var" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.rotateXY">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">rotateXY</code><span class="sig-paren">(</span><em>xvals</em>, <em>yvals</em>, <em>thetadeg=0</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.rotateXY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_math.twoD_Gaussian">
+<code class="descclassname">medis.speckle_nulling.sn_math.</code><code class="descname">twoD_Gaussian</code><span class="sig-paren">(</span><em>xxx_todo_changeme1</em>, <em>amplitude</em>, <em>xo</em>, <em>yo</em>, <em>sigma_x</em>, <em>sigma_y</em>, <em>theta</em>, <em>offset</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_math.twoD_Gaussian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-medis.speckle_nulling.sn_preprocessing">
+<span id="medis-speckle-nulling-sn-preprocessing-module"></span><h2>medis.speckle_nulling.sn_preprocessing module<a class="headerlink" href="#module-medis.speckle_nulling.sn_preprocessing" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.buildcube">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">buildcube</code><span class="sig-paren">(</span><em>filelist</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.buildcube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a file list (of fits files) and constructs a single
+data cube out of them</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.combine_quadrants">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">combine_quadrants</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.combine_quadrants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take the 4 quadrants of PHARO and tile them as a single image of 1024x1024.
+Pass the raw fits data which is 4x512x512</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.crop">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">crop</code><span class="sig-paren">(</span><em>image</em>, <em>xmin</em>, <em>xmax</em>, <em>ymin</em>, <em>ymax</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.crop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.equalize_image">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">equalize_image</code><span class="sig-paren">(</span><em>data</em>, <em>bkgd=None</em>, <em>masterflat=None</em>, <em>badpix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.equalize_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes bad pixels from data, remove bad pixels from background,
+subtracts the two, and divides by the master flat field</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.gaussfunc">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">gaussfunc</code><span class="sig-paren">(</span><em>x</em>, <em>mu</em>, <em>sig</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.gaussfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>1-d Gaussian x, mu, sigma</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.get_spot_locations">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">get_spot_locations</code><span class="sig-paren">(</span><em>refimage</em>, <em>comment=None</em>, <em>eq=True</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.get_spot_locations" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the position of a click in an image; note this is in
+imshow coordinates where the bottom left pixel is (-.5, -.5)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.histeq">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">histeq</code><span class="sig-paren">(</span><em>im</em>, <em>nbr_bins=256</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.histeq" title="Permalink to this definition">¶</a></dt>
+<dd><p>histogram equalize an image</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.linearize_and_align">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">linearize_and_align</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.linearize_and_align" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not used: apply Stan Metchev’s distortion correction to PHARO</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.locate_badpix">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">locate_badpix</code><span class="sig-paren">(</span><em>data</em>, <em>sigmaclip=5</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.locate_badpix" title="Permalink to this definition">¶</a></dt>
+<dd><p>locates bad pixels by fitting a gaussian distribution to the
+image intensity and then cutting outliers at the level of ‘sigmaclip’</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.poissfunc">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">poissfunc</code><span class="sig-paren">(</span><em>x</em>, <em>mu</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.poissfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Poisson distribution</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.quick2dairyfit">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">quick2dairyfit</code><span class="sig-paren">(</span><em>image</em>, <em>window=20</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.quick2dairyfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the parameters of a 2d airy fit to an image.
+the airy model is in pl_math called image_centroid_airy1</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.quick2dgaussfit">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">quick2dgaussfit</code><span class="sig-paren">(</span><em>image</em>, <em>window=20</em>, <em>xy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.quick2dgaussfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the parameters of a 2d gaussian fit to an image.
+the gaussian model is in pl_math called image_centroid_gaussian1</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.quickalign">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">quickalign</code><span class="sig-paren">(</span><em>datacube</em>, <em>window=20</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.quickalign" title="Permalink to this definition">¶</a></dt>
+<dd><p>quickly aligns a datacube to the first image
+around a user-clicked subwindow</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.quickcentroid">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">quickcentroid</code><span class="sig-paren">(</span><em>image</em>, <em>window=20</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.quickcentroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>quick gaussian centroid of a spot</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.removebadpix">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">removebadpix</code><span class="sig-paren">(</span><em>data</em>, <em>mask</em>, <em>kernelsize=5</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.removebadpix" title="Permalink to this definition">¶</a></dt>
+<dd><p>removes bad pixels by replacing them with a 5x5 kernel median filter
+of the image where they exist</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.subimage">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">subimage</code><span class="sig-paren">(</span><em>imagedata</em>, <em>center</em>, <em>window=20</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.subimage" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a subimage of size ‘window’ about a certain (x,y) pixel,
+passed as ‘center’</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.subimagecube">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">subimagecube</code><span class="sig-paren">(</span><em>cubedata</em>, <em>cx</em>, <em>cy</em>, <em>window=20</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.subimagecube" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a subcube of size ‘window’ about a certain (x,y) pixel,
+passed as ‘center’</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.threshold">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">threshold</code><span class="sig-paren">(</span><em>imagedata</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>crude threshold, don’t do it</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.unsubimage">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">unsubimage</code><span class="sig-paren">(</span><em>oldim</em>, <em>newimdata</em>, <em>cx</em>, <em>cy</em>, <em>window=20</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.unsubimage" title="Permalink to this definition">¶</a></dt>
+<dd><p>reinserts a image into the original cube</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_preprocessing.unsubimagecube">
+<code class="descclassname">medis.speckle_nulling.sn_preprocessing.</code><code class="descname">unsubimagecube</code><span class="sig-paren">(</span><em>cube</em>, <em>newcubedata</em>, <em>cx</em>, <em>cy</em>, <em>window=20</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_preprocessing.unsubimagecube" title="Permalink to this definition">¶</a></dt>
+<dd><p>reinserts a subcube into the original cube</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-medis.speckle_nulling.sn_processing">
+<span id="medis-speckle-nulling-sn-processing-module"></span><h2>medis.speckle_nulling.sn_processing module<a class="headerlink" href="#module-medis.speckle_nulling.sn_processing" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.annulus">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">annulus</code><span class="sig-paren">(</span><em>image</em>, <em>cx</em>, <em>cy</em>, <em>r1</em>, <em>r2</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.annulus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.annuluswedge">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">annuluswedge</code><span class="sig-paren">(</span><em>image</em>, <em>cx</em>, <em>cy</em>, <em>rad1</em>, <em>rad2</em>, <em>theta2=360</em>, <em>theta1=0</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.annuluswedge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.circle">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">circle</code><span class="sig-paren">(</span><em>image</em>, <em>cx</em>, <em>cy</em>, <em>rad</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.circle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.circle_old">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">circle_old</code><span class="sig-paren">(</span><em>image</em>, <em>cx</em>, <em>cy</em>, <em>rad</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.circle_old" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.circlewedge">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">circlewedge</code><span class="sig-paren">(</span><em>image</em>, <em>cx</em>, <em>cy</em>, <em>rad</em>, <em>theta1=0</em>, <em>theta2=360</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.circlewedge" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.correlation_coeff">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">correlation_coeff</code><span class="sig-paren">(</span><em>im1</em>, <em>im2</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.correlation_coeff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.denormalize_poisson_noise">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">denormalize_poisson_noise</code><span class="sig-paren">(</span><em>normed_datacube</em>, <em>aG</em>, <em>bH</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.denormalize_poisson_noise" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.disttocenter">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">disttocenter</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.disttocenter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.mask">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">mask</code><span class="sig-paren">(</span><em>cube</em>, <em>mask</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.matchfilter">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">matchfilter</code><span class="sig-paren">(</span><em>image</em>, <em>psf</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.matchfilter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.normalize_poisson_noise">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">normalize_poisson_noise</code><span class="sig-paren">(</span><em>datacube</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.normalize_poisson_noise" title="Permalink to this definition">¶</a></dt>
+<dd><p>from Surf. Interface Anal. 2004; 36:203-212</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.pharofilterratio">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">pharofilterratio</code><span class="sig-paren">(</span><em>filt1</em>, <em>filt2</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.pharofilterratio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.pharofilterstrength">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">pharofilterstrength</code><span class="sig-paren">(</span><em>filt</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.pharofilterstrength" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.pharogrismratio">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">pharogrismratio</code><span class="sig-paren">(</span><em>grism1</em>, <em>grism2</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.pharogrismratio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.pharogrismstrength">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">pharogrismstrength</code><span class="sig-paren">(</span><em>grism</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.pharogrismstrength" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.rotate_cube">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">rotate_cube</code><span class="sig-paren">(</span><em>cube</em>, <em>vector</em>, <em>diff=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.rotate_cube" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.rotate_image">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">rotate_image</code><span class="sig-paren">(</span><em>image</em>, <em>angle</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.rotate_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.sn_processing.topcorrelated">
+<code class="descclassname">medis.speckle_nulling.sn_processing.</code><code class="descname">topcorrelated</code><span class="sig-paren">(</span><em>im1</em>, <em>cube</em>, <em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.sn_processing.topcorrelated" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="medis-speckle-nulling-speckle-killer-module">
+<h2>medis.speckle_nulling.speckle_killer module<a class="headerlink" href="#medis-speckle-nulling-speckle-killer-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-speckle-killer-fullaperture-module">
+<h2>medis.speckle_nulling.speckle_killer_fullaperture module<a class="headerlink" href="#medis-speckle-nulling-speckle-killer-fullaperture-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-speckle-killer-fullaperture-v2-module">
+<h2>medis.speckle_nulling.speckle_killer_fullaperture_v2 module<a class="headerlink" href="#medis-speckle-nulling-speckle-killer-fullaperture-v2-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-speckle-killer-v2-module">
+<h2>medis.speckle_nulling.speckle_killer_v2 module<a class="headerlink" href="#medis-speckle-nulling-speckle-killer-v2-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling.speckle_killer_v3">
+<span id="medis-speckle-nulling-speckle-killer-v3-module"></span><h2>medis.speckle_nulling.speckle_killer_v3 module<a class="headerlink" href="#module-medis.speckle_nulling.speckle_killer_v3" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.fastplot">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">fastplot</code><span class="sig-paren">(</span><em>specklelist</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.fastplot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.filterpoints">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">filterpoints</code><span class="sig-paren">(</span><em>pointslist</em>, <em>rad=6.0</em>, <em>max=5</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.filterpoints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.filterspeckles">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">filterspeckles</code><span class="sig-paren">(</span><em>specklelist</em>, <em>max=5</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.filterspeckles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.generate_phase_nullmap">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">generate_phase_nullmap</code><span class="sig-paren">(</span><em>speckleslist</em>, <em>gain</em>, <em>phases</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.generate_phase_nullmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.generate_super_nullmap">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">generate_super_nullmap</code><span class="sig-paren">(</span><em>speckleslist</em>, <em>phases</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.generate_super_nullmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.get_ctrlrgnBoarder">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">get_ctrlrgnBoarder</code><span class="sig-paren">(</span><em>controlregion</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.get_ctrlrgnBoarder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.identify_bright_points">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">identify_bright_points</code><span class="sig-paren">(</span><em>image</em>, <em>controlregion</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.identify_bright_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>WARNING: indexes, NOT coordinates</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="medis.speckle_nulling.speckle_killer_v3.output_imagecube">
+<em class="property">class </em><code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">output_imagecube</code><span class="sig-paren">(</span><em>n</em>, <em>size</em>, <em>filepath=None</em>, <em>comment=None</em>, <em>configfile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.output_imagecube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="medis.speckle_nulling.speckle_killer_v3.output_imagecube.config_to_string">
+<code class="descname">config_to_string</code><span class="sig-paren">(</span><em>configfile</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.output_imagecube.config_to_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.speckle_killer_v3.output_imagecube.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.output_imagecube.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.printstats">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">printstats</code><span class="sig-paren">(</span><em>field_im</em>, <em>speckleslist</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.printstats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.speck_killing_loop">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">speck_killing_loop</code><span class="sig-paren">(</span><em>wfo</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.speck_killing_loop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="medis.speckle_nulling.speckle_killer_v3.speckle">
+<em class="property">class </em><code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">speckle</code><span class="sig-paren">(</span><em>image</em>, <em>xp</em>, <em>yp</em>, <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.speckle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="medis.speckle_nulling.speckle_killer_v3.speckle.compute_null_gain">
+<code class="descname">compute_null_gain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.speckle.compute_null_gain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.speckle_killer_v3.speckle.compute_null_phase">
+<code class="descname">compute_null_phase</code><span class="sig-paren">(</span><em>phases</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.speckle.compute_null_phase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.speckle_killer_v3.speckle.generate_flatmap">
+<code class="descname">generate_flatmap</code><span class="sig-paren">(</span><em>speck_phase</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.speckle.generate_flatmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>generates flatmap with a certain phase for this speckle</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="medis.speckle_nulling.speckle_killer_v3.speckle.recompute_intensity">
+<code class="descname">recompute_intensity</code><span class="sig-paren">(</span><em>phaseimage</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.speckle.recompute_intensity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="medis.speckle_nulling.speckle_killer_v3.update_field">
+<code class="descclassname">medis.speckle_nulling.speckle_killer_v3.</code><code class="descname">update_field</code><span class="sig-paren">(</span><em>field_im</em>, <em>speckleslist</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.speckle_nulling.speckle_killer_v3.update_field" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="medis-speckle-nulling-take-flats-and-darks-module">
+<h2>medis.speckle_nulling.take_flats_and_darks module<a class="headerlink" href="#medis-speckle-nulling-take-flats-and-darks-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-take-flats-and-darks-old-module">
+<h2>medis.speckle_nulling.take_flats_and_darks_old module<a class="headerlink" href="#medis-speckle-nulling-take-flats-and-darks-old-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-temp-convert-centoffs-flatmaps-module">
+<h2>medis.speckle_nulling.temp_convert_centoffs_flatmaps module<a class="headerlink" href="#medis-speckle-nulling-temp-convert-centoffs-flatmaps-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-test-module">
+<h2>medis.speckle_nulling.test module<a class="headerlink" href="#medis-speckle-nulling-test-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-test-add-and-subtract-module">
+<h2>medis.speckle_nulling.test_add_and_subtract module<a class="headerlink" href="#medis-speckle-nulling-test-add-and-subtract-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-testmain-module">
+<h2>medis.speckle_nulling.testmain module<a class="headerlink" href="#medis-speckle-nulling-testmain-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="medis-speckle-nulling-timeout-module">
+<h2>medis.speckle_nulling.timeout module<a class="headerlink" href="#medis-speckle-nulling-timeout-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-medis.speckle_nulling">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-medis.speckle_nulling" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Rupert Dodkins, Kristina Davis
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
