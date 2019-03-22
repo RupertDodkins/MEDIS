@@ -24,6 +24,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     """
     propagates instantaneous complex E-field through the optical system in loop over wavelength range
 
+    this function is called as a 'perscription' by proper
+
     uses PyPROPER3 to generate the complex E-field at the source, then propagates it through atmosphere, then telescope, to the focal plane
     currently: optics system "hard coded" as single aperture and lens
     the AO simulator happens here
@@ -64,6 +66,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         for io, (iwf, wf) in enumerate(zip(names, wfs)):
             wf_array[iw, io] = wf
 
+
     # Defines aperture (before primary)
     iter_func(wf_array, proper.prop_circular_aperture, **{'radius':tp.diam/2})
 
@@ -85,7 +88,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     if tp.use_spiders:
         iter_func(wf_array, fo.add_spiders, tp.diam)
         wf_array = aber.abs_zeros(wf_array)
-        if sp.get_ints: get_intensity(wf_array, sp, phase=True)
+        #if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
     wf_array = aber.abs_zeros(wf_array)
 
@@ -131,7 +134,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
         #     # dprint((r0, 'r0'))
         #     # if iw == np.ceil(tp.nwsamp/2):
         #     ao.wfs_measurement(wf, PASSVALUE['iter'], iw, r0=r0)  # , obj_map, tp.wfs_scale)
-        dprint('This needs to be updated to the parrallel implementation')
+        dprint('This needs to be updated to the parallel implementation')
         exit()
 
     # TODO Verify this
@@ -185,6 +188,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
 
     # TODO is this still neccessary?
     # datacube = np.transpose(np.transpose(datacube) / np.sum(datacube, axis=(1, 2)))/float(tp.nwsamp)
+
+    print('Finished datacube at single timestep')
 
     return (datacube, sampling)
 

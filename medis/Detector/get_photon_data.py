@@ -101,11 +101,11 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
             if sp.return_cube:
                 spectralcubes_queue.put((t,spectralcube))
 
-            now = time.time()
-            elapsed = float(now - start) / 60.
-            each_iter = float(elapsed) / (it + 1)
+        now = time.time()
+        elapsed = float(now - start) / 60.
+        each_iter = float(elapsed) / (it + 1)
 
-            dprint('%i elapsed of %i mins' % (elapsed, each_iter * ap.numframes/sp.num_processes)) #TODO change to log
+        dprint('%.2f minutes elapsed, each time step took %.2f minutes' % (elapsed, each_iter )) #* ap.numframes/sp.num_processes TODO change to log #
 
     except Exception as e:
         traceback.print_exc()
@@ -197,6 +197,7 @@ def run_medis():
     else:
         obs_sequence = np.zeros((ap.numframes, tp.w_bins, tp.grid_size, tp.grid_size))
 
+    # Sending Queues to gen_timeseries
     for i in range(sp.num_processes):
         p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, photon_table_queue, spectralcubes_queue,(tp,ap,sp,iop,cp,mp)))
         jobs.append(p)
@@ -207,7 +208,6 @@ def run_medis():
         for t in range(ap.startframe, ap.startframe + ap.numframes):
             inqueue.put(t)
 
-            # dprint('lol')
     else:
         dprint('If the code has hung here it probably means it cant read the CPA file at some iter')
         for t in range(ap.startframe, ap.startframe+ap.numframes):
@@ -269,10 +269,10 @@ def run_medis():
     obs_sequence = np.array(obs_sequence)
 
 
-    dprint('Photon Data Run Completed')
+    dprint('MEDIS Data Run Completed')
     finish = time.time()
     if sp.timing is True:
-        print('Time elapsed: ', finish - begin)
+        print('Time elapsed: %.2f minutes', (finish - begin)/60)
     print('**************************************')
     return obs_sequence
 

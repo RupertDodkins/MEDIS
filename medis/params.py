@@ -152,11 +152,11 @@ class Telescope_params:
         self.nwsamp = 3  # number of wavefronts created in PROPER to sample from
         self.band = np.array([800, 1500])  # wavelength range in nm
                                            # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
-        self.w_bins = 8  # number of bins in the resultant datacube
+        self.w_bins = 8  # number of spectral bins over the band (tp.band)
         self.interp_sample = True
         self.rot_rate = 0  #1 # deg/s
         self.use_spiders = True
-        self.use_hex = False  # include abberations from hexagonal segmented mirror shape of primary
+        self.use_hex = False  # include aberrations from hexagonal segmented mirror shape of primary
         self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary
         self.use_ao = True  # True
         self.quick_ao = True

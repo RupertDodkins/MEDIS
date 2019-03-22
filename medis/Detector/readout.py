@@ -369,8 +369,8 @@ def get_integ_obs_sequence(plot=False):
     """
     slightly awkward wrapper for running an observation
 
-    This code basically just checks to see if there is already
-    a observation sequence saved with the output of the run in the
+    This code checks to see if there is already
+    an observation sequence saved with the output of the run in the
     location specified by the iop. If none exists, it passes all
     the parameters to get_photon_data.
 

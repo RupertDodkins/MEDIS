@@ -1,7 +1,6 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
 import numpy as np
 import matplotlib.pyplot as plt
-from vip_hci import phot, pca
 from medis.params import ap, cp, tp, sp, mp, iop
 from medis.Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
 from medis.Utils.rawImageIO import clipped_zoom
@@ -23,7 +22,7 @@ ap.star_photons = 1e8
 
 
 tp.servo_error= [0,1]#[0,1]#False # No delay and rate of 1/frame_time
-tp.quick_ao=True
+tp.quick_ao = True
 # tp.diam=8.
 tp.use_spiders = True
 tp.use_ao = True
@@ -32,7 +31,7 @@ tp.detector = 'ideal'#'MKIDs'#'ideal'#
 tp.diam = 10
 tp.beam_ratio = 0.5
 tp.ao_act = 50
-tp.grid_size=256
+tp.grid_size = 256
 mp.array_size = np.array([257,257])#
 mp.total_pix = mp.array_size[0] * mp.array_size[1]
 mp.xnum = mp.array_size[0]
@@ -52,7 +51,7 @@ tp.aber_params = {'CPA': True,
 sp.num_processes = 40
 tp.occulter_type = '8th_Order'
 
-num_exp = 2000#2000#1000#50#50#1000
+num_exp = 2000  #2000#1000#50#50#1000
 ap.exposure_time = 0.01  # 0.001
 cp.frame_time = 0.01
 ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
@@ -62,16 +61,16 @@ ap.companion = True
 # ap.lods = [[-1.5,1.5],[1,1],[-2.5,2.5],[-3,3],[3,3],[4.5,-4]]
 # ap.contrast = [1e-5, 1e-6]  # [0.1,0.1]
 # ap.lods = [[-2.5, 2.5], [-4.5, 4.5]]
-ap.contrast = [10**-4.5,10**-4,10**-6,10**-7,10**-8]  # [0.1,0.1]
-ap.lods = [[1,-1],[-2.2,1.7],[-6,-6],[6,6],[-6,6]]
+ap.contrast = [10**-4.5, 10**-4, 10**-6, 10**-7, 10**-8]  # [0.1,0.1]
+ap.lods = [[1,-1], [-2.2,1.7], [-6,-6], [6,6], [-6,6]]
 mp.R_mean = 25
 tp.piston_error = True
 xlocs = range(0, 128)  # range(0,128)#65
 ylocs = range(0, 128)  # range(0,128)#85
 tp.band = np.array([800, 1500])
-tp.nwsamp = 8#30
+tp.nwsamp = 8 #30
 tp.rot_rate = 0  # deg/s
-theta=45
+theta = 45
 lod = 8
 
 # def eval_method(cube, algo, angle_list, algo_dict):

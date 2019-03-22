@@ -15,15 +15,15 @@ iop.update("MKID_pic/")
 
 sp.show_wframe = False
 sp.save_obs = False
-sp.show_cube=False
+sp.show_cube = False
 ap.companion = True
 # ap.contrast = [5e-3, 1e-3]
 ap.contrast = [0.1]
 ap.star_photons = int(1e7) # # G type star 10ly away gives 1e6 cts/cm^2/s
 ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
 tp.diam=5.
-tp.grid_size=256
-tp.beam_ratio =0.4
+tp.grid_size = 256
+tp.beam_ratio = 0.4
 tp.use_spiders = True
 tp.use_ao = True
 tp.ao_act = 50
@@ -43,7 +43,7 @@ mp.bad_pix = True
 mp.array_size = np.array([80,125])
 #iop.update(mp.date)
 sp.num_processes = 1
-num_exp =1 #5000
+num_exp =10 #5000
 ap.exposure_time = 0.1  # 0.001
 cp.frame_time = 0.1
 ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
