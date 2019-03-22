@@ -169,7 +169,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):  # 'dm_disp':0
     #
     shape = wf_array.shape
     for iw in range(shape[0]):
-        wframes = np.zeros((tp.grid_size, tp.grid_size))
+        wframes = np.zeros((ap.grid_size, ap.grid_size))
         for io in range(shape[1]):
             (wframe, sampling) = proper.prop_end(wf_array[iw, io])
 

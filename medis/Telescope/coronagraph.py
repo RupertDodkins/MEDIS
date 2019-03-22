@@ -164,13 +164,13 @@ def vortex(wfo):
         # proper.prop_propagate(wfo, tp.f_lens, 'VC')  # propagate wavefront
         # quicklook_wf(wfo)
         # print proper.prop_get_phase(wfo)[0,0]
-        # proper.prop_add_phase(wfo, np.ones((tp.grid_size, tp.grid_size)) * -1)
+        # proper.prop_add_phase(wfo, np.ones((ap.grid_size, ap.grid_size)) * -1)
         # quicklook_wf(wfo)
         # print proper.prop_get_phase(wfo)[0,0]
-        # proper.prop_add_phase(wfo, np.ones((tp.grid_size, tp.grid_size)) * -1)
+        # proper.prop_add_phase(wfo, np.ones((ap.grid_size, ap.grid_size)) * -1)
         # quicklook_wf(wfo)
         # print proper.prop_get_phase(wfo)[0,0]
-        # proper.prop_add_phase(wfo, np.ones((tp.grid_size, tp.grid_size))*-proper.prop_get_phase(wfo)[0,0])
+        # proper.prop_add_phase(wfo, np.ones((ap.grid_size, ap.grid_size))*-proper.prop_get_phase(wfo)[0,0])
         # quicklook_wf(wfo)
 
         if (os.path.isfile(my_file) == True):

@@ -29,7 +29,7 @@ def initialize_CPA_meas():
 
 def initialize_NCPA_meas():
     Imaps = np.zeros((4, ap.grid_size, ap.grid_size))
-    phase_map = np.zeros((tp.ao_act,tp.ao_act))#np.zeros((tp.grid_size,tp.grid_size))
+    phase_map = np.zeros((tp.ao_act,tp.ao_act))#np.zeros((ap.grid_size,ap.grid_size))
     with open(iop.NCPA_meas, 'wb') as handle:
         pickle.dump((Imaps, phase_map, 0), handle, protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -46,18 +46,18 @@ def abs_zeros(wf_array):
 def generate_maps(Loc='CPA'):
     # TODO add different timescale aberations
     dprint('Generating optic aberration maps using Proper')
-    wfo = proper.prop_begin(tp.diam, 1., tp.grid_size, tp.beam_ratio)
-    aber_cube = np.zeros((ap.numframes, tp.aber_params['n_surfs'], tp.grid_size, tp.grid_size))
+    wfo = proper.prop_begin(tp.diam, 1., ap.grid_size, tp.beam_ratio)
+    aber_cube = np.zeros((ap.numframes, tp.aber_params['n_surfs'], ap.grid_size, ap.grid_size))
     for surf in range(tp.aber_params['n_surfs']):
 
         rms_error = np.random.normal(tp.aber_vals['a'][0], tp.aber_vals['a'][1])
         c_freq = np.random.normal(tp.aber_vals['b'][0], tp.aber_vals['b'][1])  # correlation frequency (cycles/meter)
         high_power = np.random.normal(tp.aber_vals['c'][0], tp.aber_vals['c'][1])  # high frewquency falloff (r^-high_power)
 
-        perms = np.random.rand(ap.numframes, tp.grid_size, tp.grid_size)-0.5
+        perms = np.random.rand(ap.numframes, ap.grid_size, ap.grid_size)-0.5
         perms *= 1e-7
 
-        phase = 2 * np.pi * np.random.uniform(size=(tp.grid_size, tp.grid_size)) - np.pi
+        phase = 2 * np.pi * np.random.uniform(size=(ap.grid_size, ap.grid_size)) - np.pi
         aber_cube[0, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True,  PHASE_HISTORY = phase)
 
         filename = '%s%s_Phase%f_v%i.fits' % (iop.aberdir+'quasi/', Loc, 0, surf)
@@ -65,7 +65,7 @@ def generate_maps(Loc='CPA'):
 
         for a in range(1,ap.numframes):
             if a % 100 == 0: misc.progressBar(value=a, endvalue=ap.numframes)
-            perms = np.random.rand(tp.grid_size, tp.grid_size) - 0.5
+            perms = np.random.rand(ap.grid_size, ap.grid_size) - 0.5
             perms *= 0.05
             phase += perms
             aber_cube[a, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power,
@@ -112,7 +112,7 @@ def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
         if iop.aberdir[-6:] != 'quasi/':
             iop.aberdir = iop.aberdir+'quasi/'
 
-    phase_maps = np.zeros((aber_params['n_surfs'],tp.grid_size,tp.grid_size))
+    phase_maps = np.zeros((aber_params['n_surfs'],ap.grid_size,ap.grid_size))
     amp_maps = np.zeros_like(phase_maps)
 
     shape = wf_array.shape

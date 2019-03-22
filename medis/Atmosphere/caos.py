@@ -130,8 +130,8 @@ def plot_phasemaps():
     import medis.Analysis.phot
     for filename in filenames:
         phase = rawImageIO.read_image(filename, prob_map=False)[0]
-        tp.grid_size=80
-        phase = phase*Analysis.phot.aperture(tp.grid_size/2,tp.grid_size/2,tp.grid_size/2)
+        ap.grid_size=80
+        phase = phase*Analysis.phot.aperture(ap.grid_size/2,ap.grid_size/2,ap.grid_size/2)
         cube.append(phase)
     from medis.Utils.plot_tools import compare_images, view_datacube,indep_images, quicklook_im
     # indep_images(cube, titles=['$\phi$']*3)

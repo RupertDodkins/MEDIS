@@ -234,7 +234,7 @@ def run():
         packets_chunk = packets[i*max_photons:(i+1)*max_photons]
         print debprint((i, packets_chunk.shape))
         prod_x = partial(mp_worker, packets=packets_chunk)  # prod_x has only one argument x (y is fixed to 10)
-        # idxs = range(tp.grid_size**2)
+        # idxs = range(ap.grid_size**2)
         idxs = range(len(xlocs)*len(ylocs))
         print debprint(idxs)
         LClist = p.map(prod_x, idxs)
@@ -260,8 +260,8 @@ def run():
 
 def get_LCmap_multi(idx, packets):
 
-    # ix = idx/tp.grid_size
-    # iy = idx%tp.grid_size
+    # ix = idx/ap.grid_size
+    # iy = idx%ap.grid_size
     ix = idx/len(xlocs)
     iy = idx%len(xlocs)
     # print ix, iy

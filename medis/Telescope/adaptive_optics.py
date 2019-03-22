@@ -34,7 +34,7 @@ def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
     else:
         CPA_map = CPA_maps[0,iw]
 
-    dm_map = CPA_map[tp.grid_size/2-(beam_ratio*tp.grid_size/2):tp.grid_size/2+(beam_ratio*tp.grid_size/2)+1, tp.grid_size/2-(beam_ratio*tp.grid_size/2):tp.grid_size/2+(beam_ratio*tp.grid_size/2)+1]
+    dm_map = CPA_map[ap.grid_size/2-(beam_ratio*ap.grid_size/2):ap.grid_size/2+(beam_ratio*ap.grid_size/2)+1, ap.grid_size/2-(beam_ratio*ap.grid_size/2):ap.grid_size/2+(beam_ratio*ap.grid_size/2)+1]
     f= interpolate.interp2d(list(range(dm_map.shape[0])), list(range(dm_map.shape[0])), dm_map)
     dm_map = f(np.linspace(0,dm_map.shape[0],nact),np.linspace(0,dm_map.shape[0],nact))
     dm_map = -dm_map*proper.prop_get_wavelength(wfo)/(4*np.pi) #<--- here
@@ -92,10 +92,10 @@ def quick_ao(wf_array, iwf, f_lens, beam_ratios, iter, CPA_maps):
             d_beam = 2 * proper.prop_get_beamradius(wf_array[iw,io])  # beam diameter
             act_spacing = d_beam / nact_across_pupil  # actuator spacing
             # Compensating for chromatic beam size
-            dm_map = CPA_maps[iw,tp.grid_size//2-np.int_(beam_ratios[iw]*tp.grid_size//2):
-                                tp.grid_size//2+np.int_(beam_ratios[iw]*tp.grid_size//2)+1,
-                                tp.grid_size//2-np.int_(beam_ratios[iw]*tp.grid_size//2):
-                                tp.grid_size//2+np.int_(beam_ratios[iw]*tp.grid_size//2)+1]
+            dm_map = CPA_maps[iw,ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
+                                ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1,
+                                ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
+                                ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1]
             f= interpolate.interp2d(list(range(dm_map.shape[0])), list(range(dm_map.shape[0])), dm_map)
             dm_map = f(np.linspace(0,dm_map.shape[0],nact),np.linspace(0,dm_map.shape[0],nact))
             # dm_map = proper.prop_magnify(CPA_map, map_spacing / act_spacing, nact)
@@ -133,7 +133,7 @@ def quick_wfs(wf_vec, iter, r0):
     from skimage.restoration import unwrap_phase
 
     sigma = [1, 1]
-    CPA_maps = np.zeros((len(wf_vec),tp.grid_size,tp.grid_size))
+    CPA_maps = np.zeros((len(wf_vec),ap.grid_size,ap.grid_size))
     for iw in range(len(wf_vec)):
         CPA_maps[iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wf_vec[iw])), sigma,
                                                              mode='constant')

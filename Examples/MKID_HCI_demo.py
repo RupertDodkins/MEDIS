@@ -33,7 +33,7 @@ ap.contrast = [10**-3.1,10**-3.1,10**-3.1,10**-4,10**-4,10**-4]
 ap.lods = [[-1.6,0.0],[-3.2,0.0],[-5,0.0],[1.6,0.0],[3.2,0.0],[5,0.0]]
 
 tp.diam=8.
-tp.grid_size=148
+ap.grid_size=148
 tp.beam_ratio =0.5
 tp.use_spiders = True
 tp.use_ao = True
@@ -107,10 +107,10 @@ lod = 6
 #     int_maps = np.array(int_maps)
 #     dprint(int_maps[0].shape)
 #     # view_datacube(int_maps, logAmp=True)
-#     # grid(int_maps[::-1][:4,tp.grid_size//4:-tp.grid_size//4,tp.grid_size//4:-tp.grid_size//4], titles=r'$\phi$',
+#     # grid(int_maps[::-1][:4,ap.grid_size//4:-ap.grid_size//4,ap.grid_size//4:-ap.grid_size//4], titles=r'$\phi$',
 #     #      annos=['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA'],
 #     #      vmins=[-3.14] * 4, vmaxs=[3.14] * 4)
-#     grid(int_maps[::-1][4:,tp.grid_size//4:-tp.grid_size//4,tp.grid_size//4:-tp.grid_size//4], nrows =2, width=1,
+#     grid(int_maps[::-1][4:,ap.grid_size//4:-ap.grid_size//4,ap.grid_size//4:-ap.grid_size//4], nrows =2, width=1,
 #          titles=r'$I$', annos=['Before Coron.', 'After Coron.'],
 #          logAmp=True, vmins=[1e-9]*2, vmaxs=[1e-2]*2)
 #     plt.show(block=True)
@@ -121,7 +121,7 @@ if __name__ == '__main__':
     print(ap.__dict__)
     psf_template = get_unoccult_psf(obs_seq='/IntHyperUnOccult.h5', plot=False, numframes=1)
     psf_template = psf_template[0,:,1:,1:]
-    dprint((tp.grid_size//2, psf_template.shape))
+    dprint((ap.grid_size//2, psf_template.shape))
     # quicklook_im(np.sum(psf_template,axis=0))
     star_phot = phot.contrcurve.aperture_flux(np.sum(psf_template,axis=0),[mp.array_size[0]//2],[mp.array_size[0]//2],lod,1)[0]#/1e4#/ap.numframes * 500
     wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)

@@ -138,7 +138,7 @@ class Astro_params:
 
 class CAOS_params:
     """
-    #TODO make redundant with new atmosphere model
+    # TODO make redundant with new atmosphere model
     Default parameters for the atmosphere
     """
     def __init__(self):
