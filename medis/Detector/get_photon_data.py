@@ -284,13 +284,13 @@ def run_medis(plot=False):
     obs_sequence = np.array(obs_sequence)
 
 
-    dprint('MEDIS Data Run Completed')
+    print('MEDIS Data Run Completed')
     finish = time.time()
     if sp.timing is True:
         print(f'Time elapsed: {(finish-begin)/60:.2f} minutes')
     print('**************************************')
-    dprint(f"Shape of obs_sequence = {np.shape(obs_sequence)}")
-    dprint(f"Data saved: {iop.obs_seq}")
+    print(f"Shape of obs_sequence = {np.shape(obs_sequence)}")
+    print(f"Data saved: {iop.obs_seq}")
 
     # Post-processing Stuff (transferred from get_integ_obs_sequence)
     if plot: view_datacube(obs_sequence[0], logAmp=True)
