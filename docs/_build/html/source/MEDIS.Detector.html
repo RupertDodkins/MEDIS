@@ -78,25 +78,15 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">medis.Detector package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.H2RG">medis.Detector.H2RG module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.MKIDs">medis.Detector.MKIDs module</a></li>
-<li><a class="reference internal" href="#medis-detector-analysis-module">medis.Detector.analysis module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.distribution">medis.Detector.distribution module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.get_photon_data">medis.Detector.get_photon_data module</a></li>
-<li><a class="reference internal" href="#medis-detector-ideal-module">medis.Detector.ideal module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.pipeline">medis.Detector.pipeline module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.readout">medis.Detector.readout module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.spectral">medis.Detector.spectral module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.temporal">medis.Detector.temporal module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector">Module contents</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Setting the Path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#the-conda-environment">The Conda Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#installing-modified-proper">Installing Modified PROPER</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#edit-vip">Edit VIP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#setting-the-save-directory-and-the-atmosphere-maps">Setting the Save Directory and the Atmosphere Maps</a></li>
 </ul>
-</li>
-</ul>
-</div>
+
             
           
         </div>
@@ -457,8 +447,8 @@ The first part of the module has something to do with a readout system.</p>
 <dt id="medis.Detector.readout.run_medis">
 <code class="descclassname">medis.Detector.readout.</code><code class="descname">run_medis</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.run_medis" title="Permalink to this definition">¶</a></dt>
 <dd><p>slightly awkward wrapper for running an observation</p>
-<p>This code basically just checks to see if there is already
-a observation sequence saved with the output of the run in the
+<p>This code checks to see if there is already
+an observation sequence saved with the output of the run in the
 location specified by the iop. If none exists, it passes all
 the parameters to get_photon_data.</p>
 <table class="docutils field-list" frame="void" rules="none">

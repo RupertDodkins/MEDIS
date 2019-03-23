@@ -155,14 +155,17 @@ def get_R_hyper(Rs, plot=False):
 def apply_phase_distort_array(photons, sigs):
 
     wavelength = spec.wave_cal(photons[1])
-    # plt.hist(photons[1], bins=8)
-    # plt.show()
-    # dprint((photons[1][:25],photons[2][:25],wavelength.shape, photons[1].shape))
+
+    plt.hist(photons[1], bins=800)
+    plt.figure()
     idx = spec.wave_idx(wavelength)
-    # plt.hist(wavelength, bins=8)
-    # plt.show()
-    # plt.hist(idx, bins=8)
-    # plt.show()
+    print(photons[1,::10], wavelength[::100], idx[::100])
+    bad = np.where(idx<0)[0]
+    print(photons[:,bad])
+    plt.hist(wavelength, bins=800)
+    plt.figure()
+    plt.hist(idx, bins=800)
+    plt.show()
     # dprint((sigs[0,:25,:25],idx.shape,sigs.shape))#,sigs[idx].shape))
 
     distortion = np.random.normal(np.zeros((photons[1].shape[0])),
