@@ -104,13 +104,13 @@ if __name__ == '__main__':
     ###################################################################################################
     # Running the Example
     iop.obs_seq = iop.datadir + 'BpicSource5.pkl'
-    simple_hypercube_1 = read.get_integ_obs_sequence(plot=False)  #/ap.numframes
+    simple_hypercube_1 = run_medis(plot=False)  #/ap.numframes
     ###################################################################################################
 
     # Checking against another run with no companion
     ap.startframe = ap.numframes
     ap.companion = False
-    simple_hypercube_2 = read.get_integ_obs_sequence(plot=False)  #/ap.numframes
+    simple_hypercube_2 = run_medis(plot=False)  #/ap.numframes
     #
 
     # loop_frames(simple_hypercube_1[:,0], logAmp=True)

@@ -135,7 +135,7 @@ if __name__ == '__main__':
     # iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
     dprint(iop.obs_seq)
 
-    orig_hyper = read.get_integ_obs_sequence(plot=False)[:, :]
+    orig_hyper = run_medis(plot=False)[:, :]
 
     # fast_hyper = fast_hyper[:100]
     # ap.numframes = int(100 * ap.exposure_time / cp.frame_time)

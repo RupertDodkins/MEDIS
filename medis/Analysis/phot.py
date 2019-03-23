@@ -207,7 +207,7 @@ def get_unoccult_hyper(obs_seq = '/RefPSF_wLyotStop.pkl', numframes=1):
     # ap.nwsamp = 1
     # ap.w_bins = 1
     print(iop.obs_table, 'obs')
-    obs_sequence = read.get_integ_obs_sequence()
+    obs_sequence = run_medis()
     tp.__dict__ = tp_orig.__dict__
     ap.__dict__ = ap_orig.__dict__
     iop.__dict__ = iop_orig.__dict__
@@ -241,7 +241,7 @@ def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
                         'Amp': False,
                         'n_surfs': 2}
     # Yup this is 'if' is necessary
-    obs_sequence = read.get_integ_obs_sequence()
+    obs_sequence = run_medis()
     # PSF = obs_sequence[0,0]
     PSF = (read.take_exposure(obs_sequence))[0,0]
     if plot:
@@ -271,7 +271,7 @@ def get_unoccult_psf(plot=False, obs_seq = '/IntHyperUnOccult.pkl', numframes=10
     # ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
     # ap.nwsamp = 1
     # # Yup this is 'if' is necessary
-    # obs_sequence = read.get_integ_obs_sequence()
+    # obs_sequence = run_medis()
     obs_sequence = get_unoccult_hyper(obs_seq, numframes=numframes)
     # PSF = obs_sequence[0,0]
     # PSF = (read.take_exposure(obs_sequence))[0,0]
