@@ -44,7 +44,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     datacube = []
 
     # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
-    # each field in the wf_array is the complex E-field at that wavelength, scaled by the contrast
+    # each field in the wf_array is the complex E-field at that wavelength, per object
     # the E-field size is given by (ap.grid_size x ap.grid_size)
     if ap.companion:
         wf_array = np.empty((len(wsamples), 1 + len(ap.contrast)), dtype=object)

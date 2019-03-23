@@ -121,7 +121,8 @@ def wait_until(somepredicate, timeout, period=0.25, *args, **kwargs):
     time.sleep(period)
   return False
 
-def run_medis():
+
+def run_medis(plot=False):
     """
     main script to organize calls to various aspects of the simulation
 
@@ -138,8 +139,21 @@ def run_medis():
     #     print('\n', param)
     #     pprint(param.__dict__)
 
+    check = read.check_exists_obs_sequence(plot)
+    if check:
+        if iop.obs_seq[-3:] == '.h5':
+            obs_sequence = open_obs_sequence_hdf5(iop.obs_seq)
+        else:
+            obs_sequence = open_obs_sequence(iop.obs_seq)
+
+        if plot: loop_frames(obs_sequence[:, 0])
+        if plot: loop_frames(obs_sequence[0])
+        return obs_sequence
+
     import time
     begin = time.time()
+
+    print('Creating New MEDIS Simulation')
     print('********** Taking Obs Data ***********')
 
     try:
@@ -275,6 +289,34 @@ def run_medis():
     if sp.timing is True:
         print(f'Time elapsed: {(finish-begin)/60:.2f} minutes')
     print('**************************************')
+    dprint(f"Shape of obs_sequence = {np.shape(obs_sequence)}")
+    dprint(f"Data saved: {iop.obs_seq}")
+
+    # Post-processing Stuff (transferred from get_integ_obs_sequence)
+    if plot: view_datacube(obs_sequence[0], logAmp=True)
+
+    if tp.detector == 'H2RG':
+        obs_sequence = H2RG.scale_to_luminos(obs_sequence)
+        if plot: view_datacube(obs_sequence[0], logAmp=True)
+
+    # obs_sequence = take_exposure(obs_sequence)
+    # if tp.detector == 'H2RG':
+    if tp.detector == 'H2RG' and hp.use_readnoise:
+        obs_sequence = H2RG.add_readnoise(obs_sequence, hp.readnoise)
+        # if plot: view_datacube(obs_sequence[0], logAmp=True)
+
+    if plot: view_datacube(obs_sequence[0], logAmp=True)
+
+    # save_obs_sequence(obs_sequence, HyperCubeFile=iop.obs_seq)
+    # dprint("Saving as hdf5 file:")
+    # dprint(iop.obs_seq)
+    # save_obs_sequence_hdf5(obs_sequence, HyperCubeFile=iop.obs_seq)
+
+
+    if plot:
+        loop_frames(obs_sequence[:, 0])
+        loop_frames(obs_sequence[0])
+
     return obs_sequence
 
 

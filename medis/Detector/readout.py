@@ -199,64 +199,24 @@ def save_obs_sequence_hdf5(obs_sequence, HyperCubeFile = 'hyper.hdf'):
     # ds[:] = hypercube
     f.close()
 
-def get_integ_obs_sequence(plot=False):
-    """
-    slightly awkward wrapper for running an observation
 
+def check_exists_obs_sequence(plot=False):
+    """
     This code checks to see if there is already
     an observation sequence saved with the output of the run in the
     location specified by the iop. If none exists, it passes all
     the parameters to get_photon_data.
 
-    :param plot: Flag, do you want plots or not
     :return: the obs_sequence (timeseries of data cubes)
         data is saved in location specified in iop
         data can be saved as obs_table (photon table) if detector type is MKIDs
     """
-    import medis.Detector.get_photon_data as gpd
     import os
-    print('Checking for Existing Dataset')
-    print(f"File found = {os.path.isfile(iop.obs_seq)} at {iop.obs_seq}")
-
-
-
     if os.path.isfile(iop.obs_seq):
-        if iop.obs_seq[-3:] == '.h5':
-            obs_sequence = open_obs_sequence_hdf5(HyperCubeFile=iop.obs_seq)
-        else:
-            obs_sequence = open_obs_sequence(HyperCubeFile=iop.obs_seq)
+        print(f"File already exists at {iop.obs_seq}")
+        return True
     else:
-        print('Creating new Obs Sequence')
-        obs_sequence = gpd.run_medis()
-        dprint(f"Length of obs_sequence = {np.sum(obs_sequence)}")
-        if plot:
-            loop_frames(obs_sequence[:,0])
-            loop_frames(obs_sequence[0])
-        print('*********RUN COMPLETE!**************')
-        dprint(f"Shape of obs_sequence = {np.shape(obs_sequence)}")
-        dprint(f"Data saved: {HyperCubeFile}")
-        if plot: view_datacube(obs_sequence[0], logAmp=True)
-
-        if tp.detector == 'H2RG':
-            obs_sequence = H2RG.scale_to_luminos(obs_sequence)
-            if plot: view_datacube(obs_sequence[0], logAmp=True)
-
-        # obs_sequence = take_exposure(obs_sequence)
-        # if tp.detector == 'H2RG':
-        if tp.detector == 'H2RG' and hp.use_readnoise == True:
-             obs_sequence = H2RG.add_readnoise(obs_sequence, hp.readnoise)
-             # if plot: view_datacube(obs_sequence[0], logAmp=True)
-
-        if plot: view_datacube(obs_sequence[0], logAmp=True)
-        # save_obs_sequence(obs_sequence, HyperCubeFile=iop.obs_seq)
-        dprint("Saving as hdf5 file:")
-        dprint(iop.obs_seq)
-        save_obs_sequence_hdf5(obs_sequence, HyperCubeFile=iop.obs_seq)
-    # print np.shape(obs_sequence)
-
-    if plot: loop_frames(obs_sequence[:, 0])
-    if plot: loop_frames(obs_sequence[0])
-    return obs_sequence
+        return False
 
 def open_obs_sequence(HyperCubeFile = 'hyper.pkl'):
     with open(HyperCubeFile, 'rb') as handle:

@@ -38,8 +38,9 @@ def initialize():
         pickle.dump(dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
     return dp
 
+
 def truncate_array(frames):
-    '''Make non-square array'''
+    """Make non-square array"""
     # orig_shape = np.shape(frames)[2:4]
     orig_shape = np.shape(frames)[1:3]
 
@@ -56,8 +57,9 @@ def truncate_array(frames):
     # frames = frames[:, :, 22:-23]
     return frames
 
+
 def array_response(plot=False):
-    print('Assigning each pixel a phase responsivity between 0 and 1')
+    """Assigns each pixel a phase responsivity between 0 and 1"""
     dist = Distribution(gaussian(mp.g_mean, mp.g_sig, np.linspace(0, 1.2, mp.res_elements)), interpolation=True)
     response = dist(mp.array_size[0] * mp.array_size[1])[0]/float(mp.res_elements)
     if plot:
@@ -73,7 +75,7 @@ def array_response(plot=False):
     return response
 
 def assign_spectral_res(plot=False):
-    print('Assigning each pixel a spectral resolution (at 800nm)')
+    """Assigning each pixel a spectral resolution (at 800nm)"""
     dist = Distribution(gaussian(0.5, 0.25, np.linspace(-0.2, 1.2, mp.res_elements)), interpolation=True)
     dprint(f"Mean R = {mp.R_mean}")
     Rs = (dist(mp.array_size[0]*mp.array_size[1])[0]/float(mp.res_elements)-0.5)*mp.R_sig + mp.R_mean#
@@ -88,7 +90,7 @@ def assign_spectral_res(plot=False):
     return Rs
 
 def get_R_hyper(Rs, plot=False):
-    # '''Each pixel of the array has a matrix of probabilities that depends on the input wavelength'''
+    """Each pixel of the array has a matrix of probabilities that depends on the input wavelength"""
     print('Creating a cube of R standard deviations')
     m = (-1*Rs/10)/(ap.band[1] - ap.band[0]) # looses R of 10% over the 700 band
     # plt.plot(m[0])
@@ -149,6 +151,7 @@ def get_R_hyper(Rs, plot=False):
 #         plt.hist(mp.phase_distortions)
 #         plt.show()
 
+
 def apply_phase_distort_array(photons, sigs):
 
     wavelength = spec.wave_cal(photons[1])
@@ -195,7 +198,7 @@ def apply_phase_distort(phase, loc, sigs):
 
 
 def assign_phase_background(plot=False):
-    print('assigning each pixel a baseline phase')
+    """assigns each pixel a baseline phase"""
     dist = Distribution(gaussian(0.5, 0.25, np.linspace(-0.2, 1.2, mp.res_elements)), interpolation=True)
 
     basesDeg = dist(mp.array_size[0]*mp.array_size[1])[0]/float(mp.res_elements)*mp.bg_mean/mp.g_mean
