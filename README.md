@@ -40,4 +40,4 @@ The default location for the save data will be *$HOME/medis_data/*. If you want 
 Also if you don't want to generate atmosphere maps yourself, then copy *MEDIS/caos_pse/180828.zip* to your `iop.atmosdata` and unzip
 
 # Documentation
-The documentation can be found at medis.readthedocs.io
+The documentation for `MEDIS` can be found at https://medis.readthedocs.io
