@@ -102,9 +102,9 @@ class Simulation_params:
         self.variable = None
         self.save_obs = True
         self.return_cube = True
-        self.get_ints = {'w': [0],
-                         'c': [0]}  # False
-
+        # self.get_ints = {'w': [0],
+        #                  'c': [0]}
+        self.get_ints = False
 
 class Astro_params:
     """

@@ -1,6 +1,0 @@
-numpy>=1.8
-scipy>=0.14
-pyfits>=3.0
-
-[pyfftw]
-pyfftw>=0.10
