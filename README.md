@@ -1,3 +1,4 @@
+# Installation
 ### Setting the Path
 You should then export the repo to your python path. In your .bashrc (or similar), add something along the lines of:
 
@@ -37,3 +38,6 @@ and change the import statement from `get_annulus` to `get_annulus_segments`.
 The default location for the save data will be *$HOME/medis_data/*. If you want the data to be saved to a different location then change the iop.datadir variable in params
 
 Also if you don't want to generate atmosphere maps yourself, then copy *MEDIS/caos_pse/180828.zip* to your `iop.atmosdata` and unzip
+
+# Documentation
+The documentation can be found at medis.readthedocs.io
