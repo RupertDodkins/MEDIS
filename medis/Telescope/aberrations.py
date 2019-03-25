@@ -13,10 +13,6 @@ import medis.Utils.misc as misc
 from medis.params import tp, cp, mp, ap, iop
 from medis.Utils.misc import dprint
 
-class error_params():
-    def __init__(self):
-        tp.Imaps = np.zeros((4, ap.grid_size, ap.grid_size))
-        tp.phase_map = np.zeros((ap.grid_size, ap.grid_size))
 
 def initialize_CPA_meas():
     required_servo = int(tp.servo_error[0])
