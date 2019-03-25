@@ -23,9 +23,9 @@ def planck(T, l):
     result[calcMe] = (h*c*c)/(np.power(l[calcMe], 5.0) * (np.exp(p[calcMe])-1))
     return result
 
-def read_hyper_images(location):
+
+def read_obs_images(location):
     filenames = cubes.read_folder(location)
-    print(filenames)
     wavelengths = []
     for filename in filenames:
         wavelength = filename[-12:-9]
@@ -127,7 +127,7 @@ def eff_filter(cube, start = 0.8, exp=0.1):
 
 
 if __name__ == "__main__":
-    frames, wavelengths = read_hyper_images(datadir)
+    frames, wavelengths = read_obs_images(datadir)
     print(np.shape(frames))
     # frames, wavelengths = read_single_wavelength(datadir, '1.2')
     frames = change_spec_prof(frames)

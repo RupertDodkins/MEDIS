@@ -1,5 +1,7 @@
-'''This code handles the MKID-related distortions to the ideal wavefront
-e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines'''
+"""
+This code handles the MKID-related distortions to the ideal wavefront
+e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines
+"""
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -159,9 +161,7 @@ def apply_phase_distort_array(photons, sigs):
     plt.hist(photons[1], bins=800)
     plt.figure()
     idx = spec.wave_idx(wavelength)
-    print(photons[1,::10], wavelength[::100], idx[::100])
     bad = np.where(idx<0)[0]
-    print(photons[:,bad])
     plt.hist(wavelength, bins=800)
     plt.figure()
     plt.hist(idx, bins=800)

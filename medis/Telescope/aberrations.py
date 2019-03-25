@@ -104,17 +104,17 @@ def circularise(prim_map):
     return new_prim
 
 
-def add_aber(wf_array,f_lens,aber_params,aber_vals, step=0,Loc='CPA'):
-    #dprint("Adding Abberations")
+def add_aber(wf_array, f_lens, aber_params, aber_vals, step=0, Loc='CPA'):
+    # dprint("Adding Abberations")
 
-    if aber_params['QuasiStatic'] == False:
+    if not aber_params['QuasiStatic']:
         step = 0
     else:
         dprint((iop.aberdir, iop.aberdir[-6:]))
         if iop.aberdir[-6:] != 'quasi/':
             iop.aberdir = iop.aberdir+'quasi/'
 
-    phase_maps = np.zeros((aber_params['n_surfs'],ap.grid_size,ap.grid_size))
+    phase_maps = np.zeros((aber_params['n_surfs'], ap.grid_size, ap.grid_size))
     amp_maps = np.zeros_like(phase_maps)
 
     shape = wf_array.shape
