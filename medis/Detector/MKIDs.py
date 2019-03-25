@@ -76,6 +76,7 @@ def array_response(plot=False):
 
     return response
 
+
 def assign_spectral_res(plot=False):
     """Assigning each pixel a spectral resolution (at 800nm)"""
     dist = Distribution(gaussian(0.5, 0.25, np.linspace(-0.2, 1.2, mp.res_elements)), interpolation=True)
@@ -90,6 +91,7 @@ def assign_spectral_res(plot=False):
     # plt.imshow(Rs)
     # plt.show()
     return Rs
+
 
 def get_R_hyper(Rs, plot=False):
     """Each pixel of the array has a matrix of probabilities that depends on the input wavelength"""
@@ -129,30 +131,6 @@ def get_R_hyper(Rs, plot=False):
         plt.show()
     return sigs_p
 
-# def get_phase_distortions(plot=False):
-#     print '**** this is untested! ****'
-#     potench_R_matrix = np.zeros((mp.res_elements,mp.res_elements))
-#     Rprofile = gaussian(0, 0.25, np.linspace(-0.7, 0.7, mp.res_elements))*mp.R_sig + mp.R_mean
-#     for iR, R in enumerate(np.linspace(np.min(Rs), np.max(Rs), mp.res_elements)):
-#         # each row is a Gaussian with each successive Gaussin is thinner
-#         potench_R_matrix[iR] = gaussian(mp.g_mean, mp.g_mean/R, np.linspace(0, 1, mp.res_elements))
-#         # normalise the PDF of each row
-#         potench_R_matrix[iR] = potench_R_matrix[iR]/sum(potench_R_matrix[iR])
-#         # mutliply each row by the PDF of the total R distribution so middle rows (middle R) have a greater probability 
-#         potench_R_matrix[iR] = potench_R_matrix[iR]*Rprofile[iR]
-   
-#     dist = Distribution(potench_R_matrix, interpolation=True)
-#     mp.phase_distortions = dist(ap.star_photons)
-#     if plot:
-#         plt.plot(np.linspace(-0.7, 0.7, mp.res_elements), Rprofile)
-#         plt.figure()
-#         plt.imshow(potench_R_matrix, cmap='viridis')
-#         plt.xlabel('Phase')
-#         plt.ylabel('R')
-#         plt.figure()
-#         plt.hist(mp.phase_distortions)
-#         plt.show()
-
 
 def apply_phase_distort_array(photons, sigs):
 
@@ -189,16 +167,6 @@ def apply_phase_distort(phase, loc, sigs):
     # print phase
     return phase
 
-# def distort_phase(phase, R=10, Rs):
-#     # for ip, p in enumerate(phase):
-#     #     res_elements=100
-#     #     dist = Distribution(gaussian(mp.g_mean, mp.g_mean/R, np.linspace(0, 1, res_elements)), interpolation=False)
-#         # phase[ip] = dist(1)[0]/float(res_elements)*p / mp.g_mean
-#     Rindx = ((R - np.min(Rs)) / np.max(Rs)) * mp.res_elements
-#     Rindx = np.round(Rindx)
-#     phase = mp.potench_R_matrix[Rindx]
-#     # return phase
-
 
 def assign_phase_background(plot=False):
     """assigns each pixel a baseline phase"""
@@ -209,27 +177,10 @@ def assign_phase_background(plot=False):
         plt.hist(basesDeg)
         plt.show()
     basesDeg = np.reshape(basesDeg, mp.array_size)
-    # plt.imshow(basesDeg)
-    # plt.show()
+    if plot:
+        plt.imshow(basesDeg)
+        plt.show()
     return basesDeg
-
-
-# def get_phase_background(R, samples=1):
-#     #dist = Distribution(gaussian(bg_mean*response, bg_sig, np.linspace(bg_mean-bg_sig, bg_mean+bg_sig, res_elements)), interpolation=False)
-#     dist = Distribution(gaussian(mp.g_mean, 0.4, np.linspace(0, 1, mp.res_elements)), interpolation=False)
-#     plt.plot(gaussian(mp.g_mean, 0.4, np.linspace(0, 1, mp.res_elements)))
-#     # plt.plot(gaussian(mp.bg_mean*mp.response, mp.bg_sig, np.linspace(mp.bg_mean-mp.bg_sig, mp.bg_mean+mp.bg_sig, mp.res_elements)))
-
-
-#     phase = dist(samples)[0]/float(mp.res_elements)*mp.bg_mean/mp.g_mean
-#     print phase
-#     # if distort_phase:
-#     phase = distort_phase(phase, R)
-#     print phase
-#     plt.show()
-#     # plt.plot(dist(1000)[0]* -bg_sig/1000.)
-#     # plt.show()
-#     return phase[0]
 
 
 def create_bad_pix(responsivities, plot=False):
@@ -283,6 +234,61 @@ def get_hot_packets(dp):
     return photons
 
 
+def create_hot_pix(mp):
+    amount = mp.hot_pix
+
+    # dprint(f"amount = {amount}")
+    bad_ind = random.sample(list(range(mp.array_size[0]*mp.array_size[1])), amount)
+    bad_y = np.int_(np.floor(bad_ind / mp.array_size[1]))
+    bad_x = bad_ind % mp.array_size[1]
+
+    return [bad_x, bad_y]
+
+
+def remove_bad(frame, response):
+    bad_map = np.ones((ap.grid_size,ap.grid_size))
+    bad_map[response[:-1,:-1]==0] = 0
+    # quicklook_im(response, logAmp =False)
+    # quicklook_im(bad_map, logAmp =False)
+    frame = frame*bad_map
+    return frame
+
+
+# def remap_image(datacube):
+#     print datacube.shape, mp.array_size
+#     from scipy import interpolate
+#     f= interpolate.interp2d(range(datacube.shape[0]), range(datacube.shape[0]), datacube)
+#     dm_map = f(np.linspace(0,dm_map.shape[0],nact),np.linspace(0,dm_map.shape[0],nact))
+
+# def apply_false_counts(response):
+#   return response
+
+# def sample_fake_cube(frames, num_events):
+#     dist = Distribution(uniform, interpolation=False)
+#     photons = dist(num_events)
+#     print np.shape(photons)
+
+#     return photons
+
+
+
+# def get_phase_background(R, samples=1):
+#     #dist = Distribution(gaussian(bg_mean*response, bg_sig, np.linspace(bg_mean-bg_sig, bg_mean+bg_sig, res_elements)), interpolation=False)
+#     dist = Distribution(gaussian(mp.g_mean, 0.4, np.linspace(0, 1, mp.res_elements)), interpolation=False)
+#     plt.plot(gaussian(mp.g_mean, 0.4, np.linspace(0, 1, mp.res_elements)))
+#     # plt.plot(gaussian(mp.bg_mean*mp.response, mp.bg_sig, np.linspace(mp.bg_mean-mp.bg_sig, mp.bg_mean+mp.bg_sig, mp.res_elements)))
+
+
+#     phase = dist(samples)[0]/float(mp.res_elements)*mp.bg_mean/mp.g_mean
+#     print phase
+#     # if distort_phase:
+#     phase = distort_phase(phase, R)
+#     print phase
+#     plt.show()
+#     # plt.plot(dist(1000)[0]* -bg_sig/1000.)
+#     # plt.show()
+#     return phase[0]
+
 # def add_hot_pix(datacube, dp, step, plot=False):
 #     # if dp.hot_pix == None:
 #     #     dp.hot_pix = create_hot_pix(datacube)
@@ -321,41 +327,38 @@ def get_hot_packets(dp):
 #
 #     return hot_pix
 
-def create_hot_pix(mp):
-    amount = mp.hot_pix
 
-    dprint(amount)
-    bad_ind = random.sample(list(range(mp.array_size[0]*mp.array_size[1])), amount)
-    bad_y = np.int_(np.floor(bad_ind / mp.array_size[1]))
-    bad_x = bad_ind % mp.array_size[1]
+# def distort_phase(phase, R=10, Rs):
+#     # for ip, p in enumerate(phase):
+#     #     res_elements=100
+#     #     dist = Distribution(gaussian(mp.g_mean, mp.g_mean/R, np.linspace(0, 1, res_elements)), interpolation=False)
+#         # phase[ip] = dist(1)[0]/float(res_elements)*p / mp.g_mean
+#     Rindx = ((R - np.min(Rs)) / np.max(Rs)) * mp.res_elements
+#     Rindx = np.round(Rindx)
+#     phase = mp.potench_R_matrix[Rindx]
+#     # return phase
 
-    return [bad_x, bad_y]
+# def get_phase_distortions(plot=False):
+#     print '**** this is untested! ****'
+#     potench_R_matrix = np.zeros((mp.res_elements,mp.res_elements))
+#     Rprofile = gaussian(0, 0.25, np.linspace(-0.7, 0.7, mp.res_elements))*mp.R_sig + mp.R_mean
+#     for iR, R in enumerate(np.linspace(np.min(Rs), np.max(Rs), mp.res_elements)):
+#         # each row is a Gaussian with each successive Gaussin is thinner
+#         potench_R_matrix[iR] = gaussian(mp.g_mean, mp.g_mean/R, np.linspace(0, 1, mp.res_elements))
+#         # normalise the PDF of each row
+#         potench_R_matrix[iR] = potench_R_matrix[iR]/sum(potench_R_matrix[iR])
+#         # mutliply each row by the PDF of the total R distribution so middle rows (middle R) have a greater probability
+#         potench_R_matrix[iR] = potench_R_matrix[iR]*Rprofile[iR]
 
-
-def remove_bad(frame, response):
-    bad_map = np.ones((ap.grid_size,ap.grid_size))
-    bad_map[response[:-1,:-1]==0] = 0
-    # quicklook_im(response, logAmp =False)
-    # quicklook_im(bad_map, logAmp =False)
-    frame = frame*bad_map
-    return frame
-
-
-# def remap_image(datacube):
-#     print datacube.shape, mp.array_size
-#     from scipy import interpolate
-#     f= interpolate.interp2d(range(datacube.shape[0]), range(datacube.shape[0]), datacube)
-#     dm_map = f(np.linspace(0,dm_map.shape[0],nact),np.linspace(0,dm_map.shape[0],nact))
-
-# def apply_false_counts(response):
-#   return response
-
-# def sample_fake_cube(frames, num_events):
-#     dist = Distribution(uniform, interpolation=False)
-#     photons = dist(num_events)
-#     print np.shape(photons)
-
-#     return photons
-
-
+#     dist = Distribution(potench_R_matrix, interpolation=True)
+#     mp.phase_distortions = dist(ap.star_photons)
+#     if plot:
+#         plt.plot(np.linspace(-0.7, 0.7, mp.res_elements), Rprofile)
+#         plt.figure()
+#         plt.imshow(potench_R_matrix, cmap='viridis')
+#         plt.xlabel('Phase')
+#         plt.ylabel('R')
+#         plt.figure()
+#         plt.hist(mp.phase_distortions)
+#         plt.show()
 

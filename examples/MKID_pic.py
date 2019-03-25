@@ -10,8 +10,6 @@ from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, com
 import pickle
 from medis.Utils.misc import dprint
 
-# Rename Data Directory
-iop.update("MKID_pic/")
 
 sp.show_wframe = False
 sp.save_obs = False
@@ -71,12 +69,15 @@ mp.pix_yield = 0.7  # check dis
 sp.get_ints = {'w': [0], 'c': [0]}
 
 if __name__ == '__main__':
+    # Rename Data Directory
+    iop.update("MKID_pic-ideal/")
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)
 
     # Starting the Simulation
+    print("Starting MKID_pic ideal-detector example")
     ideal = gpd.run_medis()[0, :]
-    dprint("finished Ideal-loop of MKID_pic Example File")
+    print("finished Ideal-loop of MKID_pic Example File")
 
     # compare_images(ideal, logAmp=True, vmax = 0.01, vmin=1e-6, annos = ['Ideal 800 nm', '1033 nm', '1267 nm', '1500 nm'], title=r'$I$')
     with open(iop.int_maps, 'rb') as handle:
@@ -88,13 +89,22 @@ if __name__ == '__main__':
     grid(int_maps[::-1][4:], nrows =2, width=1, titles=r'$I$', annos=['Before Coron.', 'After Coron.'], logAmp=True)
     plt.show(block=True)
 
-tp.detector = 'MKIDs'
-ap.w_bins = 12
-
 
 if __name__ == '__main__':
+    # Rename Data Directory
+    iop.update("MKID_pic-ideal/")
+
+    tp.detector = 'MKIDs'
+    ap.w_bins = 12
+
+    print("*****************************************************")
+    print("*****************************************************")
+    print("*****************************************************")
+    print("Starting MKID_pic MKID detector example ")
     mkid = gpd.run_medis()[0, :]
-    dprint("finished MKID-loop of MKID_pic Example File")
+    print("finished MKID-loop of MKID_pic Example File")
+
+
     compare_images(mkid[::2], vmax=200, logAmp=True, vmin=1, title=r'$I (cts)$', annos=['MKIDs 800 nm', '940 nm', '1080 nm', '1220 nm', '1360 nm', '1500 nm'])
     quicklook_im(np.mean(mkid[5:-1], axis=0), anno='MEDIS J Band', vmax=400, axis=None, title=r'$I (cts)$', logAmp=True, label='e')
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9, 3.8))
