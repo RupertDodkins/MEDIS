@@ -40,6 +40,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     iop.__dict__ = passpara[2].__dict__
     sp.__dict__ = passpara[3].__dict__
 
+    # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
     wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
     datacube = []
 
@@ -51,7 +52,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     else:
         wf_array = np.empty((len(wsamples), 1), dtype=object)
 
-    # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
     beam_ratios = np.zeros_like((wsamples))
     for iw, w in enumerate(wsamples):
         # Initialize the wavefront at entrance pupil
@@ -71,7 +71,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
             wf_array[iw, io] = wf
 
 
-    # Defines aperture (before primary)
+    # Defines aperture (baffle-before primary)
     iter_func(wf_array, proper.prop_circular_aperture, **{'radius':tp.diam/2})
 
     # Pass through a mini-atmosphere inside the telescope baffle

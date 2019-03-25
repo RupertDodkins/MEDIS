@@ -14,18 +14,23 @@ from medis.Utils.misc import dprint
 sp.show_wframe = False
 sp.save_obs = False
 sp.show_cube = False
+sp.num_processes = 1
+
+# Astro Parameters
 ap.companion = True
 # ap.contrast = [5e-3, 1e-3]
 ap.contrast = [0.1]
 ap.star_photons = int(1e7) # # G type star 10ly away gives 1e6 cts/cm^2/s
 ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
-tp.diam=5.
+ap.exposure_time = 0.1  # 0.001
+
+# Telescope/optics Parameters
+tp.diam = 5.
 ap.grid_size = 256
 tp.beam_ratio = 0.4
 tp.use_spiders = True
 tp.use_ao = True
 tp.ao_act = 50
-tp.detector = 'ideal'
 tp.use_atmos = True
 tp.use_zern_ab = True
 tp.occulter_type = 'Vortex'  # 'None'
@@ -36,29 +41,28 @@ tp.aber_params = {'CPA': True,
                   'Amp': False,
                   'n_surfs': 8,
                   'OOPP': [16,8,8,16,4,4,8,16]}#False}#
-mp.bad_pix = True
-mp.array_size = np.array([80,125])
-sp.num_processes = 1
-num_exp =3 #5000
-ap.exposure_time = 0.1  # 0.001
-cp.frame_time = 0.1
-ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
-tp.piston_error = True
+
+# Wavelength and Spectral Range
 ap.band = np.array([800, 1500])
 ap.nwsamp = 4
 ap.w_bins = 4
+
+num_exp = 3 #5000
+cp.frame_time = 0.1
+ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
+tp.piston_error = True
 tp.rot_rate = 0  # deg/s
 tp.pix_shift = [30,0]
 lod = 8
 
-# mp.hot_pix =True
+# MKID Parameters
 mp.distort_phase = True
 mp.phase_uncertainty = True
 mp.phase_background = True
 mp.respons_var = True
 mp.bad_pix = True
 mp.hot_pix = 1
-
+mp.array_size = np.array([80,125])
 mp.R_mean = 8
 mp.g_mean = 0.2
 mp.g_sig = 0.04
@@ -73,6 +77,8 @@ if __name__ == '__main__':
     iop.update("MKID_pic-ideal/")
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)
+
+    tp.detector = 'ideal'
 
     # Starting the Simulation
     print("Starting MKID_pic ideal-detector example")

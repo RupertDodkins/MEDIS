@@ -164,8 +164,8 @@ def run_medis(plot=False):
     # initialize atmosphere
     print("Atmosdir = %s " % iop.atmosdir)
     if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
-        dprint("It looks like you don't have an atmospheric maps. You can either"
-                    "get them from Rupert or generate them yourself with caos. Removing exit()")
+        dprint("It looks like you don't have an atmospheric map. You can either"
+                    "get one from Rupert or generate them yourself with caos by removing exit() here")
         exit()
         dprint("Making New Atmosphere Model")
         caos.make_idl_params()
@@ -219,10 +219,8 @@ def run_medis(plot=False):
         p.start()
 
     if tp.quick_ao:
-
         for t in range(ap.startframe, ap.startframe + ap.numframes):
             inqueue.put(t)
-
     else:
         dprint('If the code has hung here it probably means it cant read the CPA file at some iter')
         for t in range(ap.startframe, ap.startframe+ap.numframes):

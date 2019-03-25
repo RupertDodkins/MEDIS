@@ -158,13 +158,9 @@ def apply_phase_distort(phase, loc, sigs):
     # phase = phase + mp.phase_distortions[ip]
     wavelength = spec.wave_cal(phase)
     idx = spec.wave_idx(wavelength)
-    # print phase, sigs[idx,loc[0],loc[1]], 'newphase',
-    # if idx == 7:
-    #     print phase, wavelength, idx, loc[0], loc[1]
 
     if phase != 0 and idx<len(sigs):
         phase = np.random.normal(phase,sigs[idx,loc[0],loc[1]],1)[0]
-    # print phase
     return phase
 
 
@@ -197,7 +193,7 @@ def create_bad_pix(responsivities, plot=False):
     bad_y = np.int_(np.floor(bad_ind/mp.array_size[1]))
     bad_x = bad_ind % mp.array_size[1]
 
-    dprint(f"responsivity shape  = {responsivities.shape}")
+    # dprint(f"responsivity shape  = {responsivities.shape}")
 
     responsivities[bad_x, bad_y] = 0
     if plot:
