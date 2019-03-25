@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from medis.params import ap, cp, tp, sp, mp, iop
 from medis.Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
 from medis.Utils.rawImageIO import clipped_zoom
-import medis.Detector.readout as read
+import medis.Detector.get_photon_data as gpd
 import medis.Analysis.phot
 import medis.Analysis.stats
 from medis.Utils.misc import dprint
@@ -48,10 +48,10 @@ tp.aber_params = {'CPA': True,
                     'Amp': True,
                     'n_surfs': 4,
                     'OOPP': [16,8,8, 4]}#False}#
-sp.num_processes = 40
+sp.num_processes = 2
 tp.occulter_type = '8th_Order'
 
-num_exp = 2000  #2000#1000#50#50#1000
+num_exp = 20  #2000#1000#50#50#1000
 ap.exposure_time = 0.01  # 0.001
 cp.frame_time = 0.01
 ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
@@ -104,13 +104,13 @@ if __name__ == '__main__':
     ###################################################################################################
     # Running the Example
     iop.obs_seq = iop.datadir + 'BpicSource5.pkl'
-    simple_hypercube_1 = run_medis(plot=False)  #/ap.numframes
+    simple_hypercube_1 = gpd.run_medis(plot=False)  #/ap.numframes
     ###################################################################################################
 
     # Checking against another run with no companion
     ap.startframe = ap.numframes
     ap.companion = False
-    simple_hypercube_2 = run_medis(plot=False)  #/ap.numframes
+    simple_hypercube_2 = gpd.run_medis(plot=False)  #/ap.numframes
     #
 
     # loop_frames(simple_hypercube_1[:,0], logAmp=True)

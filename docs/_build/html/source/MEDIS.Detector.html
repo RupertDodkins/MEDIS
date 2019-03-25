@@ -78,25 +78,15 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">medis.Detector package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.H2RG">medis.Detector.H2RG module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.MKIDs">medis.Detector.MKIDs module</a></li>
-<li><a class="reference internal" href="#medis-detector-analysis-module">medis.Detector.analysis module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.distribution">medis.Detector.distribution module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.get_photon_data">medis.Detector.get_photon_data module</a></li>
-<li><a class="reference internal" href="#medis-detector-ideal-module">medis.Detector.ideal module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.pipeline">medis.Detector.pipeline module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.readout">medis.Detector.readout module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.spectral">medis.Detector.spectral module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector.temporal">medis.Detector.temporal module</a></li>
-<li><a class="reference internal" href="#module-medis.Detector">Module contents</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">Setting the Path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#the-conda-environment">The Conda Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#installing-modified-proper">Installing Modified PROPER</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#edit-vip">Edit VIP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../readme.html#setting-the-save-directory-and-the-atmosphere-maps">Setting the Save Directory and the Atmosphere Maps</a></li>
 </ul>
-</li>
-</ul>
-</div>
+
             
           
         </div>
@@ -205,17 +195,20 @@ e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines<
 <dl class="function">
 <dt id="medis.Detector.MKIDs.array_response">
 <code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">array_response</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.array_response" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Assigns each pixel a phase responsivity between 0 and 1</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="medis.Detector.MKIDs.assign_phase_background">
 <code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">assign_phase_background</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.assign_phase_background" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>assigns each pixel a baseline phase</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="medis.Detector.MKIDs.assign_spectral_res">
 <code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">assign_spectral_res</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.assign_spectral_res" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Assigning each pixel a spectral resolution (at 800nm)</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="medis.Detector.MKIDs.create_bad_pix">
@@ -235,7 +228,8 @@ e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines<
 <dl class="function">
 <dt id="medis.Detector.MKIDs.get_R_hyper">
 <code class="descclassname">medis.Detector.MKIDs.</code><code class="descname">get_R_hyper</code><span class="sig-paren">(</span><em>Rs</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.MKIDs.get_R_hyper" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Each pixel of the array has a matrix of probabilities that depends on the input wavelength</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="medis.Detector.MKIDs.get_hot_packets">
@@ -354,7 +348,7 @@ thus, where the detector observes the wavefront created by optics_propagate (for
 
 <dl class="function">
 <dt id="medis.Detector.get_photon_data.run_medis">
-<code class="descclassname">medis.Detector.get_photon_data.</code><code class="descname">run_medis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.get_photon_data.run_medis" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">medis.Detector.get_photon_data.</code><code class="descname">run_medis</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.get_photon_data.run_medis" title="Permalink to this definition">¶</a></dt>
 <dd><p>main script to organize calls to various aspects of the simulation</p>
 <p>initialize different sub-processes, such as atmosphere and aberration maps, MKID device parameters
 sets up the multiprocessing features
@@ -449,31 +443,28 @@ The first part of the module has something to do with a readout system.</p>
 <dd>This deals with reading, opening, and saving obs_sequences, either hdf5 or ?? format</dd>
 </dl>
 <dl class="function">
-<dt id="medis.Detector.readout.convert_to_wfo">
-<code class="descclassname">medis.Detector.readout.</code><code class="descname">convert_to_wfo</code><span class="sig-paren">(</span><em>image</em>, <em>wfo</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.convert_to_wfo" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="medis.Detector.readout.run_medis">
-<code class="descclassname">medis.Detector.readout.</code><code class="descname">run_medis</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.run_medis" title="Permalink to this definition">¶</a></dt>
-<dd><p>slightly awkward wrapper for running an observation</p>
-<p>This code basically just checks to see if there is already
-a observation sequence saved with the output of the run in the
+<dt id="medis.Detector.readout.check_exists_obs_sequence">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">check_exists_obs_sequence</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.check_exists_obs_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>This code checks to see if there is already
+an observation sequence saved with the output of the run in the
 location specified by the iop. If none exists, it passes all
 the parameters to get_photon_data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plot</strong> – Flag, do you want plots or not</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the obs_sequence (timeseries of data cubes)
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the obs_sequence (timeseries of data cubes)
 data is saved in location specified in iop
 data can be saved as obs_table (photon table) if detector type is MKIDs</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="function">
+<dt id="medis.Detector.readout.convert_to_wfo">
+<code class="descclassname">medis.Detector.readout.</code><code class="descname">convert_to_wfo</code><span class="sig-paren">(</span><em>image</em>, <em>wfo</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.readout.convert_to_wfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="medis.Detector.readout.get_obs_command">

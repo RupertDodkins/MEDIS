@@ -68,6 +68,8 @@ mp.bg_mean = -10
 mp.bg_sig = 40
 mp.pix_yield = 0.7  # check dis
 
+sp.get_ints = {'w': [0], 'c': [0]}
+
 if __name__ == '__main__':
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)

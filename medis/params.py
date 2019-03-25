@@ -19,8 +19,8 @@ class IO_params:
     def __init__(self, testname='example1'):  # testname should be the name of the particular example you are running,
                                                 # for example 'BetaPic' or 'simple_telescope'
         # High Level Paths
-        # self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
+        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        # self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
         # self.lab_obs_path = '/mnt/kids/'  #
 
@@ -102,9 +102,9 @@ class Simulation_params:
         self.variable = None
         self.save_obs = True
         self.return_cube = True
-        self.get_ints = {'w': [0],
-                         'c': [0]}  # False
-
+        # self.get_ints = {'w': [0],
+        #                  'c': [0]}
+        self.get_ints = False
 
 class Astro_params:
     """
