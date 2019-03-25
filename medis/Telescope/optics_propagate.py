@@ -82,7 +82,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #  phase offset at a particular frequency.
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
-        aber.add_atmos(wf_array, *(tp.f_lens, w, PASSVALUE['atmos_map']))
+        aber.add_atmos(wf_array, *(w, PASSVALUE['atmos_map']))
 
     wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
 
@@ -90,9 +90,13 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         iter_func(wf_array, aber.rotate_atmos, *(PASSVALUE['atmos_map']))
 
     if tp.use_spiders:
-        iter_func(wf_array, fo.add_spiders, tp.diam)
+        # TODO check this was resolved and spiders can be applied earlier up the chain
+        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
+        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
+        iter_func(wf_array, fo.add_spiders, tp.diam, legs=False)
         wf_array = aber.abs_zeros(wf_array)
         if sp.get_ints: get_intensity(wf_array, sp, phase=True)
+
 
     wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
 
@@ -109,12 +113,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.aber_params['CPA']:
         aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='CPA')
         iter_func(wf_array, proper.prop_circular_aperture, **{'radius': tp.diam / 2})
-        # TODO check this was resolved and spiders can be applied earlier up the chain
-        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
-        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
-        iter_func(wf_array, fo.add_spiders, tp.diam, legs=False)
-        wf_array = aber.abs_zeros(wf_array)
-        if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
     if tp.quick_ao:
         r0 = float(PASSVALUE['atmos_map'][-10:-5])

@@ -184,7 +184,7 @@ class Telescope_params:
         self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
         self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
-        self.beam_ratio = 25/64.#0.39#0.3#0.25#0.5
+        self.beam_ratio = 25/64. # parameter dealing with the sampling of the beam in the pupil/focal plane vs grid size
         self.detector = 'ideal'  # 'MKIDs'
 
         # Speckles

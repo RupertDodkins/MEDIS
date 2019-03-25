@@ -136,12 +136,21 @@ def apply_phase_distort_array(photons, sigs):
 
     wavelength = spec.wave_cal(photons[1])
 
+    plt.xlabel('Photons')
+    plt.ylabel('#')
+    plt.title('Photons Distortion Histogram')
     plt.hist(photons[1], bins=800)
     plt.figure()
     idx = spec.wave_idx(wavelength)
     bad = np.where(idx<0)[0]
     plt.hist(wavelength, bins=800)
+    plt.xlabel('Wavelength')
+    plt.ylabel('#')
+    plt.title('Wavelength Distortion Histogram')
     plt.figure()
+    plt.xlabel('Index')
+    plt.ylabel('#')
+    plt.title('Index Distortion Histogram')
     plt.hist(idx, bins=800)
     plt.show()
     # dprint((sigs[0,:25,:25],idx.shape,sigs.shape))#,sigs[idx].shape))
@@ -155,6 +164,17 @@ def apply_phase_distort_array(photons, sigs):
     return photons
 
 def apply_phase_distort(phase, loc, sigs):
+    """
+    simulates phase height of a real detector system per photon
+    proper will spit out the true phase of each photon it propagates. this function will give it
+    a 'measured' phase based on the resolution of the detector, and a Gaussian distribution around
+    the center of the resolution bin
+
+    :param phase: real(exact) phase information from Proper
+    :param loc:
+    :param sigs:
+    :return: distorted phase
+    """
     # phase = phase + mp.phase_distortions[ip]
     wavelength = spec.wave_cal(phase)
     idx = spec.wave_idx(wavelength)
@@ -170,10 +190,16 @@ def assign_phase_background(plot=False):
 
     basesDeg = dist(mp.array_size[0]*mp.array_size[1])[0]/float(mp.res_elements)*mp.bg_mean/mp.g_mean
     if plot:
+        plt.xlabel('basesDeg')
+        plt.ylabel('#')
+        plt.title('Background Phase')
         plt.hist(basesDeg)
         plt.show()
     basesDeg = np.reshape(basesDeg, mp.array_size)
     if plot:
+        plt.xlabel('basesDeg')
+        plt.ylabel('#')
+        plt.title('Background Phase--Reshaped')
         plt.imshow(basesDeg)
         plt.show()
     return basesDeg
@@ -197,6 +223,9 @@ def create_bad_pix(responsivities, plot=False):
 
     responsivities[bad_x, bad_y] = 0
     if plot:
+        plt.xlabel('responsivities')
+        plt.ylabel('?')
+        plt.title('Something Related to Bad Pixels')
         plt.imshow(responsivities)
         plt.show()
 
