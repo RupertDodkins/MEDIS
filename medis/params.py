@@ -146,7 +146,8 @@ class Telescope_params:
         # Foreoptics + AO Settings
         self.pix_shift = [0, 0]  # False?  Shifts the central star to off-axis (circular shift) (mimics conex mirror)
         self.rot_rate = 0  # deg/s
-        self.use_spiders = True
+        self.obscure = True  # Turns on obscurations (spiders and secondary obscuration,
+                             # but can turn spiders off when called with legs=False)
         self.use_hex = False  # include aberrations from hexagonal segmented mirror shape of primary
         self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary
         self.use_ao = True  # True

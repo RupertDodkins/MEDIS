@@ -1,16 +1,10 @@
-# import os
 import numpy as np
 # import matplotlib.pylab as plt
-# from scipy import interpolate
-# import pickle as pickle
-# import copy
-# from scipy import ndimage
 import proper
 # from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
-# import medis.Utils.rawImageIO as rawImageIO
-# import medis.Utils.misc as misc
 from medis.params import tp, cp, mp, ap,iop#, fp
 # from medis.Utils.misc import dprint
+
 
 def offset_companion(wf_array, atmos_map):
     cont_scaling = np.linspace(1./ap.C_spec, 1, ap.nwsamp)
@@ -34,25 +28,27 @@ def offset_companion(wf_array, atmos_map):
             wf_array[iw, io].wfarr = wf_array[iw,io].wfarr * np.sqrt(ap.contrast[io]*cont_scaling[iw])
 
 
-def add_spiders(wfo, diam, legs=True):
+def add_obscurations(wfo, diam, legs=True):
     # print('Including Spiders')
-    proper.prop_circular_obscuration(wfo, (diam/3)/2.5)
+    proper.prop_circular_obscuration(wfo, diam/2)
     if legs:
         proper.prop_rectangular_obscuration(wfo, 0.05*diam, diam*1.3, ROTATION=20)
         proper.prop_rectangular_obscuration(wfo, diam*1.3, 0.05*diam, ROTATION=20)
 
 def add_hex(wfo):
     # TODO implement this
-    print('Including Mirror Segments')
-    print('** add code here **')
+    dprint('Including Mirror Segments')
+    dprint('** add code here **')
     raise NotImplementedError
 
-def prop_mid_optics(wfo, f_lens):
+
+def prop_mid_optics(wfo, f_lens, dist):
     proper.prop_lens(wfo, f_lens)
-    proper.prop_propagate(wfo, f_lens)
+    proper.prop_propagate(wfo, dist)
+
 
 def do_apod(wfo, grid_size, beam_ratio, apod_gaus):
-    # print 'Including Apodization'
+    # dprint 'Including Apodization'
     r = proper.prop_radius(wfo)
     rad = int(np.round(grid_size*(1-beam_ratio)/2)) # beam is a fraction (0.3) of the grid size
     r = r/r[grid_size/2,rad]
