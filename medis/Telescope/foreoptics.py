@@ -29,7 +29,7 @@ def offset_companion(wf_array, atmos_map):
 
 
 def add_obscurations(wfo, diam, legs=True):
-    # print('Including Spiders')
+    # print('Including Obscurations')
     proper.prop_circular_obscuration(wfo, diam/2)
     if legs:
         proper.prop_rectangular_obscuration(wfo, 0.05*diam, diam*1.3, ROTATION=20)

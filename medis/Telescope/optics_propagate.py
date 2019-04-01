@@ -89,14 +89,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.rot_rate:
         iter_func(wf_array, aber.rotate_atmos, *(PASSVALUE['atmos_map']))
 
-    if tp.obscure:
-        # TODO check this was resolved and spiders can be applied earlier up the chain
-        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
-        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
-        iter_func(wf_array, fo.add_obscurations, tp.diam, legs=False)
-        wf_array = aber.abs_zeros(wf_array)
-        if sp.get_ints: get_intensity(wf_array, sp, phase=True)
-
+    iter_func(wf_array, fo.add_obscurations, tp.diam / 4, legs=False)
+    if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
     wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
 
@@ -113,6 +107,14 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.aber_params['CPA']:
         aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='CPA')
         iter_func(wf_array, proper.prop_circular_aperture, **{'radius': tp.diam / 2})
+
+    if tp.obscure:
+        # TODO check this was resolved and spiders can be applied earlier up the chain
+        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
+        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
+        iter_func(wf_array, fo.add_obscurations, tp.diam/4, legs=False)
+        wf_array = aber.abs_zeros(wf_array)
+        if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
     if tp.quick_ao:
         r0 = float(PASSVALUE['atmos_map'][-10:-5])
@@ -147,7 +149,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.aber_params['NCPA']:
         aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='NCPA')
         iter_func(wf_array, proper.prop_circular_aperture, **{'radius': tp.diam / 2})
-        iter_func(wf_array, fo.add_obscurations, tp.diam, legs=False)
+        iter_func(wf_array, fo.add_obscurations, tp.diam/4, legs=False)
         wf_array = aber.abs_zeros(wf_array)
         if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
