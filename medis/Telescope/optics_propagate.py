@@ -1,4 +1,4 @@
-'''This code handles most of the telescope optics based functionality'''
+"""This code handles most of the telescope optics based functionality"""
 
 from scipy.interpolate import interp1d
 import proper
@@ -43,6 +43,10 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
     wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
     datacube = []
+
+    ########################################
+    # Astronomical Distortions to Wavefront
+    #######################################
 
     # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
     # each field in the wf_array is the complex E-field at that wavelength, per object
@@ -103,6 +107,9 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if wf_array.shape[1] >=1:
         fo.offset_companion(wf_array[:,1:], PASSVALUE['atmos_map'], )
 
+    ########################################
+    # Telescope Distortions to Wavefront
+    #######################################
     # Abberations before AO
     if tp.aber_params['CPA']:
         aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='CPA')
@@ -116,6 +123,9 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         wf_array = aber.abs_zeros(wf_array)
         if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
+    ########################################
+    # AO
+    #######################################
     if tp.quick_ao:
         r0 = float(PASSVALUE['atmos_map'][-10:-5])
 
@@ -145,6 +155,10 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     # if tp.active_modulate:
     #     fpwfs.modulate(wf, w, PASSVALUE['iter'])
 
+    ########################################
+    # Post-AO Telescope Distortions
+    # #######################################
+
     # Abberations after the AO Loop
     if tp.aber_params['NCPA']:
         aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='NCPA')
@@ -165,7 +179,10 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     iter_func(wf_array, fo.prop_mid_optics, tp.f_lens, tp.f_lens)
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
 
+    ########################################
     # Coronagraph
+    # #######################################
+
     iter_func(wf_array, coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
 
@@ -183,6 +200,10 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)  # cirshift array for off-axis observing
     datacube = np.abs(datacube)  # get intensity from datacube
 
+    ########################################
+    # Focal Plane
+    # #######################################
+
     # Interpolating spectral cube from ap.nwsamp discreet wavelengths to ap.w_bins
     if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:
         wave_samps = np.linspace(0, 1, ap.nwsamp)
@@ -190,8 +211,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         new_heights = np.linspace(0, 1, ap.w_bins)
         datacube = f_out(new_heights)
 
-    # TODO is this still neccessary?
-    # datacube = np.transpose(np.transpose(datacube) / np.sum(datacube, axis=(1, 2)))/float(ap.nwsamp)
 
     print('Finished datacube at single timestep')
 

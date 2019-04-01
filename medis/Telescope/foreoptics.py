@@ -35,6 +35,7 @@ def add_obscurations(wfo, diam, legs=True):
         proper.prop_rectangular_obscuration(wfo, 0.05*diam, diam*1.3, ROTATION=20)
         proper.prop_rectangular_obscuration(wfo, diam*1.3, 0.05*diam, ROTATION=20)
 
+
 def add_hex(wfo):
     # TODO implement this
     dprint('Including Mirror Segments')
