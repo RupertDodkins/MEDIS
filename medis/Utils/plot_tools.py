@@ -428,6 +428,12 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
         plt.tight_layout()
         plt.show(block=True)
 
+def initialize_GUI():
+    # plt.ion()
+    sp.show_wframe = 'continuous'
+    sp.fig = plt.figure()
+    # ax = sp.fig.add_subplot(111)
+    # ax.plot(range(5))
 
 
 def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=False, anno=None, annos=None, title=None, pupil=False, colormap="YlGnBu_r", mark_star=False, label=None):
@@ -445,12 +451,13 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
         import medis.Analysis.phot
         image = image * Analysis.phot.aperture(ap.grid_size / 2, ap.grid_size / 2, ap.grid_size / 2)
 
-    if show!='continuous':
+    if show != 'continuous':
         fig = plt.figure()
     else:
         fig = sp.fig
         vmax = sp.vmax
         vmin = sp.vmin
+
     if title == None:
         title = r'  $I / I^{*}$'
     
@@ -469,7 +476,9 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
         cax = ax.imshow(image, interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap=colormap)
     if axis:
         annotate_axis(cax, ax, image.shape[0])
-    if show=='continuous':
+    if show == 'continuous':
+        # print('here')
+        # plt.ion()
         fig.canvas.draw()
         if not sp.cbar:
             sp.cbar = plt.colorbar(cax)#norm=LogNorm(vmin=cax.min(), vmax=cax.max()))
@@ -502,7 +511,7 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
     if mark_star:
         ax.plot(image.shape[0]/2,image.shape[1]/2, marker='*', color='r')
 
-    plt.tight_layout()
+
 
 
     # # For plotting on the leftmost screen
@@ -511,7 +520,8 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
     # figManager.window.move(-1920, 0)
     # figManager.window.setFocus()
 
-    if show==True:
+    if show == True:
+        plt.tight_layout()
         plt.show(block=True)
 
 def annotate_axis(im, ax, width):
