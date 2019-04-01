@@ -4,7 +4,7 @@
 *#*
 *.pyc
 *.iml
-.idea/misc.xml
+*misc.xml
 modules.xml
 deployment.xml
 
