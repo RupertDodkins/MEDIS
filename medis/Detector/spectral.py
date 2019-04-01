@@ -23,15 +23,15 @@ def planck(T, l):
     result[calcMe] = (h*c*c)/(np.power(l[calcMe], 5.0) * (np.exp(p[calcMe])-1))
     return result
 
-def read_hyper_images(location):
+
+def read_obs_images(location):
     filenames = cubes.read_folder(location)
-    print(filenames)
     wavelengths = []
     for filename in filenames:
         wavelength = filename[-12:-9]
         if wavelength not in wavelengths:
             wavelengths.append(wavelength)
-    print(wavelengths)
+    dprint(wavelengths)
 
     input_shape = np.shape(cubes.read_image(filenames[0]))
     frames=np.zeros((len(filenames)/len(wavelengths), len(wavelengths), input_shape[0], input_shape[1]))
@@ -40,7 +40,6 @@ def read_hyper_images(location):
         # cube = cubes.datacube()
         it = ifn%len(wavelengths)
         iw = ifn/len(wavelengths)
-        print(it, iw)
         frames[it,iw] = cubes.read_image(filename)
 
     return frames, wavelengths
@@ -89,7 +88,6 @@ def assign_phase(photons, wavelengths):
 
 def calibrate_phase(photons):
     photons = np.array(photons)
-    # print photons[0,:5]
     c = ap.band[0]
     m = (ap.band[1] - ap.band[0])/ap.w_bins
     wavelengths = photons[0]*m + c
@@ -121,14 +119,14 @@ def eff_filter(cube, start = 0.8, exp=0.1):
 
             except IndexError:
                 image[x,y] = 0
-    print('sum', np.sum(image))
+    dprint('sum', np.sum(image))
     return image
 
 
 
 if __name__ == "__main__":
-    frames, wavelengths = read_hyper_images(datadir)
-    print(np.shape(frames))
+    frames, wavelengths = read_obs_images(datadir)
+    dprint(f"Frame shape = {np.shape(frames)}")
     # frames, wavelengths = read_single_wavelength(datadir, '1.2')
     frames = change_spec_prof(frames)
     # frames = uniform_cube()

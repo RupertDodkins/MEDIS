@@ -19,8 +19,8 @@ class IO_params:
     def __init__(self, testname='example1'):  # testname should be the name of the particular example you are running,
                                                 # for example 'BetaPic' or 'simple_telescope'
         # High Level Paths
-        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        # self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
+        # self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
         # self.lab_obs_path = '/mnt/kids/'  #
 
@@ -138,27 +138,6 @@ class Astro_params:
         self.interp_sample = True  # Set to interpolate wavelengths from ap.nwsamp to ap.w_bins
 
 
-class CAOS_params:
-    """
-    # TODO make redundant with new atmosphere model
-    Default parameters for the atmosphere
-    """
-    def __init__(self):
-        self.show_caosparams= True  # for control over all other variables
-        self.frame_time = 0.01  # this is the maximum frame rate of the simulation
-        self.vary_r0 = False
-        self.r0s = []
-        self.scalar_r0 = 'med'
-        self.r0s_idx = -1
-
-        # Settings Taken from MKID_params that seem to be relevant here:
-        # wind_speed = 5. # m/s
-        # atm_scale = 512.
-        # atm_size = 1. # m
-        # atm_spat_rate = 1. # pix shift
-        # frame_time = 0.001#atm_size*atm_spat_rate/(wind_speed*atm_scale) # 0.0004
-
-
 class Telescope_params:
     """
     This contains most of the parameters you will probably modify when running tests
@@ -166,16 +145,17 @@ class Telescope_params:
     def __init__(self):
         # Foreoptics + AO Settings
         self.pix_shift = [0, 0]  # False?  Shifts the central star to off-axis (circular shift) (mimics conex mirror)
-        self.rot_rate = 0  #1 # deg/s
-        self.use_spiders = True
+        self.rot_rate = 0  # deg/s
+        self.obscure = True  # Turns on obscurations (spiders and secondary obscuration,
+                             # but can turn spiders off when called with legs=False)
         self.use_hex = False  # include aberrations from hexagonal segmented mirror shape of primary
         self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary
         self.use_ao = True  # True
         self.quick_ao = True
         self.ao_act = 60  # 41 #32
-        self.servo_error = [0, 1]  #[0,1] # False # No delay and rate of 1/frame_time
+        self.servo_error = [0, 1]  # [0,1] # False # No delay and rate of 1/frame_time
         self.active_null = False
-        self.active_converge_steps = 1#10
+        self.active_converge_steps = 1  # 10
         self.active_modulate = False
         # self.null_ao_act=66
         self.wfs_measurement_error = False
@@ -195,7 +175,7 @@ class Telescope_params:
                             'Phase': True,
                             'Amp': False,
                             'n_surfs': 2,
-                            'OOPP': [8,4]} # fraction of a focal length where mirror(s) is located
+                            'OOPP': [8,4]}  # fraction of a focal length where mirror(s) is located
         self.aber_vals = {'a': [7.2e-17, 3e-17],
                            'b': [0.8, 0.2],
                            'c': [3.1,0.5],
@@ -205,7 +185,7 @@ class Telescope_params:
         self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
         self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
-        self.beam_ratio = 25/64.#0.39#0.3#0.25#0.5
+        self.beam_ratio = 25/64. # parameter dealing with the sampling of the beam in the pupil/focal plane vs grid size
         self.detector = 'ideal'  # 'MKIDs'
 
         # Speckles
@@ -241,8 +221,7 @@ class MKID_params:
         # self.total_pix = self.array_size[0] * self.array_size[1]
         self.pix_yield = 0.9
         self.hot_pix = 0  # Number of hot pixels
-        self.hot_bright = 1000  # How many counts does a hot pixel register
-        # self.wave_coeffs = [0.1,-200]
+        self.hot_bright = 1000  # Number of counts/time a hot pixel registers
         self.threshold_phase = 0#-30 # quite close to 0, basically all photons will be detected.
 
         self.max_count = 2500.  # cts/s
@@ -268,13 +247,6 @@ class MKID_params:
         self.nlod = 10  # 3 #how many lambda/D do we want to calculate out to
 
 
-class H2RG_params:
-    def __init__(self):
-        self.use_readnoise = True
-        self.readnoise = 30
-        self.erate = 1
-
-
 class Device_params:
     """
     This is different from MKID_params in that it contains an instance of these random multidimensional parameters
@@ -289,6 +261,13 @@ class Device_params:
         self.hot_pix = None
 
 
+class H2RG_params:
+    def __init__(self):
+        self.use_readnoise = True
+        self.readnoise = 30
+        self.erate = 1
+
+
 class FPWFS_params:
     """Replaces the role of M. Bottom's Config file for speckle_killer_v3"""
     def __init__(self):
@@ -298,6 +277,27 @@ class FPWFS_params:
         self.exclusionzone = 12.
         # self.controlregion = [50,80,35,50] # x1, x2, y1, y2
         self.controlregion = [40,100,20,60] # y1, y2, x1, x2
+
+
+class CAOS_params:
+    """
+    # TODO make redundant with new atmosphere model
+    Default parameters for the atmosphere
+    """
+    def __init__(self):
+        self.show_caosparams= True  # for control over all other variables
+        self.frame_time = 0.01  # this is the maximum frame rate of the simulation
+        self.vary_r0 = False
+        self.r0s = []
+        self.scalar_r0 = 'med'
+        self.r0s_idx = -1
+
+        # Settings Taken from MKID_params that seem to be relevant here:
+        # wind_speed = 5. # m/s
+        # atm_scale = 512.
+        # atm_size = 1. # m
+        # atm_spat_rate = 1. # pix shift
+        # frame_time = 0.001#atm_size*atm_spat_rate/(wind_speed*atm_scale) # 0.0004
 
 
 ap = Astro_params()
