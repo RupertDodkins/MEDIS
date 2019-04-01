@@ -4,6 +4,9 @@
 *#*
 *.pyc
 *.iml
+misc.xml
+modules.xml
+deployment.xml
 
 #ignore C compiled (or Cython compiled) files
 *.o
