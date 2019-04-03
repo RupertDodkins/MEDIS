@@ -48,7 +48,7 @@ tp.dist_ao1_dm = 0.05  # m distance AO1 to DM (just a guess here, shouldn't matt
 #----------------------------
 # AO188 OAP2
 tp.dist_dm_ao2 = 0.05  # m distance DM to AO2 (again, guess here)
-tp.d_ao1 = 0.090  # m  diamater of AO2
+tp.d_ao2 = 0.090  # m  diamater of AO2
 tp.fn_ao2 = 13.6  # f# AO2
 tp.fl_ao2 = 151.11  # m  focal length AO2
 
@@ -79,9 +79,9 @@ if __name__ == '__main__':
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)
 
-    aber.generate_maps(Loc='CPA',tp.d_nsmyth,'nasmyth')
-    aber.generate_maps(Loc='CPA', tp.d_ao1,'AO188-OAP1')
-    aber.generate_maps(Loc='NCPA', tp.d_ao2,'AO188-OAP2')
+    aber.generate_maps(tp.d_nsmyth, 'CPA',  'nasmyth')
+    aber.generate_maps(tp.d_ao1, 'CPA', 'AO188-OAP1')
+    aber.generate_maps(tp.d_ao2, 'NCPA', 'AO188-OAP2')
 
     tp.detector = 'ideal'
 

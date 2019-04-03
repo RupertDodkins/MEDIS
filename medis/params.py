@@ -32,11 +32,11 @@ class IO_params:
 
         # Aberration Metadata
         self.aberroot = 'aberrations'
-        self.aberdata = 'Palomar'
+        self.aberdata = 'Subaru'
         self.aberdir = os.path.join(self.datadir, self.aberroot, self.aberdata)
         self.NCPA_meas = os.path.join(self.aberdir, 'NCPA_meas.pkl') #
         self.CPA_meas = os.path.join(self.aberdir, 'CPA_meas.pkl')
-        self.quasi = os.path.join(self.aberdir, 'quasi/')
+        self.quasi = os.path.join(self.aberdir, 'quasi')
 
         # Unprocessed Photon Science Data
         self.sciroot = 'Observations'

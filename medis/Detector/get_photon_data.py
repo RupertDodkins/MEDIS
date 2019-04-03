@@ -175,7 +175,7 @@ def run_medis(plot=False):
     if (tp.aber_params['QuasiStatic'] is True) and glob.glob(iop.aberdir + 'quasi/*.fits') == []:
         aber.generate_maps(tp.f_lens)
         if tp.aber_params['NCPA']:
-            aber.generate_maps(Loc='NCPA',tp.f_lens)
+            aber.generate_maps(tp.f_lens, 'NCPA', 'lens')
 
     # if tp.servo_error:
     #     aber.createObjMapsEmpty()
