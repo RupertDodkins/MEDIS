@@ -175,10 +175,12 @@ class Telescope_params:
                             'Phase': True,
                             'Amp': False,
                             'n_surfs': 2,
-                            'OOPP': [8,4]}  # fraction of a focal length where mirror(s) is located
-        self.aber_vals = {'a': [7.2e-17, 3e-17],
-                           'b': [0.8, 0.2],
-                           'c': [3.1,0.5],
+                            'OOPP': [8, 4]}  # fraction of a focal length where mirror(s) is located
+        # Coefficients used to calcuate PSD errormap in Proper (see pg 56 in manual)
+        # only change these if making new aberration maps
+        self.aber_vals = {'a': [7.2e-17, 3e-17],  # power at low spatial frequencies (m4)
+                           'b': [0.8, 0.2],  # correlation length
+                           'c': [3.1,0.5],  #
                            'a_amp': [0.05,0.01]}
 
         # Optics + Detector
