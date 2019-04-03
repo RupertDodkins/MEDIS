@@ -43,13 +43,14 @@ def abs_zeros(wf_array):
     return wf_array
 
 
-def generate_maps(Loc='CPA'):
+def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
     # TODO add different timescale aberations
     dprint('Generating optic aberration maps using Proper')
-    wfo = proper.prop_begin(tp.diam, 1., ap.grid_size, tp.beam_ratio)
+    wfo = proper.prop_begin(lens_diam, 1., ap.grid_size, tp.beam_ratio)
     aber_cube = np.zeros((ap.numframes, tp.aber_params['n_surfs'], ap.grid_size, ap.grid_size))
     for surf in range(tp.aber_params['n_surfs']):
 
+        # Randomly select a value from the range of values for each constant
         rms_error = np.random.normal(tp.aber_vals['a'][0], tp.aber_vals['a'][1])
         c_freq = np.random.normal(tp.aber_vals['b'][0], tp.aber_vals['b'][1])  # correlation frequency (cycles/meter)
         high_power = np.random.normal(tp.aber_vals['c'][0], tp.aber_vals['c'][1])  # high frewquency falloff (r^-high_power)
@@ -60,8 +61,9 @@ def generate_maps(Loc='CPA'):
         phase = 2 * np.pi * np.random.uniform(size=(ap.grid_size, ap.grid_size)) - np.pi
         aber_cube[0, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True,  PHASE_HISTORY = phase)
 
-        filename = '%s%s_Phase%f_v%i.fits' % (iop.aberdir+'quasi/', Loc, 0, surf)
-        rawImageIO.saveFITS(aber_cube[0, surf], filename)
+        filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}"
+        if not filename:
+            rawImageIO.saveFITS(aber_cube[0, surf], filename)
 
         for a in range(1,ap.numframes):
             if a % 100 == 0: misc.progressBar(value=a, endvalue=ap.numframes)
@@ -71,8 +73,9 @@ def generate_maps(Loc='CPA'):
             aber_cube[a, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power,
                                  MAP="prim_map",TPF=True, PHASE_HISTORY = phase)
 
-            filename = '%s%s_Phase%f_v%i.fits' % (iop.aberdir+'quasi/', Loc, a * cp.frame_time, surf)
-            rawImageIO.saveFITS(aber_cube[a, surf], filename)
+            filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}"
+            if not filename:
+                rawImageIO.saveFITS(aber_cube[0, surf], filename)
 
     # if not os.path.isdir(iop.aberdir+'/quasi'):
     #     os.mkdir(iop.aberdir+'quasi')
@@ -132,7 +135,7 @@ def add_aber(wf_array, f_lens, aber_params, aber_vals, step=0, Loc='CPA'):
                         c_freq = np.random.normal(aber_vals['b'][0],
                                                   aber_vals['b'][1])  # correlation frequency (cycles/meter)
                         high_power = np.random.normal(aber_vals['c'][0],
-                                                      aber_vals['c'][1])  # high frewquency falloff (r^-high_power)
+                                                      aber_vals['c'][1])  # high frequency falloff (r^-high_power)
                         phase_maps[surf] = proper.prop_psd_errormap(wf_array[0,0], rms_error, c_freq, high_power, FILE=filename, TPF=True)
                     else:
                         proper.prop_add_phase(wf_array[iw,io], phase_maps[surf])
