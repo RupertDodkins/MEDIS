@@ -44,6 +44,25 @@ def abs_zeros(wf_array):
 
 
 def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
+    """
+    generate PSD-defined aberration maps for a lens(mirror) using Proper
+
+    Use Proper to generate an 2D aberration pattern across an optical element. The amplitude of the error per spatial
+     frequency (cycles/m) across the surface is taken from a power spectral density (PSD) of statistical likelihoods
+     for 'real' aberrations of physical optics.
+    parameters defining the PSD function are specified in tp.aber_vals. These limit the range for the constants of the
+     governing equation given by PSD = a/ [1+(k/b)^c]. This formula assumes the Terrestrial Planet Finder PSD, which is
+     set to TRUE unless manually overridden line-by-line. As stated in the proper manual, this PSD function general
+      under-predicts lower order aberrations, and thus Zernike polynomials can be added to get even more realistic
+      surface maps.
+    more information on a PSD error map can be found in the Proper manual on pgs 55-60
+
+    :param lens_diam: diameter of the lens/mirror to generate an aberration map for
+    :param Loc: either CPA or NCPA, depending on where the optic is relative to the DM/AO system
+    :param lens_name: name of the lens, for file naming
+    :return: will create a FITs file in the folder specified by iop.quasi for each optic (and  timestep in the case
+     of quasi-static aberrations)
+    """
     # TODO add different timescale aberations
     dprint('Generating optic aberration maps using Proper')
     wfo = proper.prop_begin(lens_diam, 1., ap.grid_size, tp.beam_ratio)
@@ -59,26 +78,25 @@ def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
         perms *= 1e-7
 
         phase = 2 * np.pi * np.random.uniform(size=(ap.grid_size, ap.grid_size)) - np.pi
-        aber_cube[0, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True,  PHASE_HISTORY = phase)
+        aber_cube[0, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True, PHASE_HISTORY=phase)
 
-        filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}"
-        if not filename:
+        filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}.fits"
+        print(filename)
+        if not os.path.isfile(filename):
             rawImageIO.saveFITS(aber_cube[0, surf], filename)
 
-        for a in range(1,ap.numframes):
+        for a in range(1, ap.numframes):
             if a % 100 == 0: misc.progressBar(value=a, endvalue=ap.numframes)
             perms = np.random.rand(ap.grid_size, ap.grid_size) - 0.5
             perms *= 0.05
             phase += perms
             aber_cube[a, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power,
-                                 MAP="prim_map",TPF=True, PHASE_HISTORY = phase)
+                                 MAP="prim_map", TPF=True, PHASE_HISTORY=phase)
 
-            filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}"
-            if not filename:
+            filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}.fits"
+            if not os.path.isfile(filename):
                 rawImageIO.saveFITS(aber_cube[0, surf], filename)
 
-    # if not os.path.isdir(iop.aberdir+'/quasi'):
-    #     os.mkdir(iop.aberdir+'quasi')
     # for f in range(0,ap.numframes,1):
     #     # print 'saving frame #', f
     #     if f%100==0: misc.progressBar(value = f, endvalue=ap.numframes)
@@ -92,7 +110,7 @@ def circularise(prim_map):
     # TODO test this
     x = np.linspace(-1,1,128) * np.ones((128,128))
     y = np.transpose(np.linspace(-1, 1, 128) * np.ones((128, 128)))
-    circ_map = np.zeros((2, 128,128))
+    circ_map = np.zeros((2, 128, 128))
     circ_map[0] = x*np.sqrt(1-(y**2/2.))
     circ_map[1] = y*np.sqrt(1-(x**2/2.))
     circ_map*= 64

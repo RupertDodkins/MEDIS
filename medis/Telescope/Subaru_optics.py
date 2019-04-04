@@ -173,11 +173,6 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
 
     # CPA from Effective Primary
     filename = '%s%s_Phase%f_v%i.fits' % (iop.quasi, 'CPA', step * cp.frame_time,0)
-    rms_error = np.random.normal(aber_vals['a'][0], aber_vals['a'][1])
-    c_freq = np.random.normal(aber_vals['b'][0],
-                              aber_vals['b'][1])  # correlation frequency (cycles/meter)
-    high_power = np.random.normal(aber_vals['c'][0],
-                                  aber_vals['c'][1])  # high frequency falloff (r^-high_power)
     iter_func(wf_array, proper.prop_psd_errormap, rms_error, c_freq, high_power, FILE=filename, TPF=True)  # CPA
 
      # Nasmyth Focus- Effective Primary/Secondary
