@@ -1,10 +1,7 @@
 import os
 import numpy as np
-# import matplotlib.pylab as plt
 # from scipy import interpolate
 import pickle as pickle
-# import copy
-# from scipy import ndimage
 import proper
 from proper_mod import prop_psd_errormap
 # from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
