@@ -155,7 +155,7 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name
                         phase_map = rawImageIO.read_image(filename, prob_map=False)
 
                     # Add Phase Map
-                    proper.prop_add_phase(wf_array[iw, io], phase_map)
+                    proper.prop_add_phase(wf_array[iw, io], phase_map[0])
 
                     if aber_params['OOPP']:
                         proper.prop_propagate(wf_array[iw,io], f_lens+f_lens*(1-1./aber_params['OOPP'][surf]))

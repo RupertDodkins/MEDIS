@@ -112,7 +112,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #######################################
     # Abberations before AO
     if tp.aber_params['CPA']:
-        aber.add_aber(wf_array, tp.f_lens, tp.diam, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='CPA')
+        aber.add_aber(wf_array, tp.f_lens, tp.diam, tp.aber_params, PASSVALUE['iter'], Loc='CPA', lens_name='CPA1')
         iter_func(wf_array, proper.prop_circular_aperture, **{'radius': tp.diam / 2})
 
     if tp.obscure:
@@ -161,7 +161,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     # Abberations after the AO Loop
     if tp.aber_params['NCPA']:
-        aber.add_aber(wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='NCPA')
+        aber.add_aber(wf_array, tp.f_lens, tp.diam, tp.aber_params, PASSVALUE['iter'], Loc='NCPA', lens_name='NCPA1')
         iter_func(wf_array, proper.prop_circular_aperture, **{'radius': tp.diam / 2})
         iter_func(wf_array, fo.add_obscurations, tp.diam/4, legs=False)
         wf_array = aber.abs_zeros(wf_array)
