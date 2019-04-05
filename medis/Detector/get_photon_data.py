@@ -57,7 +57,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
                 r0 = cp.r0s # this is a scalar in this instance
 
             atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
-            kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
+            kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp], 'save_locs': tp.save_locs}
             spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
 
             if tp.detector == 'ideal':
@@ -142,9 +142,9 @@ def run_medis(plot=False):
     check = read.check_exists_obs_sequence(plot)
     if check:
         if iop.obs_seq[-3:] == '.h5':
-            obs_sequence = open_obs_sequence_hdf5(iop.obs_seq)
+            obs_sequence = read.open_obs_sequence_hdf5(iop.obs_seq)
         else:
-            obs_sequence = open_obs_sequence(iop.obs_seq)
+            obs_sequence = read.open_obs_sequence(iop.obs_seq)
 
         if plot: loop_frames(obs_sequence[:, 0])
         if plot: loop_frames(obs_sequence[0])

@@ -4,7 +4,10 @@ import numpy as np
 from medis.Utils.plot_tools import quicklook_wf, quicklook_im
 
 
-def simple_telescope(wavelength, gridsize):
+
+def prescription_gui(wavelength, gridsize):
+    selec_E_fields = []
+
     # Define entrance aperture diameter and other quantities
     d_objective = 5.0  # objective diameter in meters
     fl_objective = 20.0 * d_objective  # objective focal length in meters
@@ -21,7 +24,8 @@ def simple_telescope(wavelength, gridsize):
     # Define entrance
     proper.prop_define_entrance(wfo)
 
-    quicklook_wf(wfo)
+    # quicklook_wf(wfo, show=True)
+    selec_E_fields.append(proper.prop_shift_center(wfo.wfarr))
 
     # Define a lens
     proper.prop_lens(wfo, fl_objective, "objective")
@@ -38,26 +42,10 @@ def simple_telescope(wavelength, gridsize):
     proper.prop_lens(wfo, fl_eye, "eye")
     proper.prop_propagate(wfo, fl_eye, "retina")
 
-    quicklook_wf(wfo)
+    # quicklook_wf(wfo)
+    selec_E_fields.append(proper.prop_shift_center(wfo.wfarr))
 
-    # make a dark hole pupil map
-    phase_map = proper.prop_get_phase(wfo)
-    amp_map = proper.prop_get_amplitude(wfo)
-    # quicklook_im(phase_map)
+    # (wfo, sampling) = proper.prop_end(wfo)
+    selec_E_fields = np.array(selec_E_fields)
 
-    amp_map[80:100, 80:100] = 0
-    # quicklook_im(amp_map, logAmp=True)
-
-    wfo.wfarr = proper.prop_shift_center(amp_map * np.cos(phase_map) + 1j * amp_map * np.sin(phase_map))
-
-    proper.prop_propagate(wfo, fl_eye, "retina")
-    proper.prop_lens(wfo, fl_eye, "eye")
-    quicklook_wf(wfo)
-
-    # End
-    (wfo, sampling) = proper.prop_end(wfo)
-
-    return (wfo, sampling)
-
-if __name__ == '__main__':
-    prop_run( 'examples.simple_telescope', 1.1, 128, PHASE_OFFSET = 1 )
+    return selec_E_fields, None  # The None is because you need to return a tuple to work with prop_run
