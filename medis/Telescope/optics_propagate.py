@@ -180,6 +180,14 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         datacube.append(wframes)
 
     datacube = np.array(datacube)
+    # TODO implement this format of dithering
+    # width = mp.array_SIZE
+    # left = np.round(datacube.shape[1]//2+x - width//2).astype(int)
+    # right = left+width
+    # bottom = np.round(datacube.shape[2]//2+y - width//2).astype(int)
+    # top = bottom +width
+    # # print(rot_sky.shape,x,y, left, right, bottom, top)
+    # dither = rot_sky[bottom:top, left:right]
     datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)  # cirshift array for off-axis observing
     datacube = np.abs(datacube)  # get intensity from datacube
 
