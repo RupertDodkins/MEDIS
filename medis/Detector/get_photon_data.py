@@ -58,9 +58,9 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
 
             atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
-            spectralcube, _ = prop_run('medis.Telescope.Subaru_optics', 1, ap.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
-            # spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
-            #                            VERBOSE=False, PHASE_OFFSET=1)
+            # spectralcube, _ = prop_run('medis.Telescope.Subaru_optics', 1, ap.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
+            spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
+                                       VERBOSE=False, PHASE_OFFSET=1)
 
             if tp.detector == 'ideal':
                 image = np.sum(spectralcube, axis=0)

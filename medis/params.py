@@ -32,7 +32,7 @@ class IO_params:
 
         # Aberration Metadata
         self.aberroot = 'aberrations'
-        self.aberdata = 'Subaru'
+        self.aberdata = 'Palomar'
         self.aberdir = os.path.join(self.datadir, self.aberroot, self.aberdata)
         self.NCPA_meas = os.path.join(self.aberdir, 'NCPA_meas.pkl') #
         self.CPA_meas = os.path.join(self.aberdir, 'CPA_meas.pkl')
@@ -180,8 +180,8 @@ class Telescope_params:
         # only change these if making new aberration maps
         self.aber_vals = {'a': [7.2e-17, 3e-17],  # power at low spatial frequencies (m4)
                            'b': [0.8, 0.2],  # correlation length
-                           'c': [3.1,0.5],  #
-                           'a_amp': [0.05,0.01]}
+                           'c': [3.1, 0.5],  #
+                           'a_amp': [0.05, 0.01]}
 
         # Optics + Detector
         self.diam = 5.0  # telescope diameter in meters

@@ -79,7 +79,7 @@ if __name__ == '__main__':
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)
 
-    aber.generate_maps(tp.d_nsmyth, 'CPA',  'nasmyth')
+    aber.generate_maps(tp.d_nsmyth, 'CPA', 'nasmyth')
     aber.generate_maps(tp.d_ao1, 'CPA', 'AO188-OAP1')
     aber.generate_maps(tp.d_ao2, 'NCPA', 'AO188-OAP2')
 
