@@ -122,7 +122,8 @@ def circularise(prim_map):
     return new_prim
 
 
-def add_aber(wf_array, f_lens, aber_params, aber_vals, step=0, Loc='CPA'):
+def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name='lens'):
+    # TODO this does not currently loop over time, so it is not using quasi-static abberations.
     # dprint("Adding Abberations")
 
     if not aber_params['QuasiStatic']:
@@ -132,8 +133,11 @@ def add_aber(wf_array, f_lens, aber_params, aber_vals, step=0, Loc='CPA'):
         if iop.aberdir[-6:] != 'quasi/':
             iop.aberdir = iop.aberdir+'quasi/'
 
-    phase_maps = np.zeros((aber_params['n_surfs'], ap.grid_size, ap.grid_size))
-    amp_maps = np.zeros_like(phase_maps)
+    # Load in or Generate Aberration Map
+    filename = f"{iop.quasi}/{Loc}_t{step}_{lens_name}.fits"
+    if not os.path.isfile(filename):
+        generate_maps(d_lens, Loc, lens_name)
+    phase_map = rawImageIO.read_image(filename, prob_map=False)
 
     shape = wf_array.shape
     # The For Loop of Horror:
@@ -143,42 +147,43 @@ def add_aber(wf_array, f_lens, aber_params, aber_vals, step=0, Loc='CPA'):
                 for surf in range(aber_params['n_surfs']):
                     if aber_params['OOPP']:
                         proper.prop_lens(wf_array[iw,io], f_lens, "OOPP")
-                        proper.prop_propagate(wf_array[iw,io],f_lens/aber_params['OOPP'][surf])
-                    if iw == 0 and io == 0:
-                        filename = '%s%s_Phase%f_v%i.fits' % (iop.quasi, Loc, step * cp.frame_time, surf)
-                        rms_error = np.random.normal(aber_vals['a'][0], aber_vals['a'][1])
-                        c_freq = np.random.normal(aber_vals['b'][0],
-                                                  aber_vals['b'][1])  # correlation frequency (cycles/meter)
-                        high_power = np.random.normal(aber_vals['c'][0],
-                                                      aber_vals['c'][1])  # high frequency falloff (r^-high_power)
-                        phase_maps[surf] = proper.prop_psd_errormap(wf_array[0,0], rms_error, c_freq, high_power, FILE=filename, TPF=True)
-                    else:
-                        proper.prop_add_phase(wf_array[iw,io], phase_maps[surf])
+                        proper.prop_propagate(wf_array[iw,io], f_lens/aber_params['OOPP'][surf])
+                        lens_name = f"OOPP{surf}"
+                        filename = f"{iop.quasi}/{Loc}_t{step}_{lens_name}.fits"
+                        if not os.path.isfile(filename):
+                            generate_maps(d_lens, Loc, lens_name)
+                        phase_map = rawImageIO.read_image(filename, prob_map=False)
+
+                    # Add Phase Map
+                    proper.prop_add_phase(wf_array[iw, io], phase_map[0])
+
                     if aber_params['OOPP']:
-                        proper.prop_propagate(wf_array[iw,io],f_lens+f_lens*(1-1./aber_params['OOPP'][surf]))
+                        proper.prop_propagate(wf_array[iw,io], f_lens+f_lens*(1-1./aber_params['OOPP'][surf]))
                         proper.prop_lens(wf_array[iw,io], f_lens, "OOPP")
+
                 # quicklook_im(phase_maps[0]*1e9, logAmp=False, colormap="jet", show=True, axis=None, title='nm', pupil=True)
 
             if aber_params['Amp']:
-                for surf in range(aber_params['n_surfs']):
-                    filename = '%s%s_Amp%f_v%i.fits' % (iop.quasi, Loc, step * cp.frame_time, surf)
-                    rms_error = np.random.normal(aber_vals['a_amp'][0],aber_vals['a_amp'][1])
-                    c_freq = np.random.normal(aber_vals['b'][0],
-                                              aber_vals['b'][1])  # correlation frequency (cycles/meter)
-                    high_power = np.random.normal(aber_vals['c'][0],
-                                                  aber_vals['c'][1])  # high frewquency falloff (r^-high_power)
-                    if aber_params['OOPP']:
-                        proper.prop_lens(wf_array[iw, io], f_lens, "OOPP")
-                        proper.prop_propagate(wf_array[iw, io], f_lens / aber_params['OOPP'][surf])
-                    if iw == 0 and io == 0:
-                        if iw == 0 and io == 0:
-                            amp_maps[surf] = proper.prop_psd_errormap(wf_array[0, 0], rms_error, c_freq, high_power,
-                                                                      FILE=filename, TPF=True)
-                        else:
-                            proper.prop_multiply(wf_array[iw, io], amp_maps[surf])
-                    if aber_params['OOPP']:
-                        proper.prop_propagate(wf_array[iw, io], f_lens + f_lens * (1 - 1. / aber_params['OOPP'][surf]))
-                        proper.prop_lens(wf_array[iw, io], f_lens, "OOPP")
+                dprint("Outdated code-please update")
+                # for surf in range(aber_params['n_surfs']):
+                #     filename = '%s%s_Amp%f_v%i.fits' % (iop.quasi, Loc, step * cp.frame_time, surf)
+                #     rms_error = np.random.normal(aber_vals['a_amp'][0],aber_vals['a_amp'][1])
+                #     c_freq = np.random.normal(aber_vals['b'][0],
+                #                               aber_vals['b'][1])  # correlation frequency (cycles/meter)
+                #     high_power = np.random.normal(aber_vals['c'][0],
+                #                                   aber_vals['c'][1])  # high frewquency falloff (r^-high_power)
+                #     if aber_params['OOPP']:
+                #         proper.prop_lens(wf_array[iw, io], f_lens, "OOPP")
+                #         proper.prop_propagate(wf_array[iw, io], f_lens / aber_params['OOPP'][surf])
+                #     if iw == 0 and io == 0:
+                #         if iw == 0 and io == 0:
+                #             amp_maps[surf] = proper.prop_psd_errormap(wf_array[0, 0], rms_error, c_freq, high_power,
+                #                                                       FILE=filename, TPF=True)
+                #         else:
+                #             proper.prop_multiply(wf_array[iw, io], amp_maps[surf])
+                #     if aber_params['OOPP']:
+                #         proper.prop_propagate(wf_array[iw, io], f_lens + f_lens * (1 - 1. / aber_params['OOPP'][surf]))
+                #         proper.prop_lens(wf_array[iw, io], f_lens, "OOPP")
 
 
 def add_zern_ab(wfo):
