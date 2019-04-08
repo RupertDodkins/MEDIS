@@ -37,6 +37,7 @@ def read_folder(wvlFrames_dir = '/Volumes/Data2/dodkins/FITS files/Wvl Frames (c
     return files 
 
 def read_image(filename = 'focalplane_1.fits', prob_map=True):
+    """Note: in this code, astropy.io.fits is renamed to pyfits. This is confusing and should be changed"""
     #hdulist = pyfits.open(directory + filename)
     hdulist = pyfits.open(filename)
     header = hdulist[0].header

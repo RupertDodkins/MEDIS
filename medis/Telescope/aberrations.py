@@ -63,6 +63,7 @@ def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
     # TODO add different timescale aberations
     dprint('Generating optic aberration maps using Proper')
     wfo = proper.prop_begin(lens_diam, 1., ap.grid_size, tp.beam_ratio)
+    print(f"ap.gridsize = {ap.grid_size}")
     aber_cube = np.zeros((ap.numframes, tp.aber_params['n_surfs'], ap.grid_size, ap.grid_size))
     for surf in range(tp.aber_params['n_surfs']):
 
@@ -137,6 +138,7 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name
     if not os.path.isfile(filename):
         generate_maps(d_lens, Loc, lens_name)
     phase_map = rawImageIO.read_image(filename, prob_map=False)
+    #print(phase_map[0].shape)
 
     shape = wf_array.shape
     # The For Loop of Horror:

@@ -67,7 +67,7 @@ tp.aber_params = {'CPA': True,
                     'Phase': True,
                     'Amp': False,
                     'n_surfs': 1,
-                    'OOPP': []}  # fraction of a focal length where mirror(s) is located
+                    'OOPP': [1]}  # fraction of a focal length where mirror(s) is located
 
 # astro_params
 ap.numframes = 3

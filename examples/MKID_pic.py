@@ -10,6 +10,7 @@ from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, com
 import pickle
 from medis.Utils.misc import dprint
 
+iop.aberdata = 'Palomar'
 
 sp.show_wframe = False
 sp.save_obs = False
@@ -18,7 +19,6 @@ sp.num_processes = 1
 
 # Astro Parameters
 ap.companion = True
-# ap.contrast = [5e-3, 1e-3]
 ap.contrast = [0.1]
 ap.star_photons = int(1e7) # # G type star 10ly away gives 1e6 cts/cm^2/s
 ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
@@ -40,7 +40,7 @@ tp.aber_params = {'CPA': True,
                   'Phase': True,
                   'Amp': False,
                   'n_surfs': 8,
-                  'OOPP': [16,8,8,16,4,4,8,16]}#False}#
+                  'OOPP': [16,8,8,16,4,4,8,16]}  # False # This means you are using 4 lenses in the aberrations module!
 
 # Wavelength and Spectral Range
 ap.band = np.array([800, 1500])

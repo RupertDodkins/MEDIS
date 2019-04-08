@@ -32,7 +32,7 @@ class IO_params:
 
         # Aberration Metadata
         self.aberroot = 'aberrations'
-        self.aberdata = 'Palomar'
+        self.aberdata = 'Subaru'
         self.aberdir = os.path.join(self.datadir, self.aberroot, self.aberdata)
         self.NCPA_meas = os.path.join(self.aberdir, 'NCPA_meas.pkl') #
         self.CPA_meas = os.path.join(self.aberdir, 'CPA_meas.pkl')
@@ -130,11 +130,11 @@ class Astro_params:
         self.nwsamp = 3  # initial number of wavefronts in spectral cube (later sampled by MKID detector)
         self.w_bins = 8  # final number of wavefronts in spectral cube after interpolation
         self.band = np.array([800, 1500])  # wavelength range in nm
-        # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
+                                            # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
         self.samp = 0.2  # 0.125  This is a hacked parameter, to scale the atmos fits files to the wf_array
         self.grid_size = 128  # creates a nxn array (of samples of the wavefront)
-        # must be bigger than the beam size to avoid FT effects at edges; must be factor of 2
-        # NOT the size of your detector/# of pixels
+                                # must be bigger than the beam size to avoid FT effects at edges; must be factor of 2
+                                # NOT the size of your detector/# of pixels
         self.interp_sample = True  # Set to interpolate wavelengths from ap.nwsamp to ap.w_bins
 
 
