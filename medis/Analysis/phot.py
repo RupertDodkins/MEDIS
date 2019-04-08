@@ -13,7 +13,7 @@ from matplotlib.ticker import MultipleLocator
 # plots = vip.var.pp_subplots
 from medis.params import cp, mp, tp, iop, ap
 # import medis.Detector.pipeline as pipe
-import medis.Detector.readout as read
+import medis.Detector.get_photon_data as gpd
 from medis.Utils.plot_tools import quicklook_im, loop_frames
 from medis.Utils.misc import dprint
 from vip_hci import phot, metrics
@@ -207,7 +207,7 @@ def get_unoccult_hyper(obs_seq = '/RefPSF_wLyotStop.pkl', numframes=1):
     # ap.nwsamp = 1
     # ap.w_bins = 1
     print(iop.obs_table, 'obs')
-    obs_sequence = run_medis()
+    obs_sequence = gpd.run_medis()
     tp.__dict__ = tp_orig.__dict__
     ap.__dict__ = ap_orig.__dict__
     iop.__dict__ = iop_orig.__dict__

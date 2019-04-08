@@ -8,7 +8,7 @@ from matplotlib.colors import LogNorm
 from vip_hci import phot, pca
 from statsmodels.tsa.stattools import acf
 from medis.params import tp, mp, cp, sp, ap, iop
-# import medis.Detector.get_photon_data as gpd
+import medis.Detector.get_photon_data as gpd
 from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
 from medis.Utils.misc import dprint
 import medis.Detector.readout as read
@@ -31,6 +31,8 @@ sp.get_ints=False
 ap.star_photons = int(1e6)
 ap.contrast = [10**-3.1,10**-3.1,10**-3.1,10**-4,10**-4,10**-4]
 ap.lods = [[-1.6,0.0],[-3.2,0.0],[-5,0.0],[1.6,0.0],[3.2,0.0],[5,0.0]]
+
+tp.save_locs = np.empty((0,1))
 
 tp.diam=8.
 ap.grid_size=148
@@ -135,7 +137,7 @@ if __name__ == '__main__':
     # iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
     dprint(iop.obs_seq)
 
-    orig_hyper = run_medis(plot=False)[:, :]
+    orig_hyper = gpd.run_medis(plot=False)[:, :]
 
     # fast_hyper = fast_hyper[:100]
     # ap.numframes = int(100 * ap.exposure_time / cp.frame_time)

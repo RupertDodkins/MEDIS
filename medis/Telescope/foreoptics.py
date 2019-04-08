@@ -28,12 +28,20 @@ def offset_companion(wf_array, atmos_map):
             wf_array[iw, io].wfarr = wf_array[iw,io].wfarr * np.sqrt(ap.contrast[io]*cont_scaling[iw])
 
 
-def add_obscurations(wfo, diam, legs=True):
+def add_obscurations(wf, M2_frac=0.25, legs_frac=0.05):
+    """
+
+    :param wf: proper wavefront
+    :param M2_frac: ratio of tp.diam the M2 occupies
+    :param legs_frac: ratio of tp.diam the leg thicknesses are
+    :return:
+    """
     # print('Including Obscurations')
-    proper.prop_circular_obscuration(wfo, diam/2)
-    if legs:
-        proper.prop_rectangular_obscuration(wfo, 0.05*diam, diam*1.3, ROTATION=20)
-        proper.prop_rectangular_obscuration(wfo, diam*1.3, 0.05*diam, ROTATION=20)
+    if M2_frac > 0:
+        proper.prop_circular_obscuration(wf, M2_frac * tp.diam)
+    if legs_frac > 0:
+        proper.prop_rectangular_obscuration(wf, legs_frac * tp.diam, tp.diam*1.3, ROTATION=20)
+        proper.prop_rectangular_obscuration(wf, tp.diam*1.3, legs_frac * tp.diam, ROTATION=20)
 
 def add_hex(wfo):
     # TODO implement this
