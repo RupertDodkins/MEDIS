@@ -172,8 +172,7 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
 
     # CPA from Effective Primary
-    filename = '%s%s_Phase%f_v%i.fits' % (iop.quasi, 'CPA', step * cp.frame_time,0)
-    iter_func(wf_array, proper.prop_psd_errormap, rms_error, c_freq, high_power, FILE=filename, TPF=True)  # CPA
+    aber.add_aber(wf_array, tp.fl_nsmyth, tp.d_nsmyth, tp.aber_params, step=0, Loc='CPA', lens_name='nsmyth')
 
      # Nasmyth Focus- Effective Primary/Secondary
     iter_func(wf_array, fo.prop_mid_optics, tp.fl_nsmyth, tp.fl_nsmyth + tp.dist_nsmyth_ao1)  # AO188 is located
@@ -188,8 +187,7 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     # AO188 Distortions to Wavefront
     #######################################
     # AO188-OAP1
-    filename = '%s%s_Phase%f_v%i.fits' % (iop.quasi, 'CPA', step * cp.frame_time, 1)
-    iter_func(wf_array, proper.prop_psd_errormap, rms_error, c_freq, high_power, FILE=filename, TPF=True)  # CPA
+    aber.add_aber(wf_array,tp.fl_ao1,tp.d_ao1, tp.aber_params, 0, 'CPA', 'ao188-OAP1')
     iter_func(wf_array, fo.prop_mid_optics, tp.fl_ao1, tp.dist_ao1_dm)
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
 
@@ -210,15 +208,6 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
 
     else:
         # TODO update this code
-        # if tp.use_ao:
-        #     ao.adaptive_optics(wf, iwf, iw, tp.f_lens, beam_ratio, PASSVALUE['iter'])
-        #
-        # if iwf == 'primary':  # and PASSVALUE['iter'] == 0:
-        #     # quicklook_wf(wf, show=True)
-        #     r0 = float(PASSVALUE['atmos_map'][-10:-5])
-        #     # dprint((r0, 'r0'))
-        #     # if iw == np.ceil(ap.nwsamp/2):
-        #     ao.wfs_measurement(wf, PASSVALUE['iter'], iw, r0=r0)  # , obj_map, tp.wfs_scale)
         dprint('This needs to be updated to the parallel implementation')
         exit()
 
@@ -228,8 +217,7 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
 
     # AO188-OAP2
     iter_func(wf_array, proper.prop_propagate, tp.dist_dm_ao2)
-    filename = '%s%s_Phase%f_v%i.fits' % (iop.quasi, 'CPA', step * cp.frame_time, surf)
-    iter_func(wf_array, proper.prop_psd_errormap, rms_error, c_freq, high_power, FILE=filename, TPF=True)  # NCPA
+    aber.add_aber(wf_array, tp.fl_ao2, tp.d_ao1, tp.aber_params, 0, 'NCPA', 'ao188-OAP2')
     iter_func(wf_array, fo.prop_mid_optics, tp.fl_ao2, tp.fl_ao2)
     if sp.get_ints: get_intensity(wf_array, sp, phase=False)
 

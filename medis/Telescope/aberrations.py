@@ -60,7 +60,7 @@ def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
     :return: will create a FITs file in the folder specified by iop.quasi for each optic (and  timestep in the case
      of quasi-static aberrations)
     """
-    # TODO add different timescale aberations
+    # TODO add different timescale aberations; only does phase aberrations, not amplitude
     dprint('Generating optic aberration maps using Proper')
     wfo = proper.prop_begin(lens_diam, 1., ap.grid_size, tp.beam_ratio)
     print(f"ap.gridsize = {ap.grid_size}")
@@ -123,6 +123,19 @@ def circularise(prim_map):
 
 
 def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name='lens'):
+    """
+    loads a phase error map and adds aberrations using proper.prop_add_phase
+    if no aberration file exists, creates one for specific lens using generate_maps
+
+    :param wf_array: 2D wavefront
+    :param f_lens: focal length (m) of lens to add aberrations to
+    :param d_lens: diameter (in m) of lens
+    :param aber_params: parameters specified by tp.aber_params
+    :param step: is the step number for quasistatic aberrations
+    :param Loc: either 'CPA" or 'NCPA' depending on lens location with respect to wavefront sensor (WFS)
+    :param lens_name: name of the lens, used to save/read in FITS file of aberration map
+    :return will act upon a given wavefront and apply new or loaded-in aberration map
+    """
     # TODO this does not currently loop over time, so it is not using quasi-static abberations.
     # dprint("Adding Abberations")
 
@@ -166,6 +179,8 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name
 
             if aber_params['Amp']:
                 dprint("Outdated code-please update")
+
+
                 # for surf in range(aber_params['n_surfs']):
                 #     filename = '%s%s_Amp%f_v%i.fits' % (iop.quasi, Loc, step * cp.frame_time, surf)
                 #     rms_error = np.random.normal(aber_vals['a_amp'][0],aber_vals['a_amp'][1])
