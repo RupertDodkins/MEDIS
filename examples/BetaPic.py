@@ -1,5 +1,6 @@
 '''This code handles the relevant functionality of a Hawaii 2RG camera'''
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 from medis.params import ap, cp, tp, sp, mp, iop
 from medis.Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
@@ -21,7 +22,7 @@ sp.show_wframe = False
 ap.star_photons = 1e8
 
 
-tp.servo_error= [0,1]#[0,1]#False # No delay and rate of 1/frame_time
+tp.servo_error = [0,1]  #[0,1]#False # No delay and rate of 1/frame_time
 tp.quick_ao = True
 # tp.diam=8.
 tp.obscure = True
@@ -42,12 +43,12 @@ mp.ynum = mp.array_size[1]
 # tp.CPA_type = 'Static'
 # tp.aber_params['OOPP'] = [8,4]
 tp.aber_params = {'CPA': True,
-                    'NCPA': True,
-                    'QuasiStatic': False,  # or Static
-                    'Phase': True,
-                    'Amp': True,
-                    'n_surfs': 4,
-                    'OOPP': [16,8,8, 4]}#False}#
+                  'NCPA': True,
+                  'QuasiStatic': False,  # or Static
+                  'Phase': True,
+                  'Amp': True,
+                  'n_surfs': 4,
+                  'OOPP': [16,8,8, 4]}#False}#
 sp.num_processes = 2
 tp.occulter_type = '8th_Order'
 
@@ -126,7 +127,7 @@ if __name__ == '__main__':
 
     LCcube = np.transpose(diff_cube, (2, 3, 0, 1))
     algo_dict = {'thresh': 0}
-    Dmap = Analysis.stats.get_Dmap(LCcube, algo_dict['thresh'], binning=499, plot=True)
+    Dmap = medis.Analysis.stats.get_Dmap(LCcube, algo_dict['thresh'], binning=499, plot=True)
     quicklook_im(Dmap, annos=['MKIDs'], title=  r'  $I_L / I^{*}$', mark_star=True)
     # indep_images([np.mean(diff_cube[:, 0], axis=0) / star_phot, Dmap / star_phot], logAmp=True,
     #              titles=[r'  $I / I^{*}$', r'  $I_L / I^{*}$'], annos=['Mean', 'MKIDs'])

@@ -78,7 +78,6 @@ def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
         aber_cube[0, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True, PHASE_HISTORY=phase)
 
         filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}.fits"
-        print(filename)
         if not os.path.isfile(filename):
             rawImageIO.saveFITS(aber_cube[0, surf], filename)
 
