@@ -19,6 +19,7 @@ class Wavefronts():
 
     :params
     save_locs e.g. np.array([['entrance pupil', 'phase'], ['after ao', 'phase'], ['before coron.', 'amp']])
+    The shape of self.selec_E_fiels is probe locs x nwsamp x nobjects x tp.grid_size
 
     """
     def __init__(self):
@@ -142,7 +143,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #  phase offset at a particular frequency.
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
-        aber.add_atmos(wfo.wf_array, *(tp.f_lens, PASSVALUE['atmos_map']))
+        aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['atmos_map']))
 
     wfo.wf_array = aber.abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
 
