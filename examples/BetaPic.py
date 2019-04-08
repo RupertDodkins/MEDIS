@@ -23,7 +23,6 @@ ap.star_photons = 1e8
 
 tp.servo_error= [0,1]#[0,1]#False # No delay and rate of 1/frame_time
 tp.quick_ao = True
-# tp.diam=8.
 tp.obscure = True
 tp.use_ao = True
 tp.detector = 'ideal'#'MKIDs'#'ideal'#
