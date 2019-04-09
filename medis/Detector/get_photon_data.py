@@ -9,10 +9,11 @@ import random
 import pickle as pickle
 import time
 from proper_mod import prop_run
-from medis.Utils.plot_tools import quicklook_im, view_datacube
+from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
 from medis.Utils.misc import dprint
-from medis.params import ap,cp,tp,mp,sp,iop,dp
+from medis.params import ap,cp,tp,mp,sp,iop,hp
 import medis.Detector.MKIDs as MKIDs
+import medis.Detector.H2RG as H2RG
 import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
@@ -70,7 +71,6 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
                 # rawImageIO.make_phase_map(cube, plot=True)
                 # return ''
             elif tp.detector == 'H2RG':
-
                 image = np.sum(spectralcube, axis=0)
                 vmin = np.min(spectralcube)*10
             elif tp.detector == 'MKIDs':
@@ -118,12 +118,14 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
         # raise e
         pass
 
+
 def wait_until(somepredicate, timeout, period=0.25, *args, **kwargs):
-  mustend = time.time() + timeout
-  while time.time() < mustend:
-    if somepredicate(*args, **kwargs): return True
-    time.sleep(period)
-  return False
+    must_end = time.time() + timeout
+    while time.time() < must_end:
+        if somepredicate(*args, **kwargs):
+            return True
+        time.sleep(period)
+        return False
 
 
 def run_medis(plot=False):
@@ -146,9 +148,9 @@ def run_medis(plot=False):
     check = read.check_exists_obs_sequence(plot)
     if check:
         if iop.obs_seq[-3:] == '.h5':
-            obs_sequence = open_obs_sequence_hdf5(iop.obs_seq)
+            obs_sequence = read.open_obs_sequence_hdf5(iop.obs_seq)
         else:
-            obs_sequence = open_obs_sequence(iop.obs_seq)
+            obs_sequence = read.open_obs_sequence(iop.obs_seq)
 
         if plot: loop_frames(obs_sequence[:, 0])
         if plot: loop_frames(obs_sequence[0])

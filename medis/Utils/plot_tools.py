@@ -380,14 +380,13 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax=
     from medis.params import ap
     w_string = np.linspace(ap.band[0], ap.band[1], ap.w_bins, dtype=str)
 
-    fig =plt.figure(figsize=(14,7))
+    fig = plt.figure(figsize=(14,7))
     colors = len(datacube)
     height = int(np.ceil(colors/float(width)))
-    peak= np.max(datacube)
-    trough= np.min(datacube)
+
+    peak = np.max(datacube)
+    trough = np.min(datacube)
     # dprint{f"peak={peak}, trough={trough}")
-
-
     # if vmin != None:
     #     if peak >= vmin:
     #         vmax = peak
@@ -402,11 +401,11 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax=
                 # datacube[w] = np.abs(datacube[w] + 1e-9)
                 ax.set_title(w_string[w])
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
-                                    norm=SymLogNorm(linthresh=1e-5),
-                                    cmap="YlGnBu_r")
+                               norm=SymLogNorm(linthresh=1e-5), cmap="YlGnBu_r")
             else:
                 ax.set_title(w_string[w])
-                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, norm=LogNorm(), cmap="YlGnBu_r")
+                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
+                               norm=LogNorm(), cmap="YlGnBu_r")
         else:
             ax.set_title(w_string[w])
             im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap="YlGnBu_r")
