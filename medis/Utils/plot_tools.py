@@ -29,7 +29,7 @@ def fmt(x, pos):
     b = int(b)
     return r'${} e^{{{}}}$'.format(a, b)
 
-def grid(datacube, nrows =2, logAmp=False, axis=None, width=None, titles=None, annos=None, scale=1, vmins =None, vmaxs=None, show=True):
+def grid(datacube, nrows =2, logAmp=False, axis=None, width=None, titles=None, ctitles=None, annos=None, scale=1, vmins =None, vmaxs=None, show=True):
     import matplotlib
     # dprint(matplotlib.is_interactive())
     matplotlib.interactive(1)
@@ -59,11 +59,13 @@ def grid(datacube, nrows =2, logAmp=False, axis=None, width=None, titles=None, a
                                            vmax=vmaxs[m], norm=SymLogNorm(linthresh=1e-7), cmap="YlGnBu_r")
                 else:
                     im = axes[y,x].imshow(datacube[m], interpolation='none', origin='lower',  vmin= vmins[m],
-                                          vmax = vmaxs[m],norm= LogNorm(), cmap="YlGnBu_r")
+                                          vmax=vmaxs[m], norm=LogNorm(), cmap="YlGnBu_r")
             else:
                 im = axes[y,x].imshow(datacube[m], interpolation='none', origin='lower', vmin= vmins[m], vmax = vmaxs[m], cmap='viridis')#"YlGnBu_r"
+            if titles is not None:
+                axes[y, x].set_title(str(titles[m]))
             props = dict(boxstyle='square', facecolor='k', alpha=0.5)
-            if annos:
+            if annos is not None:
                 axes[y, x].text(0.05, 0.075, annos[m],transform=axes[y,x].transAxes, fontweight='bold', color='w', fontsize=22, bbox=props)
             if axis == 'anno':
                 annotate_axis(im, axes[y,x], datacube.shape[1])
@@ -84,23 +86,23 @@ def grid(datacube, nrows =2, logAmp=False, axis=None, width=None, titles=None, a
 
             # axes[y, x].text(0.05, 0.85, labels[m], transform=axes[y,x].transAxes, fontweight='bold', color='w', fontsize=22, family='serif',bbox=props)
             m+= 1
-        if titles and nrows == 2 and width == 2:
+        if ctitles and nrows == 2 and width == 2:
             # cax = fig.add_axes([0.27+ 0.335*m, 0.01, 0.01, 0.89])
             # cax = fig.add_axes([0.9, 0.01 + 0.5*(1-y), 0.02, 0.44])
             cax = fig.add_axes([0.9,0.01,0.03,0.89])
             # cb = fig.colorbar(im, cax=cax, orientation='vertical',format=ticker.FuncFormatter(fmt))
             cb = fig.colorbar(im, cax=cax, orientation='vertical')
-            # cb.ax.set_title(titles[y], fontsize=16)
-            cb.ax.set_title(titles, fontsize=20)
+            # cb.ax.set_title(ctitles[y], fontsize=16)
+            cb.ax.set_title(ctitles, fontsize=20)
 
-        if titles and width == 1:
+        if ctitles and width == 1:
             # cax = fig.add_axes([0.27+ 0.335*m, 0.01, 0.01, 0.89])
             # cax = fig.add_axes([0.9, 0.01 + 0.5*(1-y), 0.02, 0.44])
             cax = fig.add_axes([0.8,0.02,0.05,0.89])
             # cb = fig.colorbar(im, cax=cax, orientation='vertical',format=ticker.FuncFormatter(fmt))
             cb = fig.colorbar(im, cax=cax, orientation='vertical')
-            # cb.ax.set_title(titles[y], fontsize=16)
-            cb.ax.set_title(titles, fontsize=20)
+            # cb.ax.set_title(ctitles[y], fontsize=16)
+            cb.ax.set_title(ctitles, fontsize=20)
     # cax = fig.add_axes([0.93, 0.25, 0.02, 0.5])
     # cb = fig.colorbar(im, cax=cax, orientation='vertical')
     # cb.ax.set_title(r'  $I / I^{*}$', fontsize=16)
@@ -428,6 +430,12 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
         plt.tight_layout()
         plt.show(block=True)
 
+def initialize_GUI():
+    # plt.ion()
+    sp.show_wframe = 'continuous'
+    sp.fig = plt.figure()
+    # ax = sp.fig.add_subplot(111)
+    # ax.plot(range(5))
 
 
 def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=False, anno=None, annos=None, title=None, pupil=False, colormap="YlGnBu_r", mark_star=False, label=None):
@@ -445,12 +453,13 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
         import medis.Analysis.phot
         image = image * Analysis.phot.aperture(ap.grid_size / 2, ap.grid_size / 2, ap.grid_size / 2)
 
-    if show!='continuous':
+    if show != 'continuous':
         fig = plt.figure()
     else:
         fig = sp.fig
         vmax = sp.vmax
         vmin = sp.vmin
+
     if title == None:
         title = r'  $I / I^{*}$'
     
@@ -469,7 +478,9 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
         cax = ax.imshow(image, interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap=colormap)
     if axis:
         annotate_axis(cax, ax, image.shape[0])
-    if show=='continuous':
+    if show == 'continuous':
+        # print('here')
+        # plt.ion()
         fig.canvas.draw()
         if not sp.cbar:
             sp.cbar = plt.colorbar(cax)#norm=LogNorm(vmin=cax.min(), vmax=cax.max()))
@@ -502,7 +513,7 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
     if mark_star:
         ax.plot(image.shape[0]/2,image.shape[1]/2, marker='*', color='r')
 
-    plt.tight_layout()
+
 
 
     # # For plotting on the leftmost screen
@@ -511,7 +522,8 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
     # figManager.window.move(-1920, 0)
     # figManager.window.setFocus()
 
-    if show==True:
+    if show == True:
+        plt.tight_layout()
         plt.show(block=True)
 
 def annotate_axis(im, ax, width):

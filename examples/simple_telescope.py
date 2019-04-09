@@ -46,10 +46,10 @@ def simple_telescope(wavelength, gridsize):
     # quicklook_im(phase_map)
 
     amp_map[80:100, 80:100] = 0
-    quicklook_im(amp_map, logAmp=True)
+    # quicklook_im(amp_map, logAmp=True)
 
     wfo.wfarr = proper.prop_shift_center(amp_map * np.cos(phase_map) + 1j * amp_map * np.sin(phase_map))
-    # quicklook_wf(wf_array[iw,0])
+
     proper.prop_propagate(wfo, fl_eye, "retina")
     proper.prop_lens(wfo, fl_eye, "eye")
     quicklook_wf(wfo)
@@ -59,4 +59,5 @@ def simple_telescope(wavelength, gridsize):
 
     return (wfo, sampling)
 
-prop_run( 'Examples.simple_telescope', 1.1, 128, PHASE_OFFSET = 1 )
+if __name__ == '__main__':
+    prop_run( 'examples.simple_telescope', 1.1, 128, PHASE_OFFSET = 1 )

@@ -78,8 +78,12 @@ def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
     return
 
 
-def quick_ao(wf_array, iwf, f_lens, beam_ratios, iter, CPA_maps):
+def quick_ao(wfo, CPA_maps):
     # TODO address the kludge. Is it still necessary
+
+    wf_array = wfo.wf_array
+    beam_ratios = wfo.beam_ratios
+
     nact = tp.ao_act  # 49                       # number of DM actuators along one axis
     nact_across_pupil = nact -2 # 47          # number of DM actuators across pupil
     dm_xc = (nact / 2)-0.5
@@ -119,6 +123,8 @@ def quick_ao(wf_array, iwf, f_lens, beam_ratios, iter, CPA_maps):
         smoothed = phase_map- lowpass
 
         wf_array[iw,0].wfarr = proper.prop_shift_center(amp_map*np.cos(smoothed)+1j*amp_map*np.sin(smoothed))
+
+    wfo.test_save('quick_ao')
 
     return
 
