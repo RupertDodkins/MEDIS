@@ -9,7 +9,7 @@ from matplotlib import gridspec
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-from medis.params import tp,ap,sp,iop,cp,mp
+from medis.params import tp,ap,sp,iop,cp
 
 sp.save_locs = np.array([['add_obscurations', 'phase'], ['quick_ao', 'phase'], ['prop_mid_optics', 'amp']])
 
@@ -115,17 +115,19 @@ class MyWindow(QtWidgets.QWidget):
         norm = np.array([None for _ in range(len(sp.save_locs))])
         vmin = np.array([None for _ in range(len(sp.save_locs))])
         vmax = np.array([None for _ in range(len(sp.save_locs))])
+        cmap = np.array([None for _ in range(len(sp.save_locs))])
 
         norm[amp_ind] = LogNorm()
-        vmin[~amp_ind] = 0
+        vmin[~amp_ind] = -np.pi
         vmax[~amp_ind] = np.pi
         vmin[amp_ind] = np.min(gui_images[amp_ind,:,0])
         vmax[amp_ind] = np.max(gui_images[amp_ind,:,0])
+        cmap[~amp_ind] = 'hsv'
 
         for x in range(self.rows):
             for y in range(self.cols):
                 im = self.matplotlibWidget.axes[x,y].imshow(gui_images[x,y,0], norm=norm[x],
-                                                            vmin=vmin[x], vmax=vmax[x])
+                                                            vmin=vmin[x], vmax=vmax[x], cmap=cmap[x])
                 if y == 2:
                     cax = self.matplotlibWidget.figure.add_axes([0.92, 0.09 + 0.277 * (self.rows -1 -x), 0.025, 0.25])
 

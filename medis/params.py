@@ -19,9 +19,7 @@ class IO_params:
                                                 # for example 'BetaPic' or 'simple_telescope'
         # High Level Paths
         self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        # self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
-        # self.lab_obs_path = '/mnt/kids/'  #
 
         # Atmosphere Metadata
         self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos (get this from Rupert, don't recreate this on your own!!)
@@ -103,6 +101,7 @@ class Simulation_params:
         self.return_cube = True
         self.get_ints = False
         self.save_locs = None
+
 
 class Astro_params:
     """
@@ -309,6 +308,11 @@ fp = FPWFS_params()
 
 proper.print_it = False
 # proper.prop_init_savestate()
+
+if os.path.exists('{}/user_params.py'.format(os.path.dirname(__file__))):
+    from medis.user_params import update
+    ap, cp, tp, mp, hp, sp, iop, dp, fp = update([ap, cp, tp, mp, hp, sp, iop, dp, fp])
+
 
 
 

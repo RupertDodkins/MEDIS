@@ -80,12 +80,12 @@ class Wavefronts():
         for iw in range(shape[0]):
             for iwf in range(shape[1]):
                 func(self.wf_array[iw, iwf], *args, **kwargs)
-                if func.__name__ in self.save_locs[:, 0]:
+                if self.save_locs is not None and func.__name__ in self.save_locs[:, 0]:
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
 
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
 
-        if func.__name__ in self.save_locs[:, 0]:
+        if self.save_locs is not None and func.__name__ in self.save_locs[:, 0]:
             self.selec_E_fields = np.vstack((self.selec_E_fields, optic_E_fields))
 
     def test_save(self, funcname):
@@ -96,7 +96,7 @@ class Wavefronts():
         :param funcname:
         :return: self.selec_E_fields
         """
-        if funcname in self.save_locs[:, 0]:
+        if self.save_locs is not None and funcname in self.save_locs[:, 0]:
             shape = self.wf_array.shape
             optic_E_fields = np.zeros((1, np.shape(self.wf_array)[0],
                                        np.shape(self.wf_array)[1],
@@ -113,7 +113,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     """
     propagates instantaneous complex E-field through the optical system in loop over wavelength range
 
-    this function is called as a 'perscription' by proper
+    this function is called as a 'prescription' by proper
 
     uses PyPROPER3 to generate the complex E-field at the source, then propagates it through atmosphere, then telescope, to the focal plane
     currently: optics system "hard coded" as single aperture and lens
@@ -170,7 +170,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #######################################
     # Abberations before AO
     if tp.aber_params['CPA']:
-        aber.add_aber(wfo.wf_array, tp.f_lens, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='CPA', lens_name='CPA1')
+        aber.add_aber(wfo.wf_array, tp.f_lens, tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='CPA1')
         wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
 
     if tp.obscure:
@@ -218,7 +218,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     # Abberations after the AO Loop
     if tp.aber_params['NCPA']:
-        aber.add_aber(wfo.wf_array, tp.f_lens,tp.diam, tp.aber_params, tp.aber_vals, PASSVALUE['iter'], Loc='NCPA', lens_name='NCPA1')
+        aber.add_aber(wfo.wf_array, tp.f_lens,tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='NCPA1')
         wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
         # TODO does this need to be here?
         # wfo.iter_func(fo.add_obscurations, tp.diam/4, legs=False)
