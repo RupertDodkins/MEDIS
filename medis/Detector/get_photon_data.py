@@ -95,15 +95,13 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
 
                 vmin = 0.9
 
-            wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins, dtype=str)
-            print(f"f_out = {wsamples}")
 
             if sp.show_wframe:
                 dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
                 quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
 
             if sp.show_cube:
-                view_datacube(spectralcube, wsamples, logAmp=True, vmin=vmin)
+                view_datacube(spectralcube, logAmp=True, vmin=vmin)
 
             if sp.return_cube:
                 spectralcubes_queue.put((t,spectralcube))
@@ -112,6 +110,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
         elapsed = float(now - start) / 60.
         each_iter = float(elapsed) / (it + 1)
 
+        print('***********************************')
         dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #
 
     except Exception as e:

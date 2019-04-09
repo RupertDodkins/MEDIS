@@ -116,7 +116,7 @@ class Astro_params:
         # Total number of photons on the array for a timestep shared between all wavelengths
         self.star_photons = int(1e5) # # A 5 apparent mag star 1e6 cts/cm^2/s
         self.companion = True
-        self.contrast = [0.05]
+        self.contrast = [0.0005]
         self.C_spec = 1.5  # the gradient of the increase in contrast towards shorter wavelengths
         self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
         self.exposure_time = 0.01
