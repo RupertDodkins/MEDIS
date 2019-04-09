@@ -74,6 +74,7 @@ sp.get_ints = {'w': [0], 'c': [0]}
 
 if __name__ == '__main__':
     # Rename Data Directory
+    iop.aberdata = 'Palomar'
     iop.update("MKID_pic-ideal/")
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)

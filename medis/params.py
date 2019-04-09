@@ -32,7 +32,7 @@ class IO_params:
 
         # Aberration Metadata
         self.aberroot = 'aberrations'
-        self.aberdata = 'Subaru'
+        self.aberdata = 'Palomar'
         self.aberdir = os.path.join(self.datadir, self.aberroot, self.aberdata)
         self.NCPA_meas = os.path.join(self.aberdir, 'NCPA_meas.pkl') #
         self.CPA_meas = os.path.join(self.aberdir, 'CPA_meas.pkl')
