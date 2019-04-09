@@ -26,7 +26,7 @@ Depending on which IDE you use to run Python, there are different methods to ens
 `$ conda activate medis`
 before running 
 `$ python`
-However, if you are using a more sophisiticated IDE, you may need to link the env to the project settings. For example, in PyCharm, you can create a MEDIS project to contain all the medis code. You then need to go into the project settings, and set Project Interpreter to */path/to/anaconda3/envs/medis/bin/python3.6*. PyCharm then automatically uses the version of numpy, scipy, etc located in the same env folder. 
+However, if you are using a more sophisticated IDE, you may need to link the env to the project settings. For example, in PyCharm, you can create a MEDIS project to contain all the medis code. You then need to go into the project settings, and set Project Interpreter to */path/to/anaconda3/envs/medis/bin/python3.6*. PyCharm then automatically uses the version of numpy, scipy, etc located in the same env folder. 
 
 ### Installing Modified PROPER
 You will also have to install a modified verision of PROPER. Go to the MEDIS/Proper folder and run
@@ -42,7 +42,7 @@ and change the import statement from `get_annulus` to `get_annulus_segments`.
 
 
 ### Setting the Save Directory and the Atmosphere Maps
-The default location for the save data will be *$HOME/medis_data/*. If you want the data to be saved to a different location then change the iop.datadir variable in params
+The default location for the save data will be *$HOME/medis_data/*. If you want the data to be saved to a different location then change the `iop.datadir` variable in *user_params.py*. Any default global parameter can be changed there and it should affect the remote repo
 
 Also if you don't want to generate atmosphere maps yourself, then copy *MEDIS/caos_pse/180828.zip* to your `iop.atmosdata` and unzip
 
