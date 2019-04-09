@@ -95,12 +95,15 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
 
                 vmin = 0.9
 
+            wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins, dtype=str)
+            print(f"f_out = {wsamples}")
+
             if sp.show_wframe:
                 dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
                 quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
 
             if sp.show_cube:
-                view_datacube(spectralcube, logAmp=True, vmin=vmin)
+                view_datacube(spectralcube, wsamples, logAmp=True, vmin=vmin)
 
             if sp.return_cube:
                 spectralcubes_queue.put((t,spectralcube))

@@ -377,16 +377,14 @@ def get_intensity(wf_array, sp, logAmp=True, show=False, save=True, phase=False)
         with open(iop.int_maps, 'wb') as wfp:
             pickle.dump(int_maps, wfp, protocol=pickle.HIGHEST_PROTOCOL)
 
-def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax =None, width=5):
+def view_datacube(datacube, w_string, show=True, logAmp=False, axis=True, vmin=None, vmax =None, width=5):
     '''axis = anno/None/True'''
     fig =plt.figure(figsize=(14,7))
     colors = len(datacube)
-    print(colors, width)
     height = int(np.ceil(colors/float(width)))
-    print(height)
     peak= np.max(datacube)
     trough= np.min(datacube)
-    # print peak, trough, 'max'
+    # dprint{f"peak={peak}, trough={trough}")
 
 
     # if vmin != None:
@@ -394,18 +392,21 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
     #         vmax = peak
     # else:
     #     vmin = np.min(datacube)
-    dprint((vmin, vmax, peak))
+    dprint(f"vmin={vmin}, vmax={vmax}, peak={peak}")
     for w in range(colors):
-        ax = fig.add_subplot(height,width,w+1)
+        ax = fig.add_subplot(height, width, w+1)
         if logAmp:
             if vmin <= 0:
                 # datacube[w] = np.abs(datacube[w] + 1e-9)
+                ax.set_title(w_string[w])
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                     norm=SymLogNorm(linthresh=1e-5),
                                     cmap="YlGnBu_r")
             else:
+                ax.set_title(w_string[w])
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin= vmin, vmax = vmax, norm= LogNorm(), cmap="YlGnBu_r")
         else:
+            ax.set_title(w_string[w])
             im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax = vmax, cmap="YlGnBu_r")
         if axis == 'anno':
             annotate_axis(im, ax, datacube.shape[1])
