@@ -9,10 +9,11 @@ import random
 import pickle as pickle
 import time
 from proper_mod import prop_run
-from medis.Utils.plot_tools import quicklook_im, view_datacube
+from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
 from medis.Utils.misc import dprint
 from medis.params import ap,cp,tp,mp,sp,iop,dp
 import medis.Detector.MKIDs as MKIDs
+import medis.Detector.H2RG as H2RG
 import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
@@ -108,6 +109,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
         elapsed = float(now - start) / 60.
         each_iter = float(elapsed) / (it + 1)
 
+        print('***********************************')
         dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #
 
     except Exception as e:
