@@ -8,11 +8,16 @@ sp.save_locs = np.array([['add_atmos',], ['quick_ao',], ['prop_mid_optics',], ['
 
 phase_ind = [True, True, False, False]
 
+wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
+
+titles = np.vstack((wsamples,wsamples)).reshape((-1,),order='F')  # interleave two arrays because grid indexes down the
+                                                                  # columns then the rows as oopsed to vice versa
+print(titles)
+
 if __name__ == '__main__':
     for t in range(10):
         r0 = 0.2
         atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0)
-
         kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
         _, selec_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                      PHASE_OFFSET=1)
@@ -23,7 +28,7 @@ if __name__ == '__main__':
 
             if phase_ind[surf]:
                 grid(np.angle(selec_E_fields[surf], deg=False).reshape(6, ap.grid_size,ap.grid_size),
-                     nrows=2, show=show)
+                     nrows=2, show=show, titles=titles)
             else:
                 grid(np.absolute(selec_E_fields[surf]).reshape(6, ap.grid_size,ap.grid_size),
-                     nrows=2, show=show)
+                     nrows=2, show=show, titles=titles)

@@ -109,11 +109,11 @@ lod = 6
 #     int_maps = np.array(int_maps)
 #     dprint(int_maps[0].shape)
 #     # view_datacube(int_maps, logAmp=True)
-#     # grid(int_maps[::-1][:4,ap.grid_size//4:-ap.grid_size//4,ap.grid_size//4:-ap.grid_size//4], titles=r'$\phi$',
+#     # grid(int_maps[::-1][:4,ap.grid_size//4:-ap.grid_size//4,ap.grid_size//4:-ap.grid_size//4], ctitles=r'$\phi$',
 #     #      annos=['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA'],
 #     #      vmins=[-3.14] * 4, vmaxs=[3.14] * 4)
 #     grid(int_maps[::-1][4:,ap.grid_size//4:-ap.grid_size//4,ap.grid_size//4:-ap.grid_size//4], nrows =2, width=1,
-#          titles=r'$I$', annos=['Before Coron.', 'After Coron.'],
+#          ctitles=r'$I$', annos=['Before Coron.', 'After Coron.'],
 #          logAmp=True, vmins=[1e-9]*2, vmaxs=[1e-2]*2)
 #     plt.show(block=True)
 
