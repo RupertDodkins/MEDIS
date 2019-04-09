@@ -2,7 +2,6 @@
 This is the main configuration file. It contains default global variables (as in they are read in by the relevant modules)
 that define the parameters of the whole telescope system. These parameters can be redefined at the beginning of the
 example module the user is running
-
 """
 
 import numpy as np
@@ -78,14 +77,13 @@ class IO_params:
         if not os.path.isdir(self.quasi):
             os.makedirs(self.quasi, exist_ok=True)
 
-    def update(self, new_name):
+    def update(self, new_name='example1'):
         self.__init__(testname=new_name)
 
 
 class Simulation_params:
     """
     Default parameters for outputs of the simulation. What plots you want to see etc
-
     """
     def __init__(self):
         self.timing = True  # True will print timing statements in run_medis()
@@ -106,7 +104,6 @@ class Simulation_params:
 class Astro_params:
     """
     Default parameters for the astronomical system under investigation
-
     exposure_time, startframe and numframes may seem a bit out of place here. Perhaps this class could be renamed
     """
     def __init__(self):
@@ -246,7 +243,6 @@ class MKID_params:
 class Device_params:
     """
     This is different from MKID_params in that it contains an instance of these random multidimensional parameters
-
     Perhaps it could be part of MKID_params
     """
     def __init__(self):
@@ -311,9 +307,4 @@ proper.print_it = False
 
 if os.path.exists('{}/user_params.py'.format(os.path.dirname(__file__))):
     from medis.user_params import update
-    ap, cp, tp, mp, hp, sp, iop, dp, fp = update([ap, cp, tp, mp, hp, sp, iop, dp, fp])
-
-
-
-
-
+    ap, cp, tp, mp, hp, sp, iop, dp, fp = update((ap, cp, tp, mp, hp, sp, iop, dp, fp))

@@ -42,7 +42,7 @@ and change the import statement from `get_annulus` to `get_annulus_segments`.
 
 
 ### Setting the Save Directory and the Atmosphere Maps
-The default location for the save data will be *$HOME/medis_data/*. If you want the data to be saved to a different location then change the `iop.datadir` variable in *user_params.py*. Any default global parameter can be changed there and it should affect the remote repo
+The default location for the save data will be *$HOME/medis_data/*. If you want the data to be saved to a different location then change the `iop.datadir` variable in *user_params.py*. Any default global parameter can be changed there and it shouldn't affect the remote repo
 
 Also if you don't want to generate atmosphere maps yourself, then copy *MEDIS/caos_pse/180828.zip* to your `iop.atmosdata` and unzip
 
