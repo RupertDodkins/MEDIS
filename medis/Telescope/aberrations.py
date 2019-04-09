@@ -40,7 +40,7 @@ def abs_zeros(wf_array):
     return wf_array
 
 
-def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
+def generate_maps(lens_diam, lens_name='lens'):
     """
     generate PSD-defined aberration maps for a lens(mirror) using Proper
 
@@ -60,10 +60,9 @@ def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
     :return: will create a FITs file in the folder specified by iop.quasi for each optic (and  timestep in the case
      of quasi-static aberrations)
     """
-    # TODO add different timescale aberations; only does phase aberrations, not amplitude
+    # TODO add different timescale aberations
     dprint('Generating optic aberration maps using Proper')
     wfo = proper.prop_begin(lens_diam, 1., ap.grid_size, tp.beam_ratio)
-    print(f"ap.gridsize = {ap.grid_size}")
     aber_cube = np.zeros((ap.numframes, tp.aber_params['n_surfs'], ap.grid_size, ap.grid_size))
     for surf in range(tp.aber_params['n_surfs']):
 
@@ -78,7 +77,8 @@ def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
         phase = 2 * np.pi * np.random.uniform(size=(ap.grid_size, ap.grid_size)) - np.pi
         aber_cube[0, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True, PHASE_HISTORY=phase)
 
-        filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}.fits"
+        filename = f"{iop.quasi}/t{0}_{lens_name}.fits"
+        print(filename)
         if not os.path.isfile(filename):
             rawImageIO.saveFITS(aber_cube[0, surf], filename)
 
@@ -90,7 +90,7 @@ def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
             aber_cube[a, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power,
                                  MAP="prim_map", TPF=True, PHASE_HISTORY=phase)
 
-            filename = f"{iop.quasi}/{Loc}_t{0}_{lens_name}.fits"
+            filename = f"{iop.quasi}/t{0}_{lens_name}.fits"
             if not os.path.isfile(filename):
                 rawImageIO.saveFITS(aber_cube[0, surf], filename)
 
@@ -98,7 +98,7 @@ def generate_maps(lens_diam, Loc='CPA', lens_name='lens'):
     #     # print 'saving frame #', f
     #     if f%100==0: misc.progressBar(value = f, endvalue=ap.numframes)
     #     for surf in range(tp.aber_params['n_surfs']):
-    #         filename = '%s%s_Phase%f_v%i.fits' % (iop.aberdir, Loc, f * cp.frame_time, surf)
+    #         filename = '%s%s_Phase%f_v%i.fits' % (iop.aberdir, f * cp.frame_time, surf)
     #         rawImageIO.saveFITS(aber_cube[f, surf], '%stelz%f.fits' % (iop.aberdir, f*cp.frame_time))
             # quicklook_im(aber_cube[f], logAmp=False, show=True)
 
@@ -122,17 +122,16 @@ def circularise(prim_map):
     return new_prim
 
 
-def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name='lens'):
+def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
     """
     loads a phase error map and adds aberrations using proper.prop_add_phase
     if no aberration file exists, creates one for specific lens using generate_maps
 
     :param wf_array: 2D wavefront
     :param f_lens: focal length (m) of lens to add aberrations to
-    :param d_lens: diameter (in m) of lens
+    :param d_lens: diameter (in m) of lens (only used when generating new aberrations maps)
     :param aber_params: parameters specified by tp.aber_params
     :param step: is the step number for quasistatic aberrations
-    :param Loc: either 'CPA" or 'NCPA' depending on lens location with respect to wavefront sensor (WFS)
     :param lens_name: name of the lens, used to save/read in FITS file of aberration map
     :return will act upon a given wavefront and apply new or loaded-in aberration map
     """
@@ -147,11 +146,10 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name
             iop.aberdir = iop.aberdir+'quasi/'
 
     # Load in or Generate Aberration Map
-    filename = f"{iop.quasi}/{Loc}_t{step}_{lens_name}.fits"
+    filename = f"{iop.quasi}/t{step}_{lens_name}.fits"
     if not os.path.isfile(filename):
-        generate_maps(d_lens, Loc, lens_name)
+        generate_maps(d_lens, lens_name)
     phase_map = rawImageIO.read_image(filename, prob_map=False)
-    #print(phase_map[0].shape)
 
     shape = wf_array.shape
     # The For Loop of Horror:
@@ -163,9 +161,9 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name
                         proper.prop_lens(wf_array[iw,io], f_lens, "OOPP")
                         proper.prop_propagate(wf_array[iw,io], f_lens/aber_params['OOPP'][surf])
                         lens_name = f"OOPP{surf}"
-                        filename = f"{iop.quasi}/{Loc}_t{step}_{lens_name}.fits"
+                        filename = f"{iop.quasi}/t{step}_{lens_name}.fits"
                         if not os.path.isfile(filename):
-                            generate_maps(d_lens, Loc, lens_name)
+                            generate_maps(d_lens, lens_name)
                         phase_map = rawImageIO.read_image(filename, prob_map=False)
 
                     # Add Phase Map
@@ -179,10 +177,8 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name
 
             if aber_params['Amp']:
                 dprint("Outdated code-please update")
-
-
                 # for surf in range(aber_params['n_surfs']):
-                #     filename = '%s%s_Amp%f_v%i.fits' % (iop.quasi, Loc, step * cp.frame_time, surf)
+                #     filename = '%s%s_Amp%f_v%i.fits' % (iop.quasi, step * cp.frame_time, surf)
                 #     rms_error = np.random.normal(aber_vals['a_amp'][0],aber_vals['a_amp'][1])
                 #     c_freq = np.random.normal(aber_vals['b'][0],
                 #                               aber_vals['b'][1])  # correlation frequency (cycles/meter)
@@ -213,13 +209,12 @@ def add_zern_ab(wfo):
     proper.prop_zernikes(wfo, [2,3,4], np.array([175,150,200])*1.0e-9)
 
 
-def add_atmos(wf_array, w, atmos_map, correction=False):
+def add_atmos(wfo, f_lens, atmos_map):
     """
     creates a phase offset matrix for each wavelength at each time step,
     sampled from the atmosphere generated by CAOS
 
     :param wf_array: array of complex E-field arrays at each wavelength for each astronomical body
-    :param w: discreet wavelength
     :param atmos_map: fits file of atmospheric aberrations at time step
     :param correction:
     :return:
@@ -234,13 +229,13 @@ def add_atmos(wf_array, w, atmos_map, correction=False):
     # dprint(f"Adding Atmosphere--at wavelength {w*1e9} nm")
     #samp = proper.prop_get_sampling(wf_array[0, 0])*ap.band[0]*1e-9/w  # <--This looks good!?!
 
-    shape = wf_array.shape
+    shape = wfo.wf_array.shape
 
     for iw in range(shape[0]):
         for io in range(shape[1]):
             if iw == 0 and io == 0:
                 try:
-                    obj_map = proper.prop_errormap(wf_array[0, 0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=ap.samp)
+                    obj_map = proper.prop_errormap(wfo.wf_array[0, 0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=ap.samp)
                 except IOError:
                     print('*** Using exception hack for name rounding error ***')
                     i = 0
@@ -261,9 +256,11 @@ def add_atmos(wf_array, w, atmos_map, correction=False):
                             print('No file found. Is your frame cadence too short for the atmosphere maps you have?')
                             exit()
 
-                    obj_map = proper.prop_errormap(wf_array[0,0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=ap.samp)
+                    obj_map = proper.prop_errormap(wfo.wf_array[0,0], atmos_map, WAVEFRONT=True, MAP="obj_map", SAMPLING=ap.samp)
             else:
-                proper.prop_add_phase(wf_array[iw,io], obj_map)
+                proper.prop_add_phase(wfo.wf_array[iw,io], obj_map)
+
+    wfo.test_save('add_atmos')
 
 def rotate_atmos(wf, atmos_map):
     time = float(atmos_map[-19:-11])

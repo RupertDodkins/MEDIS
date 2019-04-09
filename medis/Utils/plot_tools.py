@@ -30,7 +30,8 @@ def fmt(x, pos):
     return r'${} e^{{{}}}$'.format(a, b)
 
 
-def grid(datacube, nrows=2, logAmp=False, axis=None, width=None, titles=None, annos=None, scale=1, vmins=None, vmaxs=None, show=True):
+def grid(datacube, nrows=2, logAmp=False, axis=None, width=None, titles=None, ctitles=None, annos=None,
+         scale=1, vmins=None, vmaxs=None, show=True):
     import matplotlib
     # dprint(matplotlib.is_interactive())
     matplotlib.interactive(1)
@@ -59,14 +60,17 @@ def grid(datacube, nrows=2, logAmp=False, axis=None, width=None, titles=None, an
                     im = axes[y, x].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmins[m],
                                            vmax=vmaxs[m], norm=SymLogNorm(linthresh=1e-7), cmap="YlGnBu_r")
                 else:
-                    im = axes[y,x].imshow(datacube[m], interpolation='none', origin='lower',  vmin=vmins[m],
+                    im = axes[y,x].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmins[m],
                                           vmax=vmaxs[m], norm=LogNorm(), cmap="YlGnBu_r")
             else:
-                im = axes[y,x].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmins[m], vmax=vmaxs[m], cmap='viridis')#"YlGnBu_r"
+                im = axes[y,x].imshow(datacube[m], interpolation='none', origin='lower',
+                                      vmin=vmins[m], vmax=vmaxs[m], cmap='viridis')#"YlGnBu_r"
+            if titles is not None:
+                axes[y, x].set_title(str(titles[m]))
             props = dict(boxstyle='square', facecolor='k', alpha=0.5)
-            if annos:
-                axes[y, x].text(0.05, 0.075, annos[m], transform=axes[y,x].transAxes,
-                                fontweight='bold', color='w', fontsize=22, bbox=props)
+            if annos is not None:
+                axes[y, x].text(0.05, 0.075, annos[m],transform=axes[y,x].transAxes, fontweight='bold',
+                                color='w', fontsize=22, bbox=props)
             if axis == 'anno':
                 annotate_axis(im, axes[y,x], datacube.shape[1])
             if axis is None:
@@ -85,51 +89,21 @@ def grid(datacube, nrows=2, logAmp=False, axis=None, width=None, titles=None, an
             #     axes[y, x].arrow(103.5, 43, -10, 0, head_width=5, head_length=3, fc='r', ec='r')
 
             # axes[y, x].text(0.05, 0.85, labels[m], transform=axes[y,x].transAxes, fontweight='bold', color='w', fontsize=22, family='serif',bbox=props)
-
             m += 1
 
-        if titles and nrows == 2 and width == 2:
-            # cax = fig.add_axes([0.27+ 0.335*m, 0.01, 0.01, 0.89])
-            # cax = fig.add_axes([0.9, 0.01 + 0.5*(1-y), 0.02, 0.44])
+        if ctitles and nrows == 2 and width == 2:
             cax = fig.add_axes([0.9,0.01,0.03,0.89])
             # cb = fig.colorbar(im, cax=cax, orientation='vertical',format=ticker.FuncFormatter(fmt))
             cb = fig.colorbar(im, cax=cax, orientation='vertical')
-            # cb.ax.set_title(titles[y], fontsize=16)
-            cb.ax.set_title(titles, fontsize=20)
+            # cb.ax.set_title(ctitles[y], fontsize=16)
+            cb.ax.set_title(ctitles, fontsize=20)
 
-        if titles and width == 1:
-            # cax = fig.add_axes([0.27+ 0.335*m, 0.01, 0.01, 0.89])
-            # cax = fig.add_axes([0.9, 0.01 + 0.5*(1-y), 0.02, 0.44])
+        if ctitles and width == 1:
             cax = fig.add_axes([0.8,0.02,0.05,0.89])
             # cb = fig.colorbar(im, cax=cax, orientation='vertical',format=ticker.FuncFormatter(fmt))
             cb = fig.colorbar(im, cax=cax, orientation='vertical')
-            # cb.ax.set_title(titles[y], fontsize=16)
-            cb.ax.set_title(titles, fontsize=20)
-    # cax = fig.add_axes([0.93, 0.25, 0.02, 0.5])
-    # cb = fig.colorbar(im, cax=cax, orientation='vertical')
-    # cb.ax.set_title(r'  $I / I^{*}$', fontsize=16)
-    # axes[0,0].text(0.84, 0.9, '0.2"', transform=axes[0,0].transAxes, fontweight='bold', color='w', ha='center', fontsize=14, family='serif')
-    # axes[0,0].plot([0.78, 0.9], [0.87, 0.87],transform=axes[0,0].transAxes, color='w', linestyle='-', linewidth=3)
-
-
-    # plt.ticklabel_format(useOffset=False)
-    # if width != 2:
-    #     cax = fig.add_axes([0.94, 0.01, 0.01, 0.87])
-    # elif width ==2:
-    #     cax = fig.add_axes([0.84, 0.01, 0.02, 0.89])
-    # cb = fig.colorbar(im, cax=cax, orientation='vertical')
-    # if titles:
-    #     cb.ax.set_title(r'  $I / I^{*}$', fontsize=16)
-
-    # plt.subplots_adjust(left=0.01, right=0.93, top=0.9, bottom=0.01, wspace=0.33)
-
-    # figManager = plt.get_current_fig_manager()
-    # # if px=0, plot will display on 1st screen
-    # figManager.window.move(-1920, 0)
-    # # figManager.window.showMaximized()
-    # # figManager.window.move(np.random.uniform(0,1440),np.random.uniform(0,825)) #[825, 1440]
-    #
-    # figManager.window.setFocus()
+            # cb.ax.set_title(ctitles[y], fontsize=16)
+            cb.ax.set_title(ctitles, fontsize=20)
 
     if show:
         plt.subplots_adjust(left=0.01, right=0.86, top=0.9, bottom=0.01, wspace=0.1, hspace=0.1)
@@ -229,9 +203,7 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
     # datacube = datacube/norm
 
     peaks, troughs = [], []
-    dprint((datacube.shape, axes.shape, width))
-    # plt.imshow(datacube[0])
-    # plt.show()
+    dprint(f"datacube shape={datacube.shape}, axis shape={axes.shape}, width={width}")
     for image in datacube:
         peaks.append(np.max(image))
         troughs.append(np.min(image))
@@ -262,10 +234,7 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
                 im = ax[m].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                norm=SymLogNorm(linthresh=1e-7), cmap="YlGnBu_r")
                 # datacube[m] = np.abs(datacube[m]) + 1e-20
-                # vmin = 1e-3
-                # print 'corrected', np.min(datacube[m])
-                dprint((np.min(datacube[m]),vmin, vmax))
-                print('corrected', np.min(datacube[m]), np.max(datacube[m]), vmin, vmax)
+                dprint('corrected', np.min(datacube[m]), np.max(datacube[m]), vmin, vmax)
             else:
                 im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                norm=LogNorm(), cmap="YlGnBu_r")
@@ -322,7 +291,7 @@ def get_intensity(wf_array, sp, logAmp=True, show=False, save=True, phase=False)
         after_dm = proper.prop_get_amplitude(wfo)
         phase_afterdm = proper.prop_get_phase(wfo)
 
-        fig =plt.figure(figsize=(14,10))
+        fig = plt.figure(figsize=(14,10))
         ax1 = plt.subplot2grid((3, 2), (0, 0),rowspan=2)
         ax2 = plt.subplot2grid((3, 2), (0, 1),rowspan=2)
         ax3 = plt.subplot2grid((3, 2), (2, 0))
@@ -362,8 +331,6 @@ def get_intensity(wf_array, sp, logAmp=True, show=False, save=True, phase=False)
                 int_maps = np.vstack((int_maps,[int_map]))
                 # quicklook_im(int_map)#, logAmp=True)
 
-
-
         import pickle, os
         if os.path.exists(iop.int_maps):
             # "with" statements are very handy for opening files.
@@ -375,18 +342,19 @@ def get_intensity(wf_array, sp, logAmp=True, show=False, save=True, phase=False)
             pickle.dump(int_maps, wfp, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax=None, width=5):
+def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax =None, width=5):
     '''axis = anno/None/True'''
     from medis.params import ap
     w_string = np.linspace(ap.band[0], ap.band[1], ap.w_bins, dtype=str)
 
-    fig = plt.figure(figsize=(14,7))
+    fig =plt.figure(figsize=(14,7))
     colors = len(datacube)
     height = int(np.ceil(colors/float(width)))
-
-    peak = np.max(datacube)
-    trough = np.min(datacube)
+    peak= np.max(datacube)
+    trough= np.min(datacube)
     # dprint{f"peak={peak}, trough={trough}")
+
+
     # if vmin != None:
     #     if peak >= vmin:
     #         vmax = peak
@@ -395,17 +363,16 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax=
     # dprint(f"vmin={vmin}, vmax={vmax}, peak={peak}")
 
     for w in range(colors):
-        ax = fig.add_subplot(height, width, w+1)
+        ax = fig.add_subplot(height,width,w+1)
         if logAmp:
             if vmin <= 0:
                 # datacube[w] = np.abs(datacube[w] + 1e-9)
-                ax.set_title(w_string[w])
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
-                               norm=SymLogNorm(linthresh=1e-5), cmap="YlGnBu_r")
+                                    norm=SymLogNorm(linthresh=1e-5),
+                                    cmap="YlGnBu_r")
             else:
                 ax.set_title(w_string[w])
-                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
-                               norm=LogNorm(), cmap="YlGnBu_r")
+                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, norm=LogNorm(), cmap="YlGnBu_r")
         else:
             ax.set_title(w_string[w])
             im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap="YlGnBu_r")
@@ -430,6 +397,13 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax=
         plt.tight_layout()
         plt.show(block=True)
 
+def initialize_GUI():
+    # plt.ion()
+    sp.show_wframe = 'continuous'
+    sp.fig = plt.figure()
+    # ax = sp.fig.add_subplot(111)
+    # ax.plot(range(5))
+
 
 def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=False, anno=None, title=None, pupil=False, colormap="YlGnBu_r", mark_star=False, label=None):
     # MEDIUM_SIZE = 27
@@ -452,7 +426,8 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
         fig = sp.fig
         vmax = sp.vmax
         vmin = sp.vmin
-    if title == None:
+
+    if title is None:
         title = r'  $I / I^{*}$'
     
     ax = fig.add_subplot(111)
@@ -470,7 +445,7 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
         cax = ax.imshow(image, interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap=colormap)
     if axis:
         annotate_axis(cax, ax, image.shape[0])
-    if show == 'continuous':
+    if show is 'continuous':
         fig.canvas.draw()
         if not sp.cbar:
             sp.cbar = plt.colorbar(cax)#norm=LogNorm(vmin=cax.min(), vmax=cax.max()))
@@ -478,19 +453,13 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
             sp.vmax = clims[1]
             sp.vmin = clims[0]
         plt.show(block=False)
-        # import time
-        # time.sleep(5.0)
     else:
         # cb = plt.colorbar(cax, format=ticker.FuncFormatter(fmt))
         cb = plt.colorbar(cax)
 
     if axis is None:
         ax.axis('off')
-        # ax.text(0.84, 0.9, '0.2"', transform=ax.transAxes, fontweight='bold', color='w', ha='center', fontsize=14, family='serif')
-        # ax.plot([0.78, 0.9], [0.87, 0.87],transform=ax.transAxes, color='w', linestyle='-', linewidth=3)
-        # cb.ax.set_title(title, fontsize=16)
-        # if anno:
-        #     ax.text(0.05, 0.05, anno, transform=ax.transAxes, fontweight='bold', color='w', fontsize=22)
+
     if anno:
         props = dict(boxstyle='square', facecolor='k', alpha=0.3)
         ax.text(0.05, 0.05, anno, transform=ax.transAxes, fontweight='bold', color='w', fontsize=22, bbox=props)
@@ -503,9 +472,6 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
     if mark_star:
         ax.plot(image.shape[0]/2,image.shape[1]/2, marker='*', color='r')
 
-    plt.tight_layout()
-
-
     # # For plotting on the leftmost screen
     # figManager = plt.get_current_fig_manager()
     # # if px=0, plot will display on 1st screen
@@ -513,6 +479,7 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
     # figManager.window.setFocus()
 
     if show:
+        plt.tight_layout()
         plt.show(block=True)
 
 

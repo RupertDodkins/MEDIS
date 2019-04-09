@@ -11,7 +11,7 @@ import time
 from proper_mod import prop_run
 from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
 from medis.Utils.misc import dprint
-from medis.params import ap,cp,tp,mp,sp,iop,hp
+from medis.params import ap,cp,tp,mp,sp,iop,dp
 import medis.Detector.MKIDs as MKIDs
 import medis.Detector.H2RG as H2RG
 import medis.Detector.pipeline as pipe
@@ -55,13 +55,12 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
 
                 r0 = cp.r0s[element]
             else:
-                r0 = cp.r0s # this is a scalar in this instance
+                r0 = cp.r0s  # this is a scalar in this instance
 
             atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
-            spectralcube, _ = prop_run('medis.Telescope.Subaru_optics', 1, ap.grid_size, PASSVALUE=kwargs, VERBOSE=False, PHASE_OFFSET=1)
-            # spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
-            #                            VERBOSE=False, PHASE_OFFSET=1)
+            spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
+                                       VERBOSE=False, PHASE_OFFSET=1)
 
             if tp.detector == 'ideal':
                 image = np.sum(spectralcube, axis=0)
@@ -71,6 +70,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
                 # rawImageIO.make_phase_map(cube, plot=True)
                 # return ''
             elif tp.detector == 'H2RG':
+
                 image = np.sum(spectralcube, axis=0)
                 vmin = np.min(spectralcube)*10
             elif tp.detector == 'MKIDs':
@@ -95,7 +95,6 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
 
                 vmin = 0.9
 
-
             if sp.show_wframe:
                 dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
                 quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
@@ -118,14 +117,12 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
         # raise e
         pass
 
-
 def wait_until(somepredicate, timeout, period=0.25, *args, **kwargs):
-    must_end = time.time() + timeout
-    while time.time() < must_end:
-        if somepredicate(*args, **kwargs):
-            return True
-        time.sleep(period)
-        return False
+  mustend = time.time() + timeout
+  while time.time() < mustend:
+    if somepredicate(*args, **kwargs): return True
+    time.sleep(period)
+  return False
 
 
 def run_medis(plot=False):
@@ -144,6 +141,7 @@ def run_medis(plot=False):
     # for param in [ap, cp, tp, mp, sp, iop]:
     #     print('\n', param)
     #     pprint(param.__dict__)
+
 
     check = read.check_exists_obs_sequence(plot)
     if check:

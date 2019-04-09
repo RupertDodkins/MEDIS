@@ -74,6 +74,7 @@ sp.get_ints = {'w': [0], 'c': [0]}
 
 if __name__ == '__main__':
     # Rename Data Directory
+    iop.aberdata = 'Palomar'
     iop.update("MKID_pic-ideal/")
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)
@@ -91,8 +92,6 @@ if __name__ == '__main__':
 
     int_maps = np.array(int_maps)
     # view_datacube(int_maps, logAmp=True)
-    grid(int_maps[::-1][:4], titles=r'$\phi$', annos=['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA'])
-    grid(int_maps[::-1][4:], nrows =2, width=1, titles=r'$I$', annos=['Before Coron.', 'After Coron.'], logAmp=True)
     plt.show(block=True)
 
 
@@ -116,7 +115,6 @@ if __name__ == '__main__':
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9, 3.8))
     labels = ['Ideal', 'MKID']
     # images = [ideal,mkid]
-    titles = ['A.U.','cts']
     vmaxs = [0.01,100]
 
 
@@ -129,7 +127,6 @@ if __name__ == '__main__':
         cax = fig.add_axes([0.44+ 0.485*m, 0.03, 0.02, 0.89])
         # cb = fig.colorbar(im, cax=cax, orientation='vertical',format=ticker.FuncFormatter(fmt))
         cb = fig.colorbar(im, cax=cax, orientation='vertical')
-        cb.ax.set_title(titles[m], fontsize=16)
         ax.axis('off')
         # ax.set_xlabel('Radial Separation')
     # ax.set_yscale('log')
