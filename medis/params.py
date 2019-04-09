@@ -309,11 +309,6 @@ fp = FPWFS_params()
 proper.print_it = False
 # proper.prop_init_savestate()
 
-if os.path.exists('{}/user_params.py'.format(os.path.dirname(__file__))):
-    from medis.user_params import update
-    ap, cp, tp, mp, hp, sp, iop, dp, fp = update([ap, cp, tp, mp, hp, sp, iop, dp, fp])
-
-
 
 
 
