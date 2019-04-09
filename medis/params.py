@@ -2,6 +2,7 @@
 This is the main configuration file. It contains default global variables (as in they are read in by the relevant modules)
 that define the parameters of the whole telescope system. These parameters can be redefined at the beginning of the
 example module the user is running
+
 """
 
 import numpy as np

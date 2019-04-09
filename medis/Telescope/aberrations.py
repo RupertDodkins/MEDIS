@@ -60,7 +60,7 @@ def generate_maps(lens_diam, lens_name='lens'):
     :return: will create a FITs file in the folder specified by iop.quasi for each optic (and  timestep in the case
      of quasi-static aberrations)
     """
-    # TODO add different timescale aberations
+    # TODO add different timescale aberrations
     dprint('Generating optic aberration maps using Proper')
     wfo = proper.prop_begin(lens_diam, 1., ap.grid_size, tp.beam_ratio)
     aber_cube = np.zeros((ap.numframes, tp.aber_params['n_surfs'], ap.grid_size, ap.grid_size))

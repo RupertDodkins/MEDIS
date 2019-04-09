@@ -19,16 +19,16 @@ if __name__ == '__main__':
         r0 = 0.2
         atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0)
         kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
-        _, selec_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
+        _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                      PHASE_OFFSET=1)
-        print('The E field matrix has shape {}'.format(selec_E_fields.shape))
+        print('The E field matrix has shape {}'.format(save_E_fields.shape))
         show = False
         for surf in range(len(sp.save_locs)):
             if surf == len(sp.save_locs)-1: show = True
 
             if phase_ind[surf]:
-                grid(np.angle(selec_E_fields[surf], deg=False).reshape(6, ap.grid_size,ap.grid_size),
+                grid(np.angle(save_E_fields[surf], deg=False).reshape(6, ap.grid_size,ap.grid_size),
                      nrows=2, show=show, titles=titles)
             else:
-                grid(np.absolute(selec_E_fields[surf]).reshape(6, ap.grid_size,ap.grid_size),
+                grid(np.absolute(save_E_fields[surf]).reshape(6, ap.grid_size,ap.grid_size),
                      nrows=2, show=show, titles=titles)

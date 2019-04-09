@@ -18,9 +18,12 @@ class Wavefronts():
     An object containing all of the complex E fields (for each sample wavelength and astronomical object) for this timestep
 
     :params
-    save_locs e.g. np.array([['entrance pupil', 'phase'], ['after ao', 'phase'], ['before coron.', 'amp']])
+    :save_locs e.g. np.array([['entrance pupil', 'phase'], ['after ao', 'phase'], ['before coron.', 'amp']])
     The shape of self.selec_E_fiels is probe locs x nwsamp x nobjects x tp.grid_size
 
+    :returns
+    self.wf_array: a matrix of proper wavefront objects after all optic modifications have been applied
+    self.save_E_fields: a matrix of E fields (proper.WaveFront.wfarr) at specified locations in the chain
     """
     def __init__(self):
         self.save_locs = sp.save_locs
@@ -36,7 +39,7 @@ class Wavefronts():
         else:
             self.wf_array = np.empty((len(wsamples), 1), dtype=object)
 
-        self.selec_E_fields = np.empty((0,np.shape(self.wf_array)[0],
+        self.save_E_fields = np.empty((0,np.shape(self.wf_array)[0],
                                         np.shape(self.wf_array)[1],
                                         ap.grid_size,
                                         ap.grid_size), dtype=np.complex64)
@@ -64,13 +67,12 @@ class Wavefronts():
         """
         For each wavelength and astronomical object apply a function to the wavefront.
 
-        If func is in save_locs then append the E field to selec_E_fields
+        If func is in save_locs then append the E field to save_E_fields
 
         :param func: function to be applied e.g. ap.add_aber()
         :param args:
         :param kwargs:
-        :return: self.selec_E_fields
-
+        :return: self.save_E_fields
         """
         shape = self.wf_array.shape
         optic_E_fields = np.zeros((1, np.shape(self.wf_array)[0],
@@ -82,19 +84,18 @@ class Wavefronts():
                 func(self.wf_array[iw, iwf], *args, **kwargs)
                 if self.save_locs is not None and func.__name__ in self.save_locs[:, 0]:
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
-
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
 
         if self.save_locs is not None and func.__name__ in self.save_locs[:, 0]:
-            self.selec_E_fields = np.vstack((self.selec_E_fields, optic_E_fields))
+            self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
 
     def test_save(self, funcname):
         """
-        An alternative way to populate selec_E_fields since not all functions are run via iter_func
+        An alternative way to populate save_E_fields since not all functions are run via iter_func
         (e.g. add_atmos). So call this class function at the end of the function that alters the wavefront
 
         :param funcname:
-        :return: self.selec_E_fields
+        :return: self.save_E_fields
         """
         if self.save_locs is not None and funcname in self.save_locs[:, 0]:
             shape = self.wf_array.shape
@@ -106,7 +107,7 @@ class Wavefronts():
                 for iwf in range(shape[1]):
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
-            self.selec_E_fields = np.vstack((self.selec_E_fields, optic_E_fields))
+            self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
 
 
 def optics_propagate(empty_lamda, grid_size, PASSVALUE):
@@ -277,9 +278,9 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
 
     print('Finished datacube at single timestep')
-    wfo.selec_E_fields = np.array(wfo.selec_E_fields)
+    wfo.save_E_fields = np.array(wfo.save_E_fields)
 
-    return (datacube, wfo.selec_E_fields)
+    return (datacube, wfo.save_E_fields)
 
 
 
