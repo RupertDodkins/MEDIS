@@ -123,6 +123,19 @@ def circularise(prim_map):
 
 
 def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, Loc='CPA', lens_name='lens'):
+    """
+    loads a phase error map and adds aberrations using proper.prop_add_phase
+    if no aberration file exists, creates one for specific lens using generate_maps
+
+    :param wf_array: 2D wavefront
+    :param f_lens: focal length (m) of lens to add aberrations to
+    :param d_lens: diameter (in m) of lens (only used when generating new aberrations maps)
+    :param aber_params: parameters specified by tp.aber_params
+    :param step: is the step number for quasistatic aberrations
+    :param Loc: either 'CPA" or 'NCPA' depending on lens location with respect to wavefront sensor (WFS)
+    :param lens_name: name of the lens, used to save/read in FITS file of aberration map
+    :return will act upon a given wavefront and apply new or loaded-in aberration map
+    """
     # TODO this does not currently loop over time, so it is not using quasi-static abberations.
     # dprint("Adding Abberations")
 
