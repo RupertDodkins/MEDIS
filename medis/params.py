@@ -15,10 +15,13 @@ class IO_params:
     """
     Define file tree/structure to import and save data
     """
-    def __init__(self, testname='example1'):  # testname should be the name of the particular example you are running,
+    def __init__(self, testname='example1', datadir=None):  # testname should be the name of the particular example you are running,
                                                 # for example 'BetaPic' or 'simple_telescope'
         # High Level Paths
-        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        if datadir is None:
+            self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        else:
+            self.datadir = datadir
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
 
         # Atmosphere Metadata
@@ -54,7 +57,7 @@ class IO_params:
         self.IQpixel = os.path.join(self.testdir, './novary64act_medr0_piston.txt')
         self.measured_var = os.path.join(self.testdir, 'measured_var.pkl')
 
-
+        print(self.datadir)
         if not os.path.isdir(self.datadir):
             os.makedirs(self.datadir, exist_ok=True)
         if not os.path.isdir(self.testdir):
@@ -78,8 +81,8 @@ class IO_params:
         if not os.path.isdir(self.quasi):
             os.makedirs(self.quasi, exist_ok=True)
 
-    def update(self, new_name='example1'):
-        self.__init__(testname=new_name)
+    def update(self, new_name='example1', datadir=None):
+        self.__init__(testname=new_name, datadir=datadir)
 
 
 class Simulation_params:
@@ -91,13 +94,15 @@ class Simulation_params:
         self.num_processes = 1 #multiprocessing.cpu_count()
         self.show_wframe = False
         self.show_cube = True
+        self.use_gui = False
+        self.play_gui = True
         self.cbar = None
         self.fig = None
         self.vmax = None
         self.vmin = None
         self.variable = None
-        self.save_obs = True
-        self.return_cube = True
+        self.save_obs = False
+        self.return_spectralcube = False
         self.get_ints = False
         self.save_locs = None
 
