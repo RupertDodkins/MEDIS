@@ -18,34 +18,6 @@ import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
 import medis.Atmosphere.caos as caos
-# from medis.Dashboard.gui import ThreadSample
-# from medis.Dashboard.gui import lol
-# from medis.Dashboard.gui import ThreadSample
-# print(lol)
-
-from PyQt5 import QtCore
-
-class ThreadSample(QtCore.QThread):
-    newSample = QtCore.pyqtSignal(np.ndarray)
-
-    def __init__(self, parent=None):
-        super(ThreadSample, self).__init__(parent)
-        self.save_E_fields = None
-
-    def run(self):
-        run_medis(self)
-
-class ThreadMetric(QtCore.QThread):
-    newSample = QtCore.pyqtSignal(np.ndarray)
-
-    def __init__(self, parent=None):
-        super(ThreadMetric, self).__init__(parent)
-        self.metric = None
-
-    def run(self, func):
-        self.metric = func()
-        self.newSample.emit(self.metric)
-
 
 
 sentinel = None

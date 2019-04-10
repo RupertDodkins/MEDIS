@@ -11,7 +11,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QComboBox, QFormLayout, QHBoxLayout, QVBoxLayout, QLineEdit, QWidget, QPushButton
 
 from medis.params import tp,ap,sp,iop,cp
-from medis.Detector.get_photon_data import ThreadSample, ThreadMetric
+from medis.Dashboard.helper import ThreadSample, ThreadMetric
 # from medis.Detector.get_photon_data import run_medis
 
 if sp.save_locs is None:
@@ -88,7 +88,7 @@ class MyWindow(QWidget):
         self.threadMetric.newSample.connect(self.on_threadMetric_newSample)
 
         # Define the dropdown combobox
-        self.metrics = ['5 r$\sigma$ Contrast', 'ACF']
+        self.metrics = ['Sample Photons', 'take_exposure', 'Plot Stats', 'mSDI', 'SSD', 'DSI', '5 r$\sigma$ Contrast', 'ACF']
         self.metricCombo = QComboBox(self)
         self.metricCombo.addItems(self.metrics)
 
@@ -177,6 +177,7 @@ class MyWindow(QWidget):
 
     @QtCore.pyqtSlot()
     def on_pushButtonMetric_clicked(self):
+        self.threadMetric.func = self.metricCombo.currentText()
         self.threadMetric.start()
 
     @QtCore.pyqtSlot(np.ndarray)
