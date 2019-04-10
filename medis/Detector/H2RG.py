@@ -54,7 +54,7 @@ if __name__ == '__main__':
     sp.save_obs = False
 
     sp.show_cube = False
-    sp.return_cube = True
+    sp.return_spectralcube = True
     sp.show_wframe = False
     ap.companion = True
     tp.NCPA_type = 'Wave'

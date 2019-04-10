@@ -9,18 +9,48 @@ import random
 import pickle as pickle
 import time
 from proper_mod import prop_run
-from medis.Utils.plot_tools import quicklook_im, view_datacube
+from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
 from medis.Utils.misc import dprint
 from medis.params import ap,cp,tp,mp,sp,iop,dp
 import medis.Detector.MKIDs as MKIDs
+import medis.Detector.H2RG as H2RG
 import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
 import medis.Atmosphere.caos as caos
+# from medis.Dashboard.gui import ThreadSample
+# from medis.Dashboard.gui import lol
+# from medis.Dashboard.gui import ThreadSample
+# print(lol)
+
+from PyQt5 import QtCore
+
+class ThreadSample(QtCore.QThread):
+    newSample = QtCore.pyqtSignal(np.ndarray)
+
+    def __init__(self, parent=None):
+        super(ThreadSample, self).__init__(parent)
+        self.save_E_fields = None
+
+    def run(self):
+        run_medis(self)
+
+class ThreadMetric(QtCore.QThread):
+    newSample = QtCore.pyqtSignal(np.ndarray)
+
+    def __init__(self, parent=None):
+        super(ThreadMetric, self).__init__(parent)
+        self.metric = None
+
+    def run(self, func):
+        self.metric = func()
+        self.newSample.emit(self.metric)
+
+
 
 sentinel = None
 
-def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_changeme):
+def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
     """
     generates observation sequence by calling optics_propagate in time series
 
@@ -35,7 +65,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
     :return:
     """
     # TODO change this name
-    (tp,ap,sp,iop,cp,mp) = xxx_todo_changeme
+    (tp,ap,sp,iop,cp,mp) = conf_obj_tup
 
     try:
 
@@ -58,8 +88,8 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
 
             atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
             kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
-            spectralcube, _ = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
-                                       VERBOSE=False, PHASE_OFFSET=1)
+            spectralcube, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
+                                                   VERBOSE=False, PHASE_OFFSET=1)
 
             if tp.detector == 'ideal':
                 image = np.sum(spectralcube, axis=0)
@@ -75,7 +105,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
             elif tp.detector == 'MKIDs':
                 packets = read.get_packets(spectralcube, t, dp, mp)
 
-                if sp.show_wframe or sp.show_cube or sp.return_cube:
+                if sp.show_wframe or sp.show_cube or sp.return_spectralcube:
                     cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
                     if mp.remove_close:
                         timecube = read.remove_close_photons(cube)
@@ -84,7 +114,7 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
                     image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
 
                 # Interpolating spectral cube from ap.nwsamp discreet wavelengths
-                if sp.show_cube or sp.return_cube:
+                if sp.show_cube or sp.return_spectralcube:
                     spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
 
 
@@ -101,13 +131,25 @@ def gen_timeseries(inqueue, photon_table_queue, spectralcubes_queue, xxx_todo_ch
             if sp.show_cube:
                 view_datacube(spectralcube, logAmp=True, vmin=vmin)
 
-            if sp.return_cube:
-                spectralcubes_queue.put((t,spectralcube))
+            # print(sp.stop_gui)
+            if sp.return_spectralcube:
+                outqueue.put((t,spectralcube))
+            elif sp.use_gui:
+                # save_E_fields = np.ones((3, 3, 2, 256, 256))
+                gui_images = np.zeros_like(save_E_fields, dtype=np.float)
+                phase_ind = sp.save_locs[:, 1] == 'phase'
+                amp_ind = sp.save_locs[:, 1] == 'amp'
+
+                gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
+                gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
+
+                outqueue.put((t, gui_images))
 
         now = time.time()
         elapsed = float(now - start) / 60.
         each_iter = float(elapsed) / (it + 1)
 
+        print('***********************************')
         dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #
 
     except Exception as e:
@@ -123,7 +165,7 @@ def wait_until(somepredicate, timeout, period=0.25, *args, **kwargs):
   return False
 
 
-def run_medis(plot=False):
+def run_medis(self=None, plot=False):
     """
     main script to organize calls to various aspects of the simulation
 
@@ -202,7 +244,7 @@ def run_medis(plot=False):
 
     photon_table_queue = multiprocessing.Queue()
     inqueue = multiprocessing.Queue()
-    spectralcubes_queue = multiprocessing.Queue()
+    outqueue = multiprocessing.Queue()
     jobs = []
 
     if sp.save_obs and tp.detector == 'MKIDs':
@@ -216,13 +258,19 @@ def run_medis(plot=False):
 
     # Sending Queues to gen_timeseries
     for i in range(sp.num_processes):
-        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, photon_table_queue, spectralcubes_queue,(tp,ap,sp,iop,cp,mp)))
+        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, photon_table_queue, outqueue, (tp,ap,sp,iop,cp,mp)))
         jobs.append(p)
         p.start()
 
     if tp.quick_ao:
         for t in range(ap.startframe, ap.startframe + ap.numframes):
             inqueue.put(t)
+            if sp.use_gui:
+                save_E_fields = outqueue.get()
+                self.newSample.emit(save_E_fields[1])
+                while sp.play_gui is False:
+                    time.sleep(0.05)
+
     else:
         dprint('If the code has hung here it probably means it cant read the CPA file at some iter')
         for t in range(ap.startframe, ap.startframe+ap.numframes):
@@ -269,16 +317,16 @@ def run_medis(plot=False):
     for i in range(sp.num_processes):
         # Send the sentinal to tell Simulation to end
         inqueue.put(sentinel)
-    if sp.return_cube:
+    if sp.return_spectralcube:
         for t in range(ap.numframes):
-            spectralcube = spectralcubes_queue.get()
+            spectralcube = outqueue.get()
             obs_sequence[spectralcube[0]-ap.startframe] = spectralcube[1]  # should be in the right order now because of the identifier
 
     for i, p in enumerate(jobs):
         p.join()
 
     photon_table_queue.put(None)
-    spectralcubes_queue.put(None)
+    outqueue.put(None)
     if sp.save_obs and tp.detector == 'MKIDs':
         proc.join()
     obs_sequence = np.array(obs_sequence)

@@ -42,7 +42,7 @@ def prop_use_fftw(**kwargs):
     try:
         import pyfftw
     except ImportError:
-        print('pyFFTW not found, using Numpy FT.')
+        # print('pyFFTW not found, using Numpy FT.')
         fftw_flag = False
     else:
         fftw_flag = True
