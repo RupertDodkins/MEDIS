@@ -18,10 +18,12 @@ class IO_params:
     def __init__(self, testname='example1'):  # testname should be the name of the particular example you are running,
                                                 # for example 'BetaPic' or 'simple_telescope'
         # High Level Paths
-        self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
-        self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
+        # self.datadir = os.path.join(str(Path.home()), 'medis_data')  # Default Base path where results are stored (outside repository)
+        # self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
+        self.datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
+        self.rootdir = '/home/captainkay/mazinlab/MKIDSim/'
 
-        # Atmosphere Metadata
+                                                # Atmosphere Metadata
         self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos (get this from Rupert, don't recreate this on your own!!)
         self.atmosdata = '180828'  # folder from Rupert
         self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
@@ -113,7 +115,7 @@ class Astro_params:
         # Total number of photons on the array for a timestep shared between all wavelengths
         self.star_photons = int(1e5) # # A 5 apparent mag star 1e6 cts/cm^2/s
         self.companion = True
-        self.contrast = [0.0005]
+        self.contrast = [0.005]
         self.C_spec = 1.5  # the gradient of the increase in contrast towards shorter wavelengths
         self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
         self.exposure_time = 0.01

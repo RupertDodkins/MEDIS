@@ -9,7 +9,6 @@ import medis.Telescope.aberrations as aber
 import medis.Telescope.foreoptics as fo
 import medis.Telescope.FPWFS as fpwfs
 from medis.Telescope.coronagraph import coronagraph
-from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity
 from medis.params import ap, tp, iop, sp
 from medis.Utils.misc import dprint
 
@@ -143,7 +142,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #  phase offset at a particular frequency.
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
-        aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['atmos_map']))
+        aber.add_atmos(wfo, *(PASSVALUE['atmos_map']))
 
     wfo.wf_array = aber.abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
 
@@ -177,7 +176,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         # TODO check this was resolved and spiders can be applied earlier up the chain
         # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
         # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
-        wfo.iter_func(fo.add_obscurations, M2_frac=1/4)
+        wfo.iter_func(fo.add_obscurations, M2_frac=1/4, d_primary=tp.diam)
         wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
     ########################################
@@ -242,6 +241,10 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     wfo.iter_func(coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
     # if sp.get_ints: get_intensity(wfo.wf_array, sp, phase=False)
 
+    ########################################
+    # Focal Plane
+    # #######################################
+
     shape = wfo.wf_array.shape
     for iw in range(shape[0]):
         wframes = np.zeros((ap.grid_size, ap.grid_size))
@@ -263,10 +266,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     # dither = rot_sky[bottom:top, left:right]
     datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)  # cirshift array for off-axis observing
     datacube = np.abs(datacube)  # get intensity from datacube
-
-    ########################################
-    # Focal Plane
-    # #######################################
 
     # Interpolating spectral cube from ap.nwsamp discreet wavelengths to ap.w_bins
     if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:

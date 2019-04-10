@@ -30,18 +30,6 @@ from medis.params import ap, tp, iop, sp
 from medis.Utils.misc import dprint
 
 # Defining Subaru parameters
-
-# Optics + Detector
-# tp.d_primary = 8.2  # m
-# tp.fn_primary = 1.83  # f# primary
-# tp.fl_primary = 15 # m  focal length
-# tp.dist_prim_second = 12.652  # m distance primary to secondary
-# #---------------------------
-# # According to Iye-et.al.2004-Optical_Performance_of_Subaru:AstronSocJapan, the AO188 uses the IR-Cass secondary,
-# # but then feeds it to the IR Nasmyth f/13.6 focusing arrangement.
-# tp.fn_secondary = 12.6  # f# secondary
-# tp.fl_secondary = tp.fn_secondary * tp.d_secondary  # m  focal length
-# tp.dist_second_nsmyth =   # m distance secondary to nasmyth focus
 #----------------------------
 # According to Iye-et.al.2004-Optical_Performance_of_Subaru:AstronSocJapan, the AO188 uses the IR-Cass secondary,
 # but then feeds it to the IR Nasmyth f/13.6 focusing arrangement. So instead of simulating the full Subaru system,
@@ -76,11 +64,100 @@ tp.use_zern_ab = True
 tp.occulter_type = 'Vortex'  # 'None'
 
 
-def iter_func(wavefronts, func, *args, **kwargs):
-    shape = wavefronts.shape
-    for iw in range(shape[0]):
-        for iwf in range(shape[1]):
-            func(wavefronts[iw, iwf], *args, **kwargs)
+class Wavefronts():
+    """
+    An object containing all of the complex E fields (for each sample wavelength and astronomical object) for this timestep
+
+    :params
+    save_locs e.g. np.array([['entrance pupil', 'phase'], ['after ao', 'phase'], ['before coron.', 'amp']])
+    The shape of self.selec_E_fiels is probe locs x nwsamp x nobjects x tp.grid_size
+
+    """
+    def __init__(self):
+        self.save_locs = sp.save_locs
+
+        # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
+        wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
+
+        # wf_array is an array of arrays; the wf_array is (number_astro_objects x number_wavelengths)
+        # each field in the wf_array is the complex E-field at that wavelength, per object
+        # the E-field size is given by (ap.grid_size x ap.grid_size)
+        if ap.companion:
+            self.wf_array = np.empty((len(wsamples), 1 + len(ap.contrast)), dtype=object)
+        else:
+            self.wf_array = np.empty((len(wsamples), 1), dtype=object)
+
+        self.selec_E_fields = np.empty((0,np.shape(self.wf_array)[0],
+                                        np.shape(self.wf_array)[1],
+                                        ap.grid_size,
+                                        ap.grid_size), dtype=np.complex64)
+
+        # Using Proper to initiate complex wavefront for each object, wavelength
+        self.beam_ratios = np.zeros_like((wsamples))
+        for iw, w in enumerate(wsamples):
+            # Initialize the wavefront at entrance pupil
+            self.beam_ratios[iw] = tp.beam_ratio * ap.band[0] / w * 1e-9
+            wfp = proper.prop_begin(tp.diam, w, ap.grid_size, self.beam_ratios[iw])
+
+            wfs = [wfp]
+            names = ['primary']
+            # Initiate wavefronts for companion(s)
+            if ap.companion:
+                for id in range(len(ap.contrast)):
+                    wfc = proper.prop_begin(tp.diam, w, ap.grid_size, self.beam_ratios[iw])
+                    wfs.append(wfc)
+                    names.append('companion_%i' % id)
+
+            for io, (iwf, wf) in enumerate(zip(names, wfs)):
+                self.wf_array[iw, io] = wf
+
+    def iter_func(self, func, *args, **kwargs):
+        """
+        For each wavelength and astronomical object apply a function to the wavefront.
+
+        If func is in save_locs then append the E field to selec_E_fields
+
+        :param func: function to be applied e.g. ap.add_aber()
+        :param args:
+        :param kwargs:
+        :return: self.selec_E_fields
+
+        """
+        shape = self.wf_array.shape
+        optic_E_fields = np.zeros((1, np.shape(self.wf_array)[0],
+                                    np.shape(self.wf_array)[1],
+                                    ap.grid_size,
+                                    ap.grid_size), dtype=np.complex64)
+        for iw in range(shape[0]):
+            for iwf in range(shape[1]):
+                func(self.wf_array[iw, iwf], *args, **kwargs)
+                if self.save_locs is not None and func.__name__ in self.save_locs[:, 0]:
+                    wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
+
+                    optic_E_fields[0, iw, iwf] = copy.copy(wf)
+
+        if self.save_locs is not None and func.__name__ in self.save_locs[:, 0]:
+            self.selec_E_fields = np.vstack((self.selec_E_fields, optic_E_fields))
+
+    def test_save(self, funcname):
+        """
+        An alternative way to populate selec_E_fields since not all functions are run via iter_func
+        (e.g. add_atmos). So call this class function at the end of the function that alters the wavefront
+
+        :param funcname:
+        :return: self.selec_E_fields
+        """
+        if self.save_locs is not None and funcname in self.save_locs[:, 0]:
+            shape = self.wf_array.shape
+            optic_E_fields = np.zeros((1, np.shape(self.wf_array)[0],
+                                       np.shape(self.wf_array)[1],
+                                       ap.grid_size,
+                                       ap.grid_size), dtype=np.complex64)
+            for iw in range(shape[0]):
+                for iwf in range(shape[1]):
+                    wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
+                    optic_E_fields[0, iw, iwf] = copy.copy(wf)
+            self.selec_E_fields = np.vstack((self.selec_E_fields, optic_E_fields))
 
 
 def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
@@ -103,44 +180,15 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     iop.__dict__ = passpara[2].__dict__
     sp.__dict__ = passpara[3].__dict__
 
-    wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
     datacube = []
+    wfo = Wavefronts()
 
     ########################################
-    # Astronomical Distortions to Wavefront
+    # Astro/Atmospheric Distortions to Wavefront
     #######################################
-    # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
-    # each field in the wf_array is the complex E-field at that wavelength, per object
-    # the E-field size is given by (ap.grid_size x ap.grid_size)
-    if ap.companion:
-        wf_array = np.empty((len(wsamples), 1 + len(ap.contrast)), dtype=object)
-    else:
-        wf_array = np.empty((len(wsamples), 1), dtype=object)
-
-    beam_ratios = np.zeros_like((wsamples))
-    for iw, w in enumerate(wsamples):
-        # Initialize the wavefront at entrance pupil
-        beam_ratios[iw] = tp.beam_ratio * ap.band[0] / w * 1e-9
-        wfp = proper.prop_begin(tp.d_nsmyth, w, ap.grid_size, beam_ratios[iw])
-
-        wfs = [wfp]
-        names = ['cent_star']
-        # Initiate wavefronts for companion(s)
-        if ap.companion:
-            for id in range(len(ap.contrast)):
-                wfc = proper.prop_begin(tp.d_nsmyth, w, ap.grid_size, beam_ratios[iw])
-                wfs.append(wfc)
-                names.append('companion_%i' % id)
-
-        for io, (iwf, wf) in enumerate(zip(names, wfs)):
-            wf_array[iw, io] = wf
-
-    # Both offsets and scales the companion wavefront
-    if wf_array.shape[1] >= 1:
-        fo.offset_companion(wf_array[:, 1:], PASSVALUE['atmos_map'], )
 
     # Defines aperture (baffle-before primary)
-    iter_func(wf_array, proper.prop_circular_aperture, **{'radius':tp.d_nsmyth/2})
+    wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.d_nsmyth / 2})
 
     # Pass through a mini-atmosphere inside the telescope baffle
     #  The atmospheric model used here (as of 3/5/19) uses different scale heights,
@@ -150,35 +198,30 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     #  phase offset at a particular frequency.
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
-        aber.add_atmos(wf_array, *(w, PASSVALUE['atmos_map']))
+        aber.add_atmos(wfo, *(PASSVALUE['atmos_map']))
 
-    wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
+    wfo.wf_array = aber.abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
 
     if tp.rot_rate:
-        iter_func(wf_array, aber.rotate_atmos, *(PASSVALUE['atmos_map']))
+        wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['atmos_map']))
 
     ########################################
     # Subaru Distortions to Wavefront
     #######################################
-    iter_func(wf_array, proper.prop_define_entrance)  # normalizes the intensity
-
-    if tp.obscure:
-        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
-        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
-        iter_func(wf_array, fo.add_obscurations, tp.d_secondary, legs=True)
-        wf_array = aber.abs_zeros(wf_array)  # zeros outside of primary
-        if sp.get_ints: get_intensity(wf_array, sp, phase=True)
+    wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
 
     wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
 
+    if tp.obscure:
+        wfo.iter_func(fo.add_obscurations, d_primary=tp.d_nsmyth, d_secondary=tp.d_secondary)
+        wfo.wf_array = aber.abs_zeros(wfo.wf_array)
+
     # CPA from Effective Primary
-    aber.add_aber(wf_array, tp.fl_nsmyth, tp.d_nsmyth, tp.aber_params, step=0, Loc='CPA', lens_name='nsmyth')
+    aber.add_aber(wf_array, tp.fl_nsmyth, tp.d_nsmyth, tp.aber_params, step=0, lens_name='nsmyth')
 
      # Nasmyth Focus- Effective Primary/Secondary
-    iter_func(wf_array, fo.prop_mid_optics, tp.fl_nsmyth, tp.fl_nsmyth + tp.dist_nsmyth_ao1)  # AO188 is located
+    wfo.iter_func(wf_array, fo.prop_mid_optics, tp.fl_nsmyth, tp.fl_nsmyth + tp.dist_nsmyth_ao1)  # AO188 is located
                                                                 # behind the Nasmyth focus, so propagate extra amount
-    if sp.get_ints: get_intensity(wf_array, sp, phase=False)
-
     # Low-order aberrations
     if tp.use_zern_ab:
         iter_func(wf_array, aber.add_zern_ab)
@@ -187,9 +230,8 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     # AO188 Distortions to Wavefront
     #######################################
     # AO188-OAP1
-    aber.add_aber(wf_array,tp.fl_ao1,tp.d_ao1, tp.aber_params, 0, 'CPA', 'ao188-OAP1')
-    iter_func(wf_array, fo.prop_mid_optics, tp.fl_ao1, tp.dist_ao1_dm)
-    if sp.get_ints: get_intensity(wf_array, sp, phase=False)
+    aber.add_aber(wf_array, tp.fl_ao1, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP1')
+    wfo.iter_func(wf_array, fo.prop_mid_optics, tp.fl_ao1, tp.dist_ao1_dm)
 
     ########################################
     # AO
@@ -204,7 +246,6 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
         if tp.use_ao:
             ao.quick_ao(wf_array, iwf, tp.f_lens, beam_ratios, PASSVALUE['iter'], CPA_maps)
             wf_array = aber.abs_zeros(wf_array)
-            if sp.get_ints: get_intensity(wf_array, sp, phase=True)
 
     else:
         # TODO update this code
@@ -216,10 +257,9 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     #######################################
 
     # AO188-OAP2
-    iter_func(wf_array, proper.prop_propagate, tp.dist_dm_ao2)
-    aber.add_aber(wf_array, tp.fl_ao2, tp.d_ao1, tp.aber_params, 0, 'NCPA', 'ao188-OAP2')
-    iter_func(wf_array, fo.prop_mid_optics, tp.fl_ao2, tp.fl_ao2)
-    if sp.get_ints: get_intensity(wf_array, sp, phase=False)
+    wfo.iter_func(wf_array, proper.prop_propagate, tp.dist_dm_ao2)
+    aber.add_aber(wf_array, tp.fl_ao2, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP2')
+    wfo.iter_func(wf_array, fo.prop_mid_optics, tp.fl_ao2, tp.fl_ao2)
 
     ########################################
     # Focal Plane
@@ -247,9 +287,9 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
         datacube = f_out(new_heights)
 
     print('Finished datacube at single timestep')
+    wfo.selec_E_fields = np.array(wfo.selec_E_fields)
 
-    return datacube, sampling
-
+    return (datacube, wfo.selec_E_fields)
 
 
 
