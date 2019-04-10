@@ -178,7 +178,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         # TODO check this was resolved and spiders can be applied earlier up the chain
         # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
         # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
-        wfo.iter_func(fo.add_obscurations, M2_frac=1/4)
+        wfo.iter_func(fo.add_obscurations, M2_frac=1/4, d_primary=tp.diam)
         wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
     ########################################

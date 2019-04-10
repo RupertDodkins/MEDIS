@@ -28,20 +28,26 @@ def offset_companion(wf_array, atmos_map):
             wf_array[iw, io].wfarr = wf_array[iw,io].wfarr * np.sqrt(ap.contrast[io]*cont_scaling[iw])
 
 
-def add_obscurations(wf, M2_frac=0.25, legs_frac=0.05):
+def add_obscurations(wf, M2_frac=0, d_primary=0, d_secondary=0, legs_frac=0.05):
     """
-
+    adds central obscuration (secondary shadow) and/or spider legs as spatial mask to the wavefront
     :param wf: proper wavefront
     :param M2_frac: ratio of tp.diam the M2 occupies
-    :param legs_frac: ratio of tp.diam the leg thicknesses are
-    :return:
+    :param d_primary: diameter of the primary mirror
+    :param d_secondary: diameter of the secondary mirror
+    :param legs_frac: fractional size of spider legs relative to d_primary
+    :return: acts upon wfo, applies a spatial mask of s=circular secondary obscuration and possibly spider legs
     """
-    # print('Including Obscurations')
-    if M2_frac > 0:
-        proper.prop_circular_obscuration(wf, M2_frac * tp.diam)
+    # dprint('Including Obscurations')
+    if M2_frac > 0 and d_primary>0:
+        proper.prop_circular_obscuration(wf, M2_frac * d_primary)
+    elif d_secondary > 0:
+        proper.prop_circular_aperture(wf, d_secondary)
+    else:
+        raise ValueError('must either specify M2_frac and d_primary or d_secondary')
     if legs_frac > 0:
-        proper.prop_rectangular_obscuration(wf, legs_frac * tp.diam, tp.diam*1.3, ROTATION=20)
-        proper.prop_rectangular_obscuration(wf, tp.diam*1.3, legs_frac * tp.diam, ROTATION=20)
+        proper.prop_rectangular_obscuration(wf, legs_frac * d_primary, d_primary*1.3, ROTATION=20)
+        proper.prop_rectangular_obscuration(wf, d_primary*1.3, legs_frac * d_primary, ROTATION=20)
 
 
 def add_hex(wfo):
