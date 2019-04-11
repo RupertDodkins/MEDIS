@@ -40,27 +40,31 @@ tp.d_secondary = 1.265  # m diameter secondary, used for central obscuration
 
 #----------------------------
 # AO188 OAP1
-tp.d_ao1 = 0.090  # m  diamater of AO1
+tp.d_ao1 = 0.20  # m  diamater of AO1
 tp.fn_ao1 = 6  # f# AO1
-tp.fl_ao1 = 0.015  # m  focal length AO1
-tp.dist_ao1_dm = 0.05  # m distance AO1 to DM (just a guess here, shouldn't matter for the collimated beam)
+tp.fl_ao1 = 1.2  # m  focal length AO1
+tp.dist_ao1_dm = 1.345  # m distance AO1 to DM (just a guess here, shouldn't matter for the collimated beam)
 
 #----------------------------
 # AO188 OAP2
-tp.dist_dm_ao2 = 0.05  # m distance DM to AO2 (again, guess here)
-tp.d_ao2 = 0.090  # m  diamater of AO2
+tp.dist_dm_ao2 = 2.511-tp.dist_ao1_dm  # m distance DM to AO2 (again, guess here)
+tp.d_ao2 = 0.2 # m  diamater of AO2
 tp.fn_ao2 = 13.6  # f# AO2
-tp.fl_ao2 = 151.11  # m  focal length AO2
+tp.fl_ao2 = 1.2  # m  focal length AO2
+tp.dist_ao2_scexao = 1.261  # m dist between OAP2 and the focus feeding SCExAO from AO188
 
+# Telescope Perscription
+tp.perscription = 'medis.Telescope.Subaru_optics'
 
 tp.obscure = True
 tp.use_ao = True
-tp.ao188_act = 188
+tp.ao_act = 188
 tp.use_atmos = True
 tp.use_zern_ab = True
 tp.occulter_type = 'Vortex'  # 'None'
 
 # Aberrations
+iop.aberdata = 'Subaru'
 tp.aber_params = {'CPA': True,
                     'NCPA': True,
                     'QuasiStatic': False,  # or 'Static'
@@ -73,18 +77,21 @@ tp.aber_params = {'CPA': True,
 ap.numframes = 3
 
 if __name__ == '__main__':
-    # Rename Data Directory
     iop.aberdata = 'Subaru'
+    # Rename Data Directory
     iop.update("Subaru_example/")
     if os.path.exists(iop.int_maps):
         os.remove(iop.int_maps)
+    iop.aberdata = 'Subaru'
 
     # aber.generate_maps(tp.d_nsmyth, 'CPA', 'nasmyth')
     # aber.generate_maps(tp.d_ao1, 'CPA', 'AO188-OAP1')
     # aber.generate_maps(tp.d_ao2, 'NCPA', 'AO188-OAP2')
 
     tp.detector = 'ideal'
+    tp.ao188_act = 188
 
+    print(f"iop.aberdir in main of example file is {iop.aberdir}")
     # Starting the Simulation
     print("Starting Subaru Telescope ideal-detector example")
     ideal = gpd.run_medis()[0, :]

@@ -183,6 +183,7 @@ class Telescope_params:
                            'a_amp': [0.05, 0.01]}
 
         # Optics + Detector
+        self.perscription = 'medis.Telescope.optics_propagate'
         self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
         self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this

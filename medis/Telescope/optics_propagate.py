@@ -142,7 +142,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #  phase offset at a particular frequency.
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
-        aber.add_atmos(wfo, *(PASSVALUE['atmos_map']))
+        aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['atmos_map']))
 
     wfo.wf_array = aber.abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
 

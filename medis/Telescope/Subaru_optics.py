@@ -198,7 +198,7 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     #  phase offset at a particular frequency.
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
-        aber.add_atmos(wfo, *(PASSVALUE['atmos_map']))
+        aber.add_atmos(wfo, *(tp.fl_ao2, PASSVALUE['atmos_map']))
 
     wfo.wf_array = aber.abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
 
@@ -210,43 +210,39 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     #######################################
     wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
 
-    wf_array = aber.abs_zeros(wf_array)  # Zeroing outside the pupil
-
     if tp.obscure:
         wfo.iter_func(fo.add_obscurations, d_primary=tp.d_nsmyth, d_secondary=tp.d_secondary)
         wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
     # CPA from Effective Primary
-    aber.add_aber(wf_array, tp.fl_nsmyth, tp.d_nsmyth, tp.aber_params, step=0, lens_name='nsmyth')
-
-     # Nasmyth Focus- Effective Primary/Secondary
-    wfo.iter_func(wf_array, fo.prop_mid_optics, tp.fl_nsmyth, tp.fl_nsmyth + tp.dist_nsmyth_ao1)  # AO188 is located
-                                                                # behind the Nasmyth focus, so propagate extra amount
+    aber.add_aber(wfo.wf_array, tp.fl_nsmyth, tp.d_nsmyth, tp.aber_params, step=0, lens_name='nsmyth')
     # Low-order aberrations
     if tp.use_zern_ab:
-        iter_func(wf_array, aber.add_zern_ab)
+        wfo.iter_func(aber.add_zern_ab)
+
+    # Nasmyth Focus- Effective Primary/Secondary
+    wfo.iter_func(fo.prop_mid_optics, tp.fl_nsmyth, tp.fl_nsmyth + tp.dist_nsmyth_ao1)  # AO188 is located
+                                                                # behind the Nasmyth focus, so propagate extra amount
 
     ########################################
     # AO188 Distortions to Wavefront
     #######################################
     # AO188-OAP1
-    aber.add_aber(wf_array, tp.fl_ao1, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP1')
-    wfo.iter_func(wf_array, fo.prop_mid_optics, tp.fl_ao1, tp.dist_ao1_dm)
+    aber.add_aber(wfo.wf_array, tp.fl_ao1, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP1')
+    wfo.iter_func(fo.prop_mid_optics, tp.fl_ao1, tp.dist_ao1_dm)
 
     ########################################
     # AO
     #######################################
-
     if tp.quick_ao:
         r0 = float(PASSVALUE['atmos_map'][-10:-5])
 
-        ao.flat_outside(wf_array)
-        CPA_maps = ao.quick_wfs(wf_array[:,0], PASSVALUE['iter'], r0=r0)  # , obj_map, tp.wfs_scale)
+        ao.flat_outside(wfo.wf_array)
+        CPA_maps = ao.quick_wfs(wfo.wf_array[:,0], PASSVALUE['iter'], r0=r0)  # , obj_map, tp.wfs_scale)
 
         if tp.use_ao:
-            ao.quick_ao(wf_array, iwf, tp.f_lens, beam_ratios, PASSVALUE['iter'], CPA_maps)
-            wf_array = aber.abs_zeros(wf_array)
-
+            ao.quick_ao(wfo,  CPA_maps)
+            wfo.wf_array = aber.abs_zeros(wfo.wf_array)
     else:
         # TODO update this code
         dprint('This needs to be updated to the parallel implementation')
@@ -255,21 +251,20 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     ########################################
     # AO188 Distortions to Wavefront
     #######################################
-
     # AO188-OAP2
-    wfo.iter_func(wf_array, proper.prop_propagate, tp.dist_dm_ao2)
-    aber.add_aber(wf_array, tp.fl_ao2, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP2')
-    wfo.iter_func(wf_array, fo.prop_mid_optics, tp.fl_ao2, tp.fl_ao2)
+    wfo.iter_func(proper.prop_propagate, tp.dist_dm_ao2)
+    aber.add_aber(wfo.wf_array, tp.fl_ao2, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP2')
+    wfo.iter_func(fo.prop_mid_optics, tp.fl_ao2, tp.dist_ao2_scexao)
 
     ########################################
     # Focal Plane
     # #######################################
 
-    shape = wf_array.shape
+    shape = wfo.wf_array.shape
     for iw in range(shape[0]):
         wframes = np.zeros((ap.grid_size, ap.grid_size))
         for io in range(shape[1]):
-            (wframe, sampling) = proper.prop_end(wf_array[iw, io])
+            (wframe, sampling) = proper.prop_end(wfo.wf_array[iw, io])
 
             wframes += wframe
 
@@ -280,7 +275,7 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     datacube = np.abs(datacube)  # get intensity from datacube
 
     # Interpolating spectral cube from ap.nwsamp discreet wavelengths to ap.w_bins
-    if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:
+    if ap.interp_sample and ap.nwsamp > 1 and ap.nwsamp < ap.w_bins:
         wave_samps = np.linspace(0, 1, ap.nwsamp)
         f_out = interp1d(wave_samps, datacube, axis=0)
         new_heights = np.linspace(0, 1, ap.w_bins)

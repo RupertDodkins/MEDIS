@@ -4,14 +4,14 @@ import pickle as pickle
 from scipy import ndimage
 import proper
 from proper_mod import prop_dm
-from medis.params import tp, cp, mp, ap,iop
+from medis.params import tp, cp, mp, ap, iop
 
 def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
     # print 'Including Adaptive Optics'
 
     # code to distort measured phase map goes here....
     # print 'add code to distort phase measurment'
-    nact = tp.ao_act#49                       # number of DM actuators along one axis
+    nact = tp.ao_act  # number of DM actuators along one axis
     nact_across_pupil = nact-2#/1.075#nact #47          # number of DM actuators across pupil
     dm_xc = (nact / 2) -0.5#-1#0.5#- 0.5
     dm_yc = (nact / 2) -0.5#-1#0.5#- 0.5
