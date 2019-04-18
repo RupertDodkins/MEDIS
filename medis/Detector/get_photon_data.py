@@ -77,18 +77,17 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
             elif tp.detector == 'MKIDs':
                 packets = read.get_packets(spectralcube, t, dp, mp)
 
-                if sp.show_wframe or sp.show_cube or sp.return_spectralcube:
-                    cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
-                    if mp.remove_close:
-                        timecube = read.remove_close_photons(cube)
+                # if sp.show_wframe or sp.show_cube or sp.return_spectralcube:
+                cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
+                if mp.remove_close:
+                    timecube = read.remove_close_photons(cube)
 
-                if sp.show_wframe:
-                    image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
+                # if sp.show_wframe:
+                image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
 
                 # Interpolating spectral cube from ap.nwsamp discreet wavelengths
-                if sp.show_cube or sp.return_spectralcube:
-                    spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
-
+                # if sp.show_cube or sp.return_spectralcube:
+                spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
 
                 if sp.save_obs:
                     command = read.get_obs_command(packets,t)
@@ -104,9 +103,9 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
                 view_datacube(spectralcube, logAmp=True, vmin=vmin)
 
             # print(sp.stop_gui)
-            if sp.return_spectralcube:
-                outqueue.put((t,spectralcube))
-            elif sp.use_gui:
+            # if sp.return_spectralcube:
+            #     outqueue.put((t,spectralcube))
+            if sp.use_gui:
                 # save_E_fields = np.ones((3, 3, 2, 256, 256))
                 gui_images = np.zeros_like(save_E_fields, dtype=np.float)
                 phase_ind = sp.save_locs[:, 1] == 'phase'
@@ -115,7 +114,7 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
                 gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
                 gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
 
-                outqueue.put((t, gui_images))
+                outqueue.put((t, gui_images, spectralcube))
 
         now = time.time()
         elapsed = float(now - start) / 60.
@@ -137,7 +136,7 @@ def wait_until(somepredicate, timeout, period=0.25, *args, **kwargs):
   return False
 
 
-def run_medis(self=None, plot=False):
+def run_medis(EfieldsThread=None, plot=False):
     """
     main script to organize calls to various aspects of the simulation
 
@@ -237,11 +236,16 @@ def run_medis(self=None, plot=False):
     if tp.quick_ao:
         for t in range(ap.startframe, ap.startframe + ap.numframes):
             inqueue.put(t)
+
             if sp.use_gui:
-                save_E_fields = outqueue.get()
-                self.newSample.emit(save_E_fields[1])
+                it, save_E_fields, spectralcube = outqueue.get()
+
                 while sp.play_gui is False:
-                    time.sleep(0.05)
+                    time.sleep(0.005)
+
+                EfieldsThread.newSample.emit(save_E_fields)
+                EfieldsThread.sct.newSample.emit((it, spectralcube))
+
 
     else:
         dprint('If the code has hung here it probably means it cant read the CPA file at some iter')

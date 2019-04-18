@@ -112,6 +112,8 @@ class Wavefronts():
 
 def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     """
+    #TODO pass complex datacube for photon phases
+
     propagates instantaneous complex E-field through the optical system in loop over wavelength range
 
     this function is called as a 'prescription' by proper

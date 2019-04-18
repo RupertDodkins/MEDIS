@@ -121,7 +121,7 @@ class Astro_params:
         self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
         self.exposure_time = 0.01
         self.startframe = 0  # useful for things like RDI
-        self.numframes = 5000  # number of timesteps in the simulation
+        self.numframes = 100  # number of timesteps in the simulation
 
         # Wavelength and Wavefront Array Settings
         # In optics_propagate(), proper initially takes N  discreet wavelengths evenly spaced in ap.band, where N is
@@ -185,7 +185,7 @@ class Telescope_params:
         self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
         self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
-        self.beam_ratio = 25/64. # parameter dealing with the sampling of the beam in the pupil/focal plane vs grid size
+        self.beam_ratio = 25/64.  # parameter dealing with the sampling of the beam in the pupil/focal plane vs grid size
         self.detector = 'ideal'  # 'MKIDs'
 
         # Speckles
