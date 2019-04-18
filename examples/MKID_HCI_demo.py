@@ -18,7 +18,7 @@ from medis.Analysis.phot import get_unoccult_psf, eval_method
 mpl.use('Qt5Agg')
 
 # Renaming obs_sequence directory location
-iop.update('HCIdemo/')
+iop.update(new_name='HCIdemo/')
 
 # Parameters specific to this script
 sp.show_wframe = False
@@ -117,6 +117,7 @@ lod = 6
 #          logAmp=True, vmins=[1e-9]*2, vmaxs=[1e-2]*2)
 #     plt.show(block=True)
 
+ap.numframes = 3
 if __name__ == '__main__':
     plotdata, maps = [], []
 
@@ -134,10 +135,9 @@ if __name__ == '__main__':
     ap.exposure_time = 0.1  # 0.001
 
     ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
-    # iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
-    dprint(iop.obs_seq)
+    iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
 
-    orig_hyper = gpd.run_medis(plot=False)[:, :]
+    orig_hyper = gpd.run_medis()[:, :]
 
     # fast_hyper = fast_hyper[:100]
     # ap.numframes = int(100 * ap.exposure_time / cp.frame_time)

@@ -180,24 +180,21 @@ def remove_close_photons(cube):
 
 
 def save_obs_sequence(obs_sequence, HyperCubeFile = 'hyper.pkl'):
-    print(HyperCubeFile)
-    # quicklook_im(obs_sequence[-1,0])
-    # print obs_sequence.shape, 'saving'
-    with open(HyperCubeFile, 'wb') as handle:
-        pickle.dump(obs_sequence, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    with open(HyperCubeFile, 'rb') as handle:
-        obs_sequence = pickle.load(handle)
-    # quicklook_im(obs_sequence[-1, 0])
-    # HyperCubeFile = HyperCubeFile[:-3]+'npy'
-    # np.save(HyperCubeFile, hypercube)
-
-def save_obs_sequence_hdf5(obs_sequence, HyperCubeFile = 'hyper.hdf'):
-    f = pt.open_file(HyperCubeFile, 'w')
-    # atom = pt.Atom.from_dtype(hypercube.dtype)
-    # ds = f.createCArray(f.root, 'data', atom, hypercube.shape)
-    ds = f.create_array(f.root, 'data', obs_sequence)
-    # ds[:] = hypercube
-    f.close()
+    dprint((HyperCubeFile, HyperCubeFile[-3:], HyperCubeFile[-3:]=='.h5'))
+    if HyperCubeFile[-3:] == 'pkl':
+        quicklook_im(obs_sequence[-1,0])
+        # print obs_sequence.shape, 'saving'
+        with open(HyperCubeFile, 'wb') as handle:
+            pickle.dump(obs_sequence, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    elif HyperCubeFile[-3:] == 'hdf' or HyperCubeFile[-3:] == '.h5':
+        f = pt.open_file(HyperCubeFile, 'w')
+        # atom = pt.Atom.from_dtype(hypercube.dtype)
+        # ds = f.createCArray(f.root, 'data', atom, hypercube.shape)
+        ds = f.create_array(f.root, 'data', obs_sequence)
+        # ds[:] = hypercube
+        f.close()
+    else:
+        print('Extension not recognised')
 
 
 def check_exists_obs_sequence(plot=False):

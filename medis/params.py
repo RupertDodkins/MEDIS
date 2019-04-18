@@ -39,11 +39,11 @@ class IO_params:
         self.quasi = os.path.join(self.aberdir, 'quasi')
 
         # Unprocessed Photon Science Data
-        self.sciroot = 'Observations'
+        self.sciroot = 'observations'
         self.scidir = os.path.join(self.datadir, self.sciroot)  # self.savedata
         self.testname = testname  # set this up in the definition line, but can update it with iop.update('newname')
         self.testdir = os.path.join(self.scidir, self.testname)  # Save results in new sub-directory
-        self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5') # a x/y/t/w cube of data
+        self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5')  # a x/y/t/w cube of data
         self.obs_table = os.path.join(self.testdir, 'ObsTable.h5')  # a photon table with 4 coloumns
         self.device_params = os.path.join(self.testdir, 'deviceParams.pkl')  # detector metadata
         self.coron_temp = os.path.join(self.testdir, 'coron_maps/') # required by vortex coron function
@@ -58,6 +58,11 @@ class IO_params:
         self.measured_var = os.path.join(self.testdir, 'measured_var.pkl')
 
         print(self.datadir)
+
+    def update(self, new_name='example1', datadir=None):
+        self.__init__(testname=new_name, datadir=datadir)
+
+    def makedir(self):
         if not os.path.isdir(self.datadir):
             os.makedirs(self.datadir, exist_ok=True)
         if not os.path.isdir(self.testdir):
@@ -66,23 +71,18 @@ class IO_params:
             os.makedirs(self.atmosroot, exist_ok=True)
         if not os.path.isdir(self.atmosdir):
             os.makedirs(self.atmosdir, exist_ok=True)
-        absroot = os.path.join(self.testdir, self.aberroot)
-        if not os.path.isdir(absroot):
-            os.makedirs(absroot, exist_ok=True)
+        if not os.path.isdir(self.aberroot):
+            os.makedirs(self.aberroot, exist_ok=True)
         if not os.path.isdir(self.aberdir):
             os.makedirs(self.aberdir, exist_ok=True)
-        sciroot = os.path.join(self.testdir, self.sciroot)
-        if not os.path.isdir(sciroot):
-            os.makedirs(sciroot, exist_ok=True)
+        if not os.path.isdir(self.sciroot):
+            os.makedirs(self.sciroot, exist_ok=True)
         if not os.path.isdir(self.scidir):
             os.makedirs(self.scidir, exist_ok=True)
         if not os.path.isdir(self.coron_temp):
             os.makedirs(self.coron_temp, exist_ok=True)
         if not os.path.isdir(self.quasi):
             os.makedirs(self.quasi, exist_ok=True)
-
-    def update(self, new_name='example1', datadir=None):
-        self.__init__(testname=new_name, datadir=datadir)
 
 
 class Simulation_params:

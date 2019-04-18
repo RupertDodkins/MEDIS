@@ -72,14 +72,15 @@ mp.pix_yield = 0.7  # check dis
 
 sp.get_ints = {'w': [0], 'c': [0]}
 
-if __name__ == '__main__':
-    # Rename Data Directory
-    iop.aberdata = 'Palomar'
-    iop.update("MKID_pic-ideal/")
-    if os.path.exists(iop.int_maps):
-        os.remove(iop.int_maps)
+# ***** These need to be outside the if statement to have an effect!! ****
+iop.aberdata = 'Palomar' # Rename Data Directory
+iop.update("MKID_pic-ideal/")
+if os.path.exists(iop.int_maps):
+    os.remove(iop.int_maps)
 
-    tp.detector = 'ideal'
+tp.detector = 'ideal'
+
+if __name__ == '__main__':
 
     # Starting the Simulation
     print("Starting MKID_pic ideal-detector example")
@@ -94,13 +95,13 @@ if __name__ == '__main__':
     # view_datacube(int_maps, logAmp=True)
     plt.show(block=True)
 
+# **** dito *****
+iop.update("MKID_pic-ideal/")
+
+tp.detector = 'MKIDs'
+ap.w_bins = 12
 
 if __name__ == '__main__':
-    # Rename Data Directory
-    iop.update("MKID_pic-ideal/")
-
-    tp.detector = 'MKIDs'
-    ap.w_bins = 12
 
     print("*****************************************************")
     print("*****************************************************")
@@ -138,3 +139,5 @@ if __name__ == '__main__':
     # plt.show()
 
     plt.show()
+
+
