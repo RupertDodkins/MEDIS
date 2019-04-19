@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 
 from matplotlib.colors import LogNorm, SymLogNorm
@@ -5,6 +6,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from matplotlib import gridspec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from matplotlib.image import AxesImage
 
 from functools import partial
 
@@ -24,7 +26,7 @@ class MatplotlibWidget(QWidget):
         super(MatplotlibWidget, self).__init__(parent)
 
         self.nrows, self.ncols = nrows, ncols
-        self.figure = Figure(figsize=(3*ncols,3*nrows))
+        self.figure = Figure(figsize=(5*ncols,3*nrows))
         self.canvas = FigureCanvasQTAgg(self.figure)
 
         gs = gridspec.GridSpec(self.nrows, self.ncols)
@@ -42,6 +44,8 @@ class MatplotlibWidget(QWidget):
         self.layoutVertical = QFormLayout(self)
         self.layoutVertical.addWidget(self.canvas)
 
+        self.ims = np.empty((self.nrows, self.ncols), dtype=AxesImage)
+
     def add_Efield_annotations(self):
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp).astype(int)
         for c in range(self.ncols):
@@ -57,7 +61,7 @@ class MatplotlibWidget(QWidget):
                              fontweight='bold', color='w',
                              fontsize=12, bbox=props)
         for r in range(self.nrows-1):
-            self.axes[r+1, 0].text(0.05, 0.075, sp.metric_funcs[r], transform=self.axes[r+1, 0].transAxes,
+            self.axes[r+1, 0].text(0.05, 0.075, sp.metric_funcs[r].__name__, transform=self.axes[r+1, 0].transAxes,
                                  fontweight='bold', color='w',
                                  fontsize=12, bbox=props)
 
@@ -205,10 +209,15 @@ class MyWindow(QWidget):
         for x in range(self.rows):
             for y in range(self.cols):
                 # self.EmapsGrid.axes[x, y].cla()
-                im = self.EmapsGrid.axes[x, y].imshow(gui_images[x,y,0,::2,::2], norm=norm[x],
+                try:
+                    self.EmapsGrid.ims[x,y].remove()
+                except AttributeError:
+                    True
+                self.EmapsGrid.ims[x,y] = self.EmapsGrid.axes[x, y].imshow(gui_images[x,y,0,::2,::2], norm=norm[x],
                                                      vmin=vmin[x], vmax=vmax[x], cmap=cmap[x])
 
-            self.EmapsGrid.figure.colorbar(im, cax=self.EmapsGrid.cax[x], orientation='vertical')
+
+            self.EmapsGrid.figure.colorbar(self.EmapsGrid.ims[x,-1], cax=self.EmapsGrid.cax[x], orientation='vertical')
 
         self.EmapsGrid.canvas.draw()
         del gui_images
@@ -227,17 +236,73 @@ class MyWindow(QWidget):
         self.EfieldsThread.sct.integration += spectralcube
         self.EfieldsThread.sct.obs_sequence[it] = spectralcube
 
+        try:
+            self.metricsGrid.ims[0,0].remove()
+        except AttributeError:
+            True
+
         # self.metricsGrid.axes[0,0].cla()
-        im = self.metricsGrid.axes[0,0].imshow(np.sum(self.EfieldsThread.sct.integration, axis=0), norm=LogNorm())
-        self.metricsGrid.figure.colorbar(im, cax=self.metricsGrid.cax[0], orientation='vertical')
+        print(type(self.metricsGrid.ims[0,0]))
+        self.metricsGrid.ims[0,0] = self.metricsGrid.axes[0,0].imshow(np.sum(self.EfieldsThread.sct.integration,
+                                                                             axis=0),
+                                                                      norm=LogNorm())
+        self.metricsGrid.figure.colorbar(self.metricsGrid.ims[0,0], cax=self.metricsGrid.cax[0],
+                                         orientation='vertical')
 
         for r, (func, args) in enumerate(zip(sp.metric_funcs, sp.metric_args)):
+            import traceback
             # self.metricsGrid.axes[r+1,0].cla()
-            f = partial(func, args)
-            metric = f(self.EfieldsThread.sct.obs_sequence[:it])
+            from medis.Utils.misc import dprint
+            dprint((type(self.metricsGrid.ims[r + 1, 0]), type(self.metricsGrid.ims[r + 1, 0]) == list))
+            try:
+                if type(self.metricsGrid.ims[r+1, 0]) == list:
+                    for im in self.metricsGrid.ims[r + 1, 0]:
+                        im[0].remove()
+                    # self.metricsGrid.axes[r + 1, 0].cla()
+                    # self.metricsGrid.add_metric_annotations()
+                else:
+                    self.metricsGrid.ims[r+1, 0].remove()
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except:
+                traceback.print_exc()
+            dprint(type(self.metricsGrid.ims[r + 1, 0]) == list)
 
-            im = self.metricsGrid.axes[r+1, 0].imshow(metric[it-1, 0], norm=LogNorm())
-            self.metricsGrid.figure.colorbar(im, cax=self.metricsGrid.cax[r+1], orientation='vertical')
+            metric = func(self.EfieldsThread.sct.obs_sequence[:it], args)
+
+            dims = len(np.shape(metric))
+            if dims == 4:
+                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric[it-1], axis=0), norm=LogNorm())
+                self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
+                                                 orientation='vertical')
+                self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image at step {it-1}')
+            elif dims == 3 and metric.shape[0] == ap.nwsamp:
+                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric, axis=0), norm=LogNorm())
+                self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
+                                                 orientation='vertical')
+                self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image')
+            elif dims == 3 and metric.shape[0] == ap.numframes:
+                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(metric[it-1], norm=LogNorm())
+                self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
+                                                 orientation='vertical')
+                self.metricsGrid.axes[r + 1, 0].set_title(f'monochromatic image at step {it - 1}')
+            elif dims == 2 and type(metric) is np.ndarray:
+                self.metricsGrid.ims[r+1, 0] = self.metricsGrid.axes[r+1, 0].imshow(metric, norm=LogNorm())
+                self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
+                                                 orientation='vertical')
+                self.metricsGrid.axes[r + 1, 0].set_title(f'constant monochromatic image')
+            elif dims == 2 and type(metric) is list:
+                self.metricsGrid.ims[r + 1, 0] = []
+                colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+                              '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+                              '#bcbd22', '#17becf']
+                for i in range(len(metric)):
+                    self.metricsGrid.ims[r + 1, 0].append(self.metricsGrid.axes[r + 1, 0].plot(metric[i], c=colors[i]))
+                self.metricsGrid.axes[r + 1, 0].set_title(f'constant list of lines')
+            elif dims == 1:
+                self.metricsGrid.ims[r + 1, 0] = self.metricsGrid.axes[r + 1, 0].plot(metric)
+            else:
+                print(f"metric from {func} with shape {np.shape(metric)} cannot be plotted")
 
         self.metricsGrid.canvas.draw()
         del it, spectralcube
