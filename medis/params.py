@@ -102,8 +102,8 @@ class Simulation_params:
         self.vmin = None
         self.variable = None
         self.save_obs = False
-        self.return_spectralcube = False
-        self.get_ints = False
+        self.return_E = False
+        # self.get_ints = False
         self.save_locs = None
 
 

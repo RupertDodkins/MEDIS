@@ -102,11 +102,7 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
             if sp.show_cube:
                 view_datacube(spectralcube, logAmp=True, vmin=vmin)
 
-            # print(sp.stop_gui)
-            # if sp.return_spectralcube:
-            #     outqueue.put((t,spectralcube))
             if sp.use_gui:
-                # save_E_fields = np.ones((3, 3, 2, 256, 256))
                 gui_images = np.zeros_like(save_E_fields, dtype=np.float)
                 phase_ind = sp.save_locs[:, 1] == 'phase'
                 amp_ind = sp.save_locs[:, 1] == 'amp'
@@ -115,6 +111,11 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
                 gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
 
                 outqueue.put((t, gui_images, spectralcube))
+
+            elif sp.return_E:
+                outqueue.put((t, save_E_fields))
+            else:
+                outqueue.put((t, spectralcube))
 
         now = time.time()
         elapsed = float(now - start) / 60.
@@ -220,10 +221,20 @@ def run_medis(EfieldsThread=None, plot=False):
         proc = multiprocessing.Process(target=read.handle_output, args=(photon_table_queue, iop.obsfile))
         proc.start()
 
+    if ap.companion is False:
+        ap.contrast = []
+
     if tp.detector == 'MKIDs':
         obs_sequence = np.zeros((ap.numframes, ap.w_bins, mp.array_size[1], mp.array_size[0]))
     else:
         obs_sequence = np.zeros((ap.numframes, ap.w_bins, ap.grid_size, ap.grid_size))
+
+    if sp.return_E:
+        e_fields_sequence = np.zeros((ap.numframes, len(sp.save_locs),
+                                      1 + len(ap.contrast), ap.nwsamp,
+                                      ap.grid_size, ap.grid_size))
+    else:
+        e_fields_sequence = None
 
     # Sending Queues to gen_timeseries
     for i in range(sp.num_processes):
@@ -236,14 +247,13 @@ def run_medis(EfieldsThread=None, plot=False):
             inqueue.put(t)
 
             if sp.use_gui:
-                it, save_E_fields, spectralcube = outqueue.get()
+                it, gui_images, spectralcube = outqueue.get()
 
                 while sp.play_gui is False:
                     time.sleep(0.005)
 
-                EfieldsThread.newSample.emit(save_E_fields)
+                EfieldsThread.newSample.emit(gui_images)
                 EfieldsThread.sct.newSample.emit((it, spectralcube))
-
 
     else:
         dprint('If the code has hung here it probably means it cant read the CPA file at some iter')
@@ -291,10 +301,14 @@ def run_medis(EfieldsThread=None, plot=False):
     for i in range(sp.num_processes):
         # Send the sentinal to tell Simulation to end
         inqueue.put(sentinel)
-    if sp.return_spectralcube:
-        for t in range(ap.numframes):
-            spectralcube = outqueue.get()
-            obs_sequence[spectralcube[0]-ap.startframe] = spectralcube[1]  # should be in the right order now because of the identifier
+
+    for t in range(ap.numframes):
+        if sp.return_E:
+            t, save_E_fields = outqueue.get()
+            e_fields_sequence[t - ap.startframe] = save_E_fields
+        else:
+            t, spectralcube = outqueue.get()
+            obs_sequence[t - ap.startframe] = spectralcube  # should be in the right order now because of the identifier
 
     for i, p in enumerate(jobs):
         p.join()
@@ -320,11 +334,16 @@ def run_medis(EfieldsThread=None, plot=False):
     if tp.detector == 'H2RG' and hp.use_readnoise:
         obs_sequence = H2RG.add_readnoise(obs_sequence, hp.readnoise)
 
-    dprint("Saving as hdf5 file:")
-    read.save_obs_sequence(obs_sequence, HyperCubeFile=iop.obs_seq)
-    print(f"Data saved: {iop.obs_seq}")
+    if sp.return_E:
+        # dprint("Saving obs_sequence as hdf5 file:")
+        # read.save_obs_sequence(e_fields_sequence, HyperCubeFile=iop.obs_seq)
+        # print(f"Data saved: {iop.obs_seq}")
+        return e_fields_sequence
 
-    return obs_sequence
+    else:
+        dprint("Saving obs_sequence as hdf5 file:")
+        read.save_obs_sequence(obs_sequence, HyperCubeFile=iop.obs_seq)
+        return obs_sequence
 
 
 if __name__ == '__main__':

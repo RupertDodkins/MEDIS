@@ -182,8 +182,6 @@ def remove_close_photons(cube):
 def save_obs_sequence(obs_sequence, HyperCubeFile = 'hyper.pkl'):
     dprint((HyperCubeFile, HyperCubeFile[-3:], HyperCubeFile[-3:]=='.h5'))
     if HyperCubeFile[-3:] == 'pkl':
-        quicklook_im(obs_sequence[-1,0])
-        # print obs_sequence.shape, 'saving'
         with open(HyperCubeFile, 'wb') as handle:
             pickle.dump(obs_sequence, handle, protocol=pickle.HIGHEST_PROTOCOL)
     elif HyperCubeFile[-3:] == 'hdf' or HyperCubeFile[-3:] == '.h5':
