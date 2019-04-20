@@ -26,8 +26,7 @@ sp.save_locs = np.array([['add_atmos',], ['coronagraph',]])
 sp.return_E = True
 
 iop.update("mod_barebones/")
-ap.grid_size = 148
 
 if __name__ == '__main__':
-    simple_hypercube_1 = gpd.run_medis(plot=False)
-    print(simple_hypercube_1.shape) # ap.numframes x len(sp.save_locs) x (1 star + # of companions) x ap.nwsamp x ap.grid_size x ap.grid_size
+    save_E_fields = gpd.run_medis(plot=False)
+    print(save_E_fields.shape) # ap.numframes x len(sp.save_locs) x (1 star + # of companions) x ap.nwsamp x ap.grid_size x ap.grid_size
