@@ -36,7 +36,6 @@ class SpectralCubeThread(QtCore.QThread):
             # method_to_call = getattr(read, self.func)
             # self.metric = method_to_call(self.obs_sequence)
             self.metric = self.spectralcube[0]
-            print(self.metric[0,::50,::50], self.metric.shape)
             # self.newSample.emit(self.metric)
 
 # SCT = SpectralCubeThread()
@@ -55,6 +54,3 @@ class EfieldsThread(QtCore.QThread):
 
     def run(self):
         run_medis(EfieldsThread=self)
-
-
-

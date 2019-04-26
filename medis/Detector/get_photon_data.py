@@ -232,7 +232,7 @@ def run_medis(EfieldsThread=None, plot=False):
     if sp.return_E:
         e_fields_sequence = np.zeros((ap.numframes, len(sp.save_locs),
                                       1 + len(ap.contrast), ap.nwsamp,
-                                      ap.grid_size, ap.grid_size))
+                                      ap.grid_size, ap.grid_size), dtype=np.complex64)
     else:
         e_fields_sequence = None
 
@@ -335,14 +335,12 @@ def run_medis(EfieldsThread=None, plot=False):
         obs_sequence = H2RG.add_readnoise(obs_sequence, hp.readnoise)
 
     if sp.return_E:
-        # dprint("Saving obs_sequence as hdf5 file:")
-        # read.save_obs_sequence(e_fields_sequence, HyperCubeFile=iop.obs_seq)
-        # print(f"Data saved: {iop.obs_seq}")
+        read.save_fields(e_fields_sequence, fields_file=iop.fields)
         return e_fields_sequence
 
     else:
         dprint("Saving obs_sequence as hdf5 file:")
-        read.save_obs_sequence(obs_sequence, HyperCubeFile=iop.obs_seq)
+        read.save_obs_sequence(obs_sequence, obs_seq_file=iop.obs_seq)
         return obs_sequence
 
 

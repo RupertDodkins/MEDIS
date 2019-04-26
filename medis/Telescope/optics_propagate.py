@@ -148,16 +148,12 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         # TODO is this supposed to be in the for loop over w?
         aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['atmos_map']))
 
-    wfo.wf_array = aber.abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
-
     if tp.rot_rate:
         wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['atmos_map']))
 
     # if tp.obscure:
     #     # wfo.iter_func(fo.add_obscurations, tp.diam/4, legs=True)
     #     wfo.wf_array = aber.abs_zeros(wfo.wf_array)
-
-    wfo.wf_array = aber.abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
 
     if tp.use_hex:
         fo.add_hex(wfo.wf_array)
@@ -176,13 +172,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         aber.add_aber(wfo.wf_array, tp.f_lens, tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='CPA1')
         wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
 
-    if tp.obscure:
-        # TODO check this was resolved and spiders can be applied earlier up the chain
-        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
-        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
-        wfo.iter_func(fo.add_obscurations, M2_frac=1/4, d_primary=tp.diam)
-        wfo.wf_array = aber.abs_zeros(wfo.wf_array)
-
     ########################################
     # AO
     #######################################
@@ -193,9 +182,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         CPA_maps = ao.quick_wfs(wfo.wf_array[:,0], PASSVALUE['iter'], r0=r0)  # , obj_map, tp.wfs_scale)
 
         if tp.use_ao:
+            dprint(tp.use_ao)
             ao.quick_ao(wfo,  CPA_maps)
-            wfo.wf_array = aber.abs_zeros(wfo.wf_array)
-            # if sp.get_ints: get_intensity(wfo.wf_array, sp, phase=True)
 
     else:
         # TODO update this code
@@ -203,13 +191,20 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         #     ao.adaptive_optics(wf, iwf, iw, tp.f_lens, beam_ratio, PASSVALUE['iter'])
         #
         # if iwf == 'primary':  # and PASSVALUE['iter'] == 0:
-        #     # quicklook_wf(wf, show=True)
         #     r0 = float(PASSVALUE['atmos_map'][-10:-5])
         #     # dprint((r0, 'r0'))
         #     # if iw == np.ceil(ap.nwsamp/2):
         #     ao.wfs_measurement(wf, PASSVALUE['iter'], iw, r0=r0)  # , obj_map, tp.wfs_scale)
         dprint('This needs to be updated to the parallel implementation')
         exit()
+
+    if tp.obscure:
+        # TODO check this was resolved and spiders can be applied earlier up the chain
+        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
+        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
+        print('warning adding obscurations after the AO!!')
+        wfo.iter_func(fo.add_obscurations, M2_frac=1/4, d_primary=tp.diam)
+        wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
     # TODO Verify this
     # if tp.active_modulate:

@@ -12,12 +12,14 @@ def take_exposure(obs_sequence, exp_time):
 
 def take_acf(obs_sequence, locs=None):
     if locs is None:
-        locs = [73, 85, 105, 120]
+        locs = [[65,65], [65,83], [83,65], [83,83]]
 
     corrs = []
+    row = 80
     if len(obs_sequence) > 2:
-        for y in locs:
-            corr, ljb, pvalue = acf(obs_sequence[:, 0, 73, y], unbiased=False, qstat=True, nlags=len(range(ap.numframes)))
+        for (x,y) in locs:
+            corr, ljb, pvalue = acf(np.mean(obs_sequence[:, :, x-3:x+3, y-3:y+3], axis=(1, 2, 3)),
+                                    unbiased=False, qstat=True, nlags=50)
             corrs.append(corr)
     else:
         corrs = np.empty((len(locs)))
@@ -29,15 +31,22 @@ def take_acf(obs_sequence, locs=None):
 sp.use_gui = True
 sp.show_cube = False
 sp.save_locs = np.array([['add_atmos','phase'], ['quick_ao','phase'], ['prop_mid_optics','amp'], ['coronagraph','amp']])
+# sp.save_locs = np.array([ ['quick_ao','phase'], ['prop_mid_optics','amp'], ['coronagraph','amp']])
+# sp.save_locs = np.array([ ['prop_mid_optics','amp'], ['coronagraph','amp']])
 sp.metric_funcs = [take_exposure, take_acf]
-sp.metric_args = [0.1, [73, 85, 105, 120]]
+sp.metric_args = [0.1, [[65,65], [65,83], [83,65], [83,83]]]
 ap.nwsamp = 1
 ap.grid_size = 148
 ap.companion = False
 ap.star_photons = 1e8
+ap.exposure_time = 1e-3
+# tp.use_atmos = False
+# tp.use_ao = False
+# ap.numframes = 500
 
 
-tp.detector = 'MKIDs'
+# tp.detector = 'MKIDs'
+tp.detector = 'ideal'
 
 from medis.Dashboard.architecture import MyWindow
 

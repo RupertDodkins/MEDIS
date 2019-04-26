@@ -245,9 +245,9 @@ def add_atmos(wfo, f_lens, atmos_map):
 
                         atmos_map = atmos_map[:-19]+ '%1.6f' % (indx +i) + atmos_map[-11:]
                         if up:
-                            i+=1e-6
+                            i += 1e-6
                         else:
-                            i-=1e-6
+                            i -= 1e-6
                         if i >= 50e-6:
                             i = 0
                             up = 0
@@ -260,6 +260,7 @@ def add_atmos(wfo, f_lens, atmos_map):
             else:
                 proper.prop_add_phase(wfo.wf_array[iw,io], obj_map)
 
+    wfo.wf_array = abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
     wfo.test_save('add_atmos')
 
 def rotate_atmos(wf, atmos_map):

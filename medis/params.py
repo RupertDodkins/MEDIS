@@ -44,6 +44,7 @@ class IO_params:
         self.testname = testname  # set this up in the definition line, but can update it with iop.update('newname')
         self.testdir = os.path.join(self.scidir, self.testname)  # Save results in new sub-directory
         self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5')  # a x/y/t/w cube of data
+        self.fields = os.path.join(self.testdir, 'fields.h5')
         self.obs_table = os.path.join(self.testdir, 'ObsTable.h5')  # a photon table with 4 coloumns
         self.device_params = os.path.join(self.testdir, 'deviceParams.pkl')  # detector metadata
         self.coron_temp = os.path.join(self.testdir, 'coron_maps/') # required by vortex coron function
@@ -146,7 +147,7 @@ class Telescope_params:
         # Foreoptics + AO Settings
         self.pix_shift = [0, 0]  # False?  Shifts the central star to off-axis (circular shift) (mimics conex mirror)
         self.rot_rate = 0  # deg/s
-        self.obscure = True  # Turns on obscurations (spiders and secondary obscuration,
+        self.obscure = False  # Turns on obscurations (spiders and secondary obscuration,
                              # but can turn spiders off when called with legs=False)
         self.use_hex = False  # include aberrations from hexagonal segmented mirror shape of primary
         self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary

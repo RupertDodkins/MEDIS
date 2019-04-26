@@ -96,12 +96,12 @@ def quick_ao(wfo, CPA_maps):
             d_beam = 2 * proper.prop_get_beamradius(wf_array[iw,io])  # beam diameter
             act_spacing = d_beam / nact_across_pupil  # actuator spacing
             # Compensating for chromatic beam size
-            dm_map = CPA_maps[iw,ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
-                                ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1,
-                                ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
-                                ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1]
+            dm_map = CPA_maps[iw, ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
+                                  ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1,
+                     ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
+                     ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1]
             f= interpolate.interp2d(list(range(dm_map.shape[0])), list(range(dm_map.shape[0])), dm_map)
-            dm_map = f(np.linspace(0,dm_map.shape[0],nact),np.linspace(0,dm_map.shape[0],nact))
+            dm_map = f(np.linspace(0,dm_map.shape[0], nact), np.linspace(0, dm_map.shape[0], nact))
             # dm_map = proper.prop_magnify(CPA_map, map_spacing / act_spacing, nact)
 
             if tp.piston_error:
@@ -111,8 +111,8 @@ def quick_ao(wfo, CPA_maps):
 
 
             dm_map = -dm_map * proper.prop_get_wavelength(wf_array[iw,io]) / (4 * np.pi)  # <--- here
-            # dmap = proper.prop_dm(wfo, dm_map, dm_xc, dm_yc, N_ACT_ACROSS_PUPIL=nact, FIT=True)  # <-- here
-            dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)  # <-- here
+            dmap = proper.prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, N_ACT_ACROSS_PUPIL=nact, FIT=True)  # <-- here
+            # dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)  # <-- here
 
     # kludge to help with spiders
     for iw in range(shape[0]):
@@ -120,9 +120,9 @@ def quick_ao(wfo, CPA_maps):
         amp_map = proper.prop_get_amplitude(wf_array[iw,0])
 
         lowpass = ndimage.gaussian_filter(phase_map, 1, mode='nearest')
-        smoothed = phase_map- lowpass
+        smoothed = phase_map - lowpass
 
-        wf_array[iw,0].wfarr = proper.prop_shift_center(amp_map*np.cos(smoothed)+1j*amp_map*np.sin(smoothed))
+        wf_array[iw, 0].wfarr = proper.prop_shift_center(amp_map*np.cos(smoothed)+1j*amp_map*np.sin(smoothed))
 
     wfo.test_save('quick_ao')
 
@@ -138,14 +138,16 @@ def quick_wfs(wf_vec, iter, r0):
     import scipy.ndimage
     from skimage.restoration import unwrap_phase
 
-    sigma = [1, 1]
+    sigma = [2, 2]
     CPA_maps = np.zeros((len(wf_vec),ap.grid_size,ap.grid_size))
+
     for iw in range(len(wf_vec)):
         CPA_maps[iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wf_vec[iw])), sigma,
                                                              mode='constant')
-        if tp.piston_error:
-            var = 1e-4#1e-11 #0.1 wavelengths 0.1*1000e-9
-            CPA_maps[iw] = CPA_maps[iw] + np.random.normal(0,var,(CPA_maps[iw].shape[0],CPA_maps[iw].shape[1]))
+
+        # if tp.piston_error:
+        #     var = 1e-4  #1e-11 #0.1 wavelengths 0.1*1000e-9
+        #     CPA_maps[iw] = CPA_maps[iw] + np.random.normal(0,var,(CPA_maps[iw].shape[0],CPA_maps[iw].shape[1]))
 
     return CPA_maps
 
@@ -159,7 +161,8 @@ def wfs_measurement(wfo, iter, iw,r0):#, obj_map, wfs_sample):
     import scipy.ndimage
     sigma = [1, 1]
     from skimage.restoration import unwrap_phase
-    CPA_maps[0, iw] += scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wfo)), sigma, mode='constant')
+    CPA_maps[0, iw] += scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wfo)), sigma,
+                                                             mode='constant')
     if tp.servo_error:
         # print 'This might produce garbage if several processes are run in parrallel'
         CPA_maps[:,iw] = np.roll(CPA_maps[:,iw],1,0)

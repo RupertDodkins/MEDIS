@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QComboBox, QFormLayout, QHBoxLayout, QVBoxLayout, QL
 
 from medis.params import ap,sp
 from medis.Dashboard.helper import EfieldsThread, SpectralCubeThread
-
+from medis.Dashboard.twilight import sunlight, twilight
 
 if sp.save_locs is None:
     sp.save_locs = [['coronagraph',]]
@@ -78,9 +78,11 @@ class MyWindow(QWidget):
         self.pushButtonRun.clicked.connect(self.on_pushButtonRun_clicked)
         self.EfieldsThread = EfieldsThread(self)
         self.EfieldsThread.newSample.connect(self.on_EfieldsThread_newSample)
+        self.vmin, self.vmax = None, None
 
         self.pushButtonStop = QPushButton(self)
-        self.pushButtonStop.setText("Play/Pause")
+        self.pushButtonStop_options = np.rec.fromarrays((['Play', 'Pause'], [0, 1]), names=('keys', 'values'))
+        self.pushButtonStop.setText(self.pushButtonStop_options['keys'][self.pushButtonStop_options['values'] == True][0])
         self.pushButtonStop.clicked.connect(self.on_pushButtonStop_clicked)
 
         self.pushButtonSave = QPushButton(self)
@@ -180,6 +182,13 @@ class MyWindow(QWidget):
 
     @pyqtSlot()
     def on_pushButtonStop_clicked(self):
+        self.pushButtonStop_options['values'] = np.logical_not(self.pushButtonStop_options['values'])
+        self.pushButtonStop.setText(self.pushButtonStop_options['keys'][self.pushButtonStop_options['values'] == True][0])
+
+        if np.array_equal(self.pushButtonStop_options['values'], [1, 0]):
+            self.pushButtonStop.setStyleSheet("background-color: blue")
+        else:
+            self.pushButtonStop.setStyleSheet("background-color: white")
         sp.play_gui = not sp.play_gui
 
     @pyqtSlot()
@@ -200,22 +209,31 @@ class MyWindow(QWidget):
         cmap = np.array([None for _ in range(len(sp.save_locs))])
 
         norm[amp_ind] = LogNorm()
-        vmin[~amp_ind] = -np.pi
-        vmax[~amp_ind] = np.pi
-        vmin[amp_ind] = np.min(gui_images[amp_ind, :, 0])
-        vmax[amp_ind] = np.max(gui_images[amp_ind, :, 0])
-        cmap[~amp_ind] = 'hsv'
+        # vmin[~amp_ind] = -np.pi
+        # vmax[~amp_ind] = np.pi
+        vmin[~amp_ind] = np.min(gui_images[~amp_ind, :, 0], axis=(1,2,3))
+        vmax[~amp_ind] = np.max(gui_images[~amp_ind, :, 0], axis=(1,2,3))
+        vmin[amp_ind] = np.min(gui_images[amp_ind, :, 0], axis=(1,2,3))
+        vmax[amp_ind] = np.max(gui_images[amp_ind, :, 0], axis=(1,2,3))
+        if self.vmin is None:
+            # may mess up when there is just one amp figure?
+            log_bins = np.logspace(np.log10(vmin[amp_ind][0]), np.log10(vmax[amp_ind][0]), 5)
+            self.vmin = vmin
+            self.vmax = vmax
+            self.vmin[amp_ind] = log_bins[1]
+            self.vmax[amp_ind] = log_bins[-1]
+        cmap[~amp_ind] = twilight
+        cmap[amp_ind] = 'cividis'
 
         for x in range(self.rows):
             for y in range(self.cols):
                 # self.EmapsGrid.axes[x, y].cla()
                 try:
-                    self.EmapsGrid.ims[x,y].remove()
-                except AttributeError:
-                    True
-                self.EmapsGrid.ims[x,y] = self.EmapsGrid.axes[x, y].imshow(gui_images[x,y,0,::2,::2], norm=norm[x],
-                                                     vmin=vmin[x], vmax=vmax[x], cmap=cmap[x])
-
+                    self.EmapsGrid.ims[x, y].remove()
+                except (AttributeError, ValueError):
+                    pass
+                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(gui_images[x, y,0, ::2, ::2], norm=norm[x],
+                                                     vmin=self.vmin[x], vmax=self.vmax[x], cmap=cmap[x], origin='lower')
 
             self.EmapsGrid.figure.colorbar(self.EmapsGrid.ims[x,-1], cax=self.EmapsGrid.cax[x], orientation='vertical')
 
@@ -244,8 +262,8 @@ class MyWindow(QWidget):
         # self.metricsGrid.axes[0,0].cla()
         print(type(self.metricsGrid.ims[0,0]))
         self.metricsGrid.ims[0,0] = self.metricsGrid.axes[0,0].imshow(np.sum(self.EfieldsThread.sct.integration,
-                                                                             axis=0),
-                                                                      norm=LogNorm())
+                                                                             axis=0), norm=LogNorm(),
+                                                                      origin='lower', cmap='cividis')
         self.metricsGrid.figure.colorbar(self.metricsGrid.ims[0,0], cax=self.metricsGrid.cax[0],
                                          orientation='vertical')
 
@@ -257,11 +275,17 @@ class MyWindow(QWidget):
             try:
                 if type(self.metricsGrid.ims[r+1, 0]) == list:
                     for im in self.metricsGrid.ims[r + 1, 0]:
-                        im[0].remove()
+                        try:
+                            im[0].remove()
+                        except TypeError:
+                            pass
                     # self.metricsGrid.axes[r + 1, 0].cla()
                     # self.metricsGrid.add_metric_annotations()
                 else:
-                    self.metricsGrid.ims[r+1, 0].remove()
+                    try:
+                        self.metricsGrid.ims[r+1, 0].remove()
+                    except AttributeError:
+                        pass
             except (KeyboardInterrupt, SystemExit):
                 raise
             except:
@@ -272,22 +296,35 @@ class MyWindow(QWidget):
 
             dims = len(np.shape(metric))
             if dims == 4:
-                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric[it-1], axis=0), norm=LogNorm())
+                if np.shape(metric)[0] == 0:
+                    return
+                # itclip = np.array([it-1]).clip(min=0)[0]
+                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric[it-1], axis=0),
+                                                                                   norm=LogNorm(), origin='lower',
+                                                                                   cmap='cividis')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image at step {it-1}')
+
             elif dims == 3 and metric.shape[0] == ap.nwsamp:
-                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric, axis=0), norm=LogNorm())
+                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric, axis=0),
+                                                                                   norm=LogNorm(),
+                                                                                   origin='lower',
+                                                                                   cmap='cividis')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image')
             elif dims == 3 and metric.shape[0] == ap.numframes:
-                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(metric[it-1], norm=LogNorm())
+                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(metric[it-1], norm=LogNorm(),
+                                                                                   origin='lower',
+                                                                                   cmap='cividis')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'monochromatic image at step {it - 1}')
             elif dims == 2 and type(metric) is np.ndarray:
-                self.metricsGrid.ims[r+1, 0] = self.metricsGrid.axes[r+1, 0].imshow(metric, norm=LogNorm())
+                self.metricsGrid.ims[r+1, 0] = self.metricsGrid.axes[r+1, 0].imshow(metric, norm=LogNorm(),
+                                                                                    origin='lower',
+                                                                                   cmap='cividis')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'constant monochromatic image')
@@ -297,10 +334,13 @@ class MyWindow(QWidget):
                               '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
                               '#bcbd22', '#17becf']
                 for i in range(len(metric)):
-                    self.metricsGrid.ims[r + 1, 0].append(self.metricsGrid.axes[r + 1, 0].plot(metric[i], c=colors[i]))
+                    self.metricsGrid.ims[r + 1, 0].append(self.metricsGrid.axes[r + 1, 0].plot(metric[i], c=colors[i], label=args[i]))
                 self.metricsGrid.axes[r + 1, 0].set_title(f'constant list of lines')
+                self.metricsGrid.axes[r + 1, 0].legend()
+                # self.metricsGrid.axes[r + 1, 0].set_xscale('log')
             elif dims == 1:
                 self.metricsGrid.ims[r + 1, 0] = self.metricsGrid.axes[r + 1, 0].plot(metric)
+                # self.metricsGrid.ims[r + 1, 0].set_xscale('log')
             else:
                 print(f"metric from {func} with shape {np.shape(metric)} cannot be plotted")
 

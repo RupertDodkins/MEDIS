@@ -12,6 +12,7 @@ The second half of the module has little/nothing to do with a readout system
 import numpy as np
 from copy import copy
 import tables as pt
+import h5py
 import pickle as pickle
 from medis.params import ap, cp, tp, mp, iop, hp, sp
 from . import MKIDs
@@ -179,18 +180,31 @@ def remove_close_photons(cube):
 ####################################################################################################
 
 
-def save_obs_sequence(obs_sequence, HyperCubeFile = 'hyper.pkl'):
-    dprint((HyperCubeFile, HyperCubeFile[-3:], HyperCubeFile[-3:]=='.h5'))
-    if HyperCubeFile[-3:] == 'pkl':
-        with open(HyperCubeFile, 'wb') as handle:
+def save_obs_sequence(obs_sequence, obs_seq_file='hyper.pkl'):
+    dprint((obs_seq_file, obs_seq_file[-3:], obs_seq_file[-3:] == '.h5'))
+    if obs_seq_file[-3:] == 'pkl':
+        with open(obs_seq_file, 'wb') as handle:
             pickle.dump(obs_sequence, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    elif HyperCubeFile[-3:] == 'hdf' or HyperCubeFile[-3:] == '.h5':
-        f = pt.open_file(HyperCubeFile, 'w')
+    elif obs_seq_file[-3:] == 'hdf' or obs_seq_file[-3:] == '.h5':
+        f = pt.open_file(obs_seq_file, 'w')
         # atom = pt.Atom.from_dtype(hypercube.dtype)
         # ds = f.createCArray(f.root, 'data', atom, hypercube.shape)
         ds = f.create_array(f.root, 'data', obs_sequence)
         # ds[:] = hypercube
         f.close()
+    else:
+        print('Extension not recognised')
+
+
+def save_fields(e_fields_sequence, fields_file='hyper.pkl'):
+
+    dprint((fields_file, fields_file[-3:], fields_file[-3:] == '.h5'))
+    if fields_file[-3:] == 'pkl':
+        with open(fields_file, 'wb') as handle:
+            pickle.dump(e_fields_sequence, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    elif fields_file[-3:] == 'hdf' or fields_file[-3:] == '.h5':
+        with h5py.File(fields_file, 'w') as hf:
+            hf.create_dataset('data', data=e_fields_sequence)
     else:
         print('Extension not recognised')
 
@@ -213,23 +227,28 @@ def check_exists_obs_sequence(plot=False):
     else:
         return False
 
-def open_obs_sequence(HyperCubeFile = 'hyper.pkl'):
-    with open(HyperCubeFile, 'rb') as handle:
+def open_obs_sequence(obs_seq_file = 'hyper.pkl'):
+    with open(obs_seq_file, 'rb') as handle:
         obs_sequence =pickle.load(handle)
     # quicklook_im(hypercube[-1, 0])
-    # HyperCubeFile = HyperCubeFile[:-3]+'npy'
-    # hypercube = np.load(HyperCubeFile)
+    # obs_seq_file = obs_seq_file[:-3]+'npy'
+    # hypercube = np.load(obs_seq_file)
     return obs_sequence
 
 
-def open_obs_sequence_hdf5(HyperCubeFile = 'hyper.h5'):
+def open_obs_sequence_hdf5(obs_seq_file = 'hyper.h5'):
     # hdf5_path = "my_data.hdf5"
-    read_hdf5_file = pt.open_file(HyperCubeFile, mode='r')
+    read_hdf5_file = pt.open_file(obs_seq_file, mode='r')
     # Here we slice [:] all the data back into memory, then operate on it
     obs_sequence = read_hdf5_file.root.data[:]
     # hdf5_clusters = read_hdf5_file.root.clusters[:]
     read_hdf5_file.close()
     return obs_sequence
+
+def open_fields(fields_file):
+    with h5py.File(fields_file, 'r') as hf:
+        data = hf['data'][:]
+    return data
 
 
 def take_exposure(obs_sequence):
