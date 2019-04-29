@@ -15,18 +15,18 @@ sp.show_wframe = False
 sp.save_obs = False
 sp.show_cube = False
 sp.num_processes = 1
+sp.return_E = True
 
 # Astro Parameters
-ap.companion = True
+ap.companion = False
 # ap.contrast = [5e-3, 1e-3]
-ap.contrast = [0.1]
 ap.star_photons = int(1e7) # # G type star 10ly away gives 1e6 cts/cm^2/s
 ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
 ap.exposure_time = 0.1  # 0.001
 
 # Telescope/optics Parameters
 tp.diam = 5.
-ap.grid_size = 256
+ap.grid_size = 148
 tp.beam_ratio = 0.4
 tp.obscure = True
 tp.use_ao = True
@@ -44,10 +44,10 @@ tp.aber_params = {'CPA': True,
 
 # Wavelength and Spectral Range
 ap.band = np.array([800, 1500])
-ap.nwsamp = 4
-ap.w_bins = 4
+ap.nwsamp = 1
+ap.w_bins = 1
 
-num_exp = 3 #5000
+num_exp = 1 #5000
 cp.frame_time = 0.1
 ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
 tp.piston_error = True
@@ -74,32 +74,29 @@ sp.get_ints = {'w': [0], 'c': [0]}
 
 # ***** These need to be outside the if statement to have an effect!! ****
 iop.aberdata = 'Palomar' # Rename Data Directory
-iop.update("MKID_pic-ideal/")
+# iop.update("MKID_pic-ideal/")
 if os.path.exists(iop.int_maps):
     os.remove(iop.int_maps)
 
 tp.detector = 'ideal'
 
+sp.save_locs = np.array([['add_obscurations', 'phase'], ['add_aber', 'phase'], ['quick_ao', 'phase'], ['dummy', 'dummy']])
+phase_ind = range(4)
+
+
 if __name__ == '__main__':
 
     # Starting the Simulation
     print("Starting MKID_pic ideal-detector example")
-    ideal = gpd.run_medis()[0, :]
+    fields = gpd.run_medis()[0, :, 0, 0]
     print("finished Ideal-loop of MKID_pic Example File")
 
-    # compare_images(ideal, logAmp=True, vmax = 0.01, vmin=1e-6, annos = ['Ideal 800 nm', '1033 nm', '1267 nm', '1500 nm'], title=r'$I$')
-    with open(iop.int_maps, 'rb') as handle:
-        int_maps = pickle.load(handle)
-
-    int_maps = np.array(int_maps)
-    # view_datacube(int_maps, logAmp=True)
-    plt.show(block=True)
+    fields = np.angle(fields[phase_ind], deg=False)
+    grid(fields, logAmp=False)
 
 # **** dito *****
-iop.update("MKID_pic-ideal/")
-
+iop.update("MKID_pic-ideal2/")
 tp.detector = 'MKIDs'
-ap.w_bins = 12
 
 if __name__ == '__main__':
 

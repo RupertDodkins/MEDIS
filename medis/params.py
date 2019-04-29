@@ -60,7 +60,8 @@ class IO_params:
 
         print(self.datadir)
 
-    def update(self, new_name='example1', datadir=None):
+    def update(self, new_name='example1'):
+        datadir = self.datadir
         self.__init__(testname=new_name, datadir=datadir)
 
     def makedir(self):
@@ -312,6 +313,6 @@ fp = FPWFS_params()
 proper.print_it = False
 # proper.prop_init_savestate()
 
-if os.path.exists('{}/user_params.py'.format(os.path.dirname(__file__))):
+if os.path.exists(f'{os.path.dirname(__file__)}/user_params.py'):
     from medis.user_params import update
     ap, cp, tp, mp, hp, sp, iop, dp, fp = update((ap, cp, tp, mp, hp, sp, iop, dp, fp))

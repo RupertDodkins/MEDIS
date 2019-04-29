@@ -151,10 +151,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.rot_rate:
         wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['atmos_map']))
 
-    # if tp.obscure:
-    #     # wfo.iter_func(fo.add_obscurations, tp.diam/4, legs=True)
-    #     wfo.wf_array = aber.abs_zeros(wfo.wf_array)
-
     if tp.use_hex:
         fo.add_hex(wfo.wf_array)
 
@@ -169,7 +165,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #######################################
     # Abberations before AO
     if tp.aber_params['CPA']:
-        aber.add_aber(wfo.wf_array, tp.f_lens, tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='CPA1')
+        aber.add_aber(wfo, tp.f_lens, tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='CPA1')
         wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
 
     ########################################
@@ -216,7 +212,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     # Abberations after the AO Loop
     if tp.aber_params['NCPA']:
-        aber.add_aber(wfo.wf_array, tp.f_lens,tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='NCPA1')
+        aber.add_aber(wfo, tp.f_lens,tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='NCPA1')
         wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
         # TODO does this need to be here?
         # wfo.iter_func(fo.add_obscurations, tp.diam/4, legs=False)
@@ -251,14 +247,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         datacube.append(wframes)
 
     datacube = np.array(datacube)
-    # TODO implement this format of dithering
-    # width = mp.array_SIZE
-    # left = np.round(datacube.shape[1]//2+x - width//2).astype(int)
-    # right = left+width
-    # bottom = np.round(datacube.shape[2]//2+y - width//2).astype(int)
-    # top = bottom +width
-    # # print(rot_sky.shape,x,y, left, right, bottom, top)
-    # dither = rot_sky[bottom:top, left:right]
     datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)  # cirshift array for off-axis observing
     datacube = np.abs(datacube)  # get intensity from datacube
 
@@ -277,16 +265,4 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     print('Finished datacube at single timestep')
     wfo.save_E_fields = np.array(wfo.save_E_fields)
 
-    return (datacube, wfo.save_E_fields)
-
-
-
-
-
-
-
-
-
-
-
-
+    return datacube, wfo.save_E_fields

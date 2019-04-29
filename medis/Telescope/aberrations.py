@@ -122,7 +122,7 @@ def circularise(prim_map):
     return new_prim
 
 
-def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
+def add_aber(wfo, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
     """
     loads a phase error map and adds aberrations using proper.prop_add_phase
     if no aberration file exists, creates one for specific lens using generate_maps
@@ -151,15 +151,15 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
         generate_maps(d_lens, lens_name)
     phase_map = rawImageIO.read_image(filename, prob_map=False)
 
-    shape = wf_array.shape
+    shape = wfo.wf_array.shape
     # The For Loop of Horror:
     for iw in range(shape[0]):
         for io in range(shape[1]):
             if aber_params['Phase']:
                 for surf in range(aber_params['n_surfs']):
                     if aber_params['OOPP']:
-                        proper.prop_lens(wf_array[iw,io], f_lens, "OOPP")
-                        proper.prop_propagate(wf_array[iw,io], f_lens/aber_params['OOPP'][surf])
+                        proper.prop_lens(wfo.wf_array[iw,io], f_lens, "OOPP")
+                        proper.prop_propagate(wfo.wf_array[iw,io], f_lens/aber_params['OOPP'][surf])
                         lens_name = f"OOPP{surf}"
                         filename = f"{iop.quasi}/t{step}_{lens_name}.fits"
                         if not os.path.isfile(filename):
@@ -167,11 +167,11 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
                         phase_map = rawImageIO.read_image(filename, prob_map=False)
 
                     # Add Phase Map
-                    proper.prop_add_phase(wf_array[iw, io], phase_map[0])
+                    proper.prop_add_phase(wfo.wf_array[iw, io], phase_map[0])
 
                     if aber_params['OOPP']:
-                        proper.prop_propagate(wf_array[iw,io], f_lens+f_lens*(1-1./aber_params['OOPP'][surf]))
-                        proper.prop_lens(wf_array[iw,io], f_lens, "OOPP")
+                        proper.prop_propagate(wfo.wf_array[iw,io], f_lens+f_lens*(1-1./aber_params['OOPP'][surf]))
+                        proper.prop_lens(wfo.wf_array[iw,io], f_lens, "OOPP")
 
                 # quicklook_im(phase_maps[0]*1e9, logAmp=False, colormap="jet", show=True, axis=None, title='nm', pupil=True)
 
@@ -185,17 +185,18 @@ def add_aber(wf_array, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
                 #     high_power = np.random.normal(aber_vals['c'][0],
                 #                                   aber_vals['c'][1])  # high frewquency falloff (r^-high_power)
                 #     if aber_params['OOPP']:
-                #         proper.prop_lens(wf_array[iw, io], f_lens, "OOPP")
-                #         proper.prop_propagate(wf_array[iw, io], f_lens / aber_params['OOPP'][surf])
+                #         proper.prop_lens(wfo.wf_array[iw, io], f_lens, "OOPP")
+                #         proper.prop_propagate(wfo.wf_array[iw, io], f_lens / aber_params['OOPP'][surf])
                 #     if iw == 0 and io == 0:
                 #         if iw == 0 and io == 0:
-                #             amp_maps[surf] = proper.prop_psd_errormap(wf_array[0, 0], rms_error, c_freq, high_power,
+                #             amp_maps[surf] = proper.prop_psd_errormap(wfo.wf_array[0, 0], rms_error, c_freq, high_power,
                 #                                                       FILE=filename, TPF=True)
                 #         else:
-                #             proper.prop_multiply(wf_array[iw, io], amp_maps[surf])
+                #             proper.prop_multiply(wfo.wf_array[iw, io], amp_maps[surf])
                 #     if aber_params['OOPP']:
-                #         proper.prop_propagate(wf_array[iw, io], f_lens + f_lens * (1 - 1. / aber_params['OOPP'][surf]))
-                #         proper.prop_lens(wf_array[iw, io], f_lens, "OOPP")
+                #         proper.prop_propagate(wfo.wf_array[iw, io], f_lens + f_lens * (1 - 1. / aber_params['OOPP'][surf]))
+                #         proper.prop_lens(wfo.wf_array[iw, io], f_lens, "OOPP")
+    wfo.test_save('add_aber')
 
 
 def add_zern_ab(wfo):
