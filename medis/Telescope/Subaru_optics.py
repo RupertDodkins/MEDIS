@@ -199,16 +199,20 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
         aber.add_atmos(wfo, *(tp.fl_ao2, PASSVALUE['atmos_map']))
-
     wfo.wf_array = aber.abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
 
     if tp.rot_rate:
         wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['atmos_map']))
 
+    wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
+
+    # # Both offsets and scales the companion wavefront
+    # if wfo.wf_array.shape[1] >= 1:
+    #     fo.offset_companion(wfo.wf_array[:, 1:], PASSVALUE['atmos_map'], )
+
     ########################################
     # Subaru Distortions to Wavefront
     #######################################
-    wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
 
     if tp.obscure:
         wfo.iter_func(fo.add_obscurations, d_primary=tp.d_nsmyth, d_secondary=tp.d_secondary)
@@ -219,17 +223,21 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     # Low-order aberrations
     if tp.use_zern_ab:
         wfo.iter_func(aber.add_zern_ab)
+    wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.d_nsmyth / 2})
+    # wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
     # Nasmyth Focus- Effective Primary/Secondary
-    wfo.iter_func(fo.prop_mid_optics, tp.fl_nsmyth, tp.fl_nsmyth + tp.dist_nsmyth_ao1)  # AO188 is located
+    wfo.iter_func(fo.prop_mid_optics, tp.fl_nsmyth, tp.dist_subaru_focus)  # AO188 is located
                                                                 # behind the Nasmyth focus, so propagate extra amount
+
 
     ########################################
     # AO188 Distortions to Wavefront
     #######################################
-    # AO188-OAP1
-    aber.add_aber(wfo.wf_array, tp.fl_ao1, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP1')
-    wfo.iter_func(fo.prop_mid_optics, tp.fl_ao1, tp.dist_ao1_dm)
+    # # AO188-OAP1
+    # aber.add_aber(wfo.wf_array, tp.fl_ao1, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP1')
+    # # wfo.wf_array = aber.abs_zeros(wfo.wf_array)
+    # wfo.iter_func(fo.prop_mid_optics, tp.fl_ao1, tp.dist_ao1_dm)
 
     ########################################
     # AO
@@ -238,10 +246,10 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
         r0 = float(PASSVALUE['atmos_map'][-10:-5])
 
         ao.flat_outside(wfo.wf_array)
-        CPA_maps = ao.quick_wfs(wfo.wf_array[:,0], PASSVALUE['iter'], r0=r0)  # , obj_map, tp.wfs_scale)
+        CPA_maps = ao.quick_wfs(wfo.wf_array[:,0], PASSVALUE['iter'], r0=r0)
 
         if tp.use_ao:
-            ao.quick_ao(wfo,  CPA_maps)
+            ao.quick_ao(wfo, CPA_maps)
             wfo.wf_array = aber.abs_zeros(wfo.wf_array)
     else:
         # TODO update this code
@@ -252,9 +260,12 @@ def Subaru_optics(empty_lamda, grid_size, PASSVALUE):
     # AO188 Distortions to Wavefront
     #######################################
     # AO188-OAP2
-    wfo.iter_func(proper.prop_propagate, tp.dist_dm_ao2)
+    # wfo.iter_func(proper.prop_propagate, tp.dist_dm_ao2)
     aber.add_aber(wfo.wf_array, tp.fl_ao2, tp.d_ao1, tp.aber_params, 0, 'ao188-OAP2')
+    # wfo.wf_array = aber.abs_zeros(wfo.wf_array)
     wfo.iter_func(fo.prop_mid_optics, tp.fl_ao2, tp.dist_ao2_scexao)
+    # wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.d_nsmyth / 2})
+    # wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
     ########################################
     # Focal Plane

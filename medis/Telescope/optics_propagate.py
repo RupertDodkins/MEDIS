@@ -219,8 +219,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.aber_params['NCPA']:
         aber.add_aber(wfo.wf_array, tp.f_lens,tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='NCPA1')
         wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
-        # TODO does this need to be here?
-        # wfo.iter_func(fo.add_obscurations, tp.diam/4, legs=False)
         wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
     # Low-order aberrations
