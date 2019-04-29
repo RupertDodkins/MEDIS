@@ -34,23 +34,24 @@ import medis.Telescope.aberrations as aber
 tp.d_nsmyth = 7.971  # m pupil diameter
 tp.fn_nsmyth = 13.612  # f# Nasmyth focus
 tp.fl_nsmyth = 108.512  # m focal length
+tp.dist_subaru_focus = 15  # m
 tp.dist_nsmyth_ao1 = 0.015  # m distance nasmyth focus to AO188
 
 tp.d_secondary = 1.265  # m diameter secondary, used for central obscuration
 
 #----------------------------
 # AO188 OAP1
-tp.d_ao1 = 0.20  # m  diamater of AO1
+tp.d_ao1 = 0.020  # m  diamater of AO1
 tp.fn_ao1 = 6  # f# AO1
-tp.fl_ao1 = 1.2  # m  focal length AO1
-tp.dist_ao1_dm = 1.345  # m distance AO1 to DM (just a guess here, shouldn't matter for the collimated beam)
+tp.fl_ao1 = .065  # m  focal length AO1
+tp.dist_ao1_dm = .02  # m distance AO1 to DM (just a guess here, shouldn't matter for the collimated beam)
 
 #----------------------------
 # AO188 OAP2
-tp.dist_dm_ao2 = 2.511-tp.dist_ao1_dm  # m distance DM to AO2 (again, guess here)
-tp.d_ao2 = 0.2 # m  diamater of AO2
+tp.dist_dm_ao2 = .02  # m distance DM to AO2 (again, guess here)
+tp.d_ao2 = 0.02  # m  diamater of AO2
 tp.fn_ao2 = 13.6  # f# AO2
-tp.fl_ao2 = 1.2  # m  focal length AO2
+tp.fl_ao2 = .352  # m  focal length AO2
 tp.dist_ao2_scexao = 1.261  # m dist between OAP2 and the focus feeding SCExAO from AO188
 
 # Telescope Perscription
