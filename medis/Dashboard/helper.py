@@ -12,11 +12,12 @@ class SpectralCubeThread(QtCore.QThread):
 
     def __init__(self, parent=None):
         super(SpectralCubeThread, self).__init__(parent)
+        print(ap.contrast, 'contrast')
         if tp.detector == 'MKIDs':
-            self.obs_sequence = np.zeros((ap.numframes, ap.w_bins, mp.array_size[1], mp.array_size[0]))
+            self.obs_sequence = np.zeros((ap.numframes, len(ap.contrast)+1, ap.w_bins, mp.array_size[1], mp.array_size[0]))
             self.integration = np.zeros((ap.w_bins, mp.array_size[1], mp.array_size[0]))
         else:
-            self.obs_sequence = np.zeros((ap.numframes, ap.w_bins, ap.grid_size, ap.grid_size))
+            self.obs_sequence = np.zeros((ap.numframes, len(ap.contrast)+1, ap.w_bins, ap.grid_size, ap.grid_size))
             self.integration = np.zeros((ap.w_bins, ap.grid_size, ap.grid_size))
         self.metric = None
         self.func = None

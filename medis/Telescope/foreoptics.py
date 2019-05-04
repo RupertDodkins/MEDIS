@@ -4,12 +4,14 @@ import proper
 # from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
 from medis.params import tp, cp, mp, ap,iop#, fp
 # from medis.Utils.misc import dprint
+import medis.Atmosphere.atmos as atmos
 
 
-def offset_companion(wf_array, atmos_map):
+def offset_companion(wf_array, it):
     cont_scaling = np.linspace(1./ap.C_spec, 1, ap.nwsamp)
     shape = wf_array.shape
     for iw in range(shape[0]):
+        atmos_map = atmos.get_filename(iop.atmosdir, ap.sample_time, it, wf_array[iw, 0].lamda)
         for io in range(shape[1]):
 
             xloc = ap.lods[io][0]

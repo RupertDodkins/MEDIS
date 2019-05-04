@@ -74,7 +74,7 @@ if __name__ == '__main__':
     num_exp = 10
     ap.exposure_time = 0.01
     tp.NCPA_type = 'Wave'
-    ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
+    ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
     print(ap.numframes)
 
     print(os.path.isfile(H2RGobs_sequenceFile), H2RGobs_sequenceFile)

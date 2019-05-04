@@ -17,7 +17,7 @@ print(titles)
 if __name__ == '__main__':
     for t in range(10):
         r0 = 0.2
-        atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0)
+        atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * ap.sample_time, r0)
         kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
         _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                      PHASE_OFFSET=1)

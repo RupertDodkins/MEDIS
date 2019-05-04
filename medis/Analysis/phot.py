@@ -203,7 +203,7 @@ def get_unoccult_hyper(obs_seq = '/RefPSF_wLyotStop.pkl', numframes=1):
     iop.obs_seq = iop.datadir + obs_seq
     tp.occulter_type = 'None (Lyot Stop)'
     ap.numframes = numframes
-    ap.exposure_time = 1e-3
+    ap.sample_time = 1e-3
     # ap.nwsamp = 1
     # ap.w_bins = 1
     print(iop.obs_table, 'obs')
@@ -228,8 +228,8 @@ def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
     iop.obs_seq = iop.datadir + '/perfIntHyperUnOccult.pkl'
     tp.occulter_type = 'None'
     num_exp = 1
-    ap.exposure_time = 0.001  # 0.001
-    ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
+    ap.sample_time = 0.001  # 0.001
+    ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
     tp.use_atmos = False
     ap.nwsamp = 1
     tp.CPA_type = None#'Quasi'# None
@@ -268,7 +268,7 @@ def get_unoccult_psf(plot=False, obs_seq = '/IntHyperUnOccult.pkl', numframes=10
     # tp.occulter_type = 'None'
     # num_exp = 1
     # ap.exposure_time = 0.001  # 0.001
-    # ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
+    # ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
     # ap.nwsamp = 1
     # # Yup this is 'if' is necessary
     # obs_sequence = run_medis()

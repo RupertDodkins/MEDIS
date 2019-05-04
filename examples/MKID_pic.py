@@ -48,8 +48,8 @@ ap.nwsamp = 1
 ap.w_bins = 1
 
 num_exp = 1 #5000
-cp.frame_time = 0.1
-ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
+ap.sample_time = 0.1
+ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
 tp.piston_error = True
 tp.rot_rate = 0  # deg/s
 tp.pix_shift = [30,0]

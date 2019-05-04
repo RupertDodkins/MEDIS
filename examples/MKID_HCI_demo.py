@@ -67,7 +67,7 @@ tp.rot_rate = 0  # deg/s
 mp.bad_pix = True
 mp.array_size = np.array([146,146])
 num_exp =10
-cp.frame_time = 0.05
+ap.sample_time = 0.05
 # date = '180828/'
 # dprint((iop.datadir, date))
 # iop.atmosdir= os.path.join(iop.datadir,'atmos',date)
@@ -134,13 +134,13 @@ if __name__ == '__main__':
 
     ap.exposure_time = 0.1  # 0.001
 
-    ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
+    ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
     iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
 
     orig_hyper = gpd.run_medis()[:, :]
 
     # fast_hyper = fast_hyper[:100]
-    # ap.numframes = int(100 * ap.exposure_time / cp.frame_time)
+    # ap.numframes = int(100 * ap.exposure_time / ap.sample_time)
     # dprint(fast_hyper.shape)
     fast_hyper = read.take_exposure(orig_hyper)
     ap.exposure_time = 1  # 0.001

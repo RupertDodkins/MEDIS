@@ -9,7 +9,7 @@ import sys
 # from cubes import read_folder
 from .distribution import *
 #import subprocess
-from medis.params import mp, cp, tp
+from medis.params import mp, cp, tp, ap
 import math
 # import cubes
 #import dynamic_cube_v2 as dc
@@ -105,7 +105,7 @@ def sample_cube(datacube, num_events):
     # photons[1:3] = np.round_(photons[1:3])
     return photons
 
-def eff_exposure(cube, start = 0, exp=20.*cp.frame_time):
+def eff_exposure(cube, start = 0, exp=20.*ap.sample_time):
     image = np.zeros((xnum,ynum))
     for x in range(xnum):
         for y in range(ynum):
@@ -121,7 +121,7 @@ def eff_exposure(cube, start = 0, exp=20.*cp.frame_time):
     return image
 
 def assign_calibtime(photons, step):
-    time = step*cp.frame_time
+    time = step*ap.sample_time
     print(time, 'time')
     # photons = photons.astype(float)#np.asarray(photons[0], dtype=np.float64)
     # photons[0] = photons[0] * ps.mp.frame_time

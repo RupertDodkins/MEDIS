@@ -17,7 +17,7 @@ import medis.Detector.H2RG as H2RG
 import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
-import medis.Atmosphere.caos as caos
+import medis.Atmosphere.atmos as atmos
 
 
 sentinel = None
@@ -49,73 +49,69 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
 
         for it, t in enumerate(iter(inqueue.get, sentinel)):
 
-            if cp.vary_r0:
-                # cp.r0s_idx = caos.random_r0walk(cp.r0s_idx, cp.r0s)
-                # cp.r0s_idx = element
-                element = int(np.random.random()*len(cp.r0s))
-
-                r0 = cp.r0s[element]
-            else:
-                r0 = cp.r0s  # this is a scalar in this instance
-
-            atmos_map = iop.atmosdir + '/telz%f_%1.3f.fits' % (t * cp.frame_time, r0) #t *
-            kwargs = {'iter': t, 'atmos_map': atmos_map, 'params': [ap, tp, iop, sp]}
+            kwargs = {'iter': t, 'params': [ap, tp, iop, sp]}
             spectralcube, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                                    VERBOSE=False, PHASE_OFFSET=1)
 
-            if tp.detector == 'ideal':
-                image = np.sum(spectralcube, axis=0)
-                vmin = np.min(spectralcube)*10
-                # cube = ideal.assign_calibtime(spectralcube,PASSVALUE['iter'])
-                # cube = rawImageIO.arange_into_cube(packets, value='phase')
-                # rawImageIO.make_phase_map(cube, plot=True)
-                # return ''
-            elif tp.detector == 'H2RG':
+            for o in range(len(ap.contrast) + 1):
 
-                image = np.sum(spectralcube, axis=0)
-                vmin = np.min(spectralcube)*10
-            elif tp.detector == 'MKIDs':
-                packets = read.get_packets(spectralcube, t, dp, mp)
+                print(save_E_fields.shape)
+                spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
 
-                # if sp.show_wframe or sp.show_cube or sp.return_spectralcube:
-                cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
-                if mp.remove_close:
-                    timecube = read.remove_close_photons(cube)
+                if tp.detector == 'ideal':
+                    image = np.sum(spectralcube, axis=0)
+                    vmin = np.min(spectralcube)*10
+                    # cube = ideal.assign_calibtime(spectralcube,PASSVALUE['iter'])
+                    # cube = rawImageIO.arange_into_cube(packets, value='phase')
+                    # rawImageIO.make_phase_map(cube, plot=True)
+                    # return ''
+                elif tp.detector == 'H2RG':
 
-                # if sp.show_wframe:
-                image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
+                    image = np.sum(spectralcube, axis=0)
+                    vmin = np.min(spectralcube)*10
+                elif tp.detector == 'MKIDs':
+                    packets = read.get_packets(spectralcube, t, dp, mp)
+                    # packets = read.get_packets(save_E_fields, t, dp, mp)
 
-                # Interpolating spectral cube from ap.nwsamp discreet wavelengths
-                # if sp.show_cube or sp.return_spectralcube:
-                spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+                    # if sp.show_wframe or sp.show_cube or sp.return_spectralcube:
+                    cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
+                    if mp.remove_close:
+                        timecube = read.remove_close_photons(cube)
 
-                if sp.save_obs:
-                    command = read.get_obs_command(packets,t)
-                    photon_table_queue.put(command)
+                    if sp.show_wframe:
+                        image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
 
-                vmin = 0.9
+                    # Interpolating spectral cube from ap.nwsamp discreet wavelengths
+                    # if sp.show_cube or sp.return_spectralcube:
+                    spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
 
-            if sp.show_wframe:
-                dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
-                quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
+                    if sp.save_obs:
+                        command = read.get_obs_command(packets,t)
+                        photon_table_queue.put(command)
 
-            if sp.show_cube:
-                view_datacube(spectralcube, logAmp=True, vmin=vmin)
+                    vmin = 0.9
 
-            if sp.use_gui:
-                gui_images = np.zeros_like(save_E_fields, dtype=np.float)
-                phase_ind = sp.save_locs[:, 1] == 'phase'
-                amp_ind = sp.save_locs[:, 1] == 'amp'
+                if sp.show_wframe:
+                    dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
+                    quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
 
-                gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
-                gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
+                if sp.show_cube:
+                    view_datacube(spectralcube, logAmp=True, vmin=vmin)
 
-                outqueue.put((t, gui_images, spectralcube))
+                if sp.use_gui:
+                    gui_images = np.zeros_like(save_E_fields, dtype=np.float)
+                    phase_ind = sp.save_locs[:, 1] == 'phase'
+                    amp_ind = sp.save_locs[:, 1] == 'amp'
 
-            elif sp.return_E:
-                outqueue.put((t, save_E_fields))
-            else:
-                outqueue.put((t, spectralcube))
+                    gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
+                    gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
+
+                    outqueue.put((t, gui_images, spectralcube))
+
+                elif sp.return_E:
+                    outqueue.put((t, save_E_fields))
+                else:
+                    outqueue.put((t, spectralcube))
 
         now = time.time()
         elapsed = float(now - start) / 60.
@@ -178,12 +174,7 @@ def run_medis(EfieldsThread=None, plot=False):
     # initialize atmosphere
     print("Atmosdir = %s " % iop.atmosdir)
     if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
-        dprint("It looks like you don't have an atmospheric map. You can either"
-                    "get one from Rupert or generate them yourself with caos by removing exit() here")
-        exit()
-        dprint("Making New Atmosphere Model")
-        caos.make_idl_params()
-        caos.generate_maps()
+        atmos.generate_maps()
 
     # initialize telescope
     if (tp.aber_params['QuasiStatic'] is True) and glob.glob(iop.aberdir + 'quasi/*.fits') == []:
@@ -198,15 +189,6 @@ def run_medis(EfieldsThread=None, plot=False):
 
     if tp.active_null:
         aber.initialize_NCPA_meas()
-
-    caos.get_r0s()
-
-    if cp.vary_r0:
-        cp.r0s_selected = []
-        for f in range(ap.numframes):
-            cp.r0s_selected.append(random.choice(cp.r0s))
-    else:
-        cp.r0s = cp.r0s[cp.r0s_idx]  # the r0 at the index cp.r0s_idx in params will be used throughout
 
     # initialize MKIDs
     if tp.detector == 'MKIDs' and not os.path.isfile(iop.device_params):
@@ -231,7 +213,7 @@ def run_medis(EfieldsThread=None, plot=False):
 
     if sp.return_E:
         e_fields_sequence = np.zeros((ap.numframes, len(sp.save_locs),
-                                      1 + len(ap.contrast), ap.nwsamp,
+                                      ap.nwsamp, 1 + len(ap.contrast),
                                       ap.grid_size, ap.grid_size), dtype=np.complex64)
     else:
         e_fields_sequence = None

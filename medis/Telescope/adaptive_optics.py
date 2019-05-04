@@ -133,7 +133,7 @@ def flat_outside(wf_array):
         for io in range(wf_array.shape[1]):
             proper.prop_circular_aperture(wf_array[iw,io], 1, NORM=True)
 
-def quick_wfs(wf_vec, iter, r0):
+def quick_wfs(wf_vec):
 
     import scipy.ndimage
     from skimage.restoration import unwrap_phase

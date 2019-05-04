@@ -144,12 +144,14 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #  a single phase mask. The phase mask is a real-valued delay lengths across
     #  the array from infinity. The delay length thus corresponds to a different
     #  phase offset at a particular frequency.
+    # quicklook_wf(wfo.wf_array[0,0])
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
-        aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['atmos_map']))
+        aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['iter']))
 
+    # quicklook_wf(wfo.wf_array[0,0])
     if tp.rot_rate:
-        wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['atmos_map']))
+        wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['iter']))
 
     if tp.use_hex:
         fo.add_hex(wfo.wf_array)
@@ -158,7 +160,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     # Both offsets and scales the companion wavefront
     if wfo.wf_array.shape[1] >=1:
-        fo.offset_companion(wfo.wf_array[:,1:], PASSVALUE['atmos_map'], )
+        fo.offset_companion(wfo.wf_array[:, 1:], PASSVALUE['iter'], )
 
     ########################################
     # Telescope Distortions to Wavefront
@@ -172,13 +174,12 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     # AO
     #######################################
     if tp.quick_ao:
-        r0 = float(PASSVALUE['atmos_map'][-10:-5])
+        # r0 = float(PASSVALUE['atmos_map'][-10:-5])
 
         ao.flat_outside(wfo.wf_array)
-        CPA_maps = ao.quick_wfs(wfo.wf_array[:,0], PASSVALUE['iter'], r0=r0)  # , obj_map, tp.wfs_scale)
+        CPA_maps = ao.quick_wfs(wfo.wf_array[:, 0])  # , obj_map, tp.wfs_scale)
 
         if tp.use_ao:
-            dprint(tp.use_ao)
             ao.quick_ao(wfo,  CPA_maps)
 
     else:

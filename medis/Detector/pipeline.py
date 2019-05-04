@@ -107,10 +107,10 @@ def get_lightcurve(packets,xloc,yloc, start, end, bin_time=10e-3):#speed_up=True
     ts = packets[:,t]
     # print len(ts)
     # print np.shape(packets)
-    # bins = np.arange(-mp.frame_time/2 + start, cp.frame_time/2 + end, bin_time)
-    # print start, end, cp.frame_time/2.
+    # bins = np.arange(-mp.frame_time/2 + start, ap.sample_time/2 + end, bin_time)
+    # print start, end, ap.sample_time/2.
 
-    bins = np.arange(start, end+cp.frame_time/2., bin_time)
+    bins = np.arange(start, end+ap.sample_time/2., bin_time)
 
     # print bins, len(bins), ap.numframes
     inten = np.histogram(ts, bins)[0]
@@ -149,7 +149,7 @@ def make_intensity_map(cube, size, plot=False):
     print(len(cube), len(cube[0]), int_map.shape)
     for x in range(size[1]):
         for y in range(size[0]):
-            int_map[x,y]=len(cube[x][y])
+            int_map[x, y] = len(cube[x][y])
 
     if plot:
         plt.figure()
@@ -189,7 +189,7 @@ def make_datacube(cube, size):
             if cube[x][y] == []:
                 datacube[:, x, y] = np.zeros((size[2]))
             else:
-                datacube[:,x,y]=np.histogram(np.array(cube[x][y])[:,1], bins=bins)[0]#[::-1]
+                datacube[:, x, y] = np.histogram(np.array(cube[x][y])[:,1], bins=bins)[0]#[::-1]
                 datacube[0, x, y] += len(np.where(np.array(cube[x][y])[:,1]<phase_band[0])[0])
                 datacube[-1, x, y] += len(np.where(np.array(cube[x][y])[:,1]>phase_band[1])[0])
 

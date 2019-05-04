@@ -52,8 +52,8 @@ tp.occulter_type = '8th_Order'
 
 num_exp = 20  #2000#1000#50#50#1000
 ap.exposure_time = 0.01  # 0.001
-cp.frame_time = 0.01
-ap.numframes = int(num_exp * ap.exposure_time / cp.frame_time)
+ap.sample_time = 0.01
+ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
 # ap.startframe=ap.numframes
 ap.companion = True
 # ap.contrast = [1e-4,1e-3,1e-5, 1e-6,1e-6,1e-7]  # [0.1,0.1]

@@ -30,11 +30,16 @@ from medis.Utils.misc import dprint
 ####################################################################################################
 
 def get_packets(datacube, step, dp,mp):
+# def get_packets(fields, step, dp,mp):
     # print 'Detecting photons with an MKID array'
+    # print(fields.shape)
 
-    moves = np.shape(tp.pix_shift)[0]
+    # packets = np.empty(5)
+    # for o in range(len(ap.contrast) + 1):
+    # datacube = np.abs(fields[-1, o, :])**2
+    # moves = np.shape(tp.pix_shift)[0]
 
-    iteration = step % moves
+    # iteration = step % moves
 
     if (mp.array_size != datacube[0].shape + np.array([1,1])).all():
         left = int(np.floor(float(ap.grid_size-mp.array_size[0])/2))
@@ -43,10 +48,7 @@ def get_packets(datacube, step, dp,mp):
         bottom = int(np.ceil(float(ap.grid_size-mp.array_size[1])/2))
 
         dprint(f"left={left},right={right},top={top},bottom={bottom}")
-        datacube = datacube[:,bottom:-top,left:-right]
-    # loop_frames(datacube)
-    # quicklook_im(datacube[2], logAmp=False, vmax = 0.001, vmin=1e-8)
-
+        datacube = datacube[:, bottom:-top, left:-right]
 
     if mp.respons_var:
         datacube *= dp.response_map[:datacube.shape[1],:datacube.shape[1]]
@@ -83,12 +85,20 @@ def get_packets(datacube, step, dp,mp):
     if mp.phase_uncertainty:
         photons = MKIDs.apply_phase_distort_array(photons, dp.sigs)
     thresh = dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])] < -1 * photons[1]
-    photons = photons[:,thresh]
+    photons = photons[:, thresh]
 
+    # photons = assign_id(photons, obj_ind=o)
+
+    # print(photons.shape)
+    # packets = np.vstack((packets, np.transpose(photons)))
     packets = np.transpose(photons)
 
     dprint("Completed Readout Loop")
-    return packets
+
+    return packets  #[1:]  #first element from empty would otherwise be included
+
+def assign_id(photons, obj_ind):
+    return np.vstack((photons, np.ones_like(photons[0])*obj_ind))
 
 def get_obs_command(packets, t):
 
@@ -252,7 +262,7 @@ def open_fields(fields_file):
 
 
 def take_exposure(obs_sequence):
-    factor = ap.exposure_time/ cp.frame_time
+    factor = ap.exposure_time/ ap.sample_time
     num_exp = int(ap.numframes/factor)
     downsample_cube = np.zeros((num_exp,obs_sequence.shape[1],obs_sequence.shape[2], obs_sequence.shape[3]))
     for i in range(num_exp):

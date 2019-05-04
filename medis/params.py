@@ -26,7 +26,7 @@ class IO_params:
 
         # Atmosphere Metadata
         self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos (get this from Rupert, don't recreate this on your own!!)
-        self.atmosdata = '180828'  # folder from Rupert
+        self.atmosdata = '190501'
         self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
         self.idl_params = os.path.join(self.atmosroot, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
 
@@ -121,7 +121,7 @@ class Astro_params:
         self.contrast = [0.05]
         self.C_spec = 1.5  # the gradient of the increase in contrast towards shorter wavelengths
         self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
-        self.exposure_time = 0.01
+        self.sample_time = 0.01
         self.startframe = 0  # useful for things like RDI
         self.numframes = 100  # number of timesteps in the simulation
 
@@ -282,22 +282,22 @@ class FPWFS_params:
 class CAOS_params:
     """
     # TODO make redundant with new atmosphere model
-    Default parameters for the atmosphere
+    Default parameters for the atmosphere. Now uses HCIpy not CAOS but ap was taken by Astro_params
     """
     def __init__(self):
         self.show_caosparams= True  # for control over all other variables
-        self.frame_time = 0.01  # this is the maximum frame rate of the simulation
+        # self.frame_time = 0.01  # this determines the maximum frame rate of the simulation
         self.vary_r0 = False
         self.r0s = []
         self.scalar_r0 = 'med'
         self.r0s_idx = -1
+        self.outer_scale = 20
 
         # Settings Taken from MKID_params that seem to be relevant here:
         # wind_speed = 5. # m/s
         # atm_scale = 512.
         # atm_size = 1. # m
         # atm_spat_rate = 1. # pix shift
-        # frame_time = 0.001#atm_size*atm_spat_rate/(wind_speed*atm_scale) # 0.0004
 
 
 ap = Astro_params()

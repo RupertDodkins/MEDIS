@@ -56,15 +56,15 @@ def LCmap_worker(inqueue, output, packqueue):
             packets = packqueue.get()
             # print inqueue.qsize(), output.qsize(), packqueue.qsize(), 'line307 3queues'
             start = 0#packets[0, 0]
-            end = ap.numframes * cp.frame_time#packets[-1, 0]
+            end = ap.numframes * ap.sample_time#packets[-1, 0]
             # print packets[:5],
             # print packets[-5:],
             # print np.shape(packets)
             # print start, end, 'start end'
             # print ix, iy, inqueue.qsize(), output.qsize(), packqueue.qsize()
             # time0 = time.time()
-            LC = pipe.get_lightcurve(packets, xloc, yloc, start, end + cp.frame_time, bin_time=mp.bin_time)
-            # LC = pipe.get_lightcurve(packets, xloc, yloc, start, end + cp.frame_time, bin_time=bin_time, speed_up=False)
+            LC = pipe.get_lightcurve(packets, xloc, yloc, start, end + ap.sample_time, bin_time=mp.bin_time)
+            # LC = pipe.get_lightcurve(packets, xloc, yloc, start, end + ap.sample_time, bin_time=bin_time, speed_up=False)
             # print LC['intensity'], len(LC['intensity'])
             # time1 = time.time()
             # print 'time', time1 - time0
@@ -88,7 +88,7 @@ def LCmap_speedup():
 
     print(packets.shape, sp.num_processes)
     # exit()
-    num_ints = int(cp.frame_time * ap.numframes / mp.bin_time)
+    num_ints = int(ap.sample_time * ap.numframes / mp.bin_time)
     LCmap = np.zeros((len(xlocs), len(ylocs), num_ints))
     # for i in range(num_chunks):
     #     packets_chunk = packets[i * max_photons:(i + 1) * max_photons]

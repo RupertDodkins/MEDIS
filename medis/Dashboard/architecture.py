@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 
 from matplotlib.colors import LogNorm, SymLogNorm
@@ -8,12 +7,11 @@ from matplotlib import gridspec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.image import AxesImage
 
-from functools import partial
-
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QComboBox, QFormLayout, QHBoxLayout, QVBoxLayout, QLineEdit, QWidget, QPushButton, QProgressBar
 
 from medis.params import ap,sp
+from medis.Utils.misc import dprint
 from medis.Dashboard.helper import EfieldsThread, SpectralCubeThread
 from medis.Dashboard.twilight import sunlight, twilight
 
@@ -174,6 +172,8 @@ class MyWindow(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
+        self.obj, self.it = -1, 0
+
         self.show()
 
     @pyqtSlot()
@@ -232,7 +232,7 @@ class MyWindow(QWidget):
                     self.EmapsGrid.ims[x, y].remove()
                 except (AttributeError, ValueError):
                     pass
-                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(gui_images[x, y,0, ::2, ::2], norm=norm[x],
+                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(gui_images[x, y,0, ::1, ::1], norm=norm[x],
                                                      vmin=self.vmin[x], vmax=self.vmax[x], cmap=cmap[x], origin='lower')
 
             self.EmapsGrid.figure.colorbar(self.EmapsGrid.ims[x,-1], cax=self.EmapsGrid.cax[x], orientation='vertical')
@@ -251,8 +251,20 @@ class MyWindow(QWidget):
     @pyqtSlot(tuple)
     def on_SpectralCubeThread_newSample(self, spec_tuple):
         (it, spectralcube) = spec_tuple
+
+        dprint((it, self.it, self.obj))
+        if self.it == it:
+            self.obj += 1
         self.EfieldsThread.sct.integration += spectralcube
-        self.EfieldsThread.sct.obs_sequence[it] = spectralcube
+        self.EfieldsThread.sct.obs_sequence[it, self.obj] = spectralcube
+
+        dprint((it, self.it, self.obj))
+
+        if self.obj == len(ap.contrast):
+            self.obj = -1
+            self.it += 1
+
+        dprint((it, self.it, self.obj))
 
         try:
             self.metricsGrid.ims[0,0].remove()
@@ -260,7 +272,7 @@ class MyWindow(QWidget):
             True
 
         # self.metricsGrid.axes[0,0].cla()
-        print(type(self.metricsGrid.ims[0,0]))
+        # print(type(self.metricsGrid.ims[0,0]))
         self.metricsGrid.ims[0,0] = self.metricsGrid.axes[0,0].imshow(np.sum(self.EfieldsThread.sct.integration,
                                                                              axis=0), norm=LogNorm(),
                                                                       origin='lower', cmap='cividis')
@@ -270,8 +282,7 @@ class MyWindow(QWidget):
         for r, (func, args) in enumerate(zip(sp.metric_funcs, sp.metric_args)):
             import traceback
             # self.metricsGrid.axes[r+1,0].cla()
-            from medis.Utils.misc import dprint
-            dprint((type(self.metricsGrid.ims[r + 1, 0]), type(self.metricsGrid.ims[r + 1, 0]) == list))
+
             try:
                 if type(self.metricsGrid.ims[r+1, 0]) == list:
                     for im in self.metricsGrid.ims[r + 1, 0]:
@@ -290,9 +301,9 @@ class MyWindow(QWidget):
                 raise
             except:
                 traceback.print_exc()
-            dprint(type(self.metricsGrid.ims[r + 1, 0]) == list)
+            # dprint(type(self.metricsGrid.ims[r + 1, 0]) == list)
 
-            metric = func(self.EfieldsThread.sct.obs_sequence[:it], args)
+            metric = func(self.EfieldsThread.sct.obs_sequence[:it,0], args)
 
             dims = len(np.shape(metric))
             if dims == 4:
