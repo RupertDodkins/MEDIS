@@ -11,7 +11,7 @@ def offset_companion(wf_array, it):
     cont_scaling = np.linspace(1./ap.C_spec, 1, ap.nwsamp)
     shape = wf_array.shape
     for iw in range(shape[0]):
-        atmos_map = atmos.get_filename(iop.atmosdir, ap.sample_time, it, wf_array[iw, 0].lamda)
+        atmos_map = atmos.get_filename(it, wf_array[iw, 0].lamda)
         for io in range(shape[1]):
 
             xloc = ap.lods[io][0]

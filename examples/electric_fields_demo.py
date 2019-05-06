@@ -4,7 +4,7 @@ from medis.params import iop, sp, cp, ap, tp
 from medis.Utils.plot_tools import grid
 
 iop.update("Electric_fields/")
-sp.save_locs = np.array([['add_atmos',], ['quick_ao',], ['prop_mid_optics',], ['coronagraph']])
+sp.save_locs = np.array(['add_atmos', 'quick_ao', 'prop_mid_optics', 'coronagraph'])
 
 phase_ind = [True, True, False, False]
 

@@ -22,11 +22,10 @@ tp.check_args()
 sp.show_wframe = False
 sp.save_obs = False
 sp.num_processes = 1
-sp.save_locs = np.array([['add_atmos',], ['coronagraph',]])
+sp.save_locs = np.array(['add_atmos', 'coronagraph'])
 sp.return_E = True
 
 iop.update("mod_barebones/")
-ap.grid_size = 148
 
 if __name__ == '__main__':
     save_E_fields = gpd.run_medis(plot=False)

@@ -18,7 +18,8 @@ class Wavefronts():
     An object containing all of the complex E fields (for each sample wavelength and astronomical object) for this timestep
 
     :params
-    :save_locs e.g. np.array([['entrance pupil', 'phase'], ['after ao', 'phase'], ['before coron.', 'amp']])
+    :save_locs e.g. np.array(['entrance pupil', 'after ao', 'before coron.'])
+    :gui_maps_type np.array(['phase', 'phase', 'amp'])
     The shape of self.selec_E_fiels is probe locs x nwsamp x nobjects x tp.grid_size
 
     :returns
@@ -82,11 +83,11 @@ class Wavefronts():
         for iw in range(shape[0]):
             for iwf in range(shape[1]):
                 func(self.wf_array[iw, iwf], *args, **kwargs)
-                if self.save_locs is not None and func.__name__ in self.save_locs[:, 0]:
+                if self.save_locs is not None and func.__name__ in self.save_locs:
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
 
-        if self.save_locs is not None and func.__name__ in self.save_locs[:, 0]:
+        if self.save_locs is not None and func.__name__ in self.save_locs:
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
 
     def test_save(self, funcname):
@@ -97,7 +98,7 @@ class Wavefronts():
         :param funcname:
         :return: self.save_E_fields
         """
-        if self.save_locs is not None and funcname in self.save_locs[:, 0]:
+        if self.save_locs is not None and funcname in self.save_locs:
             shape = self.wf_array.shape
             optic_E_fields = np.zeros((1, np.shape(self.wf_array)[0],
                                        np.shape(self.wf_array)[1],
@@ -159,7 +160,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
 
     # Both offsets and scales the companion wavefront
-    if wfo.wf_array.shape[1] >=1:
+    if wfo.wf_array.shape[1] > 1:
         fo.offset_companion(wfo.wf_array[:, 1:], PASSVALUE['iter'], )
 
     ########################################

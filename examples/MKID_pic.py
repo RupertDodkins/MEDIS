@@ -26,7 +26,6 @@ ap.exposure_time = 0.1  # 0.001
 
 # Telescope/optics Parameters
 tp.diam = 5.
-ap.grid_size = 148
 tp.beam_ratio = 0.4
 tp.obscure = True
 tp.use_ao = True
@@ -70,17 +69,18 @@ mp.bg_mean = -10
 mp.bg_sig = 40
 mp.pix_yield = 0.7  # check dis
 
-sp.get_ints = {'w': [0], 'c': [0]}
+# sp.get_ints = {'w': [0], 'c': [0]}
 
 # ***** These need to be outside the if statement to have an effect!! ****
 iop.aberdata = 'Palomar' # Rename Data Directory
-# iop.update("MKID_pic-ideal/")
+iop.update("MKID_pic-ideal/")
 if os.path.exists(iop.int_maps):
     os.remove(iop.int_maps)
 
 tp.detector = 'ideal'
 
-sp.save_locs = np.array([['add_obscurations', 'phase'], ['add_aber', 'phase'], ['quick_ao', 'phase'], ['dummy', 'dummy']])
+sp.save_locs = np.array(['add_obscurations', 'add_aber', 'quick_ao', 'dummy'])
+sp.gui_map_type = np.array(['phase', 'phase', 'phase', 'dummy'])
 phase_ind = range(4)
 
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9, 3.8))
     labels = ['Ideal', 'MKID']
     # images = [ideal,mkid]
-    vmaxs = [0.01,100]
+    vmaxs = [0.01, 100]
 
 
     for m, ax in enumerate(axes):

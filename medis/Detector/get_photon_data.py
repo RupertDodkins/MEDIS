@@ -100,8 +100,8 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
 
                 if sp.use_gui:
                     gui_images = np.zeros_like(save_E_fields, dtype=np.float)
-                    phase_ind = sp.save_locs[:, 1] == 'phase'
-                    amp_ind = sp.save_locs[:, 1] == 'amp'
+                    phase_ind = sp.gui_map_type == 'phase'
+                    amp_ind = sp.gui_map_type == 'amp'
 
                     gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
                     gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])

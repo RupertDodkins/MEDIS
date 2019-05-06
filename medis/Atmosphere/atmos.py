@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import matplotlib.pylab as plt
 from decimal import Decimal
@@ -14,17 +15,26 @@ def eformat(f, prec, exp_digits):
     # add 1 to digits as 1 is taken by sign +/-
     return "%se%+0*d" % (mantissa, exp_digits + 1, int(exp))
 
-def get_filename(dir, samp, it, wsamp):
+def get_filename(it, wsamp):
     wave = eformat(wsamp, 3, 2)
-    return f'{dir}/telz_t{samp*it:.3f}_w{wave}.fits'
+    return f'{iop.atmosdir}/{cp.model}/telz_t{ap.sample_time*it:.3f}_w{wave}.fits'
 
 def generate_maps(plot=False):
     dprint("Making New Atmosphere Model")
 
+    if not os.path.isdir(os.path.join(iop.atmosdir, cp.model)):
+        os.makedirs(os.path.join(iop.atmosdir, cp.model), exist_ok=True)
+
     pupil_grid = hcipy.make_pupil_grid(ap.grid_size, tp.diam)
 
-    # Make multi-layer atmosphere
-    layers = hcipy.make_standard_atmospheric_layers(pupil_grid, cp.outer_scale)
+    if cp.model == 'single':
+        layers = [hcipy.InfiniteAtmosphericLayer(pupil_grid, cp.cn, cp.L0, cp.v, cp.h, 2)]
+    elif cp.model == 'hcipy_standard':
+        # Make multi-layer atmosphere
+        layers = hcipy.make_standard_atmospheric_layers(pupil_grid, cp.outer_scale)
+    elif cp.model == 'evolving':
+        raise NotImplementedError
+
     atmos = hcipy.MultiLayerAtmosphere(layers, scintilation=False)
 
     # aperture = hcipy.circular_aperture(tp.diam)(pupil_grid)
@@ -42,7 +52,7 @@ def generate_maps(plot=False):
             wf2 = atmos.forward(wf)
 
 
-            filename = get_filename(iop.atmosdir, ap.sample_time, it, wsamples[iw])
+            filename = get_filename(it, wsamples[iw])
             print(filename)
             hdu = fits.ImageHDU(wf2.phase.reshape(ap.grid_size, ap.grid_size))
             hdu.header['PIXSIZE'] = tp.diam/ap.grid_size

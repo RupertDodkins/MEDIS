@@ -238,7 +238,7 @@ def add_atmos(wfo, f_lens, it):
 
     for iw in range(shape[0]):
         wavelength = wfo.wf_array[iw, 0].lamda
-        atmos_map = atmos.get_filename(iop.atmosdir, ap.sample_time, it, wavelength)
+        atmos_map = atmos.get_filename(it, wavelength)
         for io in range(shape[1]):
             # if iw == 0 and io == 0:
                 obj_map = fits.open(atmos_map)[1].data

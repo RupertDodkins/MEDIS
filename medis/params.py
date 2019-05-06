@@ -65,20 +65,21 @@ class IO_params:
         self.__init__(testname=new_name, datadir=datadir)
 
     def makedir(self):
+        print(self.datadir, self.testdir, self.atmosroot, self.atmosdir, self.aberdir, self.scidir, self.coron_temp, self.quasi)
         if not os.path.isdir(self.datadir):
             os.makedirs(self.datadir, exist_ok=True)
         if not os.path.isdir(self.testdir):
             os.makedirs(self.testdir, exist_ok=True)
-        if not os.path.isdir(self.atmosroot):
-            os.makedirs(self.atmosroot, exist_ok=True)
+        # if not os.path.isdir(self.atmosroot):
+        #     os.makedirs(self.atmosroot, exist_ok=True)
         if not os.path.isdir(self.atmosdir):
             os.makedirs(self.atmosdir, exist_ok=True)
-        if not os.path.isdir(self.aberroot):
-            os.makedirs(self.aberroot, exist_ok=True)
+        # if not os.path.isdir(self.aberroot):
+        #     os.makedirs(self.aberroot, exist_ok=True)
         if not os.path.isdir(self.aberdir):
             os.makedirs(self.aberdir, exist_ok=True)
-        if not os.path.isdir(self.sciroot):
-            os.makedirs(self.sciroot, exist_ok=True)
+        # if not os.path.isdir(self.sciroot):
+        #     os.makedirs(self.sciroot, exist_ok=True)
         if not os.path.isdir(self.scidir):
             os.makedirs(self.scidir, exist_ok=True)
         if not os.path.isdir(self.coron_temp):
@@ -107,6 +108,7 @@ class Simulation_params:
         self.return_E = False
         # self.get_ints = False
         self.save_locs = None
+        self.gui_map_type = None
 
 
 class Astro_params:
@@ -283,9 +285,18 @@ class CAOS_params:
     """
     # TODO make redundant with new atmosphere model
     Default parameters for the atmosphere. Now uses HCIpy not CAOS but ap was taken by Astro_params
+
+    :model: either single frozen layer, hcipy_standard or evolving (apply variation to frozen some parameter)
     """
     def __init__(self):
+        self.model = 'single'  # single|hcipy_standard|evolving
         self.show_caosparams= True  # for control over all other variables
+        self.cn = 0.22 * 1e-12
+        self.L0 = 10
+        self.v = 5
+        self.h = 100
+
+        # original parameters
         # self.frame_time = 0.01  # this determines the maximum frame rate of the simulation
         self.vary_r0 = False
         self.r0s = []

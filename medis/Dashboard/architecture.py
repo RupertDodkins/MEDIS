@@ -16,7 +16,7 @@ from medis.Dashboard.helper import EfieldsThread, SpectralCubeThread
 from medis.Dashboard.twilight import sunlight, twilight
 
 if sp.save_locs is None:
-    sp.save_locs = [['coronagraph',]]
+    sp.save_locs = ['coronagraph']
 
 
 class MatplotlibWidget(QWidget):
@@ -50,7 +50,7 @@ class MatplotlibWidget(QWidget):
             self.axes[0, c].set_title('{} nm'.format(wsamples[c]))
         props = dict(boxstyle='square', facecolor='k', alpha=0.5)
         for r in range(self.nrows):
-            self.axes[r, 0].text(0.05, 0.075, sp.save_locs[r, 0], transform=self.axes[r, 0].transAxes, fontweight='bold', color='w',
+            self.axes[r, 0].text(0.05, 0.075, sp.save_locs[r], transform=self.axes[r, 0].transAxes, fontweight='bold', color='w',
                             fontsize=12, bbox=props)
 
     def add_metric_annotations(self):
@@ -202,7 +202,7 @@ class MyWindow(QWidget):
     @pyqtSlot(np.ndarray)
     def on_EfieldsThread_newSample(self, gui_images):
 
-        amp_ind = sp.save_locs[:, 1] == 'amp'
+        amp_ind = sp.gui_map_type == 'amp'
         norm = np.array([None for _ in range(len(sp.save_locs))])
         vmin = np.array([None for _ in range(len(sp.save_locs))])
         vmax = np.array([None for _ in range(len(sp.save_locs))])

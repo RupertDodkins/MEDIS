@@ -30,7 +30,8 @@ def take_acf(obs_sequence, locs=None):
 
 sp.use_gui = True
 sp.show_cube = False
-sp.save_locs = np.array([['add_atmos','phase'], ['quick_ao','phase'], ['prop_mid_optics','amp'], ['coronagraph','amp']])
+sp.save_locs = np.array(['add_atmos', 'quick_ao', 'prop_mid_optics', 'coronagraph'])
+sp.gui_map_type = np.array(['phase', 'phase','amp', 'amp'])
 # sp.save_locs = np.array([ ['quick_ao','phase'], ['prop_mid_optics','amp'], ['coronagraph','amp']])
 # sp.save_locs = np.array([ ['prop_mid_optics','amp'], ['coronagraph','amp']])
 sp.metric_funcs = [take_exposure, take_acf]
