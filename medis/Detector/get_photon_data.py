@@ -12,7 +12,7 @@ from proper_mod import prop_run
 from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
 from medis.Utils.misc import dprint
 from medis.params import ap,cp,tp,mp,sp,iop,dp
-import medis.Detector.MKIDs as MKIDs
+import medis.Detector.mkid_artefacts as MKIDs
 import medis.Detector.H2RG as H2RG
 import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
@@ -33,7 +33,7 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
     :param inqueue: time index for parallelization (used by multiprocess)
     :param photon_table_queue: photon table (list of photon packets) in the multiprocessing format
     :param spectralcube_queue: series of intensity images (spectral image cube) in the multiprocessing format
-    :param xxx_todo_changeme:
+    :param conf_obj_tup:
     :return:
     """
     # TODO change this name
@@ -50,66 +50,30 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
         for it, t in enumerate(iter(inqueue.get, sentinel)):
 
             kwargs = {'iter': t, 'params': [ap, tp, iop, sp]}
-            spectralcube, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
+            _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                                    VERBOSE=False, PHASE_OFFSET=1)
 
             for o in range(len(ap.contrast) + 1):
 
-                print(save_E_fields.shape)
                 spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
 
-                if tp.detector == 'ideal':
-                    image = np.sum(spectralcube, axis=0)
-                    vmin = np.min(spectralcube)*10
-                    # cube = ideal.assign_calibtime(spectralcube,PASSVALUE['iter'])
-                    # cube = rawImageIO.arange_into_cube(packets, value='phase')
-                    # rawImageIO.make_phase_map(cube, plot=True)
-                    # return ''
-                elif tp.detector == 'H2RG':
-
-                    image = np.sum(spectralcube, axis=0)
-                    vmin = np.min(spectralcube)*10
-                elif tp.detector == 'MKIDs':
+                if tp.detector == 'MKIDs':
                     packets = read.get_packets(spectralcube, t, dp, mp)
                     # packets = read.get_packets(save_E_fields, t, dp, mp)
-
-                    # if sp.show_wframe or sp.show_cube or sp.return_spectralcube:
-                    cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
-                    if mp.remove_close:
-                        timecube = read.remove_close_photons(cube)
-
-                    if sp.show_wframe:
-                        image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
-
-                    # Interpolating spectral cube from ap.nwsamp discreet wavelengths
-                    # if sp.show_cube or sp.return_spectralcube:
-                    spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
-
                     if sp.save_obs:
-                        command = read.get_obs_command(packets,t)
+                        command = read.get_obs_command(packets, t)
                         photon_table_queue.put(command)
 
-                    vmin = 0.9
-
-                if sp.show_wframe:
-                    dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
-                    quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
+                    spectralcube = MKIDs.detect(packets, mp.array_size)
 
                 if sp.show_cube:
-                    view_datacube(spectralcube, logAmp=True, vmin=vmin)
+                    view_datacube(spectralcube, logAmp=True)
 
                 if sp.use_gui:
-                    gui_images = np.zeros_like(save_E_fields, dtype=np.float)
-                    phase_ind = sp.gui_map_type == 'phase'
-                    amp_ind = sp.gui_map_type == 'amp'
-
-                    gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
-                    gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
-
-                    outqueue.put((t, gui_images, spectralcube))
+                    outqueue.put((t, save_E_fields[:,:, o], spectralcube))
 
                 elif sp.return_E:
-                    outqueue.put((t, save_E_fields))
+                    outqueue.put((t, save_E_fields[:, :, o]))
                 else:
                     outqueue.put((t, spectralcube))
 
@@ -211,31 +175,54 @@ def run_medis(EfieldsThread=None, plot=False):
     else:
         obs_sequence = np.zeros((ap.numframes, ap.w_bins, ap.grid_size, ap.grid_size))
 
-    if sp.return_E:
-        e_fields_sequence = np.zeros((ap.numframes, len(sp.save_locs),
-                                      ap.nwsamp, 1 + len(ap.contrast),
-                                      ap.grid_size, ap.grid_size), dtype=np.complex64)
-    else:
-        e_fields_sequence = None
+    # if sp.return_E:
+    e_fields_sequence = np.zeros((ap.numframes, len(sp.save_locs),
+                                  ap.nwsamp, 1 + len(ap.contrast),
+                                  ap.grid_size, ap.grid_size), dtype=np.complex64)
+    # else:
+    #     e_fields_sequence = None
 
     # Sending Queues to gen_timeseries
     for i in range(sp.num_processes):
-        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, photon_table_queue, outqueue, (tp,ap,sp,iop,cp,mp)))
+        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, photon_table_queue, outqueue,
+                                                                 (tp,ap,sp,iop,cp,mp)))
         jobs.append(p)
         p.start()
+
+    if ap.startframe != 0 and os.path.exists(iop.realtime_save):
+        print(iop.realtime_save, 'iop.realtimesave')
+        obs_sequence[:ap.startframe], e_fields_sequence[:ap.startframe] = read.open_rt_save(iop.realtime_save, ap.startframe)
 
     if tp.quick_ao:
         for t in range(ap.startframe, ap.startframe + ap.numframes):
             inqueue.put(t)
 
             if sp.use_gui:
-                it, gui_images, spectralcube = outqueue.get()
+                print(len(ap.contrast))
+                for o in range(len(ap.contrast)+1):
+                    qt, save_E_fields, spectralcube = outqueue.get()
 
-                while sp.play_gui is False:
-                    time.sleep(0.005)
+                    gui_images = np.zeros_like(save_E_fields, dtype=np.float)
+                    phase_ind = sp.gui_map_type == 'phase'
+                    amp_ind = sp.gui_map_type == 'amp'
+                    gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
+                    gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
 
-                EfieldsThread.newSample.emit(gui_images)
-                EfieldsThread.sct.newSample.emit((it, spectralcube))
+                    if EfieldsThread.newSample is not None:  # gets set to None if show_screens == false
+                        EfieldsThread.newSample.emit(gui_images)
+                    EfieldsThread.sct.newSample.emit((qt, spectralcube))
+
+                    e_fields_sequence[qt, :, :, o] = save_E_fields
+                    obs_sequence[qt] = spectralcube  # should be in the right order now because of the identifier
+
+                print(ap.startframe, 'ap.startframe')
+                if sp.play_gui is False:
+                    print('save')
+                    ap.startframe = qt
+                    iop.realtime_save = f"{iop.realtime_save.split('.')[0][:-4]}{str(ap.startframe).zfill(4)}.pkl"
+                    print(iop.realtime_save)
+                    read.save_rt(iop.realtime_save, e_fields_sequence[:qt], obs_sequence[:qt])
+                    return #e_fields_sequence, obs_sequence
 
     else:
         dprint('If the code has hung here it probably means it cant read the CPA file at some iter')
@@ -286,11 +273,12 @@ def run_medis(EfieldsThread=None, plot=False):
 
     for t in range(ap.numframes):
         if sp.return_E:
-            t, save_E_fields = outqueue.get()
-            e_fields_sequence[t - ap.startframe] = save_E_fields
+            qt, save_E_fields = outqueue.get()
+            e_fields_sequence[qt - ap.startframe] = save_E_fields
         else:
-            t, spectralcube = outqueue.get()
-            obs_sequence[t - ap.startframe] = spectralcube  # should be in the right order now because of the identifier
+            qt, spectralcube = outqueue.get()
+            obs_sequence[qt - ap.startframe] = spectralcube  # should be in the right order now because of the identifier
+        print(t == qt, 'test')
 
     for i, p in enumerate(jobs):
         p.join()

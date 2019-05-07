@@ -6,13 +6,27 @@ e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines
 import numpy as np
 from matplotlib import pyplot as plt
 from .distribution import *
-from medis.params import mp, ap, tp, iop, dp
+import random
+import pickle as pickle
+from medis.params import mp, ap, tp, iop, dp, sp
 from medis.Utils.plot_tools import quicklook_im, loop_frames
 from medis.Utils.misc import dprint
 from . import spectral as spec
-import random
-import pickle as pickle
+import medis.Detector.pipeline as pipe
+import medis.Detector.readout as read
 
+
+def detect(packets, array_size):
+    cube = pipe.arange_into_cube(packets, (array_size[0], array_size[1]))
+
+    if mp.remove_close:
+        cube = read.remove_close_photons(cube)
+
+    # Interpolating spectral cube from ap.nwsamp discreet wavelengths
+    # if sp.show_cube or sp.return_spectralcube:
+    spectralcube = pipe.make_datacube(cube, (array_size[0], array_size[1], ap.w_bins))
+
+    return spectralcube
 
 def initialize():
     # dp = device_params()

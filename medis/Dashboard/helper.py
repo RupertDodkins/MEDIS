@@ -5,7 +5,7 @@ import numpy as np
 from PyQt5 import QtCore
 from medis.Detector.get_photon_data import run_medis
 import medis.Detector.readout as read
-from medis.params import ap, tp, mp
+from medis.params import ap, tp, mp, sp
 
 class SpectralCubeThread(QtCore.QThread):
     newSample = QtCore.pyqtSignal(tuple)
@@ -54,4 +54,5 @@ class EfieldsThread(QtCore.QThread):
         # self.func = None
 
     def run(self):
+        sp.play_gui = True
         run_medis(EfieldsThread=self)

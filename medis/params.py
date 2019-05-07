@@ -48,6 +48,7 @@ class IO_params:
         self.obs_table = os.path.join(self.testdir, 'ObsTable.h5')  # a photon table with 4 coloumns
         self.device_params = os.path.join(self.testdir, 'deviceParams.pkl')  # detector metadata
         self.coron_temp = os.path.join(self.testdir, 'coron_maps/') # required by vortex coron function
+        self.realtime_save = os.path.join(self.testdir, 'rt_temp_txxxx.pkl')
 
         #Post Processing Data
         self.LCmapFile = os.path.join(self.testdir, 'LCmap.pkl')
@@ -163,7 +164,7 @@ class Telescope_params:
         self.active_modulate = False
         # self.null_ao_act=66
         self.wfs_measurement_error = False
-        self.piston_error = True
+        self.piston_error = False
         self.wfs_scale = 3
         self.occulter_type = 'Vortex'  # 'Gaussian'# None# '8th_Order'#'GAUSSIAN' None#'SOLID'#
         self.occult_loc = [0,0]  # [3,-5] #correspond to normal x y direction
@@ -291,9 +292,9 @@ class CAOS_params:
     def __init__(self):
         self.model = 'single'  # single|hcipy_standard|evolving
         self.show_caosparams= True  # for control over all other variables
-        self.cn = 0.22 * 1e-12
+        self.r0 = 1#0.4
         self.L0 = 10
-        self.v = 5
+        self.v = 2  #1
         self.h = 100
 
         # original parameters

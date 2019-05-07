@@ -125,8 +125,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     this does not include the observation of the wavefront by the detector
     :returns spectral cube at instantaneous time
     """
-    print("Propagating Broadband Wavefront Through Telescope")
-    # Getting Parameters-import statements weren't working
+    # print("Propagating Broadband Wavefront Through Telescope")
+    # Parameters-import statements won't work through the function
     passpara = PASSVALUE['params']
     ap.__dict__ = passpara[0].__dict__
     tp.__dict__ = passpara[1].__dict__
@@ -264,7 +264,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         datacube = f_out(new_heights)
 
 
-    print('Finished datacube at single timestep')
+    # print('Finished datacube at single timestep')
     wfo.save_E_fields = np.array(wfo.save_E_fields)
 
     return datacube, wfo.save_E_fields

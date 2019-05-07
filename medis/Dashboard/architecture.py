@@ -8,7 +8,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.image import AxesImage
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QComboBox, QFormLayout, QHBoxLayout, QVBoxLayout, QLineEdit, QWidget, QPushButton, QProgressBar
+from PyQt5.QtWidgets import QComboBox, QFormLayout, QHBoxLayout, QVBoxLayout, QLineEdit, QWidget, QPushButton, \
+    QProgressBar, QRadioButton
 
 from medis.params import ap,sp
 from medis.Utils.misc import dprint
@@ -79,13 +80,14 @@ class MyWindow(QWidget):
         self.vmin, self.vmax = None, None
 
         self.pushButtonStop = QPushButton(self)
-        self.pushButtonStop_options = np.rec.fromarrays((['Play', 'Pause'], [0, 1]), names=('keys', 'values'))
-        self.pushButtonStop.setText(self.pushButtonStop_options['keys'][self.pushButtonStop_options['values'] == True][0])
+        # self.pushButtonStop_options = np.rec.fromarrays((['Play', 'Pause'], [0, 1]), names=('keys', 'values'))
+        # self.pushButtonStop.setText(self.pushButtonStop_options['keys'][self.pushButtonStop_options['values'] == True][0])
+        self.pushButtonStop.setText('Stop and Save')
         self.pushButtonStop.clicked.connect(self.on_pushButtonStop_clicked)
 
-        self.pushButtonSave = QPushButton(self)
-        self.pushButtonSave.setText("Save State")
-        self.pushButtonSave.clicked.connect(self.on_pushButtonSave_clicked)
+        # self.pushButtonSave = QPushButton(self)
+        # self.pushButtonSave.setText("Save State")
+        # self.pushButtonSave.clicked.connect(self.on_pushButtonSave_clicked)
 
         self.nwsamp = QLineEdit(self)
         self.nwsamp.setPlaceholderText(f'{ap.nwsamp}')
@@ -95,11 +97,11 @@ class MyWindow(QWidget):
         self.degfac.setPlaceholderText('2')
 
         self.pushButtonInt = QPushButton(self)
-        self.pushButtonInt.setText("Integrate")
+        self.pushButtonInt.setText("Placeholder")
         self.pushButtonInt.clicked.connect(self.on_pushButtonInt_clicked)
 
         self.pushButtonMetric = QPushButton(self)
-        self.pushButtonMetric.setText("Plot Metric")
+        self.pushButtonMetric.setText("Placeholder")
         self.pushButtonMetric.clicked.connect(self.on_pushButtonMetric_clicked)
         # self.EfieldsThread.spectral_cube.connect(self.on_SpectralCubeThread_newSample)
         self.EfieldsThread.sct = SpectralCubeThread(self)
@@ -121,13 +123,21 @@ class MyWindow(QWidget):
         self.topHPanel = QHBoxLayout()
         self.topHPanel.addWidget(self.pushButtonRun)
         self.topHPanel.addWidget(self.pushButtonStop)
-        self.topHPanel.addWidget(self.pushButtonSave)
+        # self.topHPanel.addWidget(self.pushButtonSave)
 
         self.paramsform = QFormLayout()
         # self.paramsform.setContentsMargins(0, 0, 0, 0)
         print(ap.nwsamp)
         self.paramsform.addRow('wavelength samples:', self.nwsamp)
         self.paramsform.addRow('degredation factor:', self.degfac)
+
+        # TODO turn off individual plots
+        # self.locs_buttons = []
+        # for il, loc in enumerate(sp.save_locs):
+        self.b1 = QRadioButton('Show screens')
+        self.b1.setChecked(True)
+        self.b1.toggled.connect(lambda: self.btnstate(self.b1))
+        self.paramsform.addWidget(self.b1)
 
         self.procHPanel = QHBoxLayout()
         self.procHPanel.addWidget(self.pushButtonInt)
@@ -176,19 +186,28 @@ class MyWindow(QWidget):
 
         self.show()
 
+    def btnstate(self, b):
+        dprint(b.isChecked())
+        if not b.isChecked():
+            self.EfieldsThread.newSample.disconnect()
+            # self.EfieldsThread.newSample.connect(self.on_EfieldsThread_placeholder)
+        else:
+            self.EfieldsThread.newSample.connect(self.on_EfieldsThread_newSample)
+    #         sp.save_locs =
+    #     # b.setChecked(not b.isChecked())
+
     @pyqtSlot()
     def on_pushButtonRun_clicked(self):
         self.EfieldsThread.start()
 
     @pyqtSlot()
     def on_pushButtonStop_clicked(self):
-        self.pushButtonStop_options['values'] = np.logical_not(self.pushButtonStop_options['values'])
-        self.pushButtonStop.setText(self.pushButtonStop_options['keys'][self.pushButtonStop_options['values'] == True][0])
-
-        if np.array_equal(self.pushButtonStop_options['values'], [1, 0]):
-            self.pushButtonStop.setStyleSheet("background-color: blue")
-        else:
-            self.pushButtonStop.setStyleSheet("background-color: white")
+        # self.pushButtonStop_options['values'] = np.logical_not(self.pushButtonStop_options['values'])
+        # self.pushButtonStop.setText(self.pushButtonStop_options['keys'][self.pushButtonStop_options['values'] == True][0])
+        # if np.array_equal(self.pushButtonStop_options['values'], [1, 0]):
+        #     self.pushButtonStop.setStyleSheet("background-color: blue")
+        # else:
+        #     self.pushButtonStop.setStyleSheet("background-color: white")
         sp.play_gui = not sp.play_gui
 
     @pyqtSlot()
@@ -201,7 +220,6 @@ class MyWindow(QWidget):
 
     @pyqtSlot(np.ndarray)
     def on_EfieldsThread_newSample(self, gui_images):
-
         amp_ind = sp.gui_map_type == 'amp'
         norm = np.array([None for _ in range(len(sp.save_locs))])
         vmin = np.array([None for _ in range(len(sp.save_locs))])
@@ -211,10 +229,10 @@ class MyWindow(QWidget):
         norm[amp_ind] = LogNorm()
         # vmin[~amp_ind] = -np.pi
         # vmax[~amp_ind] = np.pi
-        vmin[~amp_ind] = np.min(gui_images[~amp_ind, :, 0], axis=(1,2,3))
-        vmax[~amp_ind] = np.max(gui_images[~amp_ind, :, 0], axis=(1,2,3))
-        vmin[amp_ind] = np.min(gui_images[amp_ind, :, 0], axis=(1,2,3))
-        vmax[amp_ind] = np.max(gui_images[amp_ind, :, 0], axis=(1,2,3))
+        vmin[~amp_ind] = np.min(gui_images[~amp_ind], axis=(1,2,3))
+        vmax[~amp_ind] = np.max(gui_images[~amp_ind], axis=(1,2,3))
+        vmin[amp_ind] = np.min(gui_images[amp_ind], axis=(1,2,3))
+        vmax[amp_ind] = np.max(gui_images[amp_ind], axis=(1,2,3))
         if self.vmin is None:
             # may mess up when there is just one amp figure?
             log_bins = np.logspace(np.log10(vmin[amp_ind][0]), np.log10(vmax[amp_ind][0]), 5)
@@ -232,16 +250,13 @@ class MyWindow(QWidget):
                     self.EmapsGrid.ims[x, y].remove()
                 except (AttributeError, ValueError):
                     pass
-                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(gui_images[x, y,0, ::1, ::1], norm=norm[x],
+                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(gui_images[x, y, ::1, ::1], norm=norm[x],
                                                      vmin=self.vmin[x], vmax=self.vmax[x], cmap=cmap[x], origin='lower')
 
             self.EmapsGrid.figure.colorbar(self.EmapsGrid.ims[x,-1], cax=self.EmapsGrid.cax[x], orientation='vertical')
 
         self.EmapsGrid.canvas.draw()
         del gui_images
-
-        self.framenumber += 1
-        self.progress.setValue(self.framenumber/ap.numframes * 100)
 
     @pyqtSlot()
     def on_pushButtonMetric_clicked(self):
@@ -252,19 +267,15 @@ class MyWindow(QWidget):
     def on_SpectralCubeThread_newSample(self, spec_tuple):
         (it, spectralcube) = spec_tuple
 
-        dprint((it, self.it, self.obj))
         if self.it == it:
             self.obj += 1
+
         self.EfieldsThread.sct.integration += spectralcube
         self.EfieldsThread.sct.obs_sequence[it, self.obj] = spectralcube
-
-        dprint((it, self.it, self.obj))
 
         if self.obj == len(ap.contrast):
             self.obj = -1
             self.it += 1
-
-        dprint((it, self.it, self.obj))
 
         try:
             self.metricsGrid.ims[0,0].remove()
@@ -357,6 +368,9 @@ class MyWindow(QWidget):
 
         self.metricsGrid.canvas.draw()
         del it, spectralcube
+
+        self.framenumber += 1
+        self.progress.setValue(self.framenumber/ap.numframes * 100)
 
     def textchanged(self, amount):
         # self.rows = int(amount)

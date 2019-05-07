@@ -15,7 +15,7 @@ import tables as pt
 import h5py
 import pickle as pickle
 from medis.params import ap, cp, tp, mp, iop, hp, sp
-from . import MKIDs
+from . import mkid_artefacts as MKIDs
 import proper
 from medis.Utils.plot_tools import view_datacube, loop_frames, quicklook_im
 from . import temporal as temp
@@ -56,8 +56,8 @@ def get_packets(datacube, step, dp,mp):
     #     datacube = MKIDs.add_hot_pix(datacube, dp, step)
 
     num_events = int(ap.star_photons * ap.exposure_time * np.sum(datacube))
-    dprint(f"# events ={num_events}, star photons = {ap.star_photons}, "
-           f"sum(datacube) = {np.sum(datacube),}, Exposure Time ={ap.exposure_time}")
+    # dprint(f"# events ={num_events}, star photons = {ap.star_photons}, "
+    #        f"sum(datacube) = {np.sum(datacube),}, Exposure Time ={ap.exposure_time}")
     if num_events * sp.num_processes > 1.0e9:
         dprint(num_events)
         dprint('Possibly too many photons for memory. Are you sure you want to do this? Remove exit() if so')
@@ -93,7 +93,7 @@ def get_packets(datacube, step, dp,mp):
     # packets = np.vstack((packets, np.transpose(photons)))
     packets = np.transpose(photons)
 
-    dprint("Completed Readout Loop")
+    # dprint("Completed Readout Loop")
 
     return packets  #[1:]  #first element from empty would otherwise be included
 
@@ -180,8 +180,7 @@ def remove_close_photons(cube):
                 pass
      
     # missed = 
-    print('need to finish remove_close_photons')
-    exit()
+    raise NotImplementedError
     return photons
 
 
@@ -219,6 +218,12 @@ def save_fields(e_fields_sequence, fields_file='hyper.pkl'):
         print('Extension not recognised')
 
 
+def save_rt(filename, e_fields_sequence, obs_sequence):
+    with open(filename, 'wb') as handle:
+        field_tup = (obs_sequence, e_fields_sequence)
+        pickle.dump(field_tup, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
 def check_exists_obs_sequence(plot=False):
     """
     This code checks to see if there is already
@@ -240,11 +245,13 @@ def check_exists_obs_sequence(plot=False):
 def open_obs_sequence(obs_seq_file = 'hyper.pkl'):
     with open(obs_seq_file, 'rb') as handle:
         obs_sequence =pickle.load(handle)
-    # quicklook_im(hypercube[-1, 0])
-    # obs_seq_file = obs_seq_file[:-3]+'npy'
-    # hypercube = np.load(obs_seq_file)
+
     return obs_sequence
 
+def open_rt_save(savename, t):
+    with open(savename, 'rb') as handle:
+        field_tup = pickle.load(handle)
+    return field_tup
 
 def open_obs_sequence_hdf5(obs_seq_file = 'hyper.h5'):
     # hdf5_path = "my_data.hdf5"

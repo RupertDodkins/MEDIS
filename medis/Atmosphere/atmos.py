@@ -28,7 +28,9 @@ def generate_maps(plot=False):
     pupil_grid = hcipy.make_pupil_grid(ap.grid_size, tp.diam)
 
     if cp.model == 'single':
-        layers = [hcipy.InfiniteAtmosphericLayer(pupil_grid, cp.cn, cp.L0, cp.v, cp.h, 2)]
+        # cn = hcipy.Cn_squared_from_fried_parameter(cp.r0, 1000e-9)
+        cn = 0.2 * 1e-12
+        layers = [hcipy.InfiniteAtmosphericLayer(pupil_grid, cn, cp.L0, cp.v, cp.h, 2)]
     elif cp.model == 'hcipy_standard':
         # Make multi-layer atmosphere
         layers = hcipy.make_standard_atmospheric_layers(pupil_grid, cp.outer_scale)
