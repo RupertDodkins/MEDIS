@@ -96,6 +96,8 @@ def wait_until(somepredicate, timeout, period=0.25, *args, **kwargs):
     time.sleep(period)
   return False
 
+def update_realtime_save():
+    iop.realtime_save = f"{iop.realtime_save.split('.')[0][:-4]}{str(ap.startframe).zfill(4)}.pkl"
 
 def run_medis(EfieldsThread=None, plot=False):
     """
@@ -137,7 +139,7 @@ def run_medis(EfieldsThread=None, plot=False):
 
     # initialize atmosphere
     print("Atmosdir = %s " % iop.atmosdir)
-    if tp.use_atmos and glob.glob(iop.atmosdir + '/*.fits') == []:
+    if tp.use_atmos and not os.path.exists(f'{iop.atmosdir}/{cp.model}'):
         atmos.generate_maps()
 
     # initialize telescope
@@ -189,39 +191,50 @@ def run_medis(EfieldsThread=None, plot=False):
         jobs.append(p)
         p.start()
 
+    update_realtime_save()
+    dprint((iop.realtime_save, os.path.exists(iop.realtime_save)))
     if ap.startframe != 0 and os.path.exists(iop.realtime_save):
         print(iop.realtime_save, 'iop.realtimesave')
         obs_sequence[:ap.startframe], e_fields_sequence[:ap.startframe] = read.open_rt_save(iop.realtime_save, ap.startframe)
 
     if tp.quick_ao:
-        for t in range(ap.startframe, ap.startframe + ap.numframes):
+        dprint((ap.startframe, ap.numframes))
+        for t in range(ap.startframe, ap.numframes):
+            dprint(t)
             inqueue.put(t)
 
             if sp.use_gui:
-                print(len(ap.contrast))
                 for o in range(len(ap.contrast)+1):
                     qt, save_E_fields, spectralcube = outqueue.get()
 
                     gui_images = np.zeros_like(save_E_fields, dtype=np.float)
                     phase_ind = sp.gui_map_type == 'phase'
                     amp_ind = sp.gui_map_type == 'amp'
+                    dprint((o, tp.use_ao, sp.play_gui, ap.startframe))
                     gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
                     gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
-
-                    if EfieldsThread.newSample is not None:  # gets set to None if show_screens == false
-                        EfieldsThread.newSample.emit(gui_images)
-                    EfieldsThread.sct.newSample.emit((qt, spectralcube))
 
                     e_fields_sequence[qt, :, :, o] = save_E_fields
                     obs_sequence[qt] = spectralcube  # should be in the right order now because of the identifier
 
+                    if o == EfieldsThread.fields_ob:
+                        EfieldsThread.newSample.emit(gui_images)
+                        EfieldsThread.sct.newSample.emit((qt, spectralcube))
+
                 print(ap.startframe, 'ap.startframe')
                 if sp.play_gui is False:
-                    print('save')
+                    dprint((t, tp.use_ao))
                     ap.startframe = qt
-                    iop.realtime_save = f"{iop.realtime_save.split('.')[0][:-4]}{str(ap.startframe).zfill(4)}.pkl"
+                    # iop.realtime_save = f"{iop.realtime_save.split('.')[0][:-4]}{str(ap.startframe).zfill(4)}.pkl"
+                    update_realtime_save()
                     print(iop.realtime_save)
                     read.save_rt(iop.realtime_save, e_fields_sequence[:qt], obs_sequence[:qt])
+                    dprint('saved')
+                    # .quit() waits for it to finish terminate and reinitialise instead.
+                    # Might be better to get the run() slot to finish early by changing ap.numframes to the current value then setting it back
+                    sp.play_gui = True
+                    run_medis(EfieldsThread)
+                    dprint((tp.use_ao, sp.play_gui))
                     return #e_fields_sequence, obs_sequence
 
     else:

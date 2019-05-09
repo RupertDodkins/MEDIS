@@ -222,6 +222,7 @@ def save_rt(filename, e_fields_sequence, obs_sequence):
     with open(filename, 'wb') as handle:
         field_tup = (obs_sequence, e_fields_sequence)
         pickle.dump(field_tup, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    dprint('saved')
 
 
 def check_exists_obs_sequence(plot=False):

@@ -5,6 +5,7 @@ from scipy import ndimage
 import proper
 from proper_mod import prop_dm
 from medis.params import tp, cp, mp, ap,iop
+from medis.Utils.misc import dprint
 
 def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
     # print 'Including Adaptive Optics'
@@ -77,10 +78,15 @@ def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
 
     return
 
+def no_ao(wfo):
+    '''Dummy function for the trigger the GUI to plot'''
+    dprint('running no_ao')
+    wfo.test_save('no_ao')
+    return
 
 def quick_ao(wfo, CPA_maps):
     # TODO address the kludge. Is it still necessary
-
+    dprint('running quick_ao')
     wf_array = wfo.wf_array
     beam_ratios = wfo.beam_ratios
 

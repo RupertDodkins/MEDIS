@@ -6,13 +6,13 @@ from PyQt5 import QtCore
 from medis.Detector.get_photon_data import run_medis
 import medis.Detector.readout as read
 from medis.params import ap, tp, mp, sp
+from medis.Utils.misc import dprint
 
 class SpectralCubeThread(QtCore.QThread):
     newSample = QtCore.pyqtSignal(tuple)
 
     def __init__(self, parent=None):
         super(SpectralCubeThread, self).__init__(parent)
-        print(ap.contrast, 'contrast')
         if tp.detector == 'MKIDs':
             self.obs_sequence = np.zeros((ap.numframes, len(ap.contrast)+1, ap.w_bins, mp.array_size[1], mp.array_size[0]))
             self.integration = np.zeros((ap.w_bins, mp.array_size[1], mp.array_size[0]))

@@ -182,6 +182,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
         if tp.use_ao:
             ao.quick_ao(wfo,  CPA_maps)
+        else:
+            ao.no_ao(wfo)
 
     else:
         # TODO update this code

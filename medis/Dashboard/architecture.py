@@ -7,11 +7,11 @@ from matplotlib import gridspec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.image import AxesImage
 
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QComboBox, QFormLayout, QHBoxLayout, QVBoxLayout, QLineEdit, QWidget, QPushButton, \
-    QProgressBar, QRadioButton
+    QProgressBar, QRadioButton, QSlider, QLabel
 
-from medis.params import ap,sp
+from medis.params import ap, sp, tp
 from medis.Utils.misc import dprint
 from medis.Dashboard.helper import EfieldsThread, SpectralCubeThread
 from medis.Dashboard.twilight import sunlight, twilight
@@ -51,7 +51,8 @@ class MatplotlibWidget(QWidget):
             self.axes[0, c].set_title('{} nm'.format(wsamples[c]))
         props = dict(boxstyle='square', facecolor='k', alpha=0.5)
         for r in range(self.nrows):
-            self.axes[r, 0].text(0.05, 0.075, sp.save_locs[r], transform=self.axes[r, 0].transAxes, fontweight='bold', color='w',
+            pretty_func_name = ' '.join(sp.save_locs[r].split('_'))
+            self.axes[r, 0].text(0.05, 0.075, pretty_func_name, transform=self.axes[r, 0].transAxes, fontweight='bold', color='w',
                             fontsize=12, bbox=props)
 
     def add_metric_annotations(self):
@@ -60,7 +61,8 @@ class MatplotlibWidget(QWidget):
                              fontweight='bold', color='w',
                              fontsize=12, bbox=props)
         for r in range(self.nrows-1):
-            self.axes[r+1, 0].text(0.05, 0.075, sp.metric_funcs[r].__name__, transform=self.axes[r+1, 0].transAxes,
+            pretty_func_name = ' '.join(sp.metric_funcs[r].__name__.split('_'))
+            self.axes[r+1, 0].text(0.05, 0.075, pretty_func_name, transform=self.axes[r+1, 0].transAxes,
                                  fontweight='bold', color='w',
                                  fontsize=12, bbox=props)
 
@@ -68,15 +70,15 @@ class MatplotlibWidget(QWidget):
 class MyWindow(QWidget):
     def __init__(self, nrows=len(sp.save_locs), ncols=ap.nwsamp, plot_metric=True):
         super().__init__()
-        
+
         self.framenumber = 0
-        
+        self.plotsamp = 2
+
         # Define and connect push buttons
         self.pushButtonRun = QPushButton(self)
         self.pushButtonRun.setText("Start Simulation")
         self.pushButtonRun.clicked.connect(self.on_pushButtonRun_clicked)
-        self.EfieldsThread = EfieldsThread(self)
-        self.EfieldsThread.newSample.connect(self.on_EfieldsThread_newSample)
+        self.initializeEfieldsThread()
         self.vmin, self.vmax = None, None
 
         self.pushButtonStop = QPushButton(self)
@@ -96,6 +98,11 @@ class MyWindow(QWidget):
         self.degfac = QLineEdit(self)
         self.degfac.setPlaceholderText('2')
 
+
+        self.plotsamptext = QLineEdit(self)
+        self.plotsamptext.setPlaceholderText(str(self.plotsamp))
+        self.plotsamptext.textChanged.connect(self.changeplotsamp)
+
         self.pushButtonInt = QPushButton(self)
         self.pushButtonInt.setText("Placeholder")
         self.pushButtonInt.clicked.connect(self.on_pushButtonInt_clicked)
@@ -103,9 +110,6 @@ class MyWindow(QWidget):
         self.pushButtonMetric = QPushButton(self)
         self.pushButtonMetric.setText("Placeholder")
         self.pushButtonMetric.clicked.connect(self.on_pushButtonMetric_clicked)
-        # self.EfieldsThread.spectral_cube.connect(self.on_SpectralCubeThread_newSample)
-        self.EfieldsThread.sct = SpectralCubeThread(self)
-        self.EfieldsThread.sct.newSample.connect(self.on_SpectralCubeThread_newSample)
 
         # Define the dropdown combobox
         self.metrics = ['take_exposure', 'Sample Photons', 'Plot Stats', 'mSDI', 'SSD', 'DSI', '5 r$\sigma$ Contrast', 'ACF']
@@ -127,17 +131,48 @@ class MyWindow(QWidget):
 
         self.paramsform = QFormLayout()
         # self.paramsform.setContentsMargins(0, 0, 0, 0)
-        print(ap.nwsamp)
-        self.paramsform.addRow('wavelength samples:', self.nwsamp)
-        self.paramsform.addRow('degredation factor:', self.degfac)
+        # print(ap.nwsamp)
+        # self.paramsform.addRow('wavelength samples:', self.nwsamp)
+        self.paramsform.addWidget(QLabel('Wavelength Displays'))
+        self.paramsform.addWidget(self.nwsamp)
+        self.paramsform.addWidget(QLabel('Spatial Degradation'))
+        self.paramsform.addWidget(self.degfac)
+        self.paramsform.addWidget(QLabel('Metric Time Display'))
+        self.paramsform.addWidget(self.plotsamptext)
+        # self.paramsform.addRow('degredation factor:', self.degfac)
+        # self.paramsform.addRow('plot sample number:', self.plotsamptext)
 
-        # TODO turn off individual plots
+        # TODO turn off plots individually
         # self.locs_buttons = []
         # for il, loc in enumerate(sp.save_locs):
-        self.b1 = QRadioButton('Show screens')
-        self.b1.setChecked(True)
-        self.b1.toggled.connect(lambda: self.btnstate(self.b1))
-        self.paramsform.addWidget(self.b1)
+
+        # self.b1 = QRadioButton('Show screens')
+        # self.b1.setChecked(True)
+        # self.b1.toggled.connect(lambda: self.fieldsbtnstate(self.b1))
+        # self.paramsform.addWidget(self.b1)
+        #
+        # self.b2 = QRadioButton('Show metrics')
+        # self.b2.setChecked(True)
+        # self.b2.toggled.connect(lambda: self.metricbtnstate(self.b2))
+        # self.paramsform.addWidget(self.b2)
+
+        self.b3 = QRadioButton('Toggle AO')
+        self.b3.setChecked(True)
+        self.b3.toggled.connect(lambda: self.toggle_ao(self.b3))
+        self.paramsform.addWidget(self.b3)
+
+        if ap.companion:
+            self.sp = QSlider(Qt.Horizontal)
+            # self.sp.setFocusPolicy(Qt.StrongFocus)
+            self.sp.setMinimum(0)
+            self.sp.setMaximum(len(ap.contrast))
+            self.sp.setValue(self.EfieldsThread.fields_ob)
+            self.sp.setTickPosition(QSlider.TicksBelow)
+            self.sp.setTickInterval(1)
+            self.sp.setSingleStep(1)
+            self.paramsform.addWidget(QLabel('Object'))
+            self.paramsform.addWidget(self.sp)
+            self.sp.valueChanged.connect(self.valuechange)
 
         self.procHPanel = QHBoxLayout()
         self.procHPanel.addWidget(self.pushButtonInt)
@@ -186,7 +221,18 @@ class MyWindow(QWidget):
 
         self.show()
 
-    def btnstate(self, b):
+    def valuechange(self):
+        self.EfieldsThread.fields_ob = self.sp.value()
+        print(self.EfieldsThread.fields_ob, 'lol')
+
+    def initializeEfieldsThread(self):
+        self.EfieldsThread = EfieldsThread(self)
+        self.EfieldsThread.newSample.connect(self.on_EfieldsThread_newSample)
+        self.EfieldsThread.fields_ob = 0
+        self.EfieldsThread.sct = SpectralCubeThread(self)
+        self.EfieldsThread.sct.newSample.connect(self.on_SpectralCubeThread_newSample)
+
+    def fieldsbtnstate(self, b):
         dprint(b.isChecked())
         if not b.isChecked():
             self.EfieldsThread.newSample.disconnect()
@@ -195,6 +241,30 @@ class MyWindow(QWidget):
             self.EfieldsThread.newSample.connect(self.on_EfieldsThread_newSample)
     #         sp.save_locs =
     #     # b.setChecked(not b.isChecked())
+
+    def metricbtnstate(self, b):
+        dprint(b.isChecked())
+        if not b.isChecked():
+            self.EfieldsThread.sct.newSample.disconnect()
+        else:
+            self.EfieldsThread.sct.newSample.connect(self.on_SpectralCubeThread_newSample)
+
+    def toggle_ao(self, b):
+        dprint(b.isChecked())
+        tp.use_ao = b.isChecked()
+        if not tp.use_ao:
+            sp.save_locs[sp.save_locs == 'quick_ao'] = 'no_ao'
+        else:
+            sp.save_locs[sp.save_locs == 'no_ao'] = 'quick_ao'
+        dprint('ao_toggle')
+        sp.play_gui = False
+        ap.startframe = self.it
+        dprint(('ao_toggle', ap.startframe))
+        dprint((tp.use_ao, sp.play_gui, ap.startframe, sp.save_locs))
+
+        # self.initializeEfieldsThread()
+        # # self.EfieldsThread.start()
+        # dprint((tp.use_ao, sp.play_gui))
 
     @pyqtSlot()
     def on_pushButtonRun_clicked(self):
@@ -208,7 +278,7 @@ class MyWindow(QWidget):
         #     self.pushButtonStop.setStyleSheet("background-color: blue")
         # else:
         #     self.pushButtonStop.setStyleSheet("background-color: white")
-        sp.play_gui = not sp.play_gui
+        sp.play_gui = False#not sp.play_gui
 
     @pyqtSlot()
     def on_pushButtonSave_clicked(self):
@@ -366,7 +436,8 @@ class MyWindow(QWidget):
             else:
                 print(f"metric from {func} with shape {np.shape(metric)} cannot be plotted")
 
-        self.metricsGrid.canvas.draw()
+        if it % self.plotsamp == 0:
+            self.metricsGrid.canvas.draw()
         del it, spectralcube
 
         self.framenumber += 1
@@ -375,5 +446,22 @@ class MyWindow(QWidget):
     def textchanged(self, amount):
         # self.rows = int(amount)
         ap.nwsamp = int(amount)
-        self.close()
-        self.__init__(ncols=ap.nwsamp)
+        sp.play_gui = False
+        ap.startframe = self.it
+        dprint(('ao_toggle', ap.startframe))
+        dprint((tp.use_ao, sp.play_gui, ap.startframe, sp.save_locs))
+        self.ncols = ap.nwsamp
+        self.ParaWaveHbox.removeWidget(self.EmapsGrid)
+        self.EmapsGrid = MatplotlibWidget(self, self.nrows, self.ncols)
+        self.EmapsGrid.add_Efield_annotations()
+        self.ParaWaveHbox.addWidget(self.EmapsGrid)
+        self.initializeEfieldsThread()
+        self.EfieldsThread.start()
+
+        # self.close()
+        # self.__init__(ncols=ap.nwsamp)
+
+    def changeplotsamp(self, amount):
+        # self.rows = int(amount)
+        self.plotsamp = int(amount)
+

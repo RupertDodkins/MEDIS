@@ -22,7 +22,7 @@ def take_acf(obs_sequence, locs=None, radius = 10):
 
     if len(obs_sequence) > 2:
         for (x,y) in locs:
-            print(my_round(np.mean(obs_sequence[:, :, x:x+radius, y:y+radius], axis=(1, 2, 3)), 3))
+            # print(my_round(np.mean(obs_sequence[:, :, x:x+radius, y:y+radius], axis=(1, 2, 3)), 3))
             corr = acf(my_round(np.mean(obs_sequence[:, :, x:x+radius, y:y+radius], axis=(1, 2, 3)), 3),
                                     fft=True, nlags=20)
             corrs.append(corr)
@@ -54,7 +54,7 @@ ap.star_photons = 1e8
 ap.exposure_time = 1e-3
 # tp.use_atmos = False
 # tp.use_ao = False
-ap.numframes = 1000
+ap.numframes = 50
 
 
 # tp.detector = 'MKIDs'
