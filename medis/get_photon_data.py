@@ -19,7 +19,7 @@ import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
 import medis.Atmosphere.atmos as atmos
 
-def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
+def gen_timeseries(inqueue, outqueue, conf_obj_tup):
     """
     generates observation sequence by calling optics_propagate in time series
 
@@ -36,10 +36,6 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
     (tp,ap,sp,iop,cp,mp) = conf_obj_tup
 
     try:
-
-        if tp.detector == 'MKIDs':
-            with open(iop.device_params, 'rb') as handle:
-                dp = pickle.load(handle)
 
         start = time.time()
 
@@ -106,22 +102,27 @@ def initialize_telescope():
 
     if sp.save_locs is None:
         sp.save_locs = []
-    if 'final' not in sp.save_locs:
-        sp.save_locs = np.append(sp.save_locs, 'final')
+    if 'detector' not in sp.save_locs:
+        sp.save_locs = np.append(sp.save_locs, 'detector')
         sp.gui_map_type = np.append(sp.gui_map_type, 'amp')
 
-def applymkideffects(spectralcube, t):
+def applymkideffects(spectralcube, t, o, photon_table_queue):
+
+    if tp.detector == 'MKIDs':
+        with open(iop.device_params, 'rb') as handle:
+            dp = pickle.load(handle)
     spectrallist = read.get_packets(spectralcube, t, dp, mp)
-    # packets = read.get_packets(save_E_fields, t, dp, mp)
     spectralcube = MKIDs.makecube(spectrallist, mp.array_size)
 
-    # if sp.save_obs:
-    #     command = read.get_obs_command(spectrallist, t)
-    # #     photon_table_queue.put(command)
+    if sp.save_obs:
+        if o == 0:
+            photon_table_queue.put(('create_group', ('/', 't%i' % t)))
+        command = read.get_obs_command(spectrallist, t, o)
+        photon_table_queue.put(command)
 
     return spectralcube
 
-def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, outqueue):
+def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queue, outqueue):
     for t in range(ap.startframe, ap.numframes):
         dprint(t)
         inqueue.put(t)
@@ -131,7 +132,7 @@ def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, outqueue):
             spectralcube = np.abs(save_E_fields[-1]) ** 2
 
             if tp.detector == 'MKIDs':
-                spectralcube = applymkideffects(spectralcube, t)
+                spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue)
 
             gui_images = np.zeros_like(save_E_fields, dtype=np.float)
             phase_ind = sp.gui_map_type == 'phase'
@@ -157,7 +158,7 @@ def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, outqueue):
     return e_fields_sequence
 
 sentinel = None
-def postfacto(e_fields_sequence, inqueue, outqueue):
+def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
     for t in range(ap.startframe, ap.numframes):
         dprint(t)
         inqueue.put(t)
@@ -171,7 +172,7 @@ def postfacto(e_fields_sequence, inqueue, outqueue):
         spectralcube = np.abs(save_E_fields[-1, :, ]) ** 2
 
         if tp.detector == 'MKIDs':
-            spectralcube = applymkideffects(spectralcube, t)
+            spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue)
 
         save_E_fields[-1] = spectralcube
         e_fields_sequence[qt - ap.startframe] = save_E_fields
@@ -203,16 +204,11 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
                                   ap.nwsamp, 1 + len(ap.contrast),
                                   ap.grid_size, ap.grid_size), dtype=np.complex64)
 
-    # if tp.detector == 'MKIDs':
-    #     obs_sequence = np.zeros((ap.numframes, ap.w_bins, mp.array_size[1], mp.array_size[0]))
-    # else:
-    #     obs_sequence = np.zeros((ap.numframes, ap.w_bins, ap.grid_size, ap.grid_size))
-
+    # If cache exists load it in
     update_realtime_save()
-    dprint((iop.realtime_save, os.path.exists(iop.realtime_save)))
     if ap.startframe != 0 and os.path.exists(iop.realtime_save):
-        print(iop.realtime_save, 'iop.realtimesave')
-        # obs_sequence[:ap.startframe], e_fields_sequence[:ap.startframe] = read.open_rt_save(iop.realtime_save, ap.startframe)
+        #todo add parameteters check
+        print('warning loading from cache. Are the parameters the same?')
         e_fields_sequence[:ap.startframe] = read.open_rt_save(iop.realtime_save, ap.startframe)
 
     inqueue = multiprocessing.Queue()
@@ -220,26 +216,28 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
     photon_table_queue = multiprocessing.Queue()
     jobs = []
 
-    # if sp.save_obs and tp.detector == 'MKIDs':
-    #     proc = multiprocessing.Process(target=read.handle_output, args=(photon_table_queue, iop.obsfile))
-    #     proc.start()
+    if sp.save_obs and tp.detector == 'MKIDs':
+        proc = multiprocessing.Process(target=read.handle_output, args=(photon_table_queue, iop.obs_table))
+        proc.start()
 
     for i in range(sp.num_processes):
-        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, photon_table_queue, outqueue,
-                                                                 (tp,ap,sp,iop,cp,mp)))
+        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, outqueue, (tp,ap,sp,iop,cp,mp)))
         jobs.append(p)
         p.start()
 
     if realtime:
-        e_fields_sequence = realtime_stream(EfieldsThread, e_fields_sequence, inqueue, outqueue)
+        e_fields_sequence = realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queue, outqueue)
     else:
-        e_fields_sequence = postfacto(e_fields_sequence, inqueue, outqueue)
+        e_fields_sequence = postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue)
 
-    for i, p in enumerate(jobs):
-        p.join()
+    #todo hanging here for some reason
+    # for i, p in enumerate(jobs):
+    #     p.join()
 
     photon_table_queue.put(None)
     outqueue.put(None)
+    if sp.save_obs and tp.detector == 'MKIDs':
+        proc.join()
 
     print('MEDIS Data Run Completed')
     finish = time.time()

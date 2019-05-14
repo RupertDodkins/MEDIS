@@ -24,7 +24,6 @@ def take_acf(obs_sequence, locs=None, radius = 10):
     return corrs
 
 sp.metric_args = [[[65,65], [65,83], [83,65], [83,83]]]
-sp.gui_map_type = np.array(['amp'])
 
 sp.metric_funcs = [take_acf]
 
@@ -40,11 +39,12 @@ ap.star_photons = 1e8
 ap.exposure_time = 1e-3
 # tp.use_atmos = False
 # tp.use_ao = False
-ap.numframes = 50
+ap.numframes = 5
 
 ##set telescope parameters
 tp.use_ao = True #AO off/on
-tp.detector = 'ideal'
+# tp.detector = 'ideal'
+tp.detector = 'MKIDs'
 
 ##set simulation parameters
 sp.num_processes = 1

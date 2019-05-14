@@ -111,7 +111,7 @@ class Wavefronts():
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
 
-def final(wfo):
+def detector(wfo):
     """
     Empty function for the purpose of telling the sim to save the final efield screen
 
@@ -248,7 +248,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     wfo.iter_func(coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
     # if sp.get_ints: get_intensity(wfo.wf_array, sp, phase=False)
 
-    wfo.iter_func(final)
+    wfo.iter_func(detector)
 
     shape = wfo.wf_array.shape
     for iw in range(shape[0]):

@@ -17,7 +17,9 @@ from medis.Dashboard.helper import EfieldsThread, SpectralCubeThread
 from medis.Dashboard.twilight import sunlight, twilight
 
 if sp.save_locs is None:
-    sp.save_locs = np.array(['final'])
+    sp.save_locs = np.array(['detector'])
+if sp.gui_map_type is None:
+    sp.gui_map_type = np.array(['amp'])
 
 class MatplotlibWidget(QWidget):
     def __init__(self, parent=None, nrows=len(sp.save_locs), ncols=ap.nwsamp):
@@ -222,7 +224,6 @@ class MyWindow(QWidget):
 
     def valuechange(self):
         self.EfieldsThread.fields_ob = self.sp.value()
-        print(self.EfieldsThread.fields_ob, 'lol')
 
     def initializeEfieldsThread(self):
         self.EfieldsThread = EfieldsThread(self)

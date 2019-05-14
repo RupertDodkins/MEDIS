@@ -100,26 +100,20 @@ def get_packets(datacube, step, dp,mp):
 def assign_id(photons, obj_ind):
     return np.vstack((photons, np.ones_like(photons[0])*obj_ind))
 
-def get_obs_command(packets, t):
-
-    # command.append(('createArray', ('/', 'p%i' % t, packets)))
-    command = ('createArray', ('/', 'p%i' % t, packets))
+def get_obs_command(packets, t, o):
+    command = ('create_array', ('/t%i' % t, 'o%i' % o, packets))
     return command
 
 
 def handle_output(output, filename):
-
-    hdf = pt.openFile(filename, mode='a')
-    while True:
-        args = output.get()
-        # for args in command:
-        if args:
-
-            method, args = args
-            getattr(hdf, method)(*args)
-        else:
-            break
-    hdf.close()
+    with pt.open_file(filename, mode='a') as hdf:
+        while True:
+            args = output.get()
+            if args:
+                method, args = args
+                getattr(hdf, method)(*args)
+            else:
+                break
 
 def write_obs(packets):
     '''Saving the packets in a pseudo h5 obsfile'''
