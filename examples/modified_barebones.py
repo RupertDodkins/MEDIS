@@ -1,4 +1,4 @@
-import medis.Detector.get_photon_data as gpd
+import medis.get_photon_data as gpd
 
 from medis.params import ap, tp, sp, iop
 import numpy as np

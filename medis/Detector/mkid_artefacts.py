@@ -16,7 +16,7 @@ import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 
 
-def detect(packets, array_size):
+def makecube(packets, array_size):
     cube = pipe.arange_into_cube(packets, (array_size[0], array_size[1]))
 
     if mp.remove_close:

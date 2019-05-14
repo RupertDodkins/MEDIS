@@ -11,7 +11,7 @@ This script is meant to override any Subaru/SCExAO-specific parameters specified
 
 import os
 from medis.params import ap, tp, iop
-import medis.Detector.get_photon_data as gpd
+import medis.get_photon_data as gpd
 import medis.Telescope.aberrations as aber
 
 # Defining Subaru parameters

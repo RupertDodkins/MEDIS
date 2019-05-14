@@ -8,7 +8,7 @@ from matplotlib.colors import LogNorm
 from vip_hci import phot, pca
 from statsmodels.tsa.stattools import acf
 from medis.params import tp, mp, cp, sp, ap, iop
-import medis.Detector.get_photon_data as gpd
+import medis.get_photon_data as gpd
 from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
 from medis.Utils.misc import dprint
 import medis.Detector.readout as read

@@ -317,12 +317,12 @@ the overhead is minimal</p>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="module-medis.Detector.get_photon_data">
-<span id="medis-detector-get-photon-data-module"></span><h2>medis.Detector.get_photon_data module<a class="headerlink" href="#module-medis.Detector.get_photon_data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-medis.get_photon_data">
+<span id="medis-detector-get-photon-data-module"></span><h2>medis.get_photon_data module<a class="headerlink" href="#module-medis.get_photon_data" title="Permalink to this headline">¶</a></h2>
 <p>Top level code that takes a atmosphere phase map and propagates a wavefront through the system</p>
 <dl class="function">
-<dt id="medis.Detector.get_photon_data.gen_timeseries">
-<code class="descclassname">medis.Detector.get_photon_data.</code><code class="descname">gen_timeseries</code><span class="sig-paren">(</span><em>inqueue</em>, <em>photon_table_queue</em>, <em>spectralcubes_queue</em>, <em>xxx_todo_changeme</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.get_photon_data.gen_timeseries" title="Permalink to this definition">¶</a></dt>
+<dt id="medis.get_photon_data.gen_timeseries">
+<code class="descclassname">medis.get_photon_data.</code><code class="descname">gen_timeseries</code><span class="sig-paren">(</span><em>inqueue</em>, <em>photon_table_queue</em>, <em>spectralcubes_queue</em>, <em>xxx_todo_changeme</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.get_photon_data.gen_timeseries" title="Permalink to this definition">¶</a></dt>
 <dd><p>generates observation sequence by calling optics_propagate in time series</p>
 <p>is the time loop wrapper for optics_propagate
 this is where the observation sequence is generated (timeseries of observations by the detector)
@@ -347,8 +347,8 @@ thus, where the detector observes the wavefront created by optics_propagate (for
 </dd></dl>
 
 <dl class="function">
-<dt id="medis.Detector.get_photon_data.run_medis">
-<code class="descclassname">medis.Detector.get_photon_data.</code><code class="descname">run_medis</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.get_photon_data.run_medis" title="Permalink to this definition">¶</a></dt>
+<dt id="medis.get_photon_data.run_medis">
+<code class="descclassname">medis.get_photon_data.</code><code class="descname">run_medis</code><span class="sig-paren">(</span><em>plot=False</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.get_photon_data.run_medis" title="Permalink to this definition">¶</a></dt>
 <dd><p>main script to organize calls to various aspects of the simulation</p>
 <p>initialize different sub-processes, such as atmosphere and aberration maps, MKID device parameters
 sets up the multiprocessing features
@@ -364,8 +364,8 @@ returns the observation sequence created by gen_timeseries</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="medis.Detector.get_photon_data.wait_until">
-<code class="descclassname">medis.Detector.get_photon_data.</code><code class="descname">wait_until</code><span class="sig-paren">(</span><em>somepredicate</em>, <em>timeout</em>, <em>period=0.25</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.Detector.get_photon_data.wait_until" title="Permalink to this definition">¶</a></dt>
+<dt id="medis.get_photon_data.wait_until">
+<code class="descclassname">medis.get_photon_data.</code><code class="descname">wait_until</code><span class="sig-paren">(</span><em>somepredicate</em>, <em>timeout</em>, <em>period=0.25</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#medis.get_photon_data.wait_until" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>

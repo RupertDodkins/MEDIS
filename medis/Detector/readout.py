@@ -218,10 +218,10 @@ def save_fields(e_fields_sequence, fields_file='hyper.pkl'):
         print('Extension not recognised')
 
 
-def save_rt(filename, e_fields_sequence, obs_sequence):
+def save_rt(filename, e_fields_sequence):
     with open(filename, 'wb') as handle:
-        field_tup = (obs_sequence, e_fields_sequence)
-        pickle.dump(field_tup, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        # field_tup = (obs_sequence, e_fields_sequence)
+        pickle.dump(e_fields_sequence, handle, protocol=pickle.HIGHEST_PROTOCOL)
     dprint('saved')
 
 

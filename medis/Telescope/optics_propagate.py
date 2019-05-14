@@ -40,6 +40,7 @@ class Wavefronts():
         else:
             self.wf_array = np.empty((len(wsamples), 1), dtype=object)
 
+        # shape is (screens, wavelengths, objects, width, length)
         self.save_E_fields = np.empty((0,np.shape(self.wf_array)[0],
                                         np.shape(self.wf_array)[1],
                                         ap.grid_size,
@@ -110,6 +111,13 @@ class Wavefronts():
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
 
+def final(wfo):
+    """
+    Empty function for the purpose of telling the sim to save the final efield screen
+
+    :return:
+    """
+    return
 
 def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     """
@@ -240,6 +248,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     wfo.iter_func(coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
     # if sp.get_ints: get_intensity(wfo.wf_array, sp, phase=False)
 
+    wfo.iter_func(final)
+
     shape = wfo.wf_array.shape
     for iw in range(shape[0]):
         wframes = np.zeros((ap.grid_size, ap.grid_size))
@@ -266,7 +276,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         datacube = f_out(new_heights)
 
 
-    # print('Finished datacube at single timestep')
+    # dprint('Finished datacube at single timestep')
     wfo.save_E_fields = np.array(wfo.save_E_fields)
 
     return datacube, wfo.save_E_fields

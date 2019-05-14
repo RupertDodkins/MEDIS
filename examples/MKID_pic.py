@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib as mpl
 mpl.use('Qt5Agg')
 from medis.params import tp, mp, cp, sp, ap, iop
-import medis.Detector.get_photon_data as gpd
+import medis.get_photon_data as gpd
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid

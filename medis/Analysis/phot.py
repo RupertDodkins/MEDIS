@@ -13,7 +13,7 @@ from matplotlib.ticker import MultipleLocator
 # plots = vip.var.pp_subplots
 from medis.params import cp, mp, tp, iop, ap
 # import medis.Detector.pipeline as pipe
-import medis.Detector.get_photon_data as gpd
+import medis.get_photon_data as gpd
 from medis.Utils.plot_tools import quicklook_im, loop_frames
 from medis.Utils.misc import dprint
 from vip_hci import phot, metrics

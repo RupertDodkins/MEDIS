@@ -97,7 +97,7 @@ class Simulation_params:
         self.timing = True  # True will print timing statements in run_medis()
         self.num_processes = 1 #multiprocessing.cpu_count()
         self.show_wframe = False
-        self.show_cube = True
+        self.show_cube = False
         self.use_gui = False
         self.play_gui = True
         self.cbar = None

@@ -36,7 +36,6 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
     :param conf_obj_tup:
     :return:
     """
-    # TODO change this name
     (tp,ap,sp,iop,cp,mp) = conf_obj_tup
 
     try:
@@ -53,29 +52,29 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
             _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                                    VERBOSE=False, PHASE_OFFSET=1)
 
-            for o in range(len(ap.contrast) + 1):
+            if not tp.detector == 'MKIDs':
+                outqueue.put((t, save_E_fields))
 
-                spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
-
-                if tp.detector == 'MKIDs':
-                    packets = read.get_packets(spectralcube, t, dp, mp)
+            else:
+                for o in range(len(ap.contrast) + 1):
+                    spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
+                    spectrallist = read.get_packets(spectralcube, t, dp, mp)
                     # packets = read.get_packets(save_E_fields, t, dp, mp)
+                    spectralcube = MKIDs.makecube(spectrallist, mp.array_size)
+
                     if sp.save_obs:
-                        command = read.get_obs_command(packets, t)
+                        command = read.get_obs_command(spectrallist, t)
                         photon_table_queue.put(command)
 
-                    spectralcube = MKIDs.detect(packets, mp.array_size)
+                    if sp.use_gui:
+                        outqueue.put((t, save_E_fields[:, :, o], spectrallist))
+                    else:
+                        outqueue.put((t, spectralcube))
 
-                if sp.show_cube:
-                    view_datacube(spectralcube, logAmp=True)
-
-                if sp.use_gui:
-                    outqueue.put((t, save_E_fields[:,:, o], spectralcube))
-
-                elif sp.return_E:
-                    outqueue.put((t, save_E_fields[:, :, o]))
-                else:
-                    outqueue.put((t, spectralcube))
+                # elif sp.return_E:
+                #     outqueue.put((t, save_E_fields[:, :, o]))
+                # else:
+                #     outqueue.put((t, spectralcube))
 
         now = time.time()
         elapsed = float(now - start) / 60.
@@ -205,7 +204,12 @@ def run_medis(EfieldsThread=None, plot=False):
 
             if sp.use_gui:
                 for o in range(len(ap.contrast)+1):
-                    qt, save_E_fields, spectralcube = outqueue.get()
+                    output = outqueue.get()
+                    if tp.detector == 'MKIDs':
+                        qt, save_E_fields, photonlist = output
+                    else:
+                        qt, save_E_fields, spectralcube = output
+                    spectralcube = np.abs(save_E_fields[-1, :, :]) ** 2
 
                     gui_images = np.zeros_like(save_E_fields, dtype=np.float)
                     phase_ind = sp.gui_map_type == 'phase'
@@ -284,14 +288,16 @@ def run_medis(EfieldsThread=None, plot=False):
         # Send the sentinal to tell Simulation to end
         inqueue.put(sentinel)
 
-    for t in range(ap.numframes):
-        if sp.return_E:
-            qt, save_E_fields = outqueue.get()
-            e_fields_sequence[qt - ap.startframe] = save_E_fields
-        else:
-            qt, spectralcube = outqueue.get()
-            obs_sequence[qt - ap.startframe] = spectralcube  # should be in the right order now because of the identifier
-        print(t == qt, 'test')
+    if not sp.use_gui:
+        for t in range(ap.numframes):
+            # if sp.return_E:
+            if tp.detector == 'MKIDs':
+                qt, save_E_fields = outqueue.get()
+                e_fields_sequence[qt - ap.startframe] = save_E_fields
+            else:
+                qt, spectralcube = outqueue.get()
+                obs_sequence[qt - ap.startframe] = spectralcube  # should be in the right order now because of the identifier
+            print(t == qt, 'test')
 
     for i, p in enumerate(jobs):
         p.join()

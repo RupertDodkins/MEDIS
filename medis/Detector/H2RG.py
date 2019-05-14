@@ -48,7 +48,7 @@ def get_ref_psf():
 
 
 if __name__ == '__main__':
-    import medis.Detector.get_photon_data as gpd
+    import medis.get_photon_data as gpd
     tp.occulter_type = None
     tp.detector = 'H2RG'  # ''MKIDs'#
     sp.save_obs = False

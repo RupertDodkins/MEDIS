@@ -39,7 +39,7 @@ medis.Detector.distribution module
 medis.Detector.get\_photon\_data module
 ---------------------------------------
 
-.. automodule:: medis.Detector.get_photon_data
+.. automodule:: medis.get_photon_data
     :members:
     :undoc-members:
     :show-inheritance:

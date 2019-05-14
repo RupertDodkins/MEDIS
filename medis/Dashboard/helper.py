@@ -3,7 +3,7 @@ Module to fascilitate the communication between get_photon_data and the gui in a
 """
 import numpy as np
 from PyQt5 import QtCore
-from medis.Detector.get_photon_data import run_medis
+from medis.get_photon_data import run_medis
 import medis.Detector.readout as read
 from medis.params import ap, tp, mp, sp
 from medis.Utils.misc import dprint

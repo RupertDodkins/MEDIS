@@ -17,8 +17,7 @@ from medis.Dashboard.helper import EfieldsThread, SpectralCubeThread
 from medis.Dashboard.twilight import sunlight, twilight
 
 if sp.save_locs is None:
-    sp.save_locs = ['coronagraph']
-
+    sp.save_locs = np.array(['final'])
 
 class MatplotlibWidget(QWidget):
     def __init__(self, parent=None, nrows=len(sp.save_locs), ncols=ap.nwsamp):
@@ -252,10 +251,12 @@ class MyWindow(QWidget):
     def toggle_ao(self, b):
         dprint(b.isChecked())
         tp.use_ao = b.isChecked()
+        dprint((sp.save_locs, sp.save_locs == 'quick_ao', sp.save_locs[sp.save_locs == 'quick_ao']))
         if not tp.use_ao:
             sp.save_locs[sp.save_locs == 'quick_ao'] = 'no_ao'
         else:
             sp.save_locs[sp.save_locs == 'no_ao'] = 'quick_ao'
+        dprint((sp.save_locs, sp.save_locs == 'quick_ao', sp.save_locs[sp.save_locs == 'quick_ao']))
         dprint('ao_toggle')
         sp.play_gui = False
         ap.startframe = self.it
@@ -296,6 +297,7 @@ class MyWindow(QWidget):
         vmax = np.array([None for _ in range(len(sp.save_locs))])
         cmap = np.array([None for _ in range(len(sp.save_locs))])
 
+        print(sp.save_locs, sp.gui_map_type)
         norm[amp_ind] = LogNorm()
         # vmin[~amp_ind] = -np.pi
         # vmax[~amp_ind] = np.pi

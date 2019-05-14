@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from medis.params import ap, cp, tp, sp, mp, iop
 from medis.Utils.plot_tools import loop_frames, quicklook_im,view_datacube, compare_images, indep_images
 from medis.Utils.rawImageIO import clipped_zoom
-import medis.Detector.get_photon_data as gpd
+import medis.get_photon_data as gpd
 import medis.Analysis.phot
 import medis.Analysis.stats
 from medis.Utils.misc import dprint
