@@ -1,4 +1,4 @@
-from medis.params import mp, ap, cp, tp
+from medis.params import mp, ap, cp, tp, iop
 # import math
 # import MKIDs
 # import cPickle
@@ -23,35 +23,42 @@ import time
 #         # return hf.get('p%i' % t)
 #         queue.put(hf.get('p%i' % t))
 
-def read_obs(max_photons=1e8,start=0):
-    filename = mp.datadir + mp.obsfile
+def traverse_datasets(hdf_file):
+
+    def h5py_dataset_iterator(g, prefix=''):
+        for key in g.keys():
+            item = g[key]
+            path = f'{prefix}/{key}'
+            if isinstance(item, h5py.Dataset): # test for dataset
+                yield (path, item)
+            elif isinstance(item, h5py.Group): # test for group (go down)
+                yield from h5py_dataset_iterator(item, path)
+
+    with h5py.File(hdf_file, 'r') as f:
+        for path, _ in h5py_dataset_iterator(f):
+            yield path
+
+def read_obs(max_photons=1e8, start=0):
+    filename =iop.obs_table
     print('Getting %.0e photon packets from pseudo obsfile %s' % (max_photons,filename))
-    contents = []
     with h5py.File(filename, 'r') as hf:
-        print(ap.numframes)
-        keys = list(hf.keys())[:ap.numframes]
-        print(keys)
-        numevents = len(hf.get(keys[0]))
-        print(numevents)
-        totevents = len(keys)*numevents
-        print(totevents)
-        # @njit
-        packets = np.zeros((totevents,5))
-        print(max_photons)
-        for it, t in enumerate(range(len(keys))):#np.arange(0,10):
-            print(t)
-            packets[it*numevents:(it+1)*numevents] = hf.get('p%i' % t)
-            # contents.append( hf.get(t))
-            # contents = hf.get(group)
-            # print contents
-            # print packets
-            # print np.shape(packets)
-            # print int(start), int(start+max_photons)
-        # packets = np.array(contents)
-        # print packets
-        # packets = np.array(contents[int(start):int(start+max_photons)])
-    # packets = packets.reshape(-1,5)
-    return packets
+        keys = list(hf.keys())#[:ap.numframes]
+        assert len(ap.contrast) + 1 == len(hf.get('t0'))
+        numobjects = len(ap.contrast) + 1
+        allpackets = []
+        for o in range(numobjects):
+            guesstotevents = len(keys)*len(hf.get('t0/o%i' % o))*2
+            packets = np.zeros((guesstotevents*2,4))
+            current_loc = 0
+            for it, t in enumerate(range(len(keys))):
+                timestep = hf.get('t%i/o%i' % (t,o))
+                numevents = len(timestep)
+                packets[current_loc: current_loc+numevents] = timestep
+                current_loc += numevents
+            packets = np.delete(packets, np.where(np.sum(packets, axis=1) == 0)[0], axis=0)
+            allpackets.append(packets)
+
+    return allpackets
 
 def arange_into_cube(packets, size):
     # print 'Sorting packets into xy grid (no phase or time sorting)'

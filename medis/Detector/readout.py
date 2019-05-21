@@ -9,6 +9,7 @@ The second half of the module has little/nothing to do with a readout system
 
 
 '''
+import os
 import numpy as np
 from copy import copy
 import tables as pt
@@ -101,11 +102,25 @@ def assign_id(photons, obj_ind):
     return np.vstack((photons, np.ones_like(photons[0])*obj_ind))
 
 def get_obs_command(packets, t, o):
+    """
+    For reatime saving of photon data together with handle_output
+
+    :param packets:
+    :param t:
+    :param o:
+    :return:
+    """
     command = ('create_array', ('/t%i' % t, 'o%i' % o, packets))
     return command
 
-
 def handle_output(output, filename):
+    """
+    For reatime saving of photon data together with get_obs_command
+
+    :param output:
+    :param filename:
+    :return:
+    """
     with pt.open_file(filename, mode='a') as hdf:
         while True:
             args = output.get()
@@ -119,36 +134,20 @@ def write_obs(packets):
     '''Saving the packets in a pseudo h5 obsfile'''
     packets = np.array(packets)
     print(f"Shape of Packets is {np.shape(packets)}")
-    num_processes = 4  # mp.cpu_count()
 
-    # time = step*mp.frame_time
-    # nearest_sec = np.arange(mp.total_int+1)[time<=np.arange(mp.total_int+1)][0]
-    # filename = os.path.join(mp.datadir,cp.date) + '%s.bin' % nearest_sec
-        # f_handle = file(filename, 'a')
-    # with open(filename, 'ab') as obs:
-    #     np.save(obs, packets)    # .npy extension is added if not given
-    # with open(filename, 'rb') as obs:
-    #     # packets = cPickle.load(obs)
-    #     d = np.load(obs)
-    # return packets['image']
-    # # with open('obs.pkl', 'ab') as obs:
-    # #     cPickle.dump(packets, obs)
+    pixIds = np.int_(packets[:,3]) * mp.xnum + np.int_(packets[:,4])
+    packets = {'basesDeg':packets[:,0], 'phases':packets[:,1], 'timestamps':packets[:,2], 'pixIds':pixIds}#, 'image':image, 'xCoords':packets[:,3], 'yCoords':packets[:,4]}
 
-
-    # pixIds = np.int_(packets[:,3]) * mp.xnum + np.int_(packets[:,4])
-    # packets = {'basesDeg':packets[:,0], 'phases':packets[:,1], 'timestamps':packets[:,2], 'pixIds':pixIds}#, 'image':image, 'xCoords':packets[:,3], 'yCoords':packets[:,4]}
-
-    # print glob.glob(filename), glob.glob(filename) == [], np.shape(packets)
-    # if glob.glob(filename) == []:
-    #     h5file = h5py.File(filename, 'w')
-    #     d = h5file.create_dataset('photons', (len(packets),5), maxshape=(None,5), dtype='f', chunks=True)
-    #     d[:] = packets
-    #     h5file.flush()
-    #     h5file.close()
-    # else:
-    #     with h5py.File(filename, 'a') as hf:
-    #         hf["photons"].resize((hf["photons"].shape[0] + len(packets)), axis = 0)
-    #         hf["photons"][-len(packets):] = packets
+    if not os.path.exists(iop.obs_table):
+        h5file = h5py.File(iop.obs_table, 'w')
+        d = h5file.create_dataset('photons', (len(packets),5), maxshape=(None,5), dtype='f', chunks=True)
+        d[:] = packets
+        h5file.flush()
+        h5file.close()
+    else:
+        with h5py.File(iop.obs_table, 'a') as hf:
+            hf["photons"].resize((hf["photons"].shape[0] + len(packets)), axis = 0)
+            hf["photons"][-len(packets):] = packets
 
 
 def convert_to_wfo(image, wfo):
@@ -156,26 +155,6 @@ def convert_to_wfo(image, wfo):
     wf_temp.wfarr = proper.prop_shift_center(image +0j)
 
     return wf_temp
-
-def remove_close_photons(cube):
-    # TODO test this
-    dprint('**** this is untested! ****')
-    # ind = np.argsort( photons[0,:] )
-    # photons = photons[:,ind]
-    image = np.zeros((mp.xnum,mp.ynum))
-    for x in range(mp.xnum):
-        for y in range(mp.ynum):
-            events = np.array(cube[x][y])
-            print(events, np.shape(events))
-            try:
-                diff = events[0,0] - np.roll(events[0,0], 1)
-                print(x, y, diff)
-            except IndexError:
-                pass
-     
-    # missed = 
-    raise NotImplementedError
-    return photons
 
 
 ####################################################################################################
@@ -256,6 +235,11 @@ def open_obs_sequence_hdf5(obs_seq_file = 'hyper.h5'):
     # hdf5_clusters = read_hdf5_file.root.clusters[:]
     read_hdf5_file.close()
     return obs_sequence
+
+# def open_pseudo_obs():
+#     with pt.open_file(iop.obs_table, mode='r') as f:
+
+
 
 def open_fields(fields_file):
     with h5py.File(fields_file, 'r') as hf:

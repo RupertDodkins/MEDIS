@@ -97,6 +97,9 @@ def initialize_telescope():
     if tp.detector == 'MKIDs' and not os.path.isfile(iop.device_params):
         MKIDs.initialize()
 
+    if sp.save_obs and os.path.exists(iop.obs_table):
+        os.remove(iop.obs_table)
+
     if ap.companion is False:
         ap.contrast = []
 
@@ -106,13 +109,12 @@ def initialize_telescope():
         sp.save_locs = np.append(sp.save_locs, 'detector')
         sp.gui_map_type = np.append(sp.gui_map_type, 'amp')
 
-def applymkideffects(spectralcube, t, o, photon_table_queue):
+def applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread=None):
 
-    if tp.detector == 'MKIDs':
-        with open(iop.device_params, 'rb') as handle:
-            dp = pickle.load(handle)
+    with open(iop.device_params, 'rb') as handle:
+        dp = pickle.load(handle)
+
     spectrallist = read.get_packets(spectralcube, t, dp, mp)
-    spectralcube = MKIDs.makecube(spectrallist, mp.array_size)
 
     if sp.save_obs:
         if o == 0:
@@ -120,11 +122,16 @@ def applymkideffects(spectralcube, t, o, photon_table_queue):
         command = read.get_obs_command(spectrallist, t, o)
         photon_table_queue.put(command)
 
+
+    spectralcube = MKIDs.makecube(spectrallist, mp.array_size)
+
+    # if EfieldsThread:
+    #     EfieldsThread.photons = spectrallist
+
     return spectralcube
 
 def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queue, outqueue):
     for t in range(ap.startframe, ap.numframes):
-        dprint(t)
         inqueue.put(t)
 
         for o in range(len(ap.contrast) + 1):
@@ -132,7 +139,7 @@ def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queu
             spectralcube = np.abs(save_E_fields[-1]) ** 2
 
             if tp.detector == 'MKIDs':
-                spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue)
+                spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread)
 
             gui_images = np.zeros_like(save_E_fields, dtype=np.float)
             phase_ind = sp.gui_map_type == 'phase'

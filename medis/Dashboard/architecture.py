@@ -1,5 +1,6 @@
 import numpy as np
 
+# import matplotlib.pylab as plt
 from matplotlib.colors import LogNorm, SymLogNorm
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -35,6 +36,7 @@ class MatplotlibWidget(QWidget):
             for c in range(self.ncols):
                 self.figure.add_subplot(gs[r,c])
 
+        dprint((self.nrows, self.ncols))
         self.axes = np.array(self.figure.axes).reshape(self.nrows, self.ncols)
         self.cax = []
         for r in range(self.nrows):
@@ -298,7 +300,6 @@ class MyWindow(QWidget):
         vmax = np.array([None for _ in range(len(sp.save_locs))])
         cmap = np.array([None for _ in range(len(sp.save_locs))])
 
-        print(sp.save_locs, sp.gui_map_type)
         norm[amp_ind] = LogNorm()
         # vmin[~amp_ind] = -np.pi
         # vmax[~amp_ind] = np.pi
@@ -356,7 +357,6 @@ class MyWindow(QWidget):
             True
 
         # self.metricsGrid.axes[0,0].cla()
-        # print(type(self.metricsGrid.ims[0,0]))
         self.metricsGrid.ims[0,0] = self.metricsGrid.axes[0,0].imshow(np.sum(self.EfieldsThread.sct.integration,
                                                                              axis=0), norm=LogNorm(),
                                                                       origin='lower', cmap='cividis')

@@ -110,6 +110,7 @@ class Simulation_params:
         # self.get_ints = False
         self.save_locs = None
         self.gui_map_type = None
+        self.metric_funcs = []
 
 
 class Astro_params:

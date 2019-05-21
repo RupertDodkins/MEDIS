@@ -13,14 +13,33 @@ from medis.Utils.plot_tools import quicklook_im, loop_frames
 from medis.Utils.misc import dprint
 from . import spectral as spec
 import medis.Detector.pipeline as pipe
-import medis.Detector.readout as read
 
+
+def remove_close_photons(cube):
+    # TODO test this
+    dprint('**** this is untested! ****')
+    # ind = np.argsort( photons[0,:] )
+    # photons = photons[:,ind]
+    image = np.zeros((mp.xnum, mp.ynum))
+    for x in range(mp.xnum):
+        for y in range(mp.ynum):
+            events = np.array(cube[x][y])
+            print(events, np.shape(events))
+            try:
+                diff = events[0, 0] - np.roll(events[0, 0], 1)
+                print(x, y, diff)
+            except IndexError:
+                pass
+
+    # missed =
+    raise NotImplementedError
+    return photons
 
 def makecube(packets, array_size):
     cube = pipe.arange_into_cube(packets, (array_size[0], array_size[1]))
 
     if mp.remove_close:
-        cube = read.remove_close_photons(cube)
+        cube = remove_close_photons(cube)
 
     # Interpolating spectral cube from ap.nwsamp discreet wavelengths
     # if sp.show_cube or sp.return_spectralcube:
