@@ -17,6 +17,8 @@ from medis.Utils.misc import dprint
 from medis.Dashboard.helper import EfieldsThread, SpectralCubeThread
 from medis.Dashboard.twilight import sunlight, twilight
 
+import medis.Detector.readout as read
+
 if sp.save_locs is None:
     sp.save_locs = np.array(['detector'])
 if sp.gui_map_type is None:
@@ -387,6 +389,7 @@ class MyWindow(QWidget):
                 traceback.print_exc()
             # dprint(type(self.metricsGrid.ims[r + 1, 0]) == list)
 
+            # self.EfieldsThread.sct.obs_sequence = read.take_exposure(self.EfieldsThread.sct.obs_sequence)
             metric = func(self.EfieldsThread.sct.obs_sequence[:it,0], args)
 
             dims = len(np.shape(metric))
@@ -432,7 +435,7 @@ class MyWindow(QWidget):
                     self.metricsGrid.ims[r + 1, 0].append(self.metricsGrid.axes[r + 1, 0].plot(metric[i], c=colors[i], label=args[i]))
                 self.metricsGrid.axes[r + 1, 0].set_title(f'constant list of lines')
                 self.metricsGrid.axes[r + 1, 0].legend()
-                # self.metricsGrid.axes[r + 1, 0].set_xscale('log')
+                # self.metricsGrid.axes[r + 1, 0].set_yscale('log')
             elif dims == 1:
                 self.metricsGrid.ims[r + 1, 0] = self.metricsGrid.axes[r + 1, 0].plot(metric)
                 # self.metricsGrid.ims[r + 1, 0].set_xscale('log')

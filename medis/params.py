@@ -295,7 +295,7 @@ class CAOS_params:
         self.show_caosparams= True  # for control over all other variables
         self.r0 = 1#0.4
         self.L0 = 10
-        self.v = 2  #1
+        self.v = 20  #1
         self.h = 100
 
         # original parameters

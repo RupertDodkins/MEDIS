@@ -56,7 +56,7 @@ def get_packets(datacube, step, dp,mp):
     # if mp.hot_pix:
     #     datacube = MKIDs.add_hot_pix(datacube, dp, step)
 
-    num_events = int(ap.star_photons * ap.exposure_time * np.sum(datacube))
+    num_events = int(ap.star_photons * ap.sample_time * np.sum(datacube))
     # dprint(f"# events ={num_events}, star photons = {ap.star_photons}, "
     #        f"sum(datacube) = {np.sum(datacube),}, Exposure Time ={ap.exposure_time}")
     if num_events * sp.num_processes > 1.0e9:
@@ -249,7 +249,7 @@ def open_fields(fields_file):
 
 def take_exposure(obs_sequence):
     factor = ap.exposure_time/ ap.sample_time
-    num_exp = int(ap.numframes/factor)
+    num_exp = int(len(obs_sequence)/factor)
     downsample_cube = np.zeros((num_exp,obs_sequence.shape[1],obs_sequence.shape[2], obs_sequence.shape[3]))
     for i in range(num_exp):
         # print np.shape(downsample_cube[i]), np.shape(obs_sequence), np.shape(np.sum(obs_sequence[i * factor : (i + 1) * factor], axis=0))

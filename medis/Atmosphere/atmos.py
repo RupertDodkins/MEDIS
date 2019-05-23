@@ -17,7 +17,7 @@ def eformat(f, prec, exp_digits):
 
 def get_filename(it, wsamp):
     wave = eformat(wsamp, 3, 2)
-    return f'{iop.atmosdir}/{cp.model}/telz_t{ap.sample_time*it:.3f}_w{wave}.fits'
+    return f'{iop.atmosdir}/{cp.model}/telz_t{ap.sample_time*it:.5f}_w{wave}.fits'
 
 def generate_maps(plot=False):
     dprint("Making New Atmosphere Model")
@@ -31,6 +31,11 @@ def generate_maps(plot=False):
         # cn = hcipy.Cn_squared_from_fried_parameter(cp.r0, 1000e-9)
         cn = 0.2 * 1e-12
         layers = [hcipy.InfiniteAtmosphericLayer(pupil_grid, cn, cp.L0, cp.v, cp.h, 2)]
+    elif cp.model == 'double':
+        layers = []
+        cn = 0.2 * 1e-12
+        layers.append(hcipy.InfiniteAtmosphericLayer(pupil_grid, cn, cp.L0, 10, cp.h, 2))
+        layers.append(hcipy.InfiniteAtmosphericLayer(pupil_grid, cn, cp.L0, -10, 1000, 2))
     elif cp.model == 'hcipy_standard':
         # Make multi-layer atmosphere
         layers = hcipy.make_standard_atmospheric_layers(pupil_grid, cp.outer_scale)
