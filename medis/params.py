@@ -111,6 +111,9 @@ class Simulation_params:
         self.save_locs = None
         self.gui_map_type = None
         self.metric_funcs = []
+        self.initial_ob = 0  # star
+        self.gui_samp = 5  # display the field on multiples of this number
+
 
 
 class Astro_params:

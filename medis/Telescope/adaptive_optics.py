@@ -80,13 +80,13 @@ def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
 
 def no_ao(wfo):
     '''Dummy function for the trigger the GUI to plot'''
-    dprint('running no_ao')
+    # dprint('running no_ao')
     wfo.test_save('no_ao')
     return
 
 def quick_ao(wfo, CPA_maps):
     # TODO address the kludge. Is it still necessary
-    dprint('running quick_ao')
+    # dprint('running quick_ao')
     wf_array = wfo.wf_array
     beam_ratios = wfo.beam_ratios
 

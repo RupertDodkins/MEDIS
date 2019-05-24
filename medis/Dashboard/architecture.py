@@ -29,6 +29,7 @@ class MatplotlibWidget(QWidget):
         super(MatplotlibWidget, self).__init__(parent)
 
         self.nrows, self.ncols = nrows, ncols
+        dprint((self.nrows, self.ncols))
         self.figure = Figure(figsize=(5*ncols,3*nrows))
         self.canvas = FigureCanvasQTAgg(self.figure)
 
@@ -40,6 +41,7 @@ class MatplotlibWidget(QWidget):
 
         dprint((self.nrows, self.ncols))
         self.axes = np.array(self.figure.axes).reshape(self.nrows, self.ncols)
+        dprint(self.axes.shape)
         self.cax = []
         for r in range(self.nrows):
             divider = make_axes_locatable(self.axes[r,-1])
@@ -52,6 +54,7 @@ class MatplotlibWidget(QWidget):
 
     def add_Efield_annotations(self):
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp).astype(int)
+        dprint(wsamples)
         for c in range(self.ncols):
             self.axes[0, c].set_title('{} nm'.format(wsamples[c]))
         props = dict(boxstyle='square', facecolor='k', alpha=0.5)
@@ -232,7 +235,7 @@ class MyWindow(QWidget):
     def initializeEfieldsThread(self):
         self.EfieldsThread = EfieldsThread(self)
         self.EfieldsThread.newSample.connect(self.on_EfieldsThread_newSample)
-        self.EfieldsThread.fields_ob = 0
+        self.EfieldsThread.fields_ob = sp.initial_ob
         self.EfieldsThread.sct = SpectralCubeThread(self)
         self.EfieldsThread.sct.newSample.connect(self.on_SpectralCubeThread_newSample)
 
@@ -294,8 +297,8 @@ class MyWindow(QWidget):
     def on_pushButtonInt_clicked(self):
         NotImplementedError
 
-    @pyqtSlot(np.ndarray)
-    def on_EfieldsThread_newSample(self, gui_images):
+    @pyqtSlot(bool)
+    def on_EfieldsThread_newSample(self, plot):
         amp_ind = sp.gui_map_type == 'amp'
         norm = np.array([None for _ in range(len(sp.save_locs))])
         vmin = np.array([None for _ in range(len(sp.save_locs))])
@@ -305,10 +308,10 @@ class MyWindow(QWidget):
         norm[amp_ind] = LogNorm()
         # vmin[~amp_ind] = -np.pi
         # vmax[~amp_ind] = np.pi
-        vmin[~amp_ind] = np.min(gui_images[~amp_ind], axis=(1,2,3))
-        vmax[~amp_ind] = np.max(gui_images[~amp_ind], axis=(1,2,3))
-        vmin[amp_ind] = np.min(gui_images[amp_ind], axis=(1,2,3))
-        vmax[amp_ind] = np.max(gui_images[amp_ind], axis=(1,2,3))
+        vmin[~amp_ind] = np.min(self.EfieldsThread.gui_images[~amp_ind], axis=(1,2,3))
+        vmax[~amp_ind] = np.max(self.EfieldsThread.gui_images[~amp_ind], axis=(1,2,3))
+        vmin[amp_ind] = np.min(self.EfieldsThread.gui_images[amp_ind], axis=(1,2,3))
+        vmax[amp_ind] = np.max(self.EfieldsThread.gui_images[amp_ind], axis=(1,2,3))
         if self.vmin is None:
             # may mess up when there is just one amp figure?
             log_bins = np.logspace(np.log10(vmin[amp_ind][0]), np.log10(vmax[amp_ind][0]), 5)
@@ -326,32 +329,32 @@ class MyWindow(QWidget):
                     self.EmapsGrid.ims[x, y].remove()
                 except (AttributeError, ValueError):
                     pass
-                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(gui_images[x, y, ::1, ::1], norm=norm[x],
+                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(self.EfieldsThread.gui_images[x, y, ::1, ::1], norm=norm[x],
                                                      vmin=self.vmin[x], vmax=self.vmax[x], cmap=cmap[x], origin='lower')
 
             self.EmapsGrid.figure.colorbar(self.EmapsGrid.ims[x,-1], cax=self.EmapsGrid.cax[x], orientation='vertical')
 
         self.EmapsGrid.canvas.draw()
-        del gui_images
+        # del gui_images
 
     @pyqtSlot()
     def on_pushButtonMetric_clicked(self):
         self.EfieldsThread.sct.func = self.metricCombo.currentText()
         self.EfieldsThread.sct.start()
 
-    @pyqtSlot(tuple)
+    @pyqtSlot(bool)
     def on_SpectralCubeThread_newSample(self, spec_tuple):
-        (it, spectralcube) = spec_tuple
+        # (it, spectralcube) = spec_tuple
 
-        if self.it == it:
-            self.obj += 1
-
-        self.EfieldsThread.sct.integration += spectralcube
-        self.EfieldsThread.sct.obs_sequence[it, self.obj] = spectralcube
-
-        if self.obj == len(ap.contrast):
-            self.obj = -1
-            self.it += 1
+        # if self.it == it:
+        #     self.obj += 1
+        #
+        # # self.EfieldsThread.sct.integration += spectralcube
+        # # self.EfieldsThread.sct.obs_sequence[it, self.obj] = spectralcube
+        #
+        # if self.obj == len(ap.contrast):
+        #     self.obj = -1
+        #     self.it += 1
 
         try:
             self.metricsGrid.ims[0,0].remove()
@@ -390,19 +393,19 @@ class MyWindow(QWidget):
             # dprint(type(self.metricsGrid.ims[r + 1, 0]) == list)
 
             # self.EfieldsThread.sct.obs_sequence = read.take_exposure(self.EfieldsThread.sct.obs_sequence)
-            metric = func(self.EfieldsThread.sct.obs_sequence[:it,0], args)
+            metric = func(self.EfieldsThread.sct.obs_sequence[:self.EfieldsThread.qt,0], args)
 
             dims = len(np.shape(metric))
             if dims == 4:
                 if np.shape(metric)[0] == 0:
                     return
                 # itclip = np.array([it-1]).clip(min=0)[0]
-                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric[it-1], axis=0),
+                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric[self.EfieldsThread.qt-1], axis=0),
                                                                                    norm=LogNorm(), origin='lower',
                                                                                    cmap='cividis')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
-                self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image at step {it-1}')
+                self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image at step {self.EfieldsThread.qt-1}')
 
             elif dims == 3 and metric.shape[0] == ap.nwsamp:
                 self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric, axis=0),
@@ -413,12 +416,12 @@ class MyWindow(QWidget):
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image')
             elif dims == 3 and metric.shape[0] == ap.numframes:
-                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(metric[it-1], norm=LogNorm(),
+                self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(metric[self.EfieldsThread.qt-1], norm=LogNorm(),
                                                                                    origin='lower',
                                                                                    cmap='cividis')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
-                self.metricsGrid.axes[r + 1, 0].set_title(f'monochromatic image at step {it - 1}')
+                self.metricsGrid.axes[r + 1, 0].set_title(f'monochromatic image at step {self.EfieldsThread.qt - 1}')
             elif dims == 2 and type(metric) is np.ndarray:
                 self.metricsGrid.ims[r+1, 0] = self.metricsGrid.axes[r+1, 0].imshow(metric, norm=LogNorm(),
                                                                                     origin='lower',
@@ -434,7 +437,8 @@ class MyWindow(QWidget):
                 for i in range(len(metric)):
                     self.metricsGrid.ims[r + 1, 0].append(self.metricsGrid.axes[r + 1, 0].plot(metric[i], c=colors[i], label=args[i]))
                 self.metricsGrid.axes[r + 1, 0].set_title(f'constant list of lines')
-                self.metricsGrid.axes[r + 1, 0].legend()
+                if self.EfieldsThread.qt == 0:
+                    self.metricsGrid.axes[r + 1, 0].legend()
                 # self.metricsGrid.axes[r + 1, 0].set_yscale('log')
             elif dims == 1:
                 self.metricsGrid.ims[r + 1, 0] = self.metricsGrid.axes[r + 1, 0].plot(metric)
@@ -442,12 +446,12 @@ class MyWindow(QWidget):
             else:
                 print(f"metric from {func} with shape {np.shape(metric)} cannot be plotted")
 
-        if it % self.plotsamp == 0:
-            self.metricsGrid.canvas.draw()
-        del it, spectralcube
+        # if self.EfieldsThread.qt % self.plotsamp == 0:
+        self.metricsGrid.canvas.draw()
+        # del it, spectralcube
 
         self.framenumber += 1
-        self.progress.setValue(self.framenumber/ap.numframes * 100)
+        self.progress.setValue(self.EfieldsThread.qt/ap.numframes * 100)
 
     def textchanged(self, amount):
         # self.rows = int(amount)

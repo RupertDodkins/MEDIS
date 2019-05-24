@@ -198,7 +198,7 @@ def save_rt(filename, e_fields_sequence):
     dprint('saved')
 
 
-def check_exists_obs_sequence(plot=False):
+def check_exists_fields(plot=False):
     """
     This code checks to see if there is already
     an observation sequence saved with the output of the run in the
@@ -210,8 +210,8 @@ def check_exists_obs_sequence(plot=False):
         data can be saved as obs_table (photon table) if detector type is MKIDs
     """
     import os
-    if os.path.isfile(iop.obs_seq):
-        print(f"File already exists at {iop.obs_seq}")
+    if os.path.isfile(iop.fields):
+        print(f"File already exists at {iop.fields}")
         return True
     else:
         return False

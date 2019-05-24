@@ -33,20 +33,21 @@ def gen_timeseries(inqueue, outqueue, conf_obj_tup):
     :param conf_obj_tup:
     :return:
     """
-    (tp,ap,sp,iop,cp,mp) = conf_obj_tup
+    (tp,ap,sp,iop,cp,mp, i) = conf_obj_tup
 
     try:
 
         start = time.time()
 
         for it, t in enumerate(iter(inqueue.get, sentinel)):
-
+            print('using process %i' % i)
             kwargs = {'iter': t, 'params': [ap, tp, iop, sp]}
             _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                                    VERBOSE=False, PHASE_OFFSET=1)
 
-            for o in range(len(ap.contrast) + 1):
-                outqueue.put((t, save_E_fields[:, :, o]))
+            # for o in range(len(ap.contrast) + 1):
+            #     outqueue.put((t, save_E_fields[:, :, o]))
+            outqueue.put((t, save_E_fields))
 
         now = time.time()
         elapsed = float(now - start) / 60.
@@ -130,33 +131,41 @@ def applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread=None)
 
     return spectralcube
 
+sentinel = None
 def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queue, outqueue):
+    EfieldsThread.e_fields_sequences = e_fields_sequence
+
     for t in range(ap.startframe, ap.numframes):
         inqueue.put(t)
 
+    for i in range(sp.num_processes):
+        # Send the sentinal to tell Simulation to end
+        inqueue.put(sentinel)
+
+    for t in range(ap.startframe, ap.numframes):
+        EfieldsThread.qt, EfieldsThread.save_E_fields[:] = outqueue.get()
+
         for o in range(len(ap.contrast) + 1):
-            qt, save_E_fields = outqueue.get()
-            spectralcube = np.abs(save_E_fields[-1]) ** 2
+            spectralcube = np.abs(EfieldsThread.save_E_fields[-1, :, o]) ** 2
 
             if tp.detector == 'MKIDs':
                 spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread)
 
-            gui_images = np.zeros_like(save_E_fields, dtype=np.float)
-            phase_ind = sp.gui_map_type == 'phase'
-            amp_ind = sp.gui_map_type == 'amp'
-            gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
-            gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
+            EfieldsThread.save_E_fields[-1] = spectralcube
+            EfieldsThread.sct.integration += spectralcube
+            EfieldsThread.sct.obs_sequence[EfieldsThread.qt, o] = spectralcube
 
-            e_fields_sequence[qt, :, :, o] = save_E_fields
+            e_fields_sequence[EfieldsThread.qt - ap.startframe, :, :, o] = EfieldsThread.save_E_fields[:, :, o]  # _fields_sequence[qt, :, :, o] = save_E_fields
 
-            if o == EfieldsThread.fields_ob:
-                EfieldsThread.newSample.emit(gui_images)
-                EfieldsThread.sct.newSample.emit((qt, spectralcube))
+            if o == EfieldsThread.fields_ob and EfieldsThread.qt % sp.gui_samp == 0:
+                EfieldsThread.get_gui_images(o)
+                EfieldsThread.newSample.emit(True)
+                EfieldsThread.sct.newSample.emit(True)
 
         if sp.play_gui is False:
-            ap.startframe = qt
+            ap.startframe = EfieldsThread.qt
             update_realtime_save()
-            read.save_rt(iop.realtime_save, e_fields_sequence[:qt])
+            read.save_rt(iop.realtime_save, e_fields_sequence[:EfieldsThread.qt])
             sp.play_gui = True
             run_medis(EfieldsThread)
             dprint((tp.use_ao, sp.play_gui))
@@ -164,7 +173,6 @@ def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queu
 
     return e_fields_sequence
 
-sentinel = None
 def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
     for t in range(ap.startframe, ap.numframes):
         dprint(t)
@@ -174,12 +182,16 @@ def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
         # Send the sentinal to tell Simulation to end
         inqueue.put(sentinel)
 
-    for t in range(ap.numframes):
+    for t in range(ap.startframe, ap.numframes):
+        now = time.time()
         qt, save_E_fields = outqueue.get()
-        spectralcube = np.abs(save_E_fields[-1, :, ]) ** 2
+        duration = time.time() - now
+
+        dprint((duration, save_E_fields.shape, t, qt))
+        spectralcube = np.abs(save_E_fields[-1]) ** 2
 
         if tp.detector == 'MKIDs':
-            spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue)
+            spectralcube = applymkideffects(spectralcube, t, 0, photon_table_queue)
 
         save_E_fields[-1] = spectralcube
         e_fields_sequence[qt - ap.startframe] = save_E_fields
@@ -192,14 +204,10 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
         realtime = True
 
     # If complete savefile exists use that
-    check = read.check_exists_obs_sequence(plot)
+    check = read.check_exists_fields(plot)
     if check:
-        if iop.obs_seq[-3:] == '.h5':
-            obs_sequence = read.open_obs_sequence_hdf5(iop.obs_seq)
-        else:
-            obs_sequence = read.open_obs_sequence(iop.obs_seq)
-
-        return obs_sequence
+        e_fields_sequence = read.open_fields(iop.fields)
+        return e_fields_sequence
 
     # Start the clock
     begin = time.time()
@@ -228,7 +236,7 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
         proc.start()
 
     for i in range(sp.num_processes):
-        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, outqueue, (tp,ap,sp,iop,cp,mp)))
+        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, outqueue, (tp,ap,sp,iop,cp,mp, i)))
         jobs.append(p)
         p.start()
 
