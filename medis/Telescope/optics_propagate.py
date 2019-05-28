@@ -185,11 +185,13 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.quick_ao:
         # r0 = float(PASSVALUE['atmos_map'][-10:-5])
 
-        ao.flat_outside(wfo.wf_array)
-        CPA_maps = ao.quick_wfs(wfo.wf_array[:, 0])  # , obj_map, tp.wfs_scale)
-
         if tp.use_ao:
-            ao.quick_ao(wfo,  CPA_maps)
+            ao.flat_outside(wfo.wf_array)
+            CPA_maps = ao.quick_wfs(wfo.wf_array[:, 0])  # , obj_map, tp.wfs_scale)
+            if tp.include_tiptilt:
+                CPA_maps = ao.tiptilt(wfo, CPA_maps)
+            if tp.include_dm:
+                ao.quick_ao(wfo, CPA_maps)
         else:
             ao.no_ao(wfo)
 

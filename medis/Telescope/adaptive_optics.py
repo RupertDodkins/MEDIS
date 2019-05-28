@@ -84,6 +84,23 @@ def no_ao(wfo):
     wfo.test_save('no_ao')
     return
 
+def tiptilt(wfo, CPA_maps):
+    wf_array = wfo.wf_array
+    shape = wf_array.shape
+
+    for iw in range(shape[0]):
+
+        aperture = proper.prop_ellipse(wf_array[iw, 0], tp.diam/2., tp.diam/2.)
+
+        coeffs, map = proper.prop_fit_zernikes(CPA_maps[iw], aperture, ap.grid_size*tp.beam_ratio, nzer=3, fit=True)
+
+        CPA_maps[iw] -= map
+        proper.prop_add_phase(wf_array[iw,0], -map*wf_array[iw,0]._lamda/(2*np.pi))
+
+    wfo.test_save('tiptilt')
+
+    return CPA_maps
+
 def quick_ao(wfo, CPA_maps):
     # TODO address the kludge. Is it still necessary
     # dprint('running quick_ao')

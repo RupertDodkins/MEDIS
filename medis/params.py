@@ -111,6 +111,7 @@ class Simulation_params:
         self.save_locs = None
         self.gui_map_type = None
         self.metric_funcs = []
+        self.metric_args = []
         self.initial_ob = 0  # star
         self.gui_samp = 5  # display the field on multiples of this number
 
@@ -160,6 +161,8 @@ class Telescope_params:
         self.use_hex = False  # include aberrations from hexagonal segmented mirror shape of primary
         self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary
         self.use_ao = True  # True
+        self.include_dm = True
+        self.include_tiptilt = True
         self.quick_ao = True
         self.ao_act = 60  # 41 #32
         self.servo_error = [0, 1]  # [0,1] # False # No delay and rate of 1/frame_time

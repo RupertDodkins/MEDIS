@@ -49,7 +49,7 @@ class EfieldsThread(QtCore.QThread):
 
     def __init__(self, parent=None):
         super(EfieldsThread, self).__init__(parent)
-        self.save_E_fields = np.zeros((len(sp.save_locs), ap.nwsamp, 1 + len(ap.contrast),
+        self.save_E_fields = np.zeros((len(sp.save_locs) + 1, ap.nwsamp, 1 + len(ap.contrast),
                                        ap.grid_size, ap.grid_size), dtype=np.complex64)
         self.sct = SpectralCubeThread()
         self.gui_images = np.zeros_like(self.save_E_fields[:, :, 0], dtype=np.float)
@@ -123,7 +123,6 @@ def plot_counts(obs_sequence, locs, radius = 10):
 
     for (x,y) in locs:
         # count = my_round(np.mean(obs_sequence[:, :, x:x+radius, y:y+radius], axis=(1, 2, 3)), 1)
-        dprint(obs_sequence.shape)
         count = obs_sequence[:, 0, x, y]
         # b, a = signal.butter(3, 0.05)
         # y = signal.filtfilt(b, a, count)

@@ -11,6 +11,8 @@ from matplotlib.image import AxesImage
 from PyQt5.QtCore import pyqtSlot, Qt
 from PyQt5.QtWidgets import QComboBox, QFormLayout, QHBoxLayout, QVBoxLayout, QLineEdit, QWidget, QPushButton, \
     QProgressBar, QRadioButton, QSlider, QLabel
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
 from medis.params import ap, sp, tp
 from medis.Utils.misc import dprint
@@ -31,7 +33,9 @@ class MatplotlibWidget(QWidget):
         self.nrows, self.ncols = nrows, ncols
         dprint((self.nrows, self.ncols))
         self.figure = Figure(figsize=(5*ncols,3*nrows))
-        self.canvas = FigureCanvasQTAgg(self.figure)
+        # self.canvas = FigureCanvasQTAgg(self.figure)
+        self.canvas = FigureCanvas(self.figure)
+        self.toolbar = NavigationToolbar(self.canvas, self)
 
         gs = gridspec.GridSpec(self.nrows, self.ncols)
 
@@ -43,16 +47,17 @@ class MatplotlibWidget(QWidget):
         self.axes = np.array(self.figure.axes).reshape(self.nrows, self.ncols)
         dprint(self.axes.shape)
         self.cax = []
-        for r in range(self.nrows):
-            divider = make_axes_locatable(self.axes[r,-1])
-            self.cax.append(divider.append_axes('right', size='5%', pad=0.15))
 
         self.layoutVertical = QFormLayout(self)
+        self.layoutVertical.addWidget(self.toolbar)
         self.layoutVertical.addWidget(self.canvas)
 
         self.ims = np.empty((self.nrows, self.ncols), dtype=AxesImage)
 
     def add_Efield_annotations(self):
+        for r in range(self.nrows):
+            divider = make_axes_locatable(self.axes[r,-1])
+            self.cax.append(divider.append_axes('right', size='5%', pad=0.15))
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp).astype(int)
         dprint(wsamples)
         for c in range(self.ncols):
@@ -64,6 +69,8 @@ class MatplotlibWidget(QWidget):
                             fontsize=12, bbox=props)
 
     def add_metric_annotations(self):
+        divider = make_axes_locatable(self.axes[0,-1])
+        self.cax.append(divider.append_axes('right', size='5%', pad=0.15))
         props = dict(boxstyle='square', facecolor='k', alpha=0.5)
         self.axes[0, 0].text(0.05, 0.075, 'Integration', transform=self.axes[0, 0].transAxes,
                              fontweight='bold', color='w',
@@ -104,7 +111,7 @@ class MyWindow(QWidget):
         self.nwsamp.textChanged.connect(self.textchanged)
 
         self.degfac = QLineEdit(self)
-        self.degfac.setPlaceholderText('2')
+        self.degfac.setPlaceholderText('1')
 
 
         self.plotsamptext = QLineEdit(self)
@@ -355,7 +362,7 @@ class MyWindow(QWidget):
         # if self.obj == len(ap.contrast):
         #     self.obj = -1
         #     self.it += 1
-
+        dprint('running recieve function')
         try:
             self.metricsGrid.ims[0,0].remove()
         except AttributeError:
@@ -437,7 +444,7 @@ class MyWindow(QWidget):
                 for i in range(len(metric)):
                     self.metricsGrid.ims[r + 1, 0].append(self.metricsGrid.axes[r + 1, 0].plot(metric[i], c=colors[i], label=args[i]))
                 self.metricsGrid.axes[r + 1, 0].set_title(f'constant list of lines')
-                if self.EfieldsThread.qt == 0:
+                if self.EfieldsThread.qt < sp.gui_samp:
                     self.metricsGrid.axes[r + 1, 0].legend()
                 # self.metricsGrid.axes[r + 1, 0].set_yscale('log')
             elif dims == 1:

@@ -153,10 +153,9 @@ def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queu
 
             EfieldsThread.save_E_fields[-1] = spectralcube
             EfieldsThread.sct.integration += spectralcube
-            EfieldsThread.sct.obs_sequence[EfieldsThread.qt, o] = spectralcube
+            EfieldsThread.sct.obs_sequence[EfieldsThread.qt - ap.startframe, o] = spectralcube
 
             e_fields_sequence[EfieldsThread.qt - ap.startframe, :, :, o] = EfieldsThread.save_E_fields[:, :, o]  # _fields_sequence[qt, :, :, o] = save_E_fields
-
             if o == EfieldsThread.fields_ob and EfieldsThread.qt % sp.gui_samp == 0:
                 EfieldsThread.get_gui_images(o)
                 EfieldsThread.newSample.emit(True)
@@ -168,7 +167,6 @@ def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queu
             read.save_rt(iop.realtime_save, e_fields_sequence[:EfieldsThread.qt])
             sp.play_gui = True
             run_medis(EfieldsThread)
-            dprint((tp.use_ao, sp.play_gui))
             return
 
     return e_fields_sequence
@@ -187,7 +185,6 @@ def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
         qt, save_E_fields = outqueue.get()
         duration = time.time() - now
 
-        dprint((duration, save_E_fields.shape, t, qt))
         spectralcube = np.abs(save_E_fields[-1]) ** 2
 
         if tp.detector == 'MKIDs':
