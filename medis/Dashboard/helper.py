@@ -84,13 +84,9 @@ def take_acf(obs_sequence, locs=None, radius = 1):
 
     if len(obs_sequence) > 2:
         for (x,y) in locs:
-            # print(my_round(np.mean(obs_sequence[:, :, x:x+radius, y:y+radius], axis=(1, 2, 3)), 3))
             count = np.mean(obs_sequence[:, :, x:x + radius, y:y + radius], axis=(1, 2, 3))
-            # b, a = signal.butter(3, 0.05)
-            # y = signal.filtfilt(b, a, count)
-            # corr = acf(my_round(np.mean(obs_sequence[:, :, x:x+radius, y:y+radius], axis=(1, 2, 3)), 1),
-            #                         fft=True, nlags=50)
-            corr = acovf(count)
+            corr = acf(count, fft=False, nlags=1000)
+            # corr = acovf(count)
             corrs.append(corr)
     else:
         corrs = np.empty((len(locs)))

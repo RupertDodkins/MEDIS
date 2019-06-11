@@ -4,9 +4,11 @@ import matplotlib.pylab as plt
 from decimal import Decimal
 import astropy.io.fits as fits
 import hcipy
+import proper
 from medis.Dashboard.twilight import sunlight
 from medis.params import cp, ap, tp, iop
 from medis.Utils.misc import dprint
+from medis.Utils.plot_tools import quicklook_wf, quicklook_im
 
 
 def eformat(f, prec, exp_digits):
@@ -24,6 +26,43 @@ def generate_maps(plot=False):
 
     if not os.path.isdir(os.path.join(iop.atmosdir, cp.model)):
         os.makedirs(os.path.join(iop.atmosdir, cp.model), exist_ok=True)
+
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
+
+    if cp.model == 'zernike':
+        beam_ratios = np.zeros_like((wsamples))
+        dprint((ap.numframes, ap.sample_time))
+        for iw, w in enumerate(wsamples[:1]):
+            beam_ratios[iw] = tp.beam_ratio * ap.band[0] / w * 1e-9
+            wf = proper.prop_begin(tp.diam, w, ap.grid_size, beam_ratios[iw])
+
+            for t, a in zip(np.arange(0, ap.numframes),
+                            np.arange(0, ap.numframes*np.pi/512., np.pi/512.)):
+                print(t, a)
+                xloc = np.sin(a)
+                yloc = np.cos(a)
+                proper.prop_zernikes(wf, [2, 3], np.array([xloc, yloc]) * 1e-7)
+                filename = get_filename(t, wsamples[iw])
+                hdu = fits.ImageHDU(proper.prop_get_phase(wf))
+                hdu.header['PIXSIZE'] = tp.diam / ap.grid_size
+                hdu.writeto(filename, overwrite=True)
+        return
+
+    if cp.model == 'sine':
+        for t in np.arange(0, ap.numframes):
+            screen = np.ones((ap.grid_size, ap.grid_size)) * np.pi * np.sin(
+            np.arange(t * np.pi / 512., t * np.pi / 512. + ap.grid_size * np.pi / 2., np.pi / 2.))[:128]
+            # plt.plot(np.sin(np.arange(t * np.pi / 64., t * np.pi / 64. + ap.grid_size * np.pi / 16., np.pi / 16.))[:128])
+            # # quicklook_im(screen)
+            # plt.show()
+        # proper.prop_add_phase(wf, screen)
+
+            filename = get_filename(t, wsamples[0])
+            print(filename)
+            hdu = fits.ImageHDU(screen)
+            hdu.header['PIXSIZE'] = tp.diam / ap.grid_size
+            hdu.writeto(filename, overwrite=True)
+        return
 
     pupil_grid = hcipy.make_pupil_grid(ap.grid_size, tp.diam)
 
@@ -45,7 +84,6 @@ def generate_maps(plot=False):
     atmos = hcipy.MultiLayerAtmosphere(layers, scintilation=False)
 
     # aperture = hcipy.circular_aperture(tp.diam)(pupil_grid)
-    wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
 
     wavefronts = []
     for wavelength in wsamples:

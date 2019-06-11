@@ -1,11 +1,14 @@
 import numpy as np
 from scipy import interpolate
+import scipy.ndimage
+from skimage.restoration import unwrap_phase
 import pickle as pickle
 from scipy import ndimage
 import proper
 from proper_mod import prop_dm
 from medis.params import tp, cp, mp, ap,iop
 from medis.Utils.misc import dprint
+from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im
 
 def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
     # print 'Including Adaptive Optics'
@@ -84,22 +87,29 @@ def no_ao(wfo):
     wfo.test_save('no_ao')
     return
 
-def tiptilt(wfo, CPA_maps):
+def tiptilt(wfo, CPA_maps, tiptilt):
     wf_array = wfo.wf_array
     shape = wf_array.shape
 
     for iw in range(shape[0]):
+        aperture = np.round(proper.prop_ellipse(wf_array[iw, 0], tp.diam/2., tp.diam/2.)).astype(np.int)
 
-        aperture = proper.prop_ellipse(wf_array[iw, 0], tp.diam/2., tp.diam/2.)
+        # calculate the tiptilt mirror from the phase measurement
+        coeffs, map = proper.prop_fit_zernikes(CPA_maps[0, iw], aperture, ap.grid_size*tp.beam_ratio/2., nzer=3, fit=True)
+        map = np.arctan2(np.sin(map), np.cos(map))
 
-        coeffs, map = proper.prop_fit_zernikes(CPA_maps[iw], aperture, ap.grid_size*tp.beam_ratio, nzer=3, fit=True)
+        # add this increasingly small correction to the tiptilt mirror
+        tiptilt += map*aperture
 
-        CPA_maps[iw] -= map
-        proper.prop_add_phase(wf_array[iw,0], -map*wf_array[iw,0]._lamda/(2*np.pi))
+        # update the phase measurement so that the DM predictions take the tiptilt corrections into consideration
+        CPA_maps[0, iw] -= map*aperture
+
+        # apply the tiptilt mirror
+        proper.prop_add_phase(wf_array[iw,0], -tiptilt*wf_array[iw,0]._lamda/(2*np.pi))
 
     wfo.test_save('tiptilt')
 
-    return CPA_maps
+    return CPA_maps, tiptilt
 
 def quick_ao(wfo, CPA_maps):
     # TODO address the kludge. Is it still necessary
@@ -119,7 +129,7 @@ def quick_ao(wfo, CPA_maps):
             d_beam = 2 * proper.prop_get_beamradius(wf_array[iw,io])  # beam diameter
             act_spacing = d_beam / nact_across_pupil  # actuator spacing
             # Compensating for chromatic beam size
-            dm_map = CPA_maps[iw, ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
+            dm_map = CPA_maps[0, iw, ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
                                   ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1,
                      ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
                      ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1]
@@ -158,11 +168,10 @@ def flat_outside(wf_array):
 
 def quick_wfs(wf_vec):
 
-    import scipy.ndimage
-    from skimage.restoration import unwrap_phase
-
     sigma = [2, 2]
     CPA_maps = np.zeros((len(wf_vec),ap.grid_size,ap.grid_size))
+
+    dprint('running quick wfs')
 
     for iw in range(len(wf_vec)):
         CPA_maps[iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wf_vec[iw])), sigma,
@@ -174,16 +183,47 @@ def quick_wfs(wf_vec):
 
     return CPA_maps
 
-def wfs_measurement(wfo, iter, iw,r0):#, obj_map, wfs_sample):
+def closedloop_wfs(wfo, CPA_maps):
+    sigma = [2, 2]
+    dprint(CPA_maps.shape)
+    for iw in range(len(wfo.wf_array[:, 0])):
+        # CPA_maps[0, iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wfo.wf_array[iw, 0])),
+        #                                                         sigma, mode='constant')
+        # quicklook_wf(wfo.wf_array[iw, 0])
+        CPA_maps[0, iw] = unwrap_phase(proper.prop_get_phase(wfo.wf_array[iw, 0]))
+        print(iw)
+        # quicklook_im(CPA_maps[0, iw])
+        CPA_maps[0, iw] *= np.round(proper.prop_ellipse(wfo.wf_array[iw, 0], tp.diam/2., tp.diam/2.)).astype(np.int)
+    dprint((tp.servo_error, CPA_maps.shape))
+    if tp.servo_error:
+        # for iw in range(len(wfo.wf_array[:, 0])):
+        # print 'This might produce garbage if several processes are run in parrallel'
+        CPA_maps = np.roll(CPA_maps,1,0)
+        # quicklook_im(CPA_maps[0, 0])
+        required_servo = int(tp.servo_error[0]) # delay
+        required_band = int(tp.servo_error[1]) # averaging
+        dprint((required_servo))
+        CPA_maps[0] = np.sum(CPA_maps[required_servo:],axis=0)/ required_band
+
+    # quicklook_im(CPA_maps[0, iw])
+
+    # quicklook_wf(wfo.wf_array[iw, 0])
+    # quicklook_im(np.arctan2(np.sin(CPA_maps[0, iw]), np.cos(CPA_maps[0, iw])), vmin=-np.pi, vmax=np.pi)
+    # quicklook_im(proper.prop_get_phase(wfo.wf_array[iw, 0]), vmin=-np.pi, vmax=np.pi)
+    # quicklook_im(proper.prop_get_phase(wfo.wf_array[iw, 0]) - np.arctan2(np.sin(CPA_maps[0, iw]), np.cos(CPA_maps[0, iw])), vmin=-np.pi, vmax=np.pi)
+
+    wfo.test_save('closedloop_wfs')
+    return CPA_maps
+
+def wfs_measurement(wfo, iter, iw, r0):#, obj_map, wfs_sample):
     # TODO verify that several processes running in parrellel does not mess this up for closed loop AO
     # print 'Including WFS Error'
 
     with open(iop.CPA_meas, 'rb') as handle:
         CPA_maps, iters = pickle.load(handle)
 
-    import scipy.ndimage
     sigma = [1, 1]
-    from skimage.restoration import unwrap_phase
+
     CPA_maps[0, iw] += scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wfo)), sigma,
                                                              mode='constant')
     if tp.servo_error:

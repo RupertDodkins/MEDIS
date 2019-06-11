@@ -157,6 +157,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
         aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['iter']))
+        # quicklook_wf(wfo.wf_array[0, 0])
 
     # quicklook_wf(wfo.wf_array[0,0])
     if tp.rot_rate:
@@ -178,35 +179,30 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.aber_params['CPA']:
         aber.add_aber(wfo, tp.f_lens, tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='CPA1')
         wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
-
+    # quicklook_wf(wfo.wf_array[0, 0])
     ########################################
     # AO
     #######################################
-    if tp.quick_ao:
-        # r0 = float(PASSVALUE['atmos_map'][-10:-5])
 
-        if tp.use_ao:
-            ao.flat_outside(wfo.wf_array)
-            CPA_maps = ao.quick_wfs(wfo.wf_array[:, 0])  # , obj_map, tp.wfs_scale)
-            if tp.include_tiptilt:
-                CPA_maps = ao.tiptilt(wfo, CPA_maps)
-            if tp.include_dm:
-                ao.quick_ao(wfo, CPA_maps)
+    if tp.use_ao:
+        ao.flat_outside(wfo.wf_array)
+        if tp.quick_ao:
+            CPA_maps = ao.quick_wfs(wfo.wf_array[:, 0])
         else:
-            ao.no_ao(wfo)
+            CPA_maps = PASSVALUE['CPA_maps']
+            tiptilt = PASSVALUE['tiptilt']
+
+        if tp.include_tiptilt:
+            CPA_maps, PASSVALUE['tiptilt'] = ao.tiptilt(wfo, CPA_maps, tiptilt)
+
+        if tp.include_dm:
+            ao.quick_ao(wfo, CPA_maps)
+
+        if not tp.quick_ao:
+            PASSVALUE['CPA_maps'] = ao.closedloop_wfs(wfo, CPA_maps)
 
     else:
-        # TODO update this code
-        # if tp.use_ao:
-        #     ao.adaptive_optics(wf, iwf, iw, tp.f_lens, beam_ratio, PASSVALUE['iter'])
-        #
-        # if iwf == 'primary':  # and PASSVALUE['iter'] == 0:
-        #     r0 = float(PASSVALUE['atmos_map'][-10:-5])
-        #     # dprint((r0, 'r0'))
-        #     # if iw == np.ceil(ap.nwsamp/2):
-        #     ao.wfs_measurement(wf, PASSVALUE['iter'], iw, r0=r0)  # , obj_map, tp.wfs_scale)
-        dprint('This needs to be updated to the parallel implementation')
-        exit()
+        ao.no_ao(wfo)
 
     if tp.obscure:
         # TODO check this was resolved and spiders can be applied earlier up the chain

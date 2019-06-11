@@ -374,7 +374,7 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
                 ax.set_title(w_string[w])
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, norm=LogNorm(), cmap="YlGnBu_r")
         else:
-            ax.set_title(w_string[w])
+            # ax.set_title(w_string[w])
             im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap="YlGnBu_r")
         if axis == 'anno':
             annotate_axis(im, ax, datacube.shape[1])

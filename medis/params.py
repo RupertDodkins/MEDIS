@@ -297,11 +297,11 @@ class CAOS_params:
     :model: either single frozen layer, hcipy_standard or evolving (apply variation to frozen some parameter)
     """
     def __init__(self):
-        self.model = 'single'  # single|hcipy_standard|evolving
+        self.model = 'zernike'  # single|hcipy_standard|evolving|zernike|sine
         self.show_caosparams= True  # for control over all other variables
-        self.r0 = 1#0.4
+        self.r0 = 100#0.4
         self.L0 = 10
-        self.v = 20  #1
+        self.v = 5  #1
         self.h = 100
 
         # original parameters

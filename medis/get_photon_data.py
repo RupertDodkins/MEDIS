@@ -17,49 +17,67 @@ import medis.Detector.H2RG as H2RG
 import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
+from medis.Telescope.optics_propagate import Wavefronts
 import medis.Atmosphere.atmos as atmos
 
-def gen_timeseries(inqueue, outqueue, conf_obj_tup):
-    """
-    generates observation sequence by calling optics_propagate in time series
+class Timeseries():
+    def __init__(self, inqueue, outqueue, conf_obj_tup):
+        self.inqueue = inqueue
+        self.outqueue = outqueue
+        self.conf_obj_tup = conf_obj_tup
+        required_servo = int(tp.servo_error[0])
+        required_band = int(tp.servo_error[1])
+        required_nframes = required_servo + required_band
+        dprint(required_nframes)
+        # self.CPA_maps = np.random.normal(0, 0.1, (required_nframes, ap.nwsamp, ap.grid_size, ap.grid_size))
+        self.CPA_maps = np.zeros((required_nframes, ap.nwsamp, ap.grid_size, ap.grid_size))
+        self.tiptilt = np.zeros((ap.grid_size, ap.grid_size))
 
-    It is the time loop wrapper for optics_propagate
-    this is where the observation sequence is generated (timeseries of observations by the detector)
-    thus, where the detector observes the wavefront created by optics_propagate (for MKIDs, the probability distribution)
+        self.gen_timeseries()
 
-    :param inqueue: time index for parallelization (used by multiprocess)
-    :param photon_table_queue: photon table (list of photon packets) in the multiprocessing format
-    :param spectralcube_queue: series of intensity images (spectral image cube) in the multiprocessing format
-    :param conf_obj_tup:
-    :return:
-    """
-    (tp,ap,sp,iop,cp,mp, i) = conf_obj_tup
+    def gen_timeseries(self):
+        """
+        generates observation sequence by calling optics_propagate in time series
 
-    try:
+        It is the time loop wrapper for optics_propagate
+        this is where the observation sequence is generated (timeseries of observations by the detector)
+        thus, where the detector observes the wavefront created by optics_propagate (for MKIDs, the probability distribution)
 
-        start = time.time()
+        :param inqueue: time index for parallelization (used by multiprocess)
+        :param photon_table_queue: photon table (list of photon packets) in the multiprocessing format
+        :param spectralcube_queue: series of intensity images (spectral image cube) in the multiprocessing format
+        :param conf_obj_tup:
+        :return:
+        """
+        (tp,ap,sp,iop,cp,mp,i) = self.conf_obj_tup
 
-        for it, t in enumerate(iter(inqueue.get, sentinel)):
-            print('using process %i' % i)
-            kwargs = {'iter': t, 'params': [ap, tp, iop, sp]}
-            _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
-                                                   VERBOSE=False, PHASE_OFFSET=1)
+        try:
 
-            # for o in range(len(ap.contrast) + 1):
-            #     outqueue.put((t, save_E_fields[:, :, o]))
-            outqueue.put((t, save_E_fields))
+            start = time.time()
 
-        now = time.time()
-        elapsed = float(now - start) / 60.
-        each_iter = float(elapsed) / (it + 1)
+            # wfo = Wavefronts(inqueue, outqueue, conf_obj_tup)
 
-        print('***********************************')
-        dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #
+            for it, t in enumerate(iter(self.inqueue.get, sentinel)):
+                print('using process %i' % i)
+                kwargs = {'iter': t, 'params': [ap, tp, iop, sp], 'CPA_maps': self.CPA_maps, 'tiptilt': self.tiptilt}
+                _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
+                                                       VERBOSE=False, PHASE_OFFSET=1)
 
-    except Exception as e:
-        traceback.print_exc()
-        # raise e
-        pass
+                # for o in range(len(ap.contrast) + 1):
+                #     outqueue.put((t, save_E_fields[:, :, o]))
+                self.outqueue.put((t, save_E_fields))
+
+            now = time.time()
+            elapsed = float(now - start) / 60.
+            each_iter = float(elapsed) / (it + 1)
+
+            print('***********************************')
+            dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #
+
+        except Exception as e:
+            traceback.print_exc()
+            # raise e
+            pass
 
 def update_realtime_save():
     iop.realtime_save = f"{iop.realtime_save.split('.')[0][:-4]}{str(ap.startframe).zfill(4)}.pkl"
@@ -233,7 +251,7 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
         proc.start()
 
     for i in range(sp.num_processes):
-        p = multiprocessing.Process(target=gen_timeseries, args=(inqueue, outqueue, (tp,ap,sp,iop,cp,mp, i)))
+        p = multiprocessing.Process(target=Timeseries, args=(inqueue, outqueue, (tp,ap,sp,iop,cp,mp, i)))
         jobs.append(p)
         p.start()
 

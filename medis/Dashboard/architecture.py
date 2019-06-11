@@ -227,7 +227,7 @@ class MyWindow(QWidget):
         self.left = 10
         self.top = 10
         self.width = 1500
-        self.height = 200 + 300*nrows
+        self.height = 200 + 200*nrows
         self.title = 'MEDIS Dashboard'
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
@@ -443,7 +443,6 @@ class MyWindow(QWidget):
                               '#bcbd22', '#17becf']
                 for i in range(len(metric)):
                     self.metricsGrid.ims[r + 1, 0].append(self.metricsGrid.axes[r + 1, 0].plot(metric[i], c=colors[i], label=args[i]))
-                self.metricsGrid.axes[r + 1, 0].set_title(f'constant list of lines')
                 if self.EfieldsThread.qt < sp.gui_samp:
                     self.metricsGrid.axes[r + 1, 0].legend()
                 # self.metricsGrid.axes[r + 1, 0].set_yscale('log')
