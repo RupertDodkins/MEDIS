@@ -185,27 +185,19 @@ def quick_wfs(wf_vec):
 
 def closedloop_wfs(wfo, CPA_maps):
     sigma = [2, 2]
-    dprint(CPA_maps.shape)
     for iw in range(len(wfo.wf_array[:, 0])):
         # CPA_maps[0, iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wfo.wf_array[iw, 0])),
         #                                                         sigma, mode='constant')
-        # quicklook_wf(wfo.wf_array[iw, 0])
         CPA_maps[0, iw] = unwrap_phase(proper.prop_get_phase(wfo.wf_array[iw, 0]))
         print(iw)
-        # quicklook_im(CPA_maps[0, iw])
         CPA_maps[0, iw] *= np.round(proper.prop_ellipse(wfo.wf_array[iw, 0], tp.diam/2., tp.diam/2.)).astype(np.int)
-    dprint((tp.servo_error, CPA_maps.shape))
     if tp.servo_error:
         # for iw in range(len(wfo.wf_array[:, 0])):
         # print 'This might produce garbage if several processes are run in parrallel'
         CPA_maps = np.roll(CPA_maps,1,0)
-        # quicklook_im(CPA_maps[0, 0])
         required_servo = int(tp.servo_error[0]) # delay
         required_band = int(tp.servo_error[1]) # averaging
-        dprint((required_servo))
         CPA_maps[0] = np.sum(CPA_maps[required_servo:],axis=0)/ required_band
-
-    # quicklook_im(CPA_maps[0, iw])
 
     # quicklook_wf(wfo.wf_array[iw, 0])
     # quicklook_im(np.arctan2(np.sin(CPA_maps[0, iw]), np.cos(CPA_maps[0, iw])), vmin=-np.pi, vmax=np.pi)

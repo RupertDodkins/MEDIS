@@ -40,7 +40,7 @@ def traverse_datasets(hdf_file):
 
 def read_obs(max_photons=1e8, start=0):
     filename =iop.obs_table
-    print('Getting %.0e photon packets from pseudo obsfile %s' % (max_photons,filename))
+    print('Getting max %.0e photon packets from pseudo obsfile %s' % (max_photons,filename))
     with h5py.File(filename, 'r') as hf:
         keys = list(hf.keys())#[:ap.numframes]
         assert len(ap.contrast) + 1 == len(hf.get('t0'))

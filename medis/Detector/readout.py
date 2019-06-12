@@ -41,7 +41,7 @@ def get_packets(datacube, step, dp,mp):
     # moves = np.shape(tp.pix_shift)[0]
 
     # iteration = step % moves
-
+    print(datacube.shape)
     if (mp.array_size != datacube[0].shape + np.array([1,1])).all():
         left = int(np.floor(float(ap.grid_size-mp.array_size[0])/2))
         right = int(np.ceil(float(ap.grid_size-mp.array_size[0])/2))

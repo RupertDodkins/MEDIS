@@ -134,6 +134,7 @@ def applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread=None)
         dp = pickle.load(handle)
 
     spectrallist = read.get_packets(spectralcube, t, dp, mp)
+    print(len(spectrallist))
 
     if sp.save_obs:
         if o == 0:
@@ -169,7 +170,7 @@ def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queu
             if tp.detector == 'MKIDs':
                 spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread)
 
-            EfieldsThread.save_E_fields[-1] = spectralcube
+            # EfieldsThread.save_E_fields[-1] = spectralcube
             EfieldsThread.sct.integration += spectralcube
             EfieldsThread.sct.obs_sequence[EfieldsThread.qt - ap.startframe, o] = spectralcube
 
@@ -199,16 +200,18 @@ def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
         inqueue.put(sentinel)
 
     for t in range(ap.startframe, ap.numframes):
+        dprint(t)
         now = time.time()
         qt, save_E_fields = outqueue.get()
         duration = time.time() - now
 
-        spectralcube = np.abs(save_E_fields[-1]) ** 2
+        for o in range(len(ap.contrast) + 1):
+            spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
 
-        if tp.detector == 'MKIDs':
-            spectralcube = applymkideffects(spectralcube, t, 0, photon_table_queue)
+            if tp.detector == 'MKIDs':
+                spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue)
 
-        save_E_fields[-1] = spectralcube
+        # save_E_fields[-1] = spectralcube
         e_fields_sequence[qt - ap.startframe] = save_E_fields
 
     return e_fields_sequence
@@ -276,7 +279,8 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
     print('**************************************')
     print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)}")
 
-    read.save_fields(e_fields_sequence, fields_file=iop.fields)
+    if sp.save_fields:
+        read.save_fields(e_fields_sequence, fields_file=iop.fields)
 
     return e_fields_sequence
 

@@ -114,6 +114,7 @@ class Simulation_params:
         self.metric_args = []
         self.initial_ob = 0  # star
         self.gui_samp = 5  # display the field on multiples of this number
+        self.save_fields = True
 
 
 
