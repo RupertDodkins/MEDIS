@@ -1,6 +1,8 @@
 import os
 from matplotlib.pylab import plt
+from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
+import itertools
 import random
 import h5py
 from medis.params import sp, ap, tp, iop, cp
@@ -31,11 +33,18 @@ tp.include_dm = False
 tp.include_tiptilt = True
 tp.occulter_type = None
 ap.companion = True
-ap.contrast = [1]
-num_photons = 2048
+ap.contrast = [0.1]
+
+starmultiplier = 1./ap.contrast[0]
+reduction = 1./(1+starmultiplier)
+
+point_num = 2048
+num_photons = int(point_num*reduction*starmultiplier)
+dprint(num_photons)
+
 ap.sample_time = 1e-3
 ap.exposure_time = 1e-3
-ap.star_photons = 1.5*num_photons/ap.sample_time # to account for throughput
+ap.star_photons = num_photons/ap.sample_time/0.8 # to account for throughput
 tp.beam_ratio = 0.5 #0.75
 ap.grid_size = 128
 # tp.detector = 'MKIDs'
@@ -46,7 +55,6 @@ tp.use_atmos = False
 tp.use_ao = False
 tp.aber_params['CPA'] = False
 tp.aber_params['NCPA'] = False
-
 
 
 ##set telescope parameters
@@ -66,86 +74,135 @@ from medis.Dashboard.run_dashboard import run_dashboard
 
 test_frac = 0.2
 batches = 5
-timesamples = 10
-num_images = 20
-ap.numframes = batches * timesamples * num_images # 32*20*50 # batches x timesamples per image x input images
+# timesamples = 20
+# num_images = 20
+# ap.numframes = batches * timesamples * num_images # 32*20*50 # batches x timesamples per image x input images
+ap.numframes = 2048  #2048 # 32*20*50 # batches x timesamples per image x input images
 
-def reformat_obs():
-    # for i in range(3):
-    #     iop.obs_table = os.path.join(iop.testdir, 'ObsTable_i%i.h5' % i)
+# def disarange(array):
+#     nrows, ncols = array.shape
+#     all_perm = np.array((list(np.random.permutation(range(ncols)))))
+#     b = all_perm[np.random.randint(0, all_perm.shape[0], size=nrows)]
+#     return array.take((b+3*np.arange(nrows)[...,np.newaxis]).ravel()).reshape(array.shape)
+
+def reformat_obs_sem(plot=False, save=True):
+    """
+    Reformat the obs files into the pointnet segmentation input data format
+    :return:
+    """
+
     photons = pipe.read_obs()
     print(photons[0][:10], len(photons[0]))
-    cut = int(len(photons[0])/ap.numframes % 2048)
-    print(cut)
-    data = []
+    data = np.empty((ap.numframes,0,3))
+    true_num_photons = []
     for o in range(2):
-        obj_photons = photons[o][:-cut*ap.numframes, [0,2,3]]
-        # print(obj_photons[:10])
-        #TODO check how reshape does the ordering
-        data.append(obj_photons.reshape(ap.numframes,2048,3))
-        # print(data[o][:10])
+        true_num_photons.append(int(len(photons[o])/ap.numframes))
+        dprint((photons[o].shape, true_num_photons[o]))
 
-    labels = np.zeros(ap.numframes*2, dtype=int)
-    labels[-ap.numframes:] = 1
+        obj_photons = photons[o][:, [0,2,3]]
+        ref_photons = obj_photons.reshape(ap.numframes, -1, 3)
+        data = np.concatenate((data, ref_photons), axis=1)
 
-    reorder = np.arange(ap.numframes*2)
-    np.random.shuffle(reorder)
+    cut = int(data.shape[1] % point_num)
+    rand_cut = np.random.uniform(0, data.shape[1], cut).astype(np.int)
+    pids = np.zeros((ap.numframes, data.shape[1]), dtype=int)
+    pids[:, true_num_photons[0]:] = 1
 
-    labels = labels[reorder]
+    if plot:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        print(data.shape, pids.shape)
+        # print(data[0, :, 0], data[0, :, 1], data[0, :, 2], pids[0])
+        # c = np.chararray(len(pids[0]))
+        # c[pids[0]==0] = 'o'
+        # c[pids[0]==1] = 'b'
+        colors = ['orange', 'orange']
+        bounds = [0,true_num_photons[0],data.shape[1]]
 
-    data = np.concatenate((data[0], data[1]),axis=0)
+        # ax.scatter(data[:, bounds[i]:bounds[i + 1], 0], data[0, bounds[i]:bounds[i + 1], 1],
+        #            data[0, bounds[i]:bounds[i + 1], 2], c=c)
+        for t in range(10):
+            for i, c in enumerate(colors):
+                print(i, c)
+                ax.scatter(data[t, bounds[i]:bounds[i+1], 0], data[t, bounds[i]:bounds[i+1], 1], data[t, bounds[i]:bounds[i+1], 2], c=c)#, marker=pids[0])
+        plt.show()
 
-    data = data[reorder]
+    data = np.delete(data, rand_cut, axis=1)
+    pids = np.delete(pids, rand_cut, axis=1)
 
-    trainfile = os.path.join(iop.testdir, 'trainfile.h5')
-    with h5py.File(trainfile, 'w') as hf:
-        hf.create_dataset('data', data=data[:-int(test_frac*ap.numframes*2)])
-        hf.create_dataset('label', data=labels[:-int(test_frac*ap.numframes*2)])
-    testfile = os.path.join(iop.testdir, 'testfile.h5')
-    with h5py.File(testfile, 'w') as hf:
-        hf.create_dataset('data', data=data[-int(test_frac*ap.numframes*2):])
-        hf.create_dataset('label', data=labels[-int(test_frac*ap.numframes*2):])
 
-def make_images():
-    # for i in range(3):
-    #     iop.obs_table = os.path.join(iop.testdir, 'ObsTable_i%i.h5' % i)
-        # if ap.numframes <= 20000 and not os.path.exists(iop.fields):
-        #     run_dashboard()
-        # else:
+
+    labels = np.zeros((ap.numframes), dtype=int)
+
+    reorder = np.apply_along_axis(np.random.permutation, 1, np.ones((ap.numframes,point_num))*np.arange(point_num)).astype(np.int)
+
+    data = np.array([data[o, order] for o, order in enumerate(reorder)])
+    pids = np.array([pids[o, order] for o, order in enumerate(reorder)])
+
+
+
+    if save:
+        trainfile = os.path.join(iop.testdir, 'trainfile_unorder.h5')
+        with h5py.File(trainfile, 'w') as hf:
+            hf.create_dataset('data', data=data[:-int(test_frac*ap.numframes)])
+            hf.create_dataset('label', data=labels[:-int(test_frac*ap.numframes)])
+            hf.create_dataset('pid', data=pids[:-int(test_frac*ap.numframes)])
+        testfile = os.path.join(iop.testdir, 'testfile_unorder.h5')
+        with h5py.File(testfile, 'w') as hf:
+            hf.create_dataset('data', data=data[-int(test_frac*ap.numframes):])
+            hf.create_dataset('label', data=labels[-int(test_frac*ap.numframes):])
+            hf.create_dataset('pid', data=pids[-int(test_frac * ap.numframes):])
+
+# def reformat_obs_class():
+#     """
+#     Reformat the obs files into the pointnet input data format
+#     :return:
+#     """
+#
+#     photons = pipe.read_obs()
+#     print(photons[0][:10], len(photons[0]))
+#     cut = int(len(photons[0])/ap.numframes % 2048)
+#     print(cut)
+#     data = []
+#     for o in range(2):
+#         obj_photons = photons[o][:-cut*ap.numframes, [0,2,3]]
+#         # print(obj_photons[:10])
+#         #TODO check how reshape does the ordering
+#         data.append(obj_photons.reshape(ap.numframes,2048,3))
+#         # print(data[o][:10])
+#
+#     labels = np.zeros(ap.numframes*2, dtype=int)
+#
+#     labels[-ap.numframes:] = 1
+#
+#     reorder = np.arange(ap.numframes*2)
+#     np.random.shuffle(reorder)
+#
+#     labels = labels[reorder]
+#
+#     data = np.concatenate((data[0], data[1]),axis=0)
+#
+#     data = data[reorder]
+#
+#     trainfile = os.path.join(iop.testdir, 'trainfile.h5')
+#     with h5py.File(trainfile, 'w') as hf:
+#         hf.create_dataset('data', data=data[:-int(test_frac*ap.numframes*2)])
+#         hf.create_dataset('label', data=labels[:-int(test_frac*ap.numframes*2)])
+#     testfile = os.path.join(iop.testdir, 'testfile.h5')
+#     with h5py.File(testfile, 'w') as hf:
+#         hf.create_dataset('data', data=data[-int(test_frac*ap.numframes*2):])
+#         hf.create_dataset('label', data=labels[-int(test_frac*ap.numframes*2):])
+
+def make_input():
+    """
+    Make the train/test data for point cloud classification algorithm
+    :return:
+    """
+
     run_medis(realtime=False)
 
-if __name__ == "__main__":
-    # make_images()
-    reformat_obs()
 
-    # photons = pipe.read_obs()
-    # print(photons[0].shape)
-    # print(photons[1].shape)
-    # allphotons = np.vstack((photons[0], photons[1]))
-    # # X = np.array([[1, 2], [1, 4], [1, 0],
-    # #               [10, 2], [10, 4], [10, 0]])
-    # kmeans = KMeans(n_clusters=2, random_state=0).fit(allphotons)
-    # class1 = allphotons[kmeans.labels_ == 0]
-    # class2 = allphotons[kmeans.labels_ == 1]
-    #
-    #
-    # spectralcube = MKIDs.makecube(photons[0], mp.array_size)
-    # plt.figure()
-    # plt.imshow(spectralcube[0], norm=LogNorm())
-    # spectralcube = MKIDs.makecube(photons[1], mp.array_size)
-    # plt.figure()
-    # plt.imshow(spectralcube[0], norm=LogNorm())
-    # spectralcube = MKIDs.makecube(class1, mp.array_size)
-    # plt.figure()
-    # plt.imshow(spectralcube[0], norm=LogNorm())
-    # spectralcube = MKIDs.makecube(class2, mp.array_size)
-    # plt.figure()
-    # plt.imshow(spectralcube[0], norm=LogNorm())
-    # spectralcube = MKIDs.makecube(allphotons, mp.array_size)
-    # plt.figure()
-    # plt.imshow(spectralcube[0], norm=LogNorm())
-    # plt.show()
-    #
-    # print(kmeans.predict([photons[1][0], photons[1][1]]))
-    #
-    # print(kmeans.cluster_centers_)
+
+if __name__ == "__main__":
+    # make_input()
+    reformat_obs_sem(save=False, plot=True)

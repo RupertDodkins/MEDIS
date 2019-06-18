@@ -2,7 +2,6 @@
 stackoverflow.com/questions/21100716/fast-arbitrary-distribution-random-sampling'''
 
 import numpy as np
-import matplotlib.pyplot as plt
 import scipy.misc
 import scipy.special as special
 

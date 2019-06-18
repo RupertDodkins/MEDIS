@@ -4,12 +4,11 @@ e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines
 """
 
 import numpy as np
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 from .distribution import *
 import random
 import pickle as pickle
 from medis.params import mp, ap, tp, iop, dp, sp
-from medis.Utils.plot_tools import quicklook_im, loop_frames
 from medis.Utils.misc import dprint
 from . import spectral as spec
 import medis.Detector.pipeline as pipe

@@ -9,7 +9,7 @@ import random
 import pickle as pickle
 import time
 from proper_mod import prop_run
-from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
+# from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
 from medis.Utils.misc import dprint
 from medis.params import ap,cp,tp,mp,sp,iop,dp
 import medis.Detector.mkid_artefacts as MKIDs
@@ -28,7 +28,6 @@ class Timeseries():
         required_servo = int(tp.servo_error[0])
         required_band = int(tp.servo_error[1])
         required_nframes = required_servo + required_band
-        dprint(required_nframes)
         # self.CPA_maps = np.random.normal(0, 0.1, (required_nframes, ap.nwsamp, ap.grid_size, ap.grid_size))
         self.CPA_maps = np.zeros((required_nframes, ap.nwsamp, ap.grid_size, ap.grid_size))
         self.tiptilt = np.zeros((ap.grid_size, ap.grid_size))
@@ -134,7 +133,6 @@ def applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread=None)
         dp = pickle.load(handle)
 
     spectrallist = read.get_packets(spectralcube, t, dp, mp)
-    print(len(spectrallist))
 
     if sp.save_obs:
         if o == 0:
