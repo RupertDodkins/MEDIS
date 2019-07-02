@@ -13,7 +13,7 @@ H2RGhyperCubeFile = './BinnedH2RGhyper.pkl'
 # tp.occulter_type = None  #
 
 def scale_to_luminos(obs_sequence):
-    scale_factor = ap.star_photons*1000*ap.exposure_time#/(ap.grid_size**2)
+    scale_factor = ap.star_photons_per_s*1000*ap.exposure_time#/(ap.grid_size**2)
     print(scale_factor)
     obs_sequence *= scale_factor*np.ones((ap.grid_size,ap.grid_size))
     return obs_sequence

@@ -116,7 +116,7 @@ def LCmap_speedup():
             # print diff, packets[span,1], iy,  span
             diff = packets[span,1] - iy
             span += 1
-            if span == ap.star_photons*ap.numframes:
+            if span == ap.star_photons_per_s*ap.numframes:
                 break
         print('lower and span', lower, span)
         upper = span -1

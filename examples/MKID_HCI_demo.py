@@ -28,7 +28,7 @@ sp.num_processes = 1
 
 ap.companion = True
 sp.get_ints=False
-ap.star_photons = int(1e6)
+ap.star_photons_per_s = int(1e6)
 ap.contrast = [10**-3.1,10**-3.1,10**-3.1,10**-4,10**-4,10**-4]
 ap.lods = [[-1.6,0.0],[-3.2,0.0],[-5,0.0],[1.6,0.0],[3.2,0.0],[5,0.0]]
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     ap.exposure_time = 0.1  # 0.001
 
     ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
-    iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons))
+    iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons_per_s))
 
     orig_hyper = gpd.run_medis()[:, :]
 

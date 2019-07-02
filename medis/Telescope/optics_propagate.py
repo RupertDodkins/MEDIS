@@ -28,6 +28,7 @@ class Wavefronts():
     """
     def __init__(self):
         self.save_locs = sp.save_locs
+        self.locs_seen = []
 
         # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
@@ -83,6 +84,7 @@ class Wavefronts():
                                     ap.grid_size), dtype=np.complex64)
         for iw in range(shape[0]):
             for iwf in range(shape[1]):
+                print(args, kwargs)
                 func(self.wf_array[iw, iwf], *args, **kwargs)
                 if self.save_locs is not None and func.__name__ in self.save_locs:
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
@@ -90,6 +92,8 @@ class Wavefronts():
 
         if self.save_locs is not None and func.__name__ in self.save_locs:
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
+            dprint(func.__name__)
+            self.locs_seen.append(func.__name__)
 
     def test_save(self, funcname):
         """
@@ -110,6 +114,24 @@ class Wavefronts():
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
+            dprint(funcname)
+            self.locs_seen.append(funcname)
+
+    def end(self):
+        """
+        Checks if the save_locs matches the functions seen otherwise save_E_fields is the wrong size for the output
+        :return:
+        """
+        self.iter_func(detector)
+
+        unseen_funcs = list(set(self.locs_seen).symmetric_difference(set(list(sp.save_locs))))
+        if len(unseen_funcs) > 0:
+            for func in unseen_funcs:
+                print('Function %s not used' % func)
+            print('Check your sp.save_locs match the telescope parameters (tp)')
+            raise AssertionError
+
+
 
 def detector(wfo):
     """
@@ -141,7 +163,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     iop.__dict__ = passpara[2].__dict__
     sp.__dict__ = passpara[3].__dict__
 
-    datacube = []
+    # datacube = []
     wfo = Wavefronts()
 
     # Defines aperture (baffle-before primary)
@@ -187,7 +209,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.use_ao:
         ao.flat_outside(wfo.wf_array)
         if tp.quick_ao:
-            CPA_maps = ao.quick_wfs(wfo.wf_array[:, 0])
+            CPA_maps, tiptilt = ao.quick_wfs(wfo.wf_array[:, 0])
         else:
             CPA_maps = PASSVALUE['CPA_maps']
             tiptilt = PASSVALUE['tiptilt']
@@ -196,11 +218,11 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
             CPA_maps, PASSVALUE['tiptilt'] = ao.tiptilt(wfo, CPA_maps, tiptilt)
 
         if tp.include_dm:
-            ao.quick_ao(wfo, CPA_maps)
+            ao.deformable_mirror(wfo, CPA_maps)
 
         if not tp.quick_ao:
             PASSVALUE['CPA_maps'] = ao.closedloop_wfs(wfo, CPA_maps)
-
+        ao.flat_outside(wfo.wf_array)
     else:
         ao.no_ao(wfo)
 
@@ -242,39 +264,13 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     ########################################
     # Coronagraph
     ########################################
-
     wfo.iter_func(coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
-    # if sp.get_ints: get_intensity(wfo.wf_array, sp, phase=False)
 
-    wfo.iter_func(detector)
+    # Final e_fields tests and saving
+    wfo.end()
 
-    shape = wfo.wf_array.shape
-    for iw in range(shape[0]):
-        wframes = np.zeros((ap.grid_size, ap.grid_size))
-        for io in range(shape[1]):
-            (wframe, sampling) = proper.prop_end(wfo.wf_array[iw, io])
-
-            wframes += wframe
-
-        datacube.append(wframes)
-
-    datacube = np.array(datacube)
-    datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)  # cirshift array for off-axis observing
-    datacube = np.abs(datacube)  # get intensity from datacube
-
-    ########################################
-    # Focal Plane
-    # #######################################
-
-    # Interpolating spectral cube from ap.nwsamp discreet wavelengths to ap.w_bins
-    if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:
-        wave_samps = np.linspace(0, 1, ap.nwsamp)
-        f_out = interp1d(wave_samps, datacube, axis=0)
-        new_heights = np.linspace(0, 1, ap.w_bins)
-        datacube = f_out(new_heights)
-
-
-    # dprint('Finished datacube at single timestep')
     wfo.save_E_fields = np.array(wfo.save_E_fields)
 
-    return datacube, wfo.save_E_fields
+    # hack to get prop_run to return what we want the psf variable is just an int that we don't care about
+    # the e fields get passed as the pixscale variable in prop_run
+    return 1, wfo.save_E_fields

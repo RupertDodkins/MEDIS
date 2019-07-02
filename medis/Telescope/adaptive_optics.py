@@ -6,9 +6,10 @@ import pickle as pickle
 from scipy import ndimage
 import proper
 from proper_mod import prop_dm
-from medis.params import tp, cp, mp, ap,iop
+from medis.params import tp, cp, mp, ap, iop
 from medis.Utils.misc import dprint
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im
+import matplotlib.pyplot as plt
 
 def adaptive_optics(wfo, iwf, iw, f_lens, beam_ratio, iter):
     # print 'Including Adaptive Optics'
@@ -95,23 +96,30 @@ def tiptilt(wfo, CPA_maps, tiptilt):
         aperture = np.round(proper.prop_ellipse(wf_array[iw, 0], tp.diam/2., tp.diam/2.)).astype(np.int)
 
         # calculate the tiptilt mirror from the phase measurement
+        # quicklook_im(CPA_maps[0,0])
+        # quicklook_im(np.arctan2(np.sin(CPA_maps[0, 0]), np.cos(CPA_maps[0, 0])))
+        # quicklook_wf(wf_array[iw, 0])
         coeffs, map = proper.prop_fit_zernikes(CPA_maps[0, iw], aperture, ap.grid_size*tp.beam_ratio/2., nzer=3, fit=True)
-        map = np.arctan2(np.sin(map), np.cos(map))
+        # map = np.arctan2(np.sin(map), np.cos(map))
 
         # add this increasingly small correction to the tiptilt mirror
-        tiptilt += map*aperture
+        tiptilt += np.arctan2(np.sin(map), np.cos(map))*aperture
 
         # update the phase measurement so that the DM predictions take the tiptilt corrections into consideration
         CPA_maps[0, iw] -= map*aperture
+        # quicklook_im(CPA_maps[0,0])
+        # quicklook_im(np.arctan2(np.sin(CPA_maps[0,0]), np.cos(CPA_maps[0,0])))
 
         # apply the tiptilt mirror
+        # quicklook_wf(wf_array[iw,0])
         proper.prop_add_phase(wf_array[iw,0], -tiptilt*wf_array[iw,0]._lamda/(2*np.pi))
+        # quicklook_wf(wf_array[iw, 0])
 
     wfo.test_save('tiptilt')
 
     return CPA_maps, tiptilt
 
-def quick_ao(wfo, CPA_maps):
+def deformable_mirror(wfo, CPA_maps):
     # TODO address the kludge. Is it still necessary
     # dprint('running quick_ao')
     wf_array = wfo.wf_array
@@ -124,18 +132,25 @@ def quick_ao(wfo, CPA_maps):
 
     shape = wf_array.shape
 
+    # print(CPA_maps.shape)
+    # quicklook_im(CPA_maps[0, 0])
+    # quicklook_wf(wf_array[0,0])
+
+
     for iw in range(shape[0]):
         for io in range(shape[1]):
             d_beam = 2 * proper.prop_get_beamradius(wf_array[iw,io])  # beam diameter
             act_spacing = d_beam / nact_across_pupil  # actuator spacing
             # Compensating for chromatic beam size
-            dm_map = CPA_maps[0, iw, ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
+            dm_map = CPA_maps[0,iw, ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
                                   ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1,
                      ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
                      ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1]
+            # quicklook_im(dm_map)
             f= interpolate.interp2d(list(range(dm_map.shape[0])), list(range(dm_map.shape[0])), dm_map)
             dm_map = f(np.linspace(0,dm_map.shape[0], nact), np.linspace(0, dm_map.shape[0], nact))
             # dm_map = proper.prop_magnify(CPA_map, map_spacing / act_spacing, nact)
+            # quicklook_im(dm_map)
 
             if tp.piston_error:
                 mean_dm_map = np.mean(np.abs(dm_map))
@@ -144,8 +159,10 @@ def quick_ao(wfo, CPA_maps):
 
 
             dm_map = -dm_map * proper.prop_get_wavelength(wf_array[iw,io]) / (4 * np.pi)  # <--- here
+            # quicklook_im(dm_map)
             dmap = proper.prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, N_ACT_ACROSS_PUPIL=nact, FIT=True)  # <-- here
             # dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)  # <-- here
+            # quicklook_wf(wf_array[0,0])
 
     # kludge to help with spiders
     for iw in range(shape[0]):
@@ -157,7 +174,7 @@ def quick_ao(wfo, CPA_maps):
 
         wf_array[iw, 0].wfarr = proper.prop_shift_center(amp_map*np.cos(smoothed)+1j*amp_map*np.sin(smoothed))
 
-    wfo.test_save('quick_ao')
+    wfo.test_save('deformable_mirror')
 
     return
 
@@ -169,19 +186,21 @@ def flat_outside(wf_array):
 def quick_wfs(wf_vec):
 
     sigma = [2, 2]
-    CPA_maps = np.zeros((len(wf_vec),ap.grid_size,ap.grid_size))
+    CPA_maps = np.zeros((1,len(wf_vec),ap.grid_size,ap.grid_size))
 
     dprint('running quick wfs')
 
     for iw in range(len(wf_vec)):
-        CPA_maps[iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wf_vec[iw])), sigma,
-                                                             mode='constant')
+        CPA_maps[iw] = unwrap_phase(proper.prop_get_phase(wf_vec[iw]))
+        # CPA_maps[iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wf_vec[iw])), sigma,
+        #                                                      mode='constant')
 
         # if tp.piston_error:
         #     var = 1e-4  #1e-11 #0.1 wavelengths 0.1*1000e-9
         #     CPA_maps[iw] = CPA_maps[iw] + np.random.normal(0,var,(CPA_maps[iw].shape[0],CPA_maps[iw].shape[1]))
+    tiptilt = np.zeros((ap.grid_size,ap.grid_size))
 
-    return CPA_maps
+    return CPA_maps, tiptilt
 
 def closedloop_wfs(wfo, CPA_maps):
     sigma = [2, 2]
@@ -189,7 +208,7 @@ def closedloop_wfs(wfo, CPA_maps):
         # CPA_maps[0, iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wfo.wf_array[iw, 0])),
         #                                                         sigma, mode='constant')
         CPA_maps[0, iw] = unwrap_phase(proper.prop_get_phase(wfo.wf_array[iw, 0]))
-        print(iw)
+        # print(iw)
         CPA_maps[0, iw] *= np.round(proper.prop_ellipse(wfo.wf_array[iw, 0], tp.diam/2., tp.diam/2.)).astype(np.int)
     if tp.servo_error:
         # for iw in range(len(wfo.wf_array[:, 0])):

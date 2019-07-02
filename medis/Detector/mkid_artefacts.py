@@ -408,7 +408,7 @@ def remove_bad(frame, response):
 #         potench_R_matrix[iR] = potench_R_matrix[iR]*Rprofile[iR]
 
 #     dist = Distribution(potench_R_matrix, interpolation=True)
-#     mp.phase_distortions = dist(ap.star_photons)
+#     mp.phase_distortions = dist(ap.star_photons_per_s)
 #     if plot:
 #         plt.plot(np.linspace(-0.7, 0.7, mp.res_elements), Rprofile)
 #         plt.figure()

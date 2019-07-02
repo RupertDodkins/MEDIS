@@ -127,12 +127,13 @@ def initialize_telescope():
         sp.save_locs = np.append(sp.save_locs, 'detector')
         sp.gui_map_type = np.append(sp.gui_map_type, 'amp')
 
-def applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread=None):
+def applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread=None, return_spectralcube=False):
 
     with open(iop.device_params, 'rb') as handle:
         dp = pickle.load(handle)
 
     spectrallist = read.get_packets(spectralcube, t, dp, mp)
+    dprint(len(spectrallist))
 
     if sp.save_obs:
         if o == 0:
@@ -140,13 +141,13 @@ def applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread=None)
         command = read.get_obs_command(spectrallist, t, o)
         photon_table_queue.put(command)
 
+    if return_spectralcube:
+        spectralcube = MKIDs.makecube(spectrallist, mp.array_size)
 
-    spectralcube = MKIDs.makecube(spectrallist, mp.array_size)
+        # if EfieldsThread:
+        #     EfieldsThread.photons = spectrallist
 
-    # if EfieldsThread:
-    #     EfieldsThread.photons = spectrallist
-
-    return spectralcube
+        return spectralcube
 
 sentinel = None
 def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queue, outqueue):
@@ -160,13 +161,14 @@ def realtime_stream(EfieldsThread, e_fields_sequence, inqueue, photon_table_queu
         inqueue.put(sentinel)
 
     for t in range(ap.startframe, ap.numframes):
+        print(EfieldsThread.save_E_fields[:].shape)
         EfieldsThread.qt, EfieldsThread.save_E_fields[:] = outqueue.get()
 
         for o in range(len(ap.contrast) + 1):
             spectralcube = np.abs(EfieldsThread.save_E_fields[-1, :, o]) ** 2
 
             if tp.detector == 'MKIDs':
-                spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread)
+                spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue, EfieldsThread, return_spectralcube=True)
 
             # EfieldsThread.save_E_fields[-1] = spectralcube
             EfieldsThread.sct.integration += spectralcube
@@ -199,20 +201,22 @@ def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
 
     for t in range(ap.startframe, ap.numframes):
         dprint(t)
-        now = time.time()
         qt, save_E_fields = outqueue.get()
-        duration = time.time() - now
 
         for o in range(len(ap.contrast) + 1):
             spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
 
             if tp.detector == 'MKIDs':
-                spectralcube = applymkideffects(spectralcube, t, o, photon_table_queue)
+                applymkideffects(spectralcube, t, o, photon_table_queue, return_spectralcube=False)
 
-        # save_E_fields[-1] = spectralcube
-        e_fields_sequence[qt - ap.startframe] = save_E_fields
+        if sp.save_fields:
+            # save_E_fields[-1] = spectralcube
+            e_fields_sequence[qt - ap.startframe] = save_E_fields
 
-    return e_fields_sequence
+    if sp.save_fields:
+        return e_fields_sequence
+    else:
+        return None
 
 def run_medis(EfieldsThread=None, realtime=False, plot=False):
 

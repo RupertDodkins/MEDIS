@@ -1,6 +1,6 @@
 import numpy as np
 
-# import matplotlib.pylab as plt
+import matplotlib.pylab as plt
 from matplotlib.colors import LogNorm, SymLogNorm
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -368,10 +368,17 @@ class MyWindow(QWidget):
         except AttributeError:
             True
 
+        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+                  '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+                  '#bcbd22', '#17becf']
+
         # self.metricsGrid.axes[0,0].cla()
         self.metricsGrid.ims[0,0] = self.metricsGrid.axes[0,0].imshow(np.sum(self.EfieldsThread.sct.integration,
                                                                              axis=0), norm=LogNorm(),
                                                                       origin='lower', cmap='cividis')
+        for i, loc in enumerate(sp.metric_args[0]):
+            circle1 = plt.Circle(loc, radius=4, color=colors[i], fill=False, linewidth=2)
+            self.metricsGrid.axes[0,0].add_artist(circle1)
         self.metricsGrid.figure.colorbar(self.metricsGrid.ims[0,0], cax=self.metricsGrid.cax[0],
                                          orientation='vertical')
 
@@ -438,9 +445,6 @@ class MyWindow(QWidget):
                 self.metricsGrid.axes[r + 1, 0].set_title(f'constant monochromatic image')
             elif dims == 2 and type(metric) is list:
                 self.metricsGrid.ims[r + 1, 0] = []
-                colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
-                              '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
-                              '#bcbd22', '#17becf']
                 for i in range(len(metric)):
                     self.metricsGrid.ims[r + 1, 0].append(self.metricsGrid.axes[r + 1, 0].plot(metric[i], c=colors[i], label=args[i]))
                 if self.EfieldsThread.qt < sp.gui_samp:

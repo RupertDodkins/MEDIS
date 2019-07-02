@@ -153,7 +153,7 @@ def get_intensity_dist(inten):
 def make_intensity_map(cube, size, plot=False):
     # print 'Making a map of photon locations for all phases and times'
     int_map = np.zeros((size[1],size[0]))
-    print(len(cube), len(cube[0]), int_map.shape)
+    # print(len(cube), len(cube[0]), int_map.shape)
     for x in range(size[1]):
         for y in range(size[0]):
             int_map[x, y] = len(cube[x][y])
@@ -203,7 +203,7 @@ def make_datacube(cube, size):
     return datacube
 
 def scale_to_luminos(obs_sequence):
-    obs_sequence *= ap.star_photons*np.ones((ap.grid_size,ap.grid_size))
+    obs_sequence *= ap.star_photons_per_s*np.ones((ap.grid_size,ap.grid_size))
     return obs_sequence
 
 def stack_obs_sequence(obs_sequence):

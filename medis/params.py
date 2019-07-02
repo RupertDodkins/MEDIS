@@ -59,6 +59,9 @@ class IO_params:
         self.IQpixel = os.path.join(self.testdir, './novary64act_medr0_piston.txt')
         self.measured_var = os.path.join(self.testdir, 'measured_var.pkl')
 
+        # Machine Learning
+        self.ml_meta = os.path.join(self.testdir, 'ml_meta.pkl')
+        self.hdf5_data_dir = self.testdir
         print(self.datadir)
 
     def update(self, new_name='example1'):
@@ -117,7 +120,6 @@ class Simulation_params:
         self.save_fields = True
 
 
-
 class Astro_params:
     """
     Default parameters for the astronomical system under investigation
@@ -125,7 +127,7 @@ class Astro_params:
     """
     def __init__(self):
         # Total number of photons on the array for a timestep shared between all wavelengths
-        self.star_photons = int(1e5) # # A 5 apparent mag star 1e6 cts/cm^2/s
+        self.star_photons_per_s = int(1e5) # # A 5 apparent mag star 1e6 cts/cm^2/s
         self.companion = True
         self.contrast = [0.05]
         self.C_spec = 1.5  # the gradient of the increase in contrast towards shorter wavelengths
@@ -298,11 +300,11 @@ class CAOS_params:
     :model: either single frozen layer, hcipy_standard or evolving (apply variation to frozen some parameter)
     """
     def __init__(self):
-        self.model = 'zernike'  # single|hcipy_standard|evolving|zernike|sine
+        self.model = 'single'  # single|hcipy_standard|evolving|zernike|sine
         self.show_caosparams= True  # for control over all other variables
         self.r0 = 100#0.4
         self.L0 = 10
-        self.v = 5  #1
+        self.v = 10  #1
         self.h = 100
 
         # original parameters

@@ -18,7 +18,7 @@ sp.save_obs = False
 sp.show_cube = False
 sp.save_obs = False
 sp.show_wframe = False
-ap.star_photons = 1e8
+ap.star_photons_per_s = 1e8
 
 
 tp.servo_error= [0,1]#[0,1]#False # No delay and rate of 1/frame_time
@@ -26,7 +26,7 @@ tp.quick_ao = True
 tp.obscure = True
 tp.use_ao = True
 tp.detector = 'ideal'#'MKIDs'#'ideal'#
-# ap.star_photons*=1000
+# ap.star_photons_per_s*=1000
 tp.diam = 10
 tp.beam_ratio = 0.5
 tp.ao_act = 50

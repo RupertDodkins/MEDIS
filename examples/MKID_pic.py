@@ -20,7 +20,7 @@ sp.return_E = True
 # Astro Parameters
 ap.companion = False
 # ap.contrast = [5e-3, 1e-3]
-ap.star_photons = int(1e7) # # G type star 10ly away gives 1e6 cts/cm^2/s
+ap.star_photons_per_s = int(1e7) # # G type star 10ly away gives 1e6 cts/cm^2/s
 ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
 ap.exposure_time = 0.1  # 0.001
 
