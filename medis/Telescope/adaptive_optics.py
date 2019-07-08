@@ -191,7 +191,7 @@ def quick_wfs(wf_vec):
     dprint('running quick wfs')
 
     for iw in range(len(wf_vec)):
-        CPA_maps[iw] = unwrap_phase(proper.prop_get_phase(wf_vec[iw]))
+        CPA_maps[0, iw] = unwrap_phase(proper.prop_get_phase(wf_vec[iw]))
         # CPA_maps[iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wf_vec[iw])), sigma,
         #                                                      mode='constant')
 

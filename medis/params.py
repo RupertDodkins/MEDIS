@@ -134,7 +134,7 @@ class Astro_params:
         self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
         self.sample_time = 0.01
         self.startframe = 0  # useful for things like RDI
-        self.numframes = 100  # number of timesteps in the simulation
+        self.numframes = 20  # number of timesteps in the simulation
 
         # Wavelength and Wavefront Array Settings
         # In optics_propagate(), proper initially takes N  discreet wavelengths evenly spaced in ap.band, where N is
