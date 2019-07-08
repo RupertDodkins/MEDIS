@@ -215,6 +215,7 @@ def save_fields(e_fields_sequence, fields_file='hyper.pkl'):
     elif fields_file[-3:] == 'hdf' or fields_file[-3:] == '.h5':
         with h5py.File(fields_file, 'w') as hf:
             hf.create_dataset('data', data=e_fields_sequence)
+            hf.attrs.create('wind_speed', 10)
     else:
         print('Extension not recognised')
 
