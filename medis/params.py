@@ -60,6 +60,13 @@ class IO_params:
 
         print(self.datadir)
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
     def update(self, new_name='example1'):
         datadir = self.datadir
         self.__init__(testname=new_name, datadir=datadir)
@@ -110,6 +117,13 @@ class Simulation_params:
         self.save_locs = None
         self.gui_map_type = None
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
 
 class Astro_params:
     """
@@ -140,6 +154,13 @@ class Astro_params:
         # must be bigger than the beam size to avoid FT effects at edges; must be factor of 2
         # NOT the size of your detector/# of pixels
         self.interp_sample = True  # Set to interpolate wavelengths from ap.nwsamp to ap.w_bins
+
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 
 class Telescope_params:
@@ -204,6 +225,13 @@ class Telescope_params:
         # dish_area = 20. # Palomar is 20 m^2 including hole.
         # total_ct_rate = ct_rate * dish_area/1e-4
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
     def check_args(self):
         assert self.occulter_type in [None, 'None', 'Solid', 'Gaussian', '8th_Order', 'Vortex', 'None (Lyot Stop)']
         # assert self.aber_params['CPA'] in [None, 'Static', 'Quasi', 'Wave', 'Amp', 'test','Both','Phase']
@@ -249,6 +277,13 @@ class MKID_params:
         self.lod = 8  # 8 pixels in these upsampled images = one lambda/d
         self.nlod = 10  # 3 #how many lambda/D do we want to calculate out to
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
 
 class Device_params:
     """
@@ -262,12 +297,26 @@ class Device_params:
         self.basesDeg = None
         self.hot_pix = None
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
 
 class H2RG_params:
     def __init__(self):
         self.use_readnoise = True
         self.readnoise = 30
         self.erate = 1
+
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 
 class FPWFS_params:
@@ -279,6 +328,13 @@ class FPWFS_params:
         self.exclusionzone = 12.
         # self.controlregion = [50,80,35,50] # x1, x2, y1, y2
         self.controlregion = [40,100,20,60] # y1, y2, x1, x2
+
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 
 class CAOS_params:
@@ -309,6 +365,13 @@ class CAOS_params:
         # atm_scale = 512.
         # atm_size = 1. # m
         # atm_spat_rate = 1. # pix shift
+
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 
 ap = Astro_params()
