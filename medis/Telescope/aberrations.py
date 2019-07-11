@@ -8,6 +8,7 @@ from proper_mod import prop_psd_errormap
 import medis.Atmosphere.atmos as atmos
 import medis.Utils.rawImageIO as rawImageIO
 import medis.Utils.misc as misc
+import medis.Telescope.foreoptics as fo
 from medis.params import tp, cp, mp, ap, iop
 from medis.Utils.misc import dprint
 import astropy.io.fits as fits
@@ -37,6 +38,7 @@ def abs_zeros(wf_array):
     shape = wf_array.shape
     for iw in range(shape[0]):
         for io in range(shape[1]):
+            proper.prop_circular_aperture(wf_array[iw,io], tp.diam/2)
             bad_locs = np.logical_or(np.real(wf_array[iw,io].wfarr) == -0,
                                      np.imag(wf_array[iw,io].wfarr) == -0)
             wf_array[iw,io].wfarr[bad_locs] = 0 +0j
@@ -125,7 +127,6 @@ def circularise(prim_map):
     new_prim = np.transpose(new_prim)
     return new_prim
 
-
 def add_aber(wfo, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
     """
     loads a phase error map and adds aberrations using proper.prop_add_phase
@@ -200,6 +201,14 @@ def add_aber(wfo, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
                 #     if aber_params['OOPP']:
                 #         proper.prop_propagate(wfo.wf_array[iw, io], f_lens + f_lens * (1 - 1. / aber_params['OOPP'][surf]))
                 #         proper.prop_lens(wfo.wf_array[iw, io], f_lens, "OOPP")
+                raise NotImplementedError
+
+    # if you're getting the weird pixelated ringing effect
+    # if tp.obscure:
+    #     wfo.iter_func(fo.add_obscurations, M2_frac=0.9 / 8, d_primary=tp.diam, legs_frac=tp.legs_frac * 0)
+    #     # wfo.wf_array = aber.abs_zeros(wfo.wf_array)
+    #     wfo.wf_array = abs_zeros(wfo.wf_array)
+
     wfo.test_save('add_aber')
 
 

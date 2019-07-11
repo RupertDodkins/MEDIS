@@ -132,11 +132,6 @@ def deformable_mirror(wfo, CPA_maps):
 
     shape = wf_array.shape
 
-    # print(CPA_maps.shape)
-    # quicklook_im(CPA_maps[0, 0])
-    # quicklook_wf(wf_array[0,0])
-
-
     for iw in range(shape[0]):
         for io in range(shape[1]):
             d_beam = 2 * proper.prop_get_beamradius(wf_array[iw,io])  # beam diameter
@@ -160,8 +155,8 @@ def deformable_mirror(wfo, CPA_maps):
 
             dm_map = -dm_map * proper.prop_get_wavelength(wf_array[iw,io]) / (4 * np.pi)  # <--- here
             # quicklook_im(dm_map)
-            dmap = proper.prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, N_ACT_ACROSS_PUPIL=nact, FIT=True)  # <-- here
-            # dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)  # <-- here
+            # dmap = proper.prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, N_ACT_ACROSS_PUPIL=nact, FIT=True)  # <-- here
+            dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)  # <-- here
             # quicklook_wf(wf_array[0,0])
 
     # kludge to help with spiders
@@ -184,8 +179,6 @@ def flat_outside(wf_array):
             proper.prop_circular_aperture(wf_array[iw,io], 1, NORM=True)
 
 def quick_wfs(wf_vec):
-
-    sigma = [2, 2]
     CPA_maps = np.zeros((1,len(wf_vec),ap.grid_size,ap.grid_size))
 
     dprint('running quick wfs')

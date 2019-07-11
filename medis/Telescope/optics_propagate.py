@@ -128,9 +128,8 @@ class Wavefronts():
         if len(unseen_funcs) > 0:
             for func in unseen_funcs:
                 print('Function %s not used' % func)
-            print('Check your sp.save_locs match the telescope parameters (tp)')
+            print('Check your sp.save_locs match the optics set by telescope parameters (tp)')
             raise AssertionError
-
 
 
 def detector(wfo):
@@ -176,10 +175,16 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     #  the array from infinity. The delay length thus corresponds to a different
     #  phase offset at a particular frequency.
     # quicklook_wf(wfo.wf_array[0,0])
+
+    if tp.obscure:
+        wfo.iter_func(fo.add_obscurations, M2_frac=1/8, d_primary=tp.diam, legs_frac=tp.legs_frac)
+
     if tp.use_atmos:
         # TODO is this supposed to be in the for loop over w?
         aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['iter']))
         # quicklook_wf(wfo.wf_array[0, 0])
+
+
 
     # quicklook_wf(wfo.wf_array[0,0])
     if tp.rot_rate:
@@ -200,8 +205,9 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     # Abberations before AO
     if tp.aber_params['CPA']:
         aber.add_aber(wfo, tp.f_lens, tp.diam, tp.aber_params, PASSVALUE['iter'], lens_name='CPA1')
-        wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
-    # quicklook_wf(wfo.wf_array[0, 0])
+        # wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
+        # wfo.wf_array = aber.abs_zeros(wfo.wf_array)
+
     ########################################
     # AO
     #######################################
@@ -226,14 +232,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     else:
         ao.no_ao(wfo)
 
-    if tp.obscure:
-        # TODO check this was resolved and spiders can be applied earlier up the chain
-        # spiders are introduced here for now since the phase unwrapping seems to ignore them and hence so does the DM
-        # Check out http://scikit-image.org/docs/dev/auto_examples/filters/plot_phase_unwrap.html for masking argument
-        print('warning adding obscurations after the AO!!')
-        wfo.iter_func(fo.add_obscurations, M2_frac=1/4, d_primary=tp.diam)
-        wfo.wf_array = aber.abs_zeros(wfo.wf_array)
-
     # TODO Verify this
     # if tp.active_modulate:
     #     fpwfs.modulate(wf, w, PASSVALUE['iter'])
@@ -248,7 +246,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
         # TODO does this need to be here?
         # wfo.iter_func(fo.add_obscurations, tp.diam/4, legs=False)
-        wfo.wf_array = aber.abs_zeros(wfo.wf_array)
+        # wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
     # Low-order aberrations
     if tp.use_zern_ab:

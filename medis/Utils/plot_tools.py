@@ -31,7 +31,7 @@ def fmt(x, pos):
 
 
 def grid(datacube, nrows=2, logAmp=False, axis=None, width=None, titles=None, ctitles=None, annos=None,
-         scale=1, vmins=None, vmaxs=None, show=True):
+         scale=1, vmins=None, vmaxs=None, show=True, colormap='viridis'):
     import matplotlib
     # dprint(matplotlib.is_interactive())
     matplotlib.interactive(1)
@@ -58,13 +58,13 @@ def grid(datacube, nrows=2, logAmp=False, axis=None, width=None, titles=None, ct
                 if np.min(datacube[m]) <= 0:
                     # datacube[m] = np.abs(datacube[m]) + 1e-20
                     im = axes[y, x].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmins[m],
-                                           vmax=vmaxs[m], norm=SymLogNorm(linthresh=1e-7), cmap="YlGnBu_r")
+                                           vmax=vmaxs[m], norm=SymLogNorm(linthresh=1e-7), cmap=colormap)
                 else:
                     im = axes[y,x].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmins[m],
-                                          vmax=vmaxs[m], norm=LogNorm(), cmap="YlGnBu_r")
+                                          vmax=vmaxs[m], norm=LogNorm(), cmap=colormap)
             else:
                 im = axes[y,x].imshow(datacube[m], interpolation='none', origin='lower',
-                                      vmin=vmins[m], vmax=vmaxs[m], cmap='viridis')#"YlGnBu_r"
+                                      vmin=vmins[m], vmax=vmaxs[m], cmap=colormap)#"YlGnBu_r"
             if titles is not None:
                 axes[y, x].set_title(str(titles[m]))
             props = dict(boxstyle='square', facecolor='k', alpha=0.5)

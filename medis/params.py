@@ -302,10 +302,10 @@ class CAOS_params:
     def __init__(self):
         self.model = 'single'  # single|hcipy_standard|evolving|zernike|sine
         self.show_caosparams= True  # for control over all other variables
-        self.r0 = 100#0.4
+        self.r0 = 0.4#0.4
         self.L0 = 10
         self.v = 10  #1
-        self.h = 100
+        self.h = 10
 
         # original parameters
         # self.frame_time = 0.01  # this determines the maximum frame rate of the simulation
