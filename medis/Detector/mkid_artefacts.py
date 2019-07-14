@@ -4,7 +4,7 @@ e.g. uncertainty in responsivity, R, dead pixels, hot pixels, missing feedlines
 """
 
 import numpy as np
-# from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 from .distribution import *
 import random
 import pickle as pickle
@@ -57,7 +57,7 @@ def initialize():
         # dp.response_map = create_hot_pix(dp.response_map)
         if mp.hot_pix:
             dp.hot_locs = create_hot_pix(mp)
-            dp.hot_per_step = int(np.round(ap.exposure_time*mp.hot_bright))
+            dp.hot_per_step = int(np.round(ap.sample_time*mp.hot_bright))
         # dp.response_map = create_bad_pix_center(dp.response_map)
     # quicklook_im(dp.response_map)
     dp.Rs = assign_spectral_res(plot=False)
@@ -283,6 +283,7 @@ def get_hot_packets(dp):
 
     photons = np.zeros((3, dp.hot_per_step))
     phases = np.random.uniform(-120, 0, dp.hot_per_step)
+    print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
     photons[0, :] = phases
     # dprint((photons[:,0:],np.transpose(dp.hot_locs)*np.ones((dp.hot_per_step,2))))
     photons[1:,:] = dp.hot_locs

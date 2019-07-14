@@ -13,6 +13,8 @@ import pickle
 from medis.Utils.misc import dprint
 from medis.Dashboard.twilight import sunlight, twilight
 
+make_figure = 2
+
 sp.return_E = True
 
 # Astro Parameters
@@ -67,34 +69,30 @@ mp.bg_mean = -10
 mp.bg_sig = 40
 mp.pix_yield = 0.7  # check dis
 
-# sp.get_ints = {'w': [0], 'c': [0]}
-
-# ***** These need to be outside the if statement to have an effect!! ****
-iop.aberdata = 'Palomar' # Rename Data Directory
-iop.update("first_principle/")
-if os.path.exists(iop.int_maps):
-    os.remove(iop.int_maps)
-
-tp.detector = 'ideal'
-
-sp.save_locs = np.array(['add_atmos', 'add_aber', 'deformable_mirror', 'add_aber', 'prop_mid_optics'])
-sp.gui_map_type = np.array(['phase', 'phase', 'phase', 'phase', 'amp'])
-phase_ind = range(4)
 
 
-if __name__ == '__main__':
+if make_figure == 1:
 
-    # Starting the Simulation
-    print("Starting ideal-detector example")
-    fields = gpd.run_medis()[0, :, 0, 0, ap.grid_size//4:-ap.grid_size//4, ap.grid_size//4:-ap.grid_size//4]
-    print("finished Ideal-loop")
+    tp.detector = 'ideal'
+    iop.update("first_principle/detector_%s" % tp.detector)
+    sp.save_locs = np.array(['add_atmos', 'add_aber', 'deformable_mirror', 'add_aber', 'prop_mid_optics'])
+    sp.gui_map_type = np.array(['phase', 'phase', 'phase', 'phase', 'amp'])
+    phase_ind = range(4)
 
-    pupils = np.angle(fields[phase_ind], deg=False)
-    focals = np.absolute(fields[4:])
-    grid(pupils, logAmp=False, colormap=twilight, vmins=[-np.pi]*len(sp.save_locs), vmaxs=[np.pi]*len(sp.save_locs))
-    grid(focals, logAmp=True, colormap='viridis')
+    if __name__ == '__main__':
+        fields = gpd.run_medis()[0, :, 0, 0, ap.grid_size//4:-ap.grid_size//4, ap.grid_size//4:-ap.grid_size//4]
+        pupils = np.angle(fields[phase_ind], deg=False)
+        focals = np.absolute(fields[4:])
+        grid(pupils, logAmp=False, colormap=twilight, vmins=[-np.pi]*len(sp.save_locs), vmaxs=[np.pi]*len(sp.save_locs))
+        grid(focals, logAmp=True, colormap='viridis')
 
+elif make_figure == 2:
 
-if __name__ == "__main__":
+    tp.detector = 'MKIDs'
+    iop.update("first_principle/detector_%s" % tp.detector)
 
-    fields = gpd.run_medis(realtime=False)
+    if __name__ == "__main__":
+        fields = gpd.run_medis(realtime=False)
+        print(fields.shape)
+        plt.imshow(np.absolute(fields[0,0,0,0]))
+        plt.show()

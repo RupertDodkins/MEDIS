@@ -58,7 +58,7 @@ def get_packets(datacube, step, dp,mp):
 
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
     dprint(f"# events ={num_events}, star photons = {ap.star_photons_per_s}, "
-           f"sum(datacube) = {np.sum(datacube),}, Exposure Time ={ap.exposure_time}")
+           f"sum(datacube) = {np.sum(datacube),}, Exposure Time ={ap.sample_time}")
     if num_events * sp.num_processes > 1.0e9:
         dprint(num_events)
         dprint('Possibly too many photons for memory. Are you sure you want to do this? Remove exit() if so')
@@ -76,10 +76,11 @@ def get_packets(datacube, step, dp,mp):
 
     photons = temp.sample_cube(datacube, num_events)
 
+    photons = spec.calibrate_phase(photons)
+
     if mp.hot_pix:
         hot_photons = MKIDs.get_hot_packets(dp)
         photons = np.hstack((photons, hot_photons))
-    photons = spec.calibrate_phase(photons)
 
     photons = temp.assign_calibtime(photons, step)
 
