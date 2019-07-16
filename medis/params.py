@@ -225,17 +225,20 @@ class MKID_params:
     def __init__(self):
         self.bad_pix = False
         # self.interp_sample=True # avoids the quantization error in creating the datacube
-        self.response_map = None
+        self.QE_map = None
         self.wavecal_coeffs = [1./12, -157]  # assume linear for now 800nm = -90deg, 1500nm = -30deg
         self.phase_uncertainty = False  # True
         self.phase_background = False
-        self.respons_var = False
+        self.QE_var = False
         self.remove_close = False
+        self.dark_counts = False
         self.array_size = np.array([129,129])#np.array([125,80])#np.array([125,125])#
         # self.total_pix = self.array_size[0] * self.array_size[1]
         self.pix_yield = 0.9
         self.hot_pix = 0  # Number of hot pixels
-        self.hot_bright = 1000  # Number of counts/time a hot pixel registers
+        self.hot_bright = 1e3  # Number of counts/s a hot pixel registers
+        self.dark_pix = 100  # Number of dark count pixels
+        self.dark_bright = 50  # Number of counts/s on average for dark count pixels
         self.threshold_phase = 0#-30 # quite close to 0, basically all photons will be detected.
 
         self.max_count = 2500.  # cts/s
@@ -267,11 +270,12 @@ class Device_params:
     Perhaps it could be part of MKID_params
     """
     def __init__(self):
-        self.response_map = None
+        self.QE_map = None
         self.Rs = None
         self.sigs = None
         self.basesDeg = None
         self.hot_pix = None
+        self.dark_pix = None
 
 
 class H2RG_params:

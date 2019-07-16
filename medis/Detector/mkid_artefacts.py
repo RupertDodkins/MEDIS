@@ -35,31 +35,34 @@ def remove_close_photons(cube):
     return photons
 
 def makecube(packets, array_size):
-    cube = pipe.arange_into_cube(packets, (array_size[0], array_size[1]))
+    stem = pipe.arange_into_stem(packets, (array_size[0], array_size[1]))
 
-    if mp.remove_close:
-        cube = remove_close_photons(cube)
+    # if mp.remove_close:
+    #     cube = remove_close_photons(cube)
 
     # Interpolating spectral cube from ap.nwsamp discreet wavelengths
     # if sp.show_cube or sp.return_spectralcube:
-    spectralcube = pipe.make_datacube(cube, (array_size[0], array_size[1], ap.w_bins))
+    spectralcube = pipe.make_datacube(stem, (array_size[0], array_size[1], ap.w_bins))
 
     return spectralcube
 
 def initialize():
     # dp = device_params()
     dprint(f"dp.hot_pix set to {dp.hot_pix}")
-    dp.response_map = array_response(plot=False)
+    dp.QE_map = array_QE(plot=False)
     if mp.pix_yield == 1:
         mp.bad_pix =False
     if mp.bad_pix == True:
-        dp.response_map = create_bad_pix(dp.response_map)
-        # dp.response_map = create_hot_pix(dp.response_map)
+        dp.QE_map = create_bad_pix(dp.QE_map)
+        # dp.QE_map = create_hot_pix(dp.QE_map)
+        if mp.dark_counts:
+            dp.dark_locs = create_hot_pix(mp)
+            dp.dark_per_step = int(np.round(ap.sample_time*mp.dark_bright))
         if mp.hot_pix:
             dp.hot_locs = create_hot_pix(mp)
             dp.hot_per_step = int(np.round(ap.sample_time*mp.hot_bright))
-        # dp.response_map = create_bad_pix_center(dp.response_map)
-    # quicklook_im(dp.response_map)
+        # dp.QE_map = create_bad_pix_center(dp.QE_map)
+    # quicklook_im(dp.QE_map)
     dp.Rs = assign_spectral_res(plot=False)
     dp.sigs = get_R_hyper(dp.Rs, plot=False)
     dprint(f"dp.sigs.shape ={ dp.sigs.shape}")
@@ -72,6 +75,14 @@ def initialize():
         pickle.dump(dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
     return dp
 
+def add_dark(photons, step):
+
+    for ip, p in enumerate(photons):
+        # x, y = p[0], p[1]
+
+        stem[x][y].append([step, 0])
+
+    return stem
 
 def truncate_array(frames):
     """Make non-square array"""
@@ -91,23 +102,21 @@ def truncate_array(frames):
     # frames = frames[:, :, 22:-23]
     return frames
 
-
-def array_response(plot=False):
+def array_QE(plot=False):
     """Assigns each pixel a phase responsivity between 0 and 1"""
     dist = Distribution(gaussian(mp.g_mean, mp.g_sig, np.linspace(0, 1.2, mp.res_elements)), interpolation=True)
-    response = dist(mp.array_size[0] * mp.array_size[1])[0]/float(mp.res_elements)
+    QE = dist(mp.array_size[0] * mp.array_size[1])[0]/float(mp.res_elements)
     if plot:
         plt.xlabel('Responsivity')
         plt.ylabel('#')
-        plt.hist(response)
+        plt.hist(QE)
         plt.show()
-    response = np.reshape(response, mp.array_size[::-1])
+    QE = np.reshape(QE, mp.array_size[::-1])
     if plot:
-        quicklook_im(response)#plt.imshow(response)
+        quicklook_im(QE)#plt.imshow(QE)
         # plt.show()
 
-    return response
-
+    return QE
 
 def assign_spectral_res(plot=False):
     """Assigning each pixel a spectral resolution (at 800nm)"""
@@ -123,7 +132,6 @@ def assign_spectral_res(plot=False):
     # plt.imshow(Rs)
     # plt.show()
     return Rs
-
 
 def get_R_hyper(Rs, plot=False):
     """Each pixel of the array has a matrix of probabilities that depends on the input wavelength"""
@@ -164,27 +172,27 @@ def get_R_hyper(Rs, plot=False):
     return sigs_p
 
 
-def apply_phase_distort_array(photons, sigs):
+def apply_phase_offset_array(photons, sigs):
 
     wavelength = spec.wave_cal(photons[1])
 
-    plt.xlabel('Photons')
-    plt.ylabel('#')
-    plt.title('Photons Distortion Histogram')
-    plt.hist(photons[1], bins=800)
-    plt.figure()
+    # plt.xlabel('Photons')
+    # plt.ylabel('#')
+    # plt.title('Photons Distortion Histogram')
+    # plt.hist(photons[1], bins=800)
+    # plt.figure()
     idx = spec.wave_idx(wavelength)
     bad = np.where(idx<0)[0]
-    plt.hist(wavelength, bins=800)
-    plt.xlabel('Wavelength')
-    plt.ylabel('#')
-    plt.title('Wavelength Distortion Histogram')
-    plt.figure()
-    plt.xlabel('Index')
-    plt.ylabel('#')
-    plt.title('Index Distortion Histogram')
-    plt.hist(idx, bins=800)
-    plt.show()
+    # plt.hist(wavelength, bins=800)
+    # plt.xlabel('Wavelength')
+    # plt.ylabel('#')
+    # plt.title('Wavelength Distortion Histogram')
+    # plt.figure()
+    # plt.xlabel('Index')
+    # plt.ylabel('#')
+    # plt.title('Index Distortion Histogram')
+    # plt.hist(idx, bins=800)
+    # plt.show()
     # dprint((sigs[0,:25,:25],idx.shape,sigs.shape))#,sigs[idx].shape))
 
     distortion = np.random.normal(np.zeros((photons[1].shape[0])),
@@ -278,16 +286,25 @@ def create_bad_pix_center(responsivities):
 
     return responsivities
 
-
 def get_hot_packets(dp):
-
-    photons = np.zeros((3, dp.hot_per_step))
+    photons = np.zeros((4, dp.hot_per_step))
     phases = np.random.uniform(-120, 0, dp.hot_per_step)
     print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
-    photons[0, :] = phases
-    # dprint((photons[:,0:],np.transpose(dp.hot_locs)*np.ones((dp.hot_per_step,2))))
-    photons[1:,:] = dp.hot_locs
-    # dprint(photons)
+    photons[1, :] = phases
+    photons[2:,:] = dp.hot_locs
+
+    return photons
+
+def get_dark_packets(dp):
+    photons = np.zeros((4, dp.dark_per_step))
+    dist = Distribution(gaussian(0, 0.25, np.linspace(0, 1, mp.res_elements)), interpolation=False)
+    phases = (dist(dp.dark_per_step)[0]) / float(dp.dark_per_step - 0.5)
+    # phases = np.random.uniform(-120, 0, dp.dark_per_step) *
+    plt.hist(phases)
+    plt.show(block=True)
+    print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
+    photons[1, :] = phases
+    photons[2:,:] = dp.dark_locs
 
     return photons
 
@@ -303,10 +320,10 @@ def create_hot_pix(mp):
     return [bad_x, bad_y]
 
 
-def remove_bad(frame, response):
+def remove_bad(frame, QE):
     bad_map = np.ones((ap.grid_size,ap.grid_size))
-    bad_map[response[:-1,:-1]==0] = 0
-    # quicklook_im(response, logAmp =False)
+    bad_map[QE[:-1,:-1]==0] = 0
+    # quicklook_im(QE, logAmp =False)
     # quicklook_im(bad_map, logAmp =False)
     frame = frame*bad_map
     return frame
@@ -318,8 +335,8 @@ def remove_bad(frame, response):
 #     f= interpolate.interp2d(range(datacube.shape[0]), range(datacube.shape[0]), datacube)
 #     dm_map = f(np.linspace(0,dm_map.shape[0],nact),np.linspace(0,dm_map.shape[0],nact))
 
-# def apply_false_counts(response):
-#   return response
+# def apply_false_counts(QE):
+#   return QE
 
 # def sample_fake_cube(frames, num_events):
 #     dist = Distribution(uniform, interpolation=False)
@@ -331,10 +348,10 @@ def remove_bad(frame, response):
 
 
 # def get_phase_background(R, samples=1):
-#     #dist = Distribution(gaussian(bg_mean*response, bg_sig, np.linspace(bg_mean-bg_sig, bg_mean+bg_sig, res_elements)), interpolation=False)
+#     #dist = Distribution(gaussian(bg_mean*QE, bg_sig, np.linspace(bg_mean-bg_sig, bg_mean+bg_sig, res_elements)), interpolation=False)
 #     dist = Distribution(gaussian(mp.g_mean, 0.4, np.linspace(0, 1, mp.res_elements)), interpolation=False)
 #     plt.plot(gaussian(mp.g_mean, 0.4, np.linspace(0, 1, mp.res_elements)))
-#     # plt.plot(gaussian(mp.bg_mean*mp.response, mp.bg_sig, np.linspace(mp.bg_mean-mp.bg_sig, mp.bg_mean+mp.bg_sig, mp.res_elements)))
+#     # plt.plot(gaussian(mp.bg_mean*mp.QE, mp.bg_sig, np.linspace(mp.bg_mean-mp.bg_sig, mp.bg_mean+mp.bg_sig, mp.res_elements)))
 
 
 #     phase = dist(samples)[0]/float(mp.res_elements)*mp.bg_mean/mp.g_mean

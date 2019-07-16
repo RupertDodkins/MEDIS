@@ -74,7 +74,7 @@ ap.sample_time = 0.05
 
 mp.phase_uncertainty =True
 mp.phase_background=False
-mp.respons_var = True
+mp.QE_var = True
 mp.bad_pix = True
 mp.hot_pix = None
 mp.hot_bright = 1e3

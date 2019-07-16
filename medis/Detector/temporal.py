@@ -179,7 +179,7 @@ def assign_calibtime(photons, step):
 #         with open('obs.pkl', 'ab') as obs:
 #             cPickle.dump(packets, obs)
 #     # exit()
-#     cube = cubes.arange_into_cube(packets)
+#     cube = cubes.arange_into_stem(packets)
 #     # cube = remove_close_photons(cube)
 
 #     # print cube

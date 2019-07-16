@@ -51,8 +51,8 @@ def get_packets(datacube, step, dp,mp):
         dprint(f"left={left},right={right},top={top},bottom={bottom}")
         datacube = datacube[:, bottom:-top, left:-right]
 
-    if mp.respons_var:
-        datacube *= dp.response_map[:datacube.shape[1],:datacube.shape[1]]
+    if mp.QE_var:
+        datacube *= dp.QE_map[:datacube.shape[1],:datacube.shape[1]]
     # if mp.hot_pix:
     #     datacube = MKIDs.add_hot_pix(datacube, dp, step)
 
@@ -85,10 +85,11 @@ def get_packets(datacube, step, dp,mp):
     photons = temp.assign_calibtime(photons, step)
 
     if mp.phase_uncertainty:
-        photons = MKIDs.apply_phase_distort_array(photons, dp.sigs)
+        photons = MKIDs.apply_phase_offset_array(photons, dp.sigs)
     thresh = dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])] < -1 * photons[1]
     photons = photons[:, thresh]
 
+    # todo implement flatcal and wavecal here
     # photons = assign_id(photons, obj_ind=o)
 
     # print(photons.shape)

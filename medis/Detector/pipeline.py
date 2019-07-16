@@ -60,20 +60,20 @@ def read_obs(max_photons=1e8, start=0):
 
     return allpackets
 
-def arange_into_cube(packets, size):
+def arange_into_stem(packets, size):
     # print 'Sorting packets into xy grid (no phase or time sorting)'
-    cube = [[[] for i in range(size[0])] for j in range(size[1])]
+    stem = [[[] for i in range(size[0])] for j in range(size[1])]
     # dprint(np.shape(cube))
     # plt.hist(packets[:,1], bins=100)
     # plt.show()
     for ip, p in enumerate(packets):
         x = np.int_(p[2])
         y = np.int_(p[3])
-        cube[x][y].append([p[0],p[1]])
+        stem[x][y].append([p[0],p[1]])
         if len(packets)>=1e7 and ip%10000==0: misc.progressBar(value = ip, endvalue=len(packets))
     # print cube[x][y]
     # cube = time_sort(cube)
-    return cube
+    return stem
 
 def isolate_interval(packets,times):
     print('Isolating all events between %f and %f secs' % (times[0], times[1]))

@@ -170,7 +170,7 @@ if __name__ == "__main__":
             packet = cubes.make_packet([x, y], time, phase)
             packets.append(packet)
 
-    cube = cubes.arange_into_cube(packets)
+    cube = cubes.arange_into_stem(packets)
 
     # cube = remove_close_photons(cube)
 

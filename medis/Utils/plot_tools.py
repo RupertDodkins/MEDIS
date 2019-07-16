@@ -10,8 +10,8 @@ from medis.Utils.misc import dprint
 import medis.Utils.colormaps as cmaps
 plt.register_cmap(name='viridis', cmap=cmaps.viridis)
 plt.register_cmap(name='plasma', cmap=cmaps.plasma)
-plt.register_cmap(name='inferno', cmap=cmaps.plasma)
-plt.register_cmap(name='magma', cmap=cmaps.plasma)
+plt.register_cmap(name='inferno', cmap=cmaps.inferno)
+plt.register_cmap(name='magma', cmap=cmaps.magma)
 
 # MEDIUM_SIZE = 17
 # plt.rc('font', size=MEDIUM_SIZE)  # controls default text sizes
@@ -405,7 +405,8 @@ def initialize_GUI():
     # ax.plot(range(5))
 
 
-def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=False, anno=None, title=None, pupil=False, colormap="YlGnBu_r", mark_star=False, label=None):
+def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=False, anno=None, title=None, pupil=False,
+                 colormap="inferno", mark_star=False, label=None):
     # MEDIUM_SIZE = 27
     # plt.rc('font', size=MEDIUM_SIZE)  # controls default text sizes
 
@@ -436,10 +437,10 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
 
             cax = ax.imshow(image, interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                             norm=SymLogNorm(linthresh=1e-5),
-                            cmap="YlGnBu_r")
+                            cmap=colormap)
         else:
             cax = ax.imshow(image, interpolation='none',origin='lower', vmin=vmin, vmax=vmax,
-                            norm= LogNorm(), cmap="YlGnBu_r")
+                            norm= LogNorm(), cmap=colormap)
 
     else:
         cax = ax.imshow(image, interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap=colormap)
