@@ -192,7 +192,7 @@ def make_SNR_plot(datacube):
     ax1.legend()
     plt.show()
 
-def get_unoccult_hyper(obs_seq = '/RefPSF_wLyotStop.pkl', numframes=1):
+def get_unoccult_hyper(fields = '/RefPSF_wLyotStop.pkl', numframes=1):
     import copy
     tp_orig = copy.copy(tp)
     ap_orig = copy.copy(ap)
@@ -200,19 +200,19 @@ def get_unoccult_hyper(obs_seq = '/RefPSF_wLyotStop.pkl', numframes=1):
 
     # tp.detector = 'ideal'
     ap.companion = False
-    iop.obs_seq = iop.datadir + obs_seq
+    iop.fields = iop.testdir + fields
     tp.occulter_type = 'None (Lyot Stop)'
     ap.numframes = numframes
     ap.sample_time = 1e-3
     # ap.nwsamp = 1
     # ap.w_bins = 1
     print(iop.obs_table, 'obs')
-    obs_sequence = gpd.run_medis()
+    fields = gpd.run_medis()
     tp.__dict__ = tp_orig.__dict__
     ap.__dict__ = ap_orig.__dict__
     iop.__dict__ = iop_orig.__dict__
 
-    return obs_sequence
+    return fields
 
 
 def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
@@ -254,7 +254,7 @@ def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
 
     return PSF
 
-def get_unoccult_psf(plot=False, obs_seq = '/IntHyperUnOccult.pkl', numframes=1000):
+def get_unoccult_psf(plot=False, fields = '/IntHyperUnOccult.pkl', numframes=1000):
     # import copy
     # tp_orig = copy.copy(tp)
     # ap_orig = copy.copy(ap)
@@ -272,20 +272,19 @@ def get_unoccult_psf(plot=False, obs_seq = '/IntHyperUnOccult.pkl', numframes=10
     # ap.nwsamp = 1
     # # Yup this is 'if' is necessary
     # obs_sequence = run_medis()
-    obs_sequence = get_unoccult_hyper(obs_seq, numframes=numframes)
+    fields = get_unoccult_hyper(fields, numframes=numframes)
     # PSF = obs_sequence[0,0]
     # PSF = (read.take_exposure(obs_sequence))[0,0]
     # PSF = (read.take_exposure(obs_sequence))
-    PSF = obs_sequence
     if plot:
-        quicklook_im(PSF)
-
+        quicklook_im(fields)
+    psf_template = np.abs(fields[0, -1, :, 0, 1:, 1:])**2
     # tp.__dict__ = tp_orig.__dict__
     # ap.__dict__ = ap_orig.__dict__
     # iop.__dict__ = iop_orig.__dict__
     # # print tp.occulter_type
 
-    return PSF
+    return psf_template
 
 
 # def make_cont_plot(images, labels):
@@ -473,7 +472,7 @@ def SDI_each_exposure(obs_sequence, binning=10):
     #     plt.show()
 
 def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=4, star_phot=1):
-    fulloutput = metrics.contrcurve.contrast_curve(cube=cube,
+    fulloutput = metrics.contrcurve.contrast_curve(cube=cube, interp_order=1,
                                    angle_list=angle_list, psf_template=psf_template,
                                    fwhm=fwhm, pxscale=tp.platescale/1000,
                                    starphot=star_phot, algo=algo, nbranch=3,

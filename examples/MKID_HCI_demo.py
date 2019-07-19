@@ -26,7 +26,7 @@ sp.save_obs = False
 sp.show_cube=False
 sp.num_processes = 1
 
-ap.companion = True
+ap.companion = False
 sp.get_ints=False
 ap.star_photons_per_s = int(1e6)
 ap.contrast = [10**-3.1,10**-3.1,10**-3.1,10**-4,10**-4,10**-4]
@@ -66,7 +66,7 @@ tp.rot_rate = 0  # deg/s
 
 mp.bad_pix = True
 mp.array_size = np.array([146,146])
-num_exp =10
+num_exp =100
 ap.sample_time = 0.05
 # date = '180828/'
 # dprint((iop.datadir, date))
@@ -122,22 +122,23 @@ if __name__ == '__main__':
     plotdata, maps = [], []
 
     print(ap.__dict__)
-    psf_template = get_unoccult_psf(obs_seq='/IntHyperUnOccult.h5', plot=False, numframes=1)
-    psf_template = psf_template[0,:,1:,1:]
+    psf_template = get_unoccult_psf(fields='/IntHyperUnOccult.h5', plot=False, numframes=1)
     dprint((ap.grid_size//2, psf_template.shape))
-    # quicklook_im(np.sum(psf_template,axis=0))
+    # quicklook_im(np.sum(psf_template,axis=0), logAmp=True)
     star_phot = phot.contrcurve.aperture_flux(np.sum(psf_template,axis=0),[mp.array_size[0]//2],[mp.array_size[0]//2],lod,1)[0]#/1e4#/ap.numframes * 500
     wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
     scale_list = wsamples/(ap.band[1]-ap.band[0])
     # scale_list = scale_list[::-1]
     algo_dict = {'scale_list': scale_list}
 
-    ap.exposure_time = 0.1  # 0.001
+ap.exposure_time = 0.1  # 0.001
+ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
+iop.fields = iop.testdir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons_per_s))
 
-    ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
-    iop.hyperFile = iop.datadir + '/HR8799_phot_tag%i_tar_%i.h5' % (ap.numframes, np.log10(ap.star_photons_per_s))
+if __name__ == '__main__':
+    fields = gpd.run_medis()
+    orig_hyper = np.abs(fields[:, -1, :, 0])**2
 
-    orig_hyper = gpd.run_medis()[:, :]
 
     # fast_hyper = fast_hyper[:100]
     # ap.numframes = int(100 * ap.exposure_time / ap.sample_time)
@@ -177,6 +178,7 @@ if __name__ == '__main__':
     #     # plt.xscale('log')
     # loop_frames(fast_hyper[0], logAmp=True)
     # plt.show()
+    dprint(fast_hyper.shape)
 
     SDI = pca.pca(fast_hyper, angle_list=np.zeros((fast_hyper.shape[1])), scale_list=scale_list,
                   mask_center_px=None,adimsdi='double', ncomp=7, ncomp2=None, collapse='median')#, ncomp2=3)#,
@@ -191,7 +193,7 @@ if __name__ == '__main__':
     # # quicklook_im(SDI, logAmp=True)
     # maps.append(SDI)
 
-    dprint((fast_hyper.shape, med_hyper.shape, slow_hyper.shape))
+    dprint((fast_hyper.shape, med_hyper.shape, slow_hyper.shape, psf_template.shape))
     indep_images(maps, logAmp=True)
     plt.show()
     # fast_hyper = fast_hyper[:,:10]

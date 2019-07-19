@@ -75,6 +75,22 @@ def arange_into_stem(packets, size):
     # cube = time_sort(cube)
     return stem
 
+def ungroup(stem):
+    photons = np.empty((0, 4))
+    for x in range(mp.array_size[1]):
+        for y in range(mp.array_size[0]):
+            # print(x, y)
+            if len(stem[x][y]) > 0:
+                events = np.array(stem[x][y])
+                xy = [[x, y]] * len(events) if len(events.shape)== 2 else [x,y]
+                events = np.append(events, xy, axis=1)
+                photons = np.vstack((photons, events))
+                # print(events, np.shape(events))
+                # timesort = np.argsort(events[:, 0])
+                # events = events[timesort]
+                # sep = events[:, 0] - np.roll(events[:, 0], 1, 0)
+    return photons
+
 def isolate_interval(packets,times):
     print('Isolating all events between %f and %f secs' % (times[0], times[1]))
     locs = np.where((packets[:,2] >= times[0]) & (packets[:,2] < times[1]))[0]

@@ -269,6 +269,13 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
     # for i, p in enumerate(jobs):
     #     p.join()
 
+    if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:
+        from scipy.interpolate import interp1d
+        wave_samps = np.linspace(0, 1, ap.nwsamp)
+        f_out = interp1d(wave_samps, e_fields_sequence, axis=2)
+        new_heights = np.linspace(0, 1, ap.w_bins)
+        e_fields_sequence = f_out(new_heights)
+
     photon_table_queue.put(None)
     outqueue.put(None)
     if sp.save_obs and tp.detector == 'MKIDs':

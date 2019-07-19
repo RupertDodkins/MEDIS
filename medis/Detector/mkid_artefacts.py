@@ -13,26 +13,30 @@ from medis.Utils.misc import dprint
 from . import spectral as spec
 import medis.Detector.pipeline as pipe
 
-
-def remove_close_photons(cube):
-    # TODO test this
-    dprint('**** this is untested! ****')
-    # ind = np.argsort( photons[0,:] )
-    # photons = photons[:,ind]
-    image = np.zeros((mp.xnum, mp.ynum))
-    for x in range(mp.xnum):
-        for y in range(mp.ynum):
-            events = np.array(cube[x][y])
-            print(events, np.shape(events))
-            try:
-                diff = events[0, 0] - np.roll(events[0, 0], 1)
-                print(x, y, diff)
-            except IndexError:
-                pass
-
-    # missed =
-    raise NotImplementedError
-    return photons
+def remove_close(stem):
+    for x in range(mp.array_size[1]):
+        for y in range(mp.array_size[0]):
+            print(x,y)
+            if len(stem[x][y])>1:
+                events = np.array(stem[x][y])
+                # print(events, np.shape(events))
+                timesort = np.argsort(events[:, 0])
+                events = events[timesort]
+                if x == 20 and y == 65:
+                    print(len(stem[x][y]))
+                sep = events[:, 0] - np.roll(events[:, 0], 1, 0)
+                try:
+                    idx = -1  # becomes None when no more close photons are found
+                    while idx != None:
+                        idx, _ = next(((i, v) for (i, v) in enumerate(sep) if 0 < v < mp.dead_time), (None, None))
+                        if idx != None:
+                            events = np.delete(events, idx, axis=0)
+                            sep = events[:, 0] - np.roll(events[:, 0], 1, 0)
+                except StopIteration:
+                    pass
+                stem[x][y] = events
+                # print('lol')
+    return stem
 
 def makecube(packets, array_size):
     stem = pipe.arange_into_stem(packets, (array_size[0], array_size[1]))
@@ -56,10 +60,10 @@ def initialize():
         dp.QE_map = create_bad_pix(dp.QE_map)
         # dp.QE_map = create_hot_pix(dp.QE_map)
         if mp.dark_counts:
-            dp.dark_locs = create_hot_pix(mp)
+            # dp.dark_locs = create_false_pix(mp, amount = mp.dark_pix)
             dp.dark_per_step = int(np.round(ap.sample_time*mp.dark_bright))
         if mp.hot_pix:
-            dp.hot_locs = create_hot_pix(mp)
+            dp.hot_locs = create_false_pix(mp, amount = mp.hot_pix)
             dp.hot_per_step = int(np.round(ap.sample_time*mp.hot_bright))
         # dp.QE_map = create_bad_pix_center(dp.QE_map)
     # quicklook_im(dp.QE_map)
@@ -68,21 +72,12 @@ def initialize():
     dprint(f"dp.sigs.shape ={ dp.sigs.shape}")
     # get_phase_distortions(plot=True)
     if mp.phase_background:
-        dp.basesDeg = assign_phase_background(plot=False)
+        dp.basesDeg = assign_phase_background(plot=True)
     else:
         dp.basesDeg = np.zeros((mp.array_size))
     with open(iop.device_params, 'wb') as handle:
         pickle.dump(dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
     return dp
-
-def add_dark(photons, step):
-
-    for ip, p in enumerate(photons):
-        # x, y = p[0], p[1]
-
-        stem[x][y].append([step, 0])
-
-    return stem
 
 def truncate_array(frames):
     """Make non-square array"""
@@ -234,14 +229,12 @@ def assign_phase_background(plot=False):
         plt.ylabel('#')
         plt.title('Background Phase')
         plt.hist(basesDeg)
-        plt.show()
+        plt.show(block=True)
     basesDeg = np.reshape(basesDeg, mp.array_size)
     if plot:
-        plt.xlabel('basesDeg')
-        plt.ylabel('#')
         plt.title('Background Phase--Reshaped')
         plt.imshow(basesDeg)
-        plt.show()
+        plt.show(block=True)
     return basesDeg
 
 
@@ -286,32 +279,33 @@ def create_bad_pix_center(responsivities):
 
     return responsivities
 
-def get_hot_packets(dp):
+def get_hot_packets(dp, step):
     photons = np.zeros((4, dp.hot_per_step))
     phases = np.random.uniform(-120, 0, dp.hot_per_step)
     print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
-    photons[1, :] = phases
-    photons[2:,:] = dp.hot_locs
-
+    meantime = step*ap.sample_time
+    photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
+    photons[1] = phases
+    photons[2:] = dp.hot_locs
     return photons
 
-def get_dark_packets(dp):
+def get_dark_packets(dp, step):
     photons = np.zeros((4, dp.dark_per_step))
     dist = Distribution(gaussian(0, 0.25, np.linspace(0, 1, mp.res_elements)), interpolation=False)
-    phases = (dist(dp.dark_per_step)[0]) / float(dp.dark_per_step - 0.5)
+    # phases = (dist(dp.dark_per_step)[0]) / float(dp.dark_per_step - 0.5) * 45e3 - 120
+    phases = dist(dp.dark_per_step)[0]
+    max_phase = max(phases)
+    phases = -phases*120/max_phase
     # phases = np.random.uniform(-120, 0, dp.dark_per_step) *
-    plt.hist(phases)
-    plt.show(block=True)
     print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
+    meantime = step*ap.sample_time
+    photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
     photons[1, :] = phases
-    photons[2:,:] = dp.dark_locs
-
+    photons[2:,:] = create_false_pix(mp, dp.dark_per_step)
     return photons
 
 
-def create_hot_pix(mp):
-    amount = mp.hot_pix
-
+def create_false_pix(mp, amount):
     # dprint(f"amount = {amount}")
     bad_ind = random.sample(list(range(mp.array_size[0]*mp.array_size[1])), amount)
     bad_y = np.int_(np.floor(bad_ind / mp.array_size[1]))

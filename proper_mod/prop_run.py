@@ -77,7 +77,7 @@ def prop_run(routine_name, lambda0, gridsize, **kwargs):
         print("ERROR: grid size must be a power of 2")
 
         # This is very naughty
-        print("... but we'll continue anyway (just this once)")
+        print("... but we'll continue anyway")
         # return
 
     if ("TABLE" in kwargs and kwargs["TABLE"]):

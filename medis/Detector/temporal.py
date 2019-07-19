@@ -121,10 +121,11 @@ def eff_exposure(cube, start = 0, exp=20.*ap.sample_time):
     return image
 
 def assign_calibtime(photons, step):
-    time = step*ap.sample_time
+    meantime = step*ap.sample_time
     # photons = photons.astype(float)#np.asarray(photons[0], dtype=np.float64)
     # photons[0] = photons[0] * ps.mp.frame_time
-    photons = np.vstack((np.ones_like(photons[0])*time, photons))
+    timedist = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
+    photons = np.vstack((timedist, photons))
     return photons
 
 

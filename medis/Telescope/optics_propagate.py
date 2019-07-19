@@ -84,7 +84,6 @@ class Wavefronts():
                                     ap.grid_size), dtype=np.complex64)
         for iw in range(shape[0]):
             for iwf in range(shape[1]):
-                print(args, kwargs)
                 func(self.wf_array[iw, iwf], *args, **kwargs)
                 if self.save_locs is not None and func.__name__ in self.save_locs:
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
@@ -92,7 +91,6 @@ class Wavefronts():
 
         if self.save_locs is not None and func.__name__ in self.save_locs:
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
-            dprint(func.__name__)
             self.locs_seen.append(func.__name__)
 
     def test_save(self, funcname):
@@ -114,7 +112,6 @@ class Wavefronts():
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
-            dprint(funcname)
             self.locs_seen.append(funcname)
 
     def end(self):

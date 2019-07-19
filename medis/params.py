@@ -43,7 +43,7 @@ class IO_params:
         self.scidir = os.path.join(self.datadir, self.sciroot)  # self.savedata
         self.testname = testname  # set this up in the definition line, but can update it with iop.update('newname')
         self.testdir = os.path.join(self.scidir, self.testname)  # Save results in new sub-directory
-        self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5')  # a x/y/t/w cube of data
+        # self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5')  # a x/y/t/w cube of data
         self.fields = os.path.join(self.testdir, 'fields.h5')
         self.obs_table = os.path.join(self.testdir, 'ObsTable.h5')  # a photon table with 4 coloumns
         self.device_params = os.path.join(self.testdir, 'deviceParams.pkl')  # detector metadata
@@ -180,6 +180,7 @@ class Telescope_params:
         self.occult_loc = [0,0]  # [3,-5] #correspond to normal x y direction
         self.use_apod = True
         self.apod_gaus = 1
+        self.legs_frac = 0.03
 
         # Aberrations
         self.abertime = 0.5  # time scale of optic aberrations in seconds
@@ -242,7 +243,7 @@ class MKID_params:
         self.threshold_phase = 0#-30 # quite close to 0, basically all photons will be detected.
 
         self.max_count = 2500.  # cts/s
-        self.dead_time = 1./self.max_count
+        self.dead_time = 0.02#10e-6  # s
         self.bin_time = 2e-3 # minimum time to bin counts for stat-based analysis
         # self.frame_time = 0.001#atm_size*atm_spat_rate/(wind_speed*atm_scale) # 0.0004
         self.total_int = 1 #second
