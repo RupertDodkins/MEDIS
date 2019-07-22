@@ -12,6 +12,7 @@ from medis.params import mp, ap, tp, iop, dp, sp
 from medis.Utils.misc import dprint
 from . import spectral as spec
 import medis.Detector.pipeline as pipe
+from medis.Utils.plot_tools import quicklook_im
 
 def remove_close(stem):
     for x in range(mp.array_size[1]):
@@ -54,6 +55,7 @@ def initialize():
     # dp = device_params()
     dprint(f"dp.hot_pix set to {dp.hot_pix}")
     dp.QE_map = array_QE(plot=False)
+    dp.responsivity_error_map = responvisity_scaling_map(plot=True)
     if mp.pix_yield == 1:
         mp.bad_pix =False
     if mp.bad_pix == True:
@@ -72,7 +74,7 @@ def initialize():
     dprint(f"dp.sigs.shape ={ dp.sigs.shape}")
     # get_phase_distortions(plot=True)
     if mp.phase_background:
-        dp.basesDeg = assign_phase_background(plot=True)
+        dp.basesDeg = assign_phase_background(plot=False)
     else:
         dp.basesDeg = np.zeros((mp.array_size))
     with open(iop.device_params, 'wb') as handle:
@@ -96,6 +98,22 @@ def truncate_array(frames):
 
     # frames = frames[:, :, 22:-23]
     return frames
+
+def responvisity_scaling_map(plot=False):
+    """Assigns each pixel a phase responsivity between 0 and 1"""
+    dist = Distribution(gaussian(mp.r_mean, mp.r_sig, np.linspace(0, 2, mp.res_elements)), interpolation=True)
+    responsivity = dist(mp.array_size[0] * mp.array_size[1])[0]/float(mp.res_elements) * 2
+    if plot:
+        plt.xlabel('Responsivity')
+        plt.ylabel('#')
+        plt.hist(responsivity)
+        plt.show()
+    responsivity = np.reshape(responsivity, mp.array_size[::-1])
+    if plot:
+        quicklook_im(responsivity)#plt.imshow(QE)
+        # plt.show()
+
+    return responsivity
 
 def array_QE(plot=False):
     """Assigns each pixel a phase responsivity between 0 and 1"""
@@ -166,9 +184,22 @@ def get_R_hyper(Rs, plot=False):
         plt.show()
     return sigs_p
 
+def apply_phase_scaling(photons, ):
+    """
+    From things like resonator Q, bias power, quasiparticle losses
+
+    :param photons:
+    :return:
+    """
 
 def apply_phase_offset_array(photons, sigs):
+    """
+    From things like IQ phase offset noise
 
+    :param photons:
+    :param sigs:
+    :return:
+    """
     wavelength = spec.wave_cal(photons[1])
 
     # plt.xlabel('Photons')
@@ -200,7 +231,7 @@ def apply_phase_offset_array(photons, sigs):
 
 def apply_phase_distort(phase, loc, sigs):
     """
-    simulates phase height of a real detector system per photon
+    Simulates phase height of a real detector system per photon
     proper will spit out the true phase of each photon it propagates. this function will give it
     a 'measured' phase based on the resolution of the detector, and a Gaussian distribution around
     the center of the resolution bin

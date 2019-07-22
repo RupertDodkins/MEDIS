@@ -55,11 +55,11 @@ tp.legs_frac = 0.03
 # Wavelength and Spectral Range
 ap.nwsamp = 1
 ap.w_bins = 1
-num_exp = 100 #5000
+num_exp = 8 #5000
 ap.sample_time = 0.1
 ap.numframes = int(num_exp)
 # tp.piston_error = True
-tp.pix_shift = [15,30]
+tp.pix_shift = [[15,30],[-30,15],[-15,-30],[30,-15]]
 
 # MKID Parameters
 mp.phase_uncertainty = True
@@ -73,9 +73,11 @@ mp.array_size = np.array([142,146])
 mp.R_mean = 8
 mp.g_mean = 0.2
 mp.g_sig = 0.04
+mp.r_mean = 1
+mp.r_sig = 0.1
 mp.bg_mean = -10
 mp.bg_sig = 10
-mp.pix_yield = 0.7  # check dis
+mp.pix_yield = 0.8  # check dis
 mp.dark_bright = 5e4
 mp.hot_bright = 4e3
 mp.dead_time = 1e-5
@@ -109,6 +111,7 @@ def make_figure2():
 
         photons = np.empty((0, 4))
         dprint(len(fields))
+        stackcube = np.zeros((ap.numframes, 1, mp.array_size[1], mp.array_size[0]))
         for step in range(len(fields)):
             print(step)
             spectralcube = np.abs(fields[step, 0, :, 0]) ** 2
@@ -116,14 +119,16 @@ def make_figure2():
                 step_packets, fig = get_packets_plots(spectralcube, step, dp, mp, plot=True)
             else:
                 step_packets = get_packets_plots(spectralcube, step, dp, mp, plot=False)
-            # stem = pipe.arange_into_stem(step_packets, (mp.array_size[0], mp.array_size[1]))
-            # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+            stem = pipe.arange_into_stem(step_packets, (mp.array_size[0], mp.array_size[1]))
+            cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
             # quicklook_im(cube[0], vmin=1, logAmp=True)
+            # datacube += cube[0]
+            stackcube[step] = cube
 
             photons = np.vstack((photons, step_packets))
 
 
-        ax6 = fig.add_subplot(236)
+        ax6 = fig.add_subplot(336)
 
         # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
         # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
@@ -185,13 +190,32 @@ def make_figure2():
 
         # quicklook_im(cube[0], vmin=1, logAmp=True)
 
-        plt.show(block=True)
-        quicklook_im(cube[0], vmin=1, logAmp=True)
 
-        packets = pipe.ungroup(stem)
+        # quicklook_im(cube[0], vmin=1, logAmp=True)
+
+        dith_duration = np.floor(ap.numframes / len(tp.pix_shift))
+
+        datacube = np.zeros((1,mp.array_size[1]+60, mp.array_size[0]+60))
+        center_array_origin = (datacube.shape[1:] - mp.array_size[::-1]) // 2
+
+        for step, cube in enumerate(stackcube):
+            dith_idx = np.floor(step / dith_duration).astype(np.int32)
+            dprint((dith_duration, dith_idx, tp.pix_shift[dith_idx]))
+
+
+            left = center_array_origin[0]+tp.pix_shift[dith_idx][0]
+            bottom = center_array_origin[1]+tp.pix_shift[dith_idx][1]
+            dprint((center_array_origin, left, left+mp.array_size[1], bottom, bottom+mp.array_size[0]))
+            datacube[0, left: left + mp.array_size[1], bottom: bottom + mp.array_size[0]] += cube[0]
+            # quicklook_im(cube[0], logAmp=True, vmin=1)
+            # quicklook_im(datacube[0], logAmp=True, vmin=1 )
+
+        ax9 = fig.add_subplot(339)
+        ax9.imshow(datacube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
         # print(fields.shape)
         # plt.imshow(np.absolute(fields[0,0,0,0]))
         # plt.show()
+        plt.show(block=True)
 
 def make_figure3():
     sp.use_gui = True
@@ -269,16 +293,20 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
         top = int(np.floor(float(ap.grid_size-mp.array_size[1])/2))
         bottom = int(np.ceil(float(ap.grid_size-mp.array_size[1])/2))
 
+        dith_duration = np.floor(ap.numframes/len(tp.pix_shift))
+        dith_idx = np.floor(step/dith_duration).astype(np.int32)
+        dprint((dith_duration, dith_idx, tp.pix_shift[dith_idx]))
+
         dprint(f"left={left},right={right},top={top},bottom={bottom}")
-        datacube = datacube[:, tp.pix_shift[0]+bottom:tp.pix_shift[0]-top,
-                   tp.pix_shift[1]+left:tp.pix_shift[1]-right]
+        datacube = datacube[:, tp.pix_shift[dith_idx][0]+bottom:tp.pix_shift[dith_idx][0]-top,
+                   tp.pix_shift[dith_idx][1]+left:tp.pix_shift[dith_idx][1]-right]
 
     # fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(14, 8))
     # axes = axes.reshape(2, 3)
 
     if plot:
-        fig = plt.figure(figsize=(14,8))
-        ax1 = fig.add_subplot(231)
+        fig = plt.figure(figsize=(11,10))
+        ax1 = fig.add_subplot(331)
         ax1.imshow(datacube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1e-7)
 
     if mp.QE_var:
@@ -288,7 +316,7 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
 
     # quicklook_im(datacube[0], logAmp=True, vmin=1)
     if plot:
-        ax2 = fig.add_subplot(232)
+        ax2 = fig.add_subplot(332)
         ax2.imshow(datacube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1e-7)
 
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
@@ -299,7 +327,7 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
     photons = temp.assign_calibtime(photons, step)
 
     if plot:
-        ax3 = fig.add_subplot(233, projection='3d')
+        ax3 = fig.add_subplot(333, projection='3d')
         ax3.scatter(photons[1], photons[2], photons[3], s=1, alpha=0.25, color='#d62728')
         ax3.view_init(elev=25., azim=-25)
         ax3.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
@@ -312,7 +340,7 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
     # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
     # quicklook_im(cube[0], logAmp=True, vmin=1)
     if plot:
-        ax4 = fig.add_subplot(234)
+        ax4 = fig.add_subplot(334)
         ax4.hist(photons[1], bins=range(-120,0,2), histtype='stepfilled', color='#d62728', alpha=0.95, label='Real')
         ax4.hist(photons[1], bins=range(-120,0,2), histtype='step', color='k', alpha=0.95)
 
@@ -340,20 +368,31 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
     # quicklook_im(cube[0], logAmp=True, vmin=1)
 
     if mp.phase_uncertainty:
+        photons[1] *= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
         photons = MKIDs.apply_phase_offset_array(photons, dp.sigs)
 
     if plot:
-        ax5 = fig.add_subplot(235)
+        ax5 = fig.add_subplot(335)
         ax5.hist(photons[1], bins=range(-120,0,2), alpha=0.5, histtype='stepfilled', color='#2ca02c', label='Degraded')
         ax5.hist(photons[1], bins=range(-120,0,2), histtype='step', color='k')
 
     # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
     # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
     # quicklook_im(cube[0], vmin=1, logAmp=True)
+    # plt.figure()
+    # plt.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+    # plt.show(block=True)
 
     thresh =  photons[1] < dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])]
     photons = photons[:, thresh]
     # print(thresh)
+
+    # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+    # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+    # quicklook_im(cube[0], vmin=1, logAmp=True)
+    # plt.figure()
+    # plt.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+    # plt.show(block=True)
 
     if plot:
         ax5.hist(photons[1], bins=range(-120, 0, 2), alpha=0.95, histtype='stepfilled', rwidth=0.9, color= '#9467bd', label='Detect')
@@ -361,16 +400,35 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
         ax5.set_xlabel('Phase (deg)')
         ax5.legend()
 
-    packets = photons.T
+    dprint(photons.shape)
 
-    # todo implement flatcal and wavecal here
+    stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+    cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+    # ax7.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+    cube /= dp.QE_map
+    photons = pipe.ungroup(stem)
+
+    dprint(photons.shape)
+    if plot:
+        ax7 = fig.add_subplot(337)
+        # ax8.imshow(dp.QE_map, origin='lower', norm=LogNorm(), cmap='inferno')
+        ax7.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+
+    if plot:
+        ax8 = fig.add_subplot(338)
+        photons[1] /= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
+        ax8.hist(photons[1], bins=range(-120,0,2), alpha=0.5, histtype='stepfilled', color='#2ca02c', label='Degraded')
+        ax8.hist(photons[1], bins=range(-120,0,2), histtype='step', color='k')
+        # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+        # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+        # ax8.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
 
     dprint("Completed Readout Loop")
 
     if plot:
-        return packets, fig
+        return photons.T, fig
     else:
-        return packets
+        return photons.T
 
 if make_figure == 1:
     make_figure1()

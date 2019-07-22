@@ -89,7 +89,7 @@ def ungroup(stem):
                 # timesort = np.argsort(events[:, 0])
                 # events = events[timesort]
                 # sep = events[:, 0] - np.roll(events[:, 0], 1, 0)
-    return photons
+    return photons.T
 
 def isolate_interval(packets,times):
     print('Isolating all events between %f and %f secs' % (times[0], times[1]))

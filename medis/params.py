@@ -258,6 +258,8 @@ class MKID_params:
         self.g_sig = 0.025
         self.bg_mean = -10
         self.bg_sig = 30
+        self.r_mean = 1
+        self.r_sig = 0.05
         self.R_mean = 50
         self.R_sig = 2
 
