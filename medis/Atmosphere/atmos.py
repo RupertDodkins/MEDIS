@@ -10,12 +10,27 @@ from medis.Utils.misc import dprint
 
 
 def eformat(f, prec, exp_digits):
+    """
+    reformats wavelength into scientific notation in meters
+
+    :param f: wavelength float
+    :param prec: precision
+    :param exp_digits: number of digits in the exponent
+    :return:
+    """
     s = "%.*e" % (prec, f)
     mantissa, exp = s.split('e')
     # add 1 to digits as 1 is taken by sign +/-
     return "%se%+0*d" % (mantissa, exp_digits + 1, int(exp))
 
 def get_filename(it, wsamp):
+    """
+    returns the atmosphere map names in the format location/<atmosheremodel>/telz_t<time>w_<wavelength>
+
+    :param it: time index
+    :param wsamp: wavelength
+    :return:
+    """
     wave = eformat(wsamp, 3, 2)
     return f'{iop.atmosdir}/{cp.model}/telz_t{ap.sample_time*it:.3f}_w{wave}.fits'
 
