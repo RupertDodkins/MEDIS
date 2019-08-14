@@ -31,7 +31,7 @@ def fmt(x, pos):
 
 
 def grid(datacube, nrows=2, logAmp=False, axis=None, width=None, titles=None, ctitles=None, annos=None,
-         scale=1, vmins=None, vmaxs=None, show=True, colormap='viridis'):
+         scale=1, vmins=None, vmaxs=None, show=True, colormap="inferno",):
     import matplotlib
     # dprint(matplotlib.is_interactive())
     matplotlib.interactive(1)

@@ -55,7 +55,7 @@ def initialize():
     # dp = device_params()
     dprint(f"dp.hot_pix set to {dp.hot_pix}")
     dp.QE_map = array_QE(plot=False)
-    dp.responsivity_error_map = responvisity_scaling_map(plot=True)
+    dp.responsivity_error_map = responvisity_scaling_map(plot=False)
     if mp.pix_yield == 1:
         mp.bad_pix =False
     if mp.bad_pix == True:

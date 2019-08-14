@@ -90,11 +90,12 @@ def make_figure1():
     phase_ind = range(4)
 
     if __name__ == '__main__':  # required for multiprocessing - make sure globals are set before though
-        fields = gpd.run_medis()[0, :, 0, 0, ap.grid_size//4:-ap.grid_size//4, ap.grid_size//4:-ap.grid_size//4]
+        fields = gpd.run_medis()[0, :, 0, 0]#, ap.grid_size//4:-ap.grid_size//4, ap.grid_size//4:-ap.grid_size//4]
         pupils = np.angle(fields[phase_ind], deg=False)
         focals = np.absolute(fields[4:])
-        grid(pupils, logAmp=False, colormap=twilight, vmins=[-np.pi]*len(sp.save_locs), vmaxs=[np.pi]*len(sp.save_locs))
-        grid(focals, logAmp=True, colormap='viridis')
+        grid(pupils, logAmp=False, colormap=twilight, vmins=[-np.pi]*len(sp.save_locs), vmaxs=[np.pi]*len(sp.save_locs),
+             annos=['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA'], ctitles=r'$\phi$')
+        grid(focals, logAmp=True, annos=['Before Coron.', 'After Coron.'], ctitles='$I$', vmins=[5e-4]*len(focals), vmaxs=[0.05]*len(focals))
 
 def make_figure2():
     tp.detector = 'ideal'  #set ideal at first then do the mkid related stuff here
@@ -186,7 +187,7 @@ def make_figure2():
 
         ax6.set_xlabel('Intensity (counts/0.1s)')
         # fig.tight_layout()
-        ax6.legend()
+        ax6.legend(loc = 'lower left')
 
         # quicklook_im(cube[0], vmin=1, logAmp=True)
 
@@ -212,9 +213,16 @@ def make_figure2():
 
         ax9 = fig.add_subplot(339)
         ax9.imshow(datacube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+        ax9.set_xlabel('xpix')
+        ax9.set_ylabel('ypix')
+        props = dict(boxstyle='square', facecolor='k', alpha=0.5)
+        ax9.text(0.05, 0.075, 'Mosaic', transform=ax9.transAxes, fontweight='bold',
+                 color='w', fontsize=16, bbox=props)
+
         # print(fields.shape)
         # plt.imshow(np.absolute(fields[0,0,0,0]))
-        # plt.show()
+
+        fig.tight_layout()
         plt.show(block=True)
 
 def make_figure3():
@@ -277,7 +285,7 @@ def make_figure3():
             ax1.ylabel(r'$C_1(\tau)$')
             ax2.xlabel(r'$I$ (counts)')
             # ax2.ylabel()
-            ax1.legend()
+            ax1.legend(loc = 'lower left')
             plt.show()
 
 def make_figure4():
@@ -308,6 +316,11 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
         fig = plt.figure(figsize=(11,10))
         ax1 = fig.add_subplot(331)
         ax1.imshow(datacube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1e-7)
+        ax1.set_ylabel(r'ypix')
+        ax1.set_xlabel(r'xpix')
+        props = dict(boxstyle='square', facecolor='k', alpha=0.5)
+        ax1.text(0.05, 0.075, 'PROPER\n section', transform=ax1.transAxes, fontweight='bold',
+                 color='w', fontsize=16, bbox=props)
 
     if mp.QE_var:
         datacube *= dp.QE_map[:datacube.shape[1],:datacube.shape[1]]
@@ -318,6 +331,10 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
     if plot:
         ax2 = fig.add_subplot(332)
         ax2.imshow(datacube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1e-7)
+        ax2.set_ylabel(r'ypix')
+        ax2.set_xlabel(r'xpix')
+        ax2.text(0.05, 0.075, 'Responsivity\n correction', transform=ax2.transAxes, fontweight='bold',
+                 color='w', fontsize=16, bbox=props)
 
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
 
@@ -333,7 +350,10 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
         ax3.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
         ax3.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
         ax3.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
-        fig.tight_layout()
+        ax3.set_xlabel('$\phi$')
+        ax3.set_ylabel('xpix')
+        ax3.set_zlabel('ypix')
+        # fig.tight_layout()
         # plt.show(block=True)
 
     # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
@@ -360,7 +380,7 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
         # plt.show(block=True)
         ax4.hist(hot_photons[1], bins=range(-120,0,2), alpha=0.5, color='#ff7f0e', histtype='stepfilled', label='Hot')
         ax4.hist(hot_photons[1], bins=range(-120,0,2), histtype='step', color='k')
-        ax4.legend()
+        ax4.legend(loc = 'lower left')
         ax4.set_xlabel('Phase (deg)')
 
     # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
@@ -398,7 +418,7 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
         ax5.hist(photons[1], bins=range(-120, 0, 2), alpha=0.95, histtype='stepfilled', rwidth=0.9, color= '#9467bd', label='Detect')
         ax5.hist(photons[1], bins=range(-120, 0, 2), histtype='step', color='k')
         ax5.set_xlabel('Phase (deg)')
-        ax5.legend()
+        ax5.legend(loc = 'lower left')
 
     dprint(photons.shape)
 
@@ -413,12 +433,19 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
         ax7 = fig.add_subplot(337)
         # ax8.imshow(dp.QE_map, origin='lower', norm=LogNorm(), cmap='inferno')
         ax7.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+        ax7.set_xlabel('xpix')
+        ax7.set_ylabel('ypix')
+        ax7.text(0.05, 0.075, 'Flatfield', transform=ax7.transAxes, fontweight='bold',
+                 color='w', fontsize=16, bbox=props)
 
     if plot:
         ax8 = fig.add_subplot(338)
         photons[1] /= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
-        ax8.hist(photons[1], bins=range(-120,0,2), alpha=0.5, histtype='stepfilled', color='#2ca02c', label='Degraded')
-        ax8.hist(photons[1], bins=range(-120,0,2), histtype='step', color='k')
+        photons[1] = spec.wave_cal(photons[1])
+        ax8.hist(photons[1], bins=60, alpha=0.5, histtype='stepfilled', color='#2ca02c', label='Wave Cal.')
+        ax8.hist(photons[1], bins=60, histtype='step', color='k')
+        ax8.legend(loc = 'lower left')
+        ax8.set_xlabel('Wavelength (m)')
         # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
         # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
         # ax8.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
