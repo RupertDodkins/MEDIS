@@ -31,6 +31,7 @@ def remove_close(stem):
                     while idx != None:
                         idx, _ = next(((i, v) for (i, v) in enumerate(sep) if 0 < v < mp.dead_time), (None, None))
                         if idx != None:
+                            # dprint((len(events), np.min(sep[1:]), sep[:3]))
                             events = np.delete(events, idx, axis=0)
                             sep = events[:, 0] - np.roll(events[:, 0], 1, 0)
                 except StopIteration:

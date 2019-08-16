@@ -15,10 +15,12 @@ import medis.Detector.readout as read
 from medis.Analysis.phot import get_unoccult_psf, eval_method
 
 
-mpl.use('Qt5Agg')
+# mpl.use('Qt5Agg')
 
 # Renaming obs_sequence directory location
 iop.update(new_name='HCIdemo/')
+iop.atmosdata = '190801'
+iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
 
 # Parameters specific to this script
 sp.show_wframe = False
@@ -35,7 +37,7 @@ ap.lods = [[-1.6,0.0],[-3.2,0.0],[-5,0.0],[1.6,0.0],[3.2,0.0],[5,0.0]]
 tp.save_locs = np.empty((0,1))
 
 tp.diam=8.
-ap.grid_size=148
+ap.grid_size=256
 tp.beam_ratio =0.5
 tp.obscure = True
 tp.use_ao = True
@@ -58,7 +60,7 @@ tp.aber_vals = {'a': [5e-18, 1e-19],#'a': [5e-17, 1e-18],
                 'c': [3.1, 0.5],
                 'a_amp': [0.05, 0.01]}
 tp.piston_error = False
-ap.band = np.array([700, 1500])
+ap.band = np.array([800, 1500])
 ap.nwsamp = 4
 ap.w_bins = 16#8
 tp.rot_rate = 0  # deg/s
