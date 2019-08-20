@@ -26,7 +26,7 @@ sp.return_E = True
 
 # Astro Parameters
 ap.companion = False
-ap.star_photons_per_s = int(1e8)
+ap.star_photons_per_s = int(2e7)
 ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
 
 # Telescope/optics Parameters
@@ -60,7 +60,7 @@ ap.sample_time = 0.1
 ap.numframes = 100#5000
 # tp.piston_error = True
 # tp.pix_shift = [[15,30],[-30,15],[-15,-30],[30,-15]]
-tp.pix_shift = [[0,0]]
+tp.pix_shift = [[15,30]]
 
 # MKID Parameters
 mp.phase_uncertainty = True
@@ -105,37 +105,37 @@ def make_figure2():
     if __name__ == "__main__":  # required for multiprocessing - make sure globals are set before though
         fields = gpd.run_medis(realtime=False)[:ap.numframes]
 
-        # if not os.path.isfile(iop.device_params):
-        #     MKIDs.initialize()
-        #
-        # with open(iop.device_params, 'rb') as handle:
-        #     dp = pickle.load(handle)
-        #
-        # photons = np.empty((0, 4))
-        # dprint(len(fields))
-        # stackcube = np.zeros((ap.numframes, 1, mp.array_size[1], mp.array_size[0]))
-        # for step in range(len(fields)):
-        #     dprint(step)
-        #     spectralcube = np.abs(fields[step, 0, :, 0]) ** 2
-        #     if step == 0:
-        #         step_packets, fig = get_packets_plots(spectralcube, step, dp, mp, plot=True)
-        #     else:
-        #         step_packets = get_packets_plots(spectralcube, step, dp, mp, plot=False)
-        #     stem = pipe.arange_into_stem(step_packets, (mp.array_size[0], mp.array_size[1]))
-        #     cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
-        #     # quicklook_im(cube[0], vmin=1, logAmp=True)
-        #     # datacube += cube[0]
-        #     stackcube[step] = cube
-        #
-        #     photons = np.vstack((photons, step_packets))
-        #
-        # stem = pipe.arange_into_stem(photons, (mp.array_size[0], mp.array_size[1]))
+        if not os.path.isfile(iop.device_params):
+            MKIDs.initialize()
 
-        # with open('phot_data.pkl', 'wb') as handle:
-        #     pickle.dump((photons, stackcube, fig, stem), handle, protocol=pickle.HIGHEST_PROTOCOL)
+        with open(iop.device_params, 'rb') as handle:
+            dp = pickle.load(handle)
 
-        with open('phot_data.pkl', 'rb') as handle:
-            photons, stackcube, fig, stem = pickle.load(handle)
+        photons = np.empty((0, 4))
+        dprint(len(fields))
+        stackcube = np.zeros((ap.numframes, 1, mp.array_size[1], mp.array_size[0]))
+        for step in range(len(fields)):
+            dprint(step)
+            spectralcube = np.abs(fields[step, 0, :, 0]) ** 2
+            if step == 0:
+                step_packets, fig = get_packets_plots(spectralcube, step, dp, mp, plot=True)
+            else:
+                step_packets = get_packets_plots(spectralcube, step, dp, mp, plot=False)
+            stem = pipe.arange_into_stem(step_packets, (mp.array_size[0], mp.array_size[1]))
+            cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+            # quicklook_im(cube[0], vmin=1, logAmp=True)
+            # datacube += cube[0]
+            stackcube[step] = cube
+
+            photons = np.vstack((photons, step_packets))
+
+        stem = pipe.arange_into_stem(photons, (mp.array_size[0], mp.array_size[1]))
+
+        with open('phot_data.pkl', 'wb') as handle:
+            pickle.dump((photons, stackcube, fig, stem), handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+        # with open('phot_data.pkl', 'rb') as handle:
+        #     photons, stackcube, fig, stem = pickle.load(handle)
 
         ax6 = fig.add_subplot(336)
 
@@ -158,14 +158,14 @@ def make_figure2():
         times = np.sort(star_events[:, 0])
         dprint((np.shape(star_events)))
 
-        plt.figure()
-        plt.plot(times, marker='o')
-        plt.figure()
-        plt.hist(times, bins=5000)
-        plt.figure()
-        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],
-                 histtype='stepfilled', label='True')
-        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],
+        # plt.figure()
+        # plt.plot(times, marker='o')
+        # plt.figure()
+        # plt.hist(times, bins=5000)
+        # plt.figure()
+        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0], bins=range(40,100),
+                 histtype='stepfilled', label='Original')
+        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0], bins=range(40,100),
                  histtype='step', color='k')
 
         stem = MKIDs.remove_close(stem)
@@ -180,9 +180,9 @@ def make_figure2():
         # plt.figure()
         # plt.hist(times, bins=5000)
         # plt.figure()
-        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],
-                 histtype='stepfilled', label='Missed', alpha=0.75)
-        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],
+        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],bins=range(40,100),
+                 histtype='stepfilled', label='Observed', alpha=0.75)
+        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],bins=range(40,100),
                  histtype='step', color='k')
         # plt.show(block=True)
         cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
