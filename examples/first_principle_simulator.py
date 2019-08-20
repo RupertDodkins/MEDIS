@@ -163,9 +163,9 @@ def make_figure2():
         plt.figure()
         plt.hist(times, bins=5000)
         plt.figure()
-        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, ap.numframes))[0],
+        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],
                  histtype='stepfilled', label='True')
-        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, ap.numframes))[0],
+        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],
                  histtype='step', color='k')
 
         stem = MKIDs.remove_close(stem)
@@ -180,9 +180,9 @@ def make_figure2():
         # plt.figure()
         # plt.hist(times, bins=5000)
         # plt.figure()
-        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, ap.numframes))[0],
+        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],
                  histtype='stepfilled', label='Missed', alpha=0.75)
-        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, ap.numframes))[0],
+        ax6.hist(np.histogram(times, bins=np.linspace(0,len(fields)*ap.sample_time, 5000))[0],
                  histtype='step', color='k')
         # plt.show(block=True)
         cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))

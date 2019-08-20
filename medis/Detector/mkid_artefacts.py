@@ -14,31 +14,30 @@ from . import spectral as spec
 import medis.Detector.pipeline as pipe
 from medis.Utils.plot_tools import quicklook_im
 
+
 def remove_close(stem):
     for x in range(mp.array_size[1]):
         for y in range(mp.array_size[0]):
-            print(x,y)
-            if len(stem[x][y])>1:
+            print(x, y)
+            if len(stem[x][y]) > 1:
                 events = np.array(stem[x][y])
-                # print(events, np.shape(events))
                 timesort = np.argsort(events[:, 0])
                 events = events[timesort]
-                if x == 20 and y == 65:
-                    print(len(stem[x][y]))
-                sep = events[:, 0] - np.roll(events[:, 0], 1, 0)
-                try:
-                    idx = -1  # becomes None when no more close photons are found
-                    while idx != None:
-                        idx, _ = next(((i, v) for (i, v) in enumerate(sep) if 0 < v < mp.dead_time), (None, None))
-                        if idx != None:
-                            # dprint((len(events), np.min(sep[1:]), sep[:3]))
-                            events = np.delete(events, idx, axis=0)
-                            sep = events[:, 0] - np.roll(events[:, 0], 1, 0)
-                except StopIteration:
-                    pass
+                detected = [0]
+                idx = 0
+                while idx != None:
+                    these_times = events[idx:, 0] - events[idx, 0]
+                    detect, _ = next(((i, v) for (i, v) in enumerate(these_times) if v > mp.dead_time), (None, None))
+                    if detect != None:
+                        detect += idx
+                        detected.append(detect)
+                    idx = detect
+
+                missed = [ele for ele in range(detected[-1] + 1) if ele not in detected]
+                events = np.delete(events, missed, axis=0)
                 stem[x][y] = events
-                # print('lol')
     return stem
+
 
 def makecube(packets, array_size):
     stem = pipe.arange_into_stem(packets, (array_size[0], array_size[1]))
