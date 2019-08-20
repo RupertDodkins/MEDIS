@@ -33,6 +33,16 @@ class Wavefronts():
         # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
 
+        # eso_samp = np.arange(1150, 25000, 5)
+        # cut = eso_samp<ap.band[0] or eso_samp>ap.band[1]
+        # with open(iop.stellardata) as fn:
+        #     self.starspectrum = fn.readlines()
+        # self.starspectrum = np.delete(self.starspectrum, cut)
+        #
+        # with open(iop.planetspectra) as fn:
+        #     self.planetspectrum = fn.readlines()
+        # self.planetspectrum = np.delete(self.planetspectrum, cut)
+
         # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
         # each field in the wf_array is the complex E-field at that wavelength, per object
         # the E-field size is given by (ap.grid_size x ap.grid_size)
@@ -53,6 +63,7 @@ class Wavefronts():
             # Initialize the wavefront at entrance pupil
             self.beam_ratios[iw] = tp.beam_ratio * ap.band[0] / w * 1e-9
             wfp = proper.prop_begin(tp.diam, w, ap.grid_size, self.beam_ratios[iw])
+            # wfp *= self.starspectrum[iw]
 
             wfs = [wfp]
             names = ['primary']
@@ -60,6 +71,7 @@ class Wavefronts():
             if ap.companion:
                 for id in range(len(ap.contrast)):
                     wfc = proper.prop_begin(tp.diam, w, ap.grid_size, self.beam_ratios[iw])
+                    # wfc *= self.planetspectrum[iw]
                     wfs.append(wfc)
                     names.append('companion_%i' % id)
 

@@ -38,6 +38,12 @@ class IO_params:
         self.CPA_meas = os.path.join(self.aberdir, 'CPA_meas.pkl')
         self.quasi = os.path.join(self.aberdir, 'quasi')
 
+        self.ref_spectra = 'reference_spectra'
+        self.stellarfile = 'ukg0i.dat'
+        self.stellardata = os.path.join(self.datadir, self.ref_spectra, self.stellarfile)
+        # self.planetfile = 'ukg0i.dat'
+        # self.planetdata = os.path.join(self.datadir, self.ref_spectra, self.planetfile)
+
         # Unprocessed Photon Science Data
         self.sciroot = 'observations'
         self.scidir = os.path.join(self.datadir, self.sciroot)  # self.savedata
