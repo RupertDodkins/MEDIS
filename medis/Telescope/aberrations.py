@@ -146,7 +146,6 @@ def add_aber(wfo, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
     if not aber_params['QuasiStatic']:
         step = 0
     else:
-        dprint((iop.aberdir, iop.aberdir[-6:]))
         if iop.aberdir[-6:] != 'quasi/':
             iop.aberdir = iop.aberdir+'quasi/'
 

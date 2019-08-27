@@ -6,6 +6,7 @@ import pickle as pickle
 from scipy import ndimage
 import proper
 from proper_mod import prop_dm
+import medis.speckle_nulling.dm_functions as DM
 from medis.params import tp, cp, mp, ap, iop
 from medis.Utils.misc import dprint
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im
@@ -119,7 +120,7 @@ def tiptilt(wfo, CPA_maps, tiptilt):
 
     return CPA_maps, tiptilt
 
-def deformable_mirror(wfo, CPA_maps):
+def deformable_mirror(wfo, CPA_maps, astrogrid=False):
     # TODO address the kludge. Is it still necessary
     # dprint('running quick_ao')
     wf_array = wfo.wf_array
@@ -144,8 +145,15 @@ def deformable_mirror(wfo, CPA_maps):
             # quicklook_im(dm_map)
             f= interpolate.interp2d(list(range(dm_map.shape[0])), list(range(dm_map.shape[0])), dm_map)
             dm_map = f(np.linspace(0,dm_map.shape[0], nact), np.linspace(0, dm_map.shape[0], nact))
-            # dm_map = proper.prop_magnify(CPA_map, map_spacing / act_spacing, nact)
-            # quicklook_im(dm_map)
+
+            s_amp = DM.amplitudemodel(0.4*10**-6, 3, c=1.6)
+            phase = 1 % 10 * 2 * np.pi / 10.
+            s_amp = 1 % 5 * s_amp / 5.
+            xloc, yloc = 12, 12
+            waffle = DM.make_speckle_kxy(xloc, yloc, s_amp, phase)
+            waffle += DM.make_speckle_kxy(xloc, -yloc, s_amp, phase)
+
+
 
             if tp.piston_error:
                 mean_dm_map = np.mean(np.abs(dm_map))
@@ -154,6 +162,12 @@ def deformable_mirror(wfo, CPA_maps):
 
 
             dm_map = -dm_map * proper.prop_get_wavelength(wf_array[iw,io]) / (4 * np.pi)  # <--- here
+            # quicklook_im(dm_map)
+            dm_map += waffle
+            # dm_map = proper.prop_magnify(CPA_map, map_spacing / act_spacing, nact)
+            # quicklook_im(waffle)
+            # quicklook_im(dm_map)
+
             # quicklook_im(dm_map)
             # dmap = proper.prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, N_ACT_ACROSS_PUPIL=nact, FIT=True)  # <-- here
             dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)  # <-- here
