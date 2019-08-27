@@ -21,8 +21,10 @@ import proper
 from medis.Utils.plot_tools import view_datacube, loop_frames, quicklook_im
 from . import temporal as temp
 from . import spectral as spec
+from . import pipeline as pipe
 # import matplotlib.pyplot as plt
 from . import H2RG
+
 from medis.Utils.misc import dprint
 
 
@@ -30,7 +32,94 @@ from medis.Utils.misc import dprint
 ## Modules Relating to Formatting Data in Photon Lists ##
 ####################################################################################################
 
-def get_packets(datacube, step, dp,mp):
+def get_packets(datacube, step, dp, mp):
+    # quicklook_im(datacube[0], logAmp=True)
+
+    if (mp.array_size != datacube[0].shape + np.array([1,1])).all():
+        left = int(np.floor(float(ap.grid_size-mp.array_size[0])/2))
+        right = int(np.ceil(float(ap.grid_size-mp.array_size[0])/2))
+        top = int(np.floor(float(ap.grid_size-mp.array_size[1])/2))
+        bottom = int(np.ceil(float(ap.grid_size-mp.array_size[1])/2))
+
+        dith_duration = np.floor(ap.numframes/len(tp.pix_shift))
+        print(ap.numframes, len(tp.pix_shift), dith_duration)
+        dith_idx = np.floor(step/dith_duration).astype(np.int32)
+        dprint((dith_duration, dith_idx, tp.pix_shift[dith_idx]))
+
+        dprint(f"left={left},right={right},top={top},bottom={bottom}")
+        datacube = datacube[:, tp.pix_shift[dith_idx][0]+bottom:tp.pix_shift[dith_idx][0]-top,
+                   tp.pix_shift[dith_idx][1]+left:tp.pix_shift[dith_idx][1]-right]
+
+    if mp.QE_var:
+        datacube *= dp.QE_map[:datacube.shape[1],:datacube.shape[1]]
+    # if mp.hot_pix:
+    #     datacube = MKIDs.add_hot_pix(datacube, dp, step)
+
+    # quicklook_im(datacube[0], logAmp=True, vmin=1)
+
+    num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
+
+    photons = temp.sample_cube(datacube, num_events)
+
+    photons = spec.calibrate_phase(photons)
+    photons = temp.assign_calibtime(photons, step)
+
+    # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+    # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+    # quicklook_im(cube[0], logAmp=True, vmin=1)
+
+    if mp.dark_counts:
+        dark_photons = MKIDs.get_dark_packets(dp, step)
+        photons = np.hstack((photons, dark_photons))
+        # photons = MKIDs.add_dark(photons)
+
+    if mp.hot_pix:
+        hot_photons = MKIDs.get_hot_packets(dp, step)
+        photons = np.hstack((photons, hot_photons))
+        # stem = MKIDs.add_hot(stem)
+
+    # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+    # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+    # quicklook_im(cube[0], logAmp=True, vmin=1)
+
+    if mp.phase_uncertainty:
+        photons = MKIDs.apply_phase_offset_array(photons, dp.sigs)
+        photons[1] *= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
+
+    # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+    # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+    # quicklook_im(cube[0], vmin=1, logAmp=True)
+    # plt.figure()
+    # plt.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+    # plt.show(block=True)
+
+    thresh =  photons[1] < dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])]
+    photons = photons[:, thresh]
+    # print(thresh)
+
+    # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+    # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+    # quicklook_im(cube[0], vmin=1, logAmp=True)
+    # plt.figure()
+    # plt.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+    # plt.show(block=True)
+
+    dprint(photons.shape)
+
+    stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+    cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+    # ax7.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+    cube /= dp.QE_map
+    photons = pipe.ungroup(stem)
+
+    dprint(photons.shape)
+
+    dprint("Completed Readout Loop")
+
+    return photons.T
+
+
+def get_packets_old(datacube, step, dp,mp):
 # def get_packets(fields, step, dp,mp):
     # print 'Detecting photons with an MKID array'
     # print(fields.shape)

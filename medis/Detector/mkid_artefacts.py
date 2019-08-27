@@ -16,9 +16,9 @@ from medis.Utils.plot_tools import quicklook_im
 
 
 def remove_close(stem):
+    dprint('removing close photons')
     for x in range(mp.array_size[1]):
         for y in range(mp.array_size[0]):
-            print(x, y)
             if len(stem[x][y]) > 1:
                 events = np.array(stem[x][y])
                 timesort = np.argsort(events[:, 0])
@@ -142,8 +142,11 @@ def assign_spectral_res(plot=False):
         plt.hist(Rs)
         plt.show()
     Rs = np.reshape(Rs, mp.array_size)
-    # plt.imshow(Rs)
-    # plt.show()
+
+    if plot:
+        plt.figure()
+        plt.imshow(Rs)
+        plt.show()
     return Rs
 
 def get_R_hyper(Rs, plot=False):
@@ -155,9 +158,9 @@ def get_R_hyper(Rs, plot=False):
     c = Rs-m*ap.band[0] # each c depends on the R @ 800
     # plt.plot(c)
     # plt.show()
-    waves = np.ones((np.shape(m)[1],np.shape(m)[0],ap.w_bins))*np.linspace(ap.band[0],ap.band[1],ap.w_bins)
+    waves = np.ones((np.shape(m)[1],np.shape(m)[0],ap.w_bins+5))*np.linspace(ap.band[0],ap.band[1],ap.w_bins+5)
     waves = np.transpose(waves) # make a tensor of 128x128x10 where every 10 vector is 800... 1500
-    R_spec = m* waves + c # 128x128x10 tensor is now lots of simple linear lines e.g. 50,49,.. 45
+    R_spec = m * waves + c # 128x128x10 tensor is now lots of simple linear lines e.g. 50,49,.. 45
     # probs = np.ones((np.shape(R_spec)[0],np.shape(R_spec)[1],np.shape(R_spec)[2],
     #                 mp.res_elements))*np.linspace(0, 1, mp.res_elements)
     #                         # similar to waves but 0... 1 using 128 elements
