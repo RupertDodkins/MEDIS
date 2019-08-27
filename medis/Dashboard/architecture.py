@@ -327,7 +327,7 @@ class MyWindow(QWidget):
             self.vmin[amp_ind] = log_bins[1]
             self.vmax[amp_ind] = log_bins[-1]
         cmap[~amp_ind] = twilight
-        cmap[amp_ind] = 'cividis'
+        cmap[amp_ind] = 'inferno'
 
         for x in range(self.rows):
             for y in range(self.cols):
@@ -338,6 +338,7 @@ class MyWindow(QWidget):
                     pass
                 self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(self.EfieldsThread.gui_images[x, y, ::1, ::1], norm=norm[x],
                                                      vmin=self.vmin[x], vmax=self.vmax[x], cmap=cmap[x], origin='lower')
+                self.EmapsGrid.axes[x, y].axis('off')
 
             self.EmapsGrid.figure.colorbar(self.EmapsGrid.ims[x,-1], cax=self.EmapsGrid.cax[x], orientation='vertical')
 
@@ -375,7 +376,7 @@ class MyWindow(QWidget):
         # self.metricsGrid.axes[0,0].cla()
         self.metricsGrid.ims[0,0] = self.metricsGrid.axes[0,0].imshow(np.sum(self.EfieldsThread.sct.integration,
                                                                              axis=0), norm=LogNorm(),
-                                                                      origin='lower', cmap='cividis')
+                                                                      origin='lower', cmap='inferno')
         for i, loc in enumerate(sp.metric_args[0]):
             circle1 = plt.Circle(loc, radius=4, color=colors[i], fill=False, linewidth=2)
             self.metricsGrid.axes[0,0].add_artist(circle1)
@@ -416,7 +417,7 @@ class MyWindow(QWidget):
                 # itclip = np.array([it-1]).clip(min=0)[0]
                 self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric[self.EfieldsThread.qt-1], axis=0),
                                                                                    norm=LogNorm(), origin='lower',
-                                                                                   cmap='cividis')
+                                                                                   cmap='inferno')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image at step {self.EfieldsThread.qt-1}')
@@ -425,21 +426,21 @@ class MyWindow(QWidget):
                 self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(np.sum(metric, axis=0),
                                                                                    norm=LogNorm(),
                                                                                    origin='lower',
-                                                                                   cmap='cividis')
+                                                                                   cmap='inferno')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'wavelength collapsed image')
             elif dims == 3 and metric.shape[0] == ap.numframes:
                 self.metricsGrid.ims[r+1,0] = self.metricsGrid.axes[r+1, 0].imshow(metric[self.EfieldsThread.qt-1], norm=LogNorm(),
                                                                                    origin='lower',
-                                                                                   cmap='cividis')
+                                                                                   cmap='inferno')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'monochromatic image at step {self.EfieldsThread.qt - 1}')
             elif dims == 2 and type(metric) is np.ndarray:
                 self.metricsGrid.ims[r+1, 0] = self.metricsGrid.axes[r+1, 0].imshow(metric, norm=LogNorm(),
                                                                                     origin='lower',
-                                                                                   cmap='cividis')
+                                                                                   cmap='inferno')
                 self.metricsGrid.figure.colorbar(self.metricsGrid.ims[r+1,0], cax=self.metricsGrid.cax[r+1],
                                                  orientation='vertical')
                 self.metricsGrid.axes[r + 1, 0].set_title(f'constant monochromatic image')
