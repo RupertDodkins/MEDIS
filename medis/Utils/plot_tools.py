@@ -232,12 +232,12 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
         if logAmp:
             if np.min(datacube[m]) <= 0.:
                 im = ax[m].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
-                               norm=SymLogNorm(linthresh=1e-7), cmap="YlGnBu_r")
+                               norm=SymLogNorm(linthresh=1e-7), cmap="inferno")
                 # datacube[m] = np.abs(datacube[m]) + 1e-20
-                dprint('corrected', np.min(datacube[m]), np.max(datacube[m]), vmin, vmax)
+                dprint(('corrected', np.min(datacube[m]), np.max(datacube[m]), vmin, vmax))
             else:
                 im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
-                               norm=LogNorm(), cmap="YlGnBu_r")
+                               norm=LogNorm(), cmap="inferno")
         else:
             im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap="jet")
         if annos:
@@ -365,17 +365,17 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
     for w in range(colors):
         ax = fig.add_subplot(height,width,w+1)
         if logAmp:
-            if vmin <= 0:
+            if True:#vmin <= 0:
                 # datacube[w] = np.abs(datacube[w] + 1e-9)
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                     norm=SymLogNorm(linthresh=1e-5),
-                                    cmap="YlGnBu_r")
+                                    cmap="inferno")
             else:
                 ax.set_title(w_string[w])
-                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, norm=LogNorm(), cmap="YlGnBu_r")
+                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, norm=LogNorm(), cmap="inferno")
         else:
             # ax.set_title(w_string[w])
-            im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap="YlGnBu_r")
+            im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap="inferno")
         if axis == 'anno':
             annotate_axis(im, ax, datacube.shape[1])
         if axis is None:

@@ -66,9 +66,9 @@ class Timeseries():
                 #     outqueue.put((t, save_E_fields[:, :, o]))
                 self.outqueue.put((t, save_E_fields))
 
-            now = time.time()
-            elapsed = float(now - start) / 60.
-            each_iter = float(elapsed) / (it + 1)
+                now = time.time()
+                elapsed = float(now - start) / 60.
+                each_iter = float(elapsed) / (it + 1)
 
             print('***********************************')
             dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #
@@ -94,14 +94,14 @@ def initialize_telescope():
 
     # initialize atmosphere
     print("Atmosdir = %s " % iop.atmosdir)
-    if tp.use_atmos and not os.path.exists(f'{iop.atmosdir}/{cp.model}'):
-        atmos.generate_maps()
+    if tp.use_atmos:
+        atmos.prepare_maps()
 
     # initialize telescope
-    if (tp.aber_params['QuasiStatic'] is True) and glob.glob(iop.aberdir + 'quasi/*.fits') == []:
+    if glob.glob(iop.quasi+'/*.fits') == []:
         aber.generate_maps(tp.f_lens)
         if tp.aber_params['NCPA']:
-            aber.generate_maps(tp.f_lens, 'NCPA', 'lens')
+            aber.generate_maps(tp.f_lens)
 
     # if tp.servo_error:
     #     aber.createObjMapsEmpty()
@@ -220,6 +220,7 @@ def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
 
 def run_medis(EfieldsThread=None, realtime=False, plot=False):
 
+    dprint((iop.fields, sp.save_fields))
     if EfieldsThread is not None:
         realtime = True
 
@@ -289,6 +290,7 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
     print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)}")
 
     if sp.save_fields:
+        dprint(iop.fields)
         read.save_fields(e_fields_sequence, fields_file=iop.fields)
 
     return e_fields_sequence
