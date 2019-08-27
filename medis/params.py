@@ -29,6 +29,7 @@ class IO_params:
         self.atmosdata = '190501'
         self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
         self.idl_params = os.path.join(self.atmosroot, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
+        self.atmosconfig = os.path.join(self.atmosdir, 'config.txt')
 
         # Aberration Metadata
         self.aberroot = 'aberrations'
@@ -43,6 +44,9 @@ class IO_params:
         self.stellardata = os.path.join(self.datadir, self.ref_spectra, self.stellarfile)
         # self.planetfile = 'ukg0i.dat'
         # self.planetdata = os.path.join(self.datadir, self.ref_spectra, self.planetfile)
+
+        self.throughput = 'throughput'
+        self.throughputfile = os.path.join(self.datadir, self.throughput, 'throughput.txt')
 
         # Unprocessed Photon Science Data
         self.sciroot = 'observations'
@@ -155,6 +159,8 @@ class Astro_params:
         # must be bigger than the beam size to avoid FT effects at edges; must be factor of 2
         # NOT the size of your detector/# of pixels
         self.interp_sample = True  # Set to interpolate wavelengths from ap.nwsamp to ap.w_bins
+        self.star_spec = 'ref'
+        self.planet_spec = None
 
 
 class Telescope_params:
@@ -316,6 +322,7 @@ class CAOS_params:
         self.model = 'single'  # single|hcipy_standard|evolving|zernike|sine
         self.show_caosparams= True  # for control over all other variables
         self.r0 = 0.4#0.4
+        self.cn = 0.1 * 1e-13
         self.L0 = 10
         self.v = 10  #1
         self.h = 10

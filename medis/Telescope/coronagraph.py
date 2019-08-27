@@ -77,6 +77,7 @@ def coronagraph(wfo, f_lens, occulter_type, occult_loc, diam):
         # print('lol')
         # apodization(wfo, True)
         vortex(wfo)
+        # quicklook_wf(wfo)
         # lyotstop(wfo, True)
 
         #plt.suptitle("8th order band limited spot", fontsize = 18)
@@ -116,8 +117,9 @@ def coronagraph(wfo, f_lens, occulter_type, occult_loc, diam):
         proper.prop_circular_aperture(wfo, 0.75, NORM = True) #0.5
     elif occulter_type == "Vortex":
         # proper.prop_circular_aperture(wfo, 0.98, NORM = True) #0.5
+        # quicklook_wf(wfo, logAmp=False)
         lyotstop(wfo,True)
-        # quicklook_wf(wfo)
+        # quicklook_wf(wfo, logAmp=False)
     elif occulter_type == "None (Lyot Stop)":
         proper.prop_circular_aperture(wfo, 0.8, NORM=True)
 
@@ -350,7 +352,7 @@ def lyotstop(wf,  RAVC=None, APP=None, get_pupil='no', dnpup=50):
 
         # Lyot stop parameters: R_out, dR_in, spi_width
         # outer radius (absolute %), inner radius (relative %), spider width (m)
-        (R_out, dR_in, spi_width) = [0.98, 0.03, 1.1]
+        (R_out, dR_in, spi_width) = [0.98, 0.03, 0]
 
         # Lyot stop inner radius at least as large as obstruction radius
         R_in = 0.15

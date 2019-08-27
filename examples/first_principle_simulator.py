@@ -26,7 +26,7 @@ sp.return_E = True
 
 # Astro Parameters
 ap.companion = False
-ap.star_photons_per_s = int(2e7)
+ap.star_photons_per_s = int(2e3)
 ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
 
 # Telescope/optics Parameters
@@ -35,7 +35,7 @@ tp.diam = 8.
 tp.beam_ratio = 0.5
 tp.obscure = True
 tp.use_ao = True
-# tp.include_tiptilt= False
+tp.include_tiptilt= False
 tp.ao_act = 50
 tp.use_atmos = True
 # tp.use_zern_ab = True
@@ -47,17 +47,23 @@ tp.aber_params = {'CPA': True,
                   'Amp': False,
                   'n_surfs': 8,
                   'OOPP': False}#[16,8,8,16,4,4,8,16]}#False}#
-tp.aber_vals = {'a': [1e-17, 0.2e-17],
-               'b': [0.8, 0.2],
-               'c': [3.1,0.5],
-               'a_amp': [0.05,0.01]}
+# tp.aber_vals = {'a': [1e-17, 0.2e-17],
+#                'b': [0.8, 0.2],
+#                'c': [3.1,0.5],
+#                'a_amp': [0.05,0.01]}
+tp.aber_vals = {'a': [1e-18, 2e-20],#'a': [5e-17, 1e-18],
+                'b': [2.0, 0.2],
+                'c': [3.1, 0.5],
+                'a_amp': [0.05, 0.01]}
 tp.legs_frac = 0.03
 
+tp.satelite_speck = True
+
 # Wavelength and Spectral Range
-ap.nwsamp = 1
-ap.w_bins = 1
+ap.nwsamp = 8
+ap.w_bins = 8
 ap.sample_time = 0.1
-ap.numframes = 100#5000
+ap.numframes = 100 #100 #5000
 # tp.piston_error = True
 # tp.pix_shift = [[15,30],[-30,15],[-15,-30],[30,-15]]
 tp.pix_shift = [[15,30]]
@@ -82,10 +88,20 @@ mp.pix_yield = 0.8  # check dis
 mp.dark_bright = 5e4
 mp.hot_bright = 4e3
 mp.dead_time = 1e-5
+mp.wavecal_coeffs = [1./6, -250]
+
+# sp.save_fields = False
 
 def make_figure1():
+    ap.nwsamp = 1
+    ap.w_bins = 1
     tp.detector = 'ideal'
     iop.update("first_principle/figure1")
+    iop.aberdir = os.path.join(iop.datadir, iop.aberroot, 'Palomar256')
+    iop.quasi = os.path.join(iop.aberdir, 'quasi')
+    iop.atmosdata = '190823'
+    iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
+
     sp.save_locs = np.array(['add_atmos', 'add_aber', 'deformable_mirror', 'add_aber', 'prop_mid_optics'])
     sp.gui_map_type = np.array(['phase', 'phase', 'phase', 'phase', 'amp'])
     phase_ind = range(4)
@@ -94,17 +110,37 @@ def make_figure1():
         fields = gpd.run_medis()[0, :, 0, 0]#, ap.grid_size//4:-ap.grid_size//4, ap.grid_size//4:-ap.grid_size//4]
         pupils = np.angle(fields[phase_ind], deg=False)
         focals = np.absolute(fields[4:])
+
         grid(pupils, logAmp=False, colormap=twilight, vmins=[-np.pi]*len(sp.save_locs), vmaxs=[np.pi]*len(sp.save_locs),
              annos=['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA'], ctitles=r'$\phi$')
-        grid(focals, logAmp=True, annos=['Before Coron.', 'After Coron.'], ctitles='$I$', vmins=[5e-4]*len(focals), vmaxs=[0.05]*len(focals))
+        grid(focals[:, ap.grid_size//4:-ap.grid_size//4,ap.grid_size//4:-ap.grid_size//4],
+             logAmp=True, annos=['Before Coron.', 'After Coron.'], ctitles='$I$', vmins=[0.001]*len(focals),
+             vmaxs=[0.05]*len(focals))
 
-def make_figure2():
+def make_figure2(normalize_spec=False):
     tp.detector = 'ideal'  #set ideal at first then do the mkid related stuff here
     iop.update("first_principle/figure2")
+    iop.aberdir = os.path.join(iop.datadir, iop.aberroot, 'Palomar256')
+    iop.quasi = os.path.join(iop.aberdir, 'quasi')
+    iop.atmosdata = '190823'
+    iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
+    iop.atmosconfig = os.path.join(iop.atmosdir, cp.model, 'config.txt')
 
     if __name__ == "__main__":  # required for multiprocessing - make sure globals are set before though
         fields = gpd.run_medis(realtime=False)[:ap.numframes]
 
+        # spectralcube = np.abs(fields[0, -1, :, 0]) ** 2
+        # throughput = np.sum(spectralcube, axis=(1, 2))
+        # np.savetxt(iop.throughputfile, throughput)
+
+        if normalize_spec:
+            throughput = np.loadtxt(iop.throughputfile)
+            plt.plot(throughput)
+            plt.figure()
+            plt.plot(1./throughput)
+            plt.show()
+
+        dprint((fields.shape))
         if not os.path.isfile(iop.device_params):
             MKIDs.initialize()
 
@@ -113,10 +149,14 @@ def make_figure2():
 
         photons = np.empty((0, 4))
         dprint(len(fields))
-        stackcube = np.zeros((ap.numframes, 1, mp.array_size[1], mp.array_size[0]))
+        stackcube = np.zeros((ap.numframes, ap.w_bins, mp.array_size[1], mp.array_size[0]))
         for step in range(len(fields)):
             dprint(step)
-            spectralcube = np.abs(fields[step, 0, :, 0]) ** 2
+            spectralcube = np.abs(fields[step, -1, :, 0]) ** 2
+
+            if normalize_spec:
+                spectralcube = spectralcube * sum(throughput/ap.w_bins) / throughput[:, np.newaxis, np.newaxis]
+
             if step == 0:
                 step_packets, fig = get_packets_plots(spectralcube, step, dp, mp, plot=True)
             else:
@@ -300,6 +340,8 @@ def make_figure4():
 def get_packets_plots(datacube, step, dp, mp, plot=False):
 
     # quicklook_im(datacube[0], logAmp=True)
+    # plt.plot(np.sum(datacube, axis=(1,2)))
+    # plt.show(block=True)
 
     if (mp.array_size != datacube[0].shape + np.array([1,1])).all():
         left = int(np.floor(float(ap.grid_size-mp.array_size[0])/2))
@@ -344,9 +386,9 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
                  color='w', fontsize=16, bbox=props)
 
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
+    dprint(num_events)
 
     photons = temp.sample_cube(datacube, num_events)
-
     photons = spec.calibrate_phase(photons)
     photons = temp.assign_calibtime(photons, step)
 
@@ -395,8 +437,8 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
     # quicklook_im(cube[0], logAmp=True, vmin=1)
 
     if mp.phase_uncertainty:
-        photons[1] *= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
         photons = MKIDs.apply_phase_offset_array(photons, dp.sigs)
+        photons[1] *= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
 
     if plot:
         ax5 = fig.add_subplot(335)
@@ -468,3 +510,5 @@ if make_figure == 1:
     make_figure1()
 elif make_figure == 2:
     make_figure2()
+
+

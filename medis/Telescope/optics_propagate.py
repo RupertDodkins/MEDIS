@@ -12,6 +12,7 @@ from medis.Telescope.coronagraph import coronagraph
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity
 from medis.params import ap, tp, iop, sp
 from medis.Utils.misc import dprint
+import matplotlib.pylab as plt
 
 class Wavefronts():
     """
@@ -33,16 +34,20 @@ class Wavefronts():
         # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
 
-        # eso_samp = np.arange(1150, 25000, 5)
-        # cut = eso_samp<ap.band[0] or eso_samp>ap.band[1]
-        # with open(iop.stellardata) as fn:
-        #     self.starspectrum = fn.readlines()
-        # self.starspectrum = np.delete(self.starspectrum, cut)
-        #
-        # with open(iop.planetspectra) as fn:
-        #     self.planetspectrum = fn.readlines()
-        # self.planetspectrum = np.delete(self.planetspectrum, cut)
-
+        if ap.star_spec == 'ref':
+            eso_samp = np.arange(115, 2500, 5)
+            cut = np.logical_or(eso_samp<ap.band[0], eso_samp>ap.band[1])
+            with open(iop.stellardata) as fn:
+                self.starspectrum = fn.readlines()
+            self.starspectrum = np.delete(self.starspectrum, cut)
+        else:
+            self.starspectrum = np.ones((ap.nwsamp))
+        if ap.planet_spec == 'ref':
+            with open(iop.planetspectra) as fn:
+                self.planetspectrum = fn.readlines()
+            self.planetspectrum = np.delete(self.planetspectrum, cut)
+        else:
+            self.planetspectrum = np.ones((ap.nwsamp))
         # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
         # each field in the wf_array is the complex E-field at that wavelength, per object
         # the E-field size is given by (ap.grid_size x ap.grid_size)
@@ -71,7 +76,7 @@ class Wavefronts():
             if ap.companion:
                 for id in range(len(ap.contrast)):
                     wfc = proper.prop_begin(tp.diam, w, ap.grid_size, self.beam_ratios[iw])
-                    # wfc *= self.planetspectrum[iw]
+                    wfc *= self.planetspectrum[iw]
                     wfs.append(wfc)
                     names.append('companion_%i' % id)
 
@@ -193,8 +198,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         aber.add_atmos(wfo, *(tp.f_lens, PASSVALUE['iter']))
         # quicklook_wf(wfo.wf_array[0, 0])
 
-
-
     # quicklook_wf(wfo.wf_array[0,0])
     if tp.rot_rate:
         wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['iter']))
@@ -202,7 +205,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     if tp.use_hex:
         fo.add_hex(wfo.wf_array)
 
-    wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
+    # wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
 
     # Both offsets and scales the companion wavefront
     if wfo.wf_array.shape[1] > 1:
@@ -217,7 +220,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         # wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam / 2})
         # wfo.wf_array = aber.abs_zeros(wfo.wf_array)
 
-    ########################################
+    #######################################
     # AO
     #######################################
 
@@ -233,17 +236,13 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
             CPA_maps, PASSVALUE['tiptilt'] = ao.tiptilt(wfo, CPA_maps, tiptilt)
 
         if tp.include_dm:
-            ao.deformable_mirror(wfo, CPA_maps)
+            ao.deformable_mirror(wfo, CPA_maps, astrogrid=tp.satelite_speck)
 
         if not tp.quick_ao:
             PASSVALUE['CPA_maps'] = ao.closedloop_wfs(wfo, CPA_maps)
         ao.flat_outside(wfo.wf_array)
     else:
         ao.no_ao(wfo)
-
-    # TODO Verify this
-    # if tp.active_modulate:
-    #     fpwfs.modulate(wf, w, PASSVALUE['iter'])
 
     ########################################
     # Post-AO Telescope Distortions
@@ -267,12 +266,10 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     # First Optic (primary mirror)
     wfo.iter_func(fo.prop_mid_optics, tp.f_lens, tp.f_lens)
-
     ########################################
     # Coronagraph
     ########################################
     wfo.iter_func(coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
-
     # Final e_fields tests and saving
     wfo.end()
 
@@ -280,4 +277,9 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     # hack to get prop_run to return what we want the psf variable is just an int that we don't care about
     # the e fields get passed as the pixscale variable in prop_run
+
+    # spectralcube = np.abs(wfo.save_E_fields[-1]) ** 2
+    # plt.plot(np.sum(spectralcube, axis=(1,2,3)))
+    # plt.show()
+
     return 1, wfo.save_E_fields
