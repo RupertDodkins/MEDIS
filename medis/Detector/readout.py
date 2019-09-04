@@ -42,9 +42,7 @@ def get_packets(datacube, step, dp, mp):
         bottom = int(np.ceil(float(ap.grid_size-mp.array_size[1])/2))
 
         dith_duration = np.floor(ap.numframes/len(tp.pix_shift))
-        print(ap.numframes, len(tp.pix_shift), dith_duration)
         dith_idx = np.floor(step/dith_duration).astype(np.int32)
-        dprint((dith_duration, dith_idx, tp.pix_shift[dith_idx]))
 
         dprint(f"left={left},right={right},top={top},bottom={bottom}")
         datacube = datacube[:, tp.pix_shift[dith_idx][0]+bottom:tp.pix_shift[dith_idx][0]-top,
@@ -59,6 +57,7 @@ def get_packets(datacube, step, dp, mp):
 
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
 
+    dprint((datacube.shape, num_events))
     photons = temp.sample_cube(datacube, num_events)
 
     photons = spec.calibrate_phase(photons)
@@ -106,15 +105,16 @@ def get_packets(datacube, step, dp, mp):
 
     dprint(photons.shape)
 
-    stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
-    cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
-    # ax7.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
-    cube /= dp.QE_map
-    photons = pipe.ungroup(stem)
+    # This step was taking a long time
+    # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+    # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+    # # ax7.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
+    # cube /= dp.QE_map
+    # photons = pipe.ungroup(stem)
 
     dprint(photons.shape)
 
-    dprint("Completed Readout Loop")
+    dprint("Measured photons with MKIDs")
 
     return photons.T
 
@@ -330,13 +330,10 @@ def open_obs_sequence_hdf5(obs_seq_file = 'hyper.h5'):
 # def open_pseudo_obs():
 #     with pt.open_file(iop.obs_table, mode='r') as f:
 
-
-
 def open_fields(fields_file):
     with h5py.File(fields_file, 'r') as hf:
         data = hf['data'][:]
     return data
-
 
 def take_exposure(obs_sequence):
     factor = ap.exposure_time/ ap.sample_time
@@ -346,6 +343,16 @@ def take_exposure(obs_sequence):
         # print np.shape(downsample_cube[i]), np.shape(obs_sequence), np.shape(np.sum(obs_sequence[i * factor : (i + 1) * factor], axis=0))
         downsample_cube[i] = np.sum(obs_sequence[int(i*factor):int((i+1)*factor)],axis=0)#/float(factor)
     return downsample_cube
+
+def take_fields_exposure(fields):
+    factor = ap.exposure_time/ ap.sample_time
+    dprint(factor)
+    num_exp = int(len(fields)/factor)
+    downsample_fields = np.zeros((num_exp,fields.shape[1],fields.shape[2],fields.shape[3],fields.shape[4],fields.shape[5]))
+    for i in range(num_exp):
+        # print np.shape(downsample_cube[i]), np.shape(obs_sequence), np.shape(np.sum(obs_sequence[i * factor : (i + 1) * factor], axis=0))
+        downsample_fields[i] = np.sum(fields[int(i*factor):int((i+1)*factor)],axis=0)#/float(factor)
+    return downsample_fields
 
 def med_collapse(obs_sequence):
     downsample_cube = np.median(obs_sequence,axis=0)

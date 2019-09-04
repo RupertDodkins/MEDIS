@@ -19,6 +19,7 @@ def remove_close(stem):
     dprint('removing close photons')
     for x in range(mp.array_size[1]):
         for y in range(mp.array_size[0]):
+            print(x,y)
             if len(stem[x][y]) > 1:
                 events = np.array(stem[x][y])
                 timesort = np.argsort(events[:, 0])
@@ -54,13 +55,14 @@ def makecube(packets, array_size):
 def initialize():
     # dp = device_params()
     dprint(f"dp.hot_pix set to {dp.hot_pix}")
-    dp.QE_map = array_QE(plot=False)
+    dp.QE_map_all = array_QE(plot=False)
     dp.responsivity_error_map = responvisity_scaling_map(plot=False)
     if mp.pix_yield == 1:
         mp.bad_pix =False
     if mp.bad_pix == True:
-        dp.QE_map = create_bad_pix(dp.QE_map)
+        dp.QE_map = create_bad_pix(dp.QE_map_all)
         # dp.QE_map = create_hot_pix(dp.QE_map)
+        # quicklook_im(dp.QE_map_all)
         if mp.dark_counts:
             # dp.dark_locs = create_false_pix(mp, amount = mp.dark_pix)
             dp.dark_per_step = int(np.round(ap.sample_time*mp.dark_bright))
@@ -68,7 +70,6 @@ def initialize():
             dp.hot_locs = create_false_pix(mp, amount = mp.hot_pix)
             dp.hot_per_step = int(np.round(ap.sample_time*mp.hot_bright))
         # dp.QE_map = create_bad_pix_center(dp.QE_map)
-    # quicklook_im(dp.QE_map)
     dp.Rs = assign_spectral_res(plot=False)
     dp.sigs = get_R_hyper(dp.Rs, plot=False)
     dprint(f"dp.sigs.shape ={ dp.sigs.shape}")
@@ -158,6 +159,7 @@ def get_R_hyper(Rs, plot=False):
     c = Rs-m*ap.band[0] # each c depends on the R @ 800
     # plt.plot(c)
     # plt.show()
+    dprint(ap.w_bins)
     waves = np.ones((np.shape(m)[1],np.shape(m)[0],ap.w_bins+5))*np.linspace(ap.band[0],ap.band[1],ap.w_bins+5)
     waves = np.transpose(waves) # make a tensor of 128x128x10 where every 10 vector is 800... 1500
     R_spec = m * waves + c # 128x128x10 tensor is now lots of simple linear lines e.g. 50,49,.. 45
@@ -272,31 +274,30 @@ def assign_phase_background(plot=False):
     return basesDeg
 
 
-def create_bad_pix(responsivities, plot=False):
-    x = np.arange(mp.array_size[0])
-    y = np.arange(mp.array_size[1])
+def create_bad_pix(QE_map_all, plot=False):
     amount = int(mp.array_size[0]*mp.array_size[1]*(1.-mp.pix_yield))
 
     bad_ind = random.sample(list(range(mp.array_size[0]*mp.array_size[1])), amount)
 
     dprint(f"Bad indices = {len(bad_ind)}, # MKID pix = { mp.array_size[0]*mp.array_size[1]}, "
-           f"Pixel Yield = { mp.pix_yield}, amount?? = {amount}")
+           f"Pixel Yield = {mp.pix_yield}, amount?? = {amount}")
 
     # bad_y = random.sample(y, amount)
     bad_y = np.int_(np.floor(bad_ind/mp.array_size[1]))
     bad_x = bad_ind % mp.array_size[1]
 
     # dprint(f"responsivity shape  = {responsivities.shape}")
+    QE_map = np.array(QE_map_all)
 
-    responsivities[bad_x, bad_y] = 0
+    QE_map[bad_x, bad_y] = 0
     if plot:
         plt.xlabel('responsivities')
         plt.ylabel('?')
         plt.title('Something Related to Bad Pixels')
-        plt.imshow(responsivities)
+        plt.imshow(QE_map)
         plt.show()
 
-    return responsivities
+    return QE_map
 
 
 def create_bad_pix_center(responsivities):

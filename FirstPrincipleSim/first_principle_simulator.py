@@ -26,7 +26,7 @@ sp.return_E = True
 
 # Astro Parameters
 ap.companion = False
-ap.star_photons_per_s = int(2e3)
+ap.star_photons_per_s = int(2e5)
 ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
 
 # Telescope/optics Parameters
@@ -140,42 +140,46 @@ def make_figure2(normalize_spec=False):
             plt.plot(1./throughput)
             plt.show()
 
-        dprint((fields.shape))
-        if not os.path.isfile(iop.device_params):
-            MKIDs.initialize()
+        if os.path.exists(iop.form_photons):
+            print(f'loading formatted photon data from {iop.form_photons}')
+            with open(iop.form_photons, 'rb') as handle:
+                photons, stackcube, fig, stem = pickle.load(handle)
 
-        with open(iop.device_params, 'rb') as handle:
-            dp = pickle.load(handle)
+        else:
+            dprint((fields.shape))
+            if not os.path.isfile(iop.device_params):
+                MKIDs.initialize()
 
-        photons = np.empty((0, 4))
-        dprint(len(fields))
-        stackcube = np.zeros((ap.numframes, ap.w_bins, mp.array_size[1], mp.array_size[0]))
-        for step in range(len(fields)):
-            dprint(step)
-            spectralcube = np.abs(fields[step, -1, :, 0]) ** 2
+            with open(iop.device_params, 'rb') as handle:
+                dp = pickle.load(handle)
 
-            if normalize_spec:
-                spectralcube = spectralcube * sum(throughput/ap.w_bins) / throughput[:, np.newaxis, np.newaxis]
+            photons = np.empty((0, 4))
+            dprint(len(fields))
+            stackcube = np.zeros((ap.numframes, ap.w_bins, mp.array_size[1], mp.array_size[0]))
+            for step in range(len(fields)):
+                dprint(step)
+                spectralcube = np.abs(fields[step, -1, :, 0]) ** 2
 
-            if step == 0:
-                step_packets, fig = get_packets_plots(spectralcube, step, dp, mp, plot=True)
-            else:
-                step_packets = get_packets_plots(spectralcube, step, dp, mp, plot=False)
-            stem = pipe.arange_into_stem(step_packets, (mp.array_size[0], mp.array_size[1]))
-            cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
-            # quicklook_im(cube[0], vmin=1, logAmp=True)
-            # datacube += cube[0]
-            stackcube[step] = cube
+                if normalize_spec:
+                    spectralcube = spectralcube * sum(throughput/ap.w_bins) / throughput[:, np.newaxis, np.newaxis]
 
-            photons = np.vstack((photons, step_packets))
+                if step == 0:
+                    step_packets, fig = get_packets_plots(spectralcube, step, dp, mp, plot=True)
+                else:
+                    step_packets = get_packets_plots(spectralcube, step, dp, mp, plot=False)
+                stem = pipe.arange_into_stem(step_packets, (mp.array_size[0], mp.array_size[1]))
+                cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
+                # quicklook_im(cube[0], vmin=1, logAmp=True)
+                # datacube += cube[0]
+                stackcube[step] = cube
 
-        stem = pipe.arange_into_stem(photons, (mp.array_size[0], mp.array_size[1]))
+                photons = np.vstack((photons, step_packets))
 
-        with open('phot_data.pkl', 'wb') as handle:
-            pickle.dump((photons, stackcube, fig, stem), handle, protocol=pickle.HIGHEST_PROTOCOL)
+            stem = pipe.arange_into_stem(photons, (mp.array_size[0], mp.array_size[1]))
 
-        # with open('phot_data.pkl', 'rb') as handle:
-        #     photons, stackcube, fig, stem = pickle.load(handle)
+            with open(iop.form_photons, 'wb') as handle:
+                pickle.dump((photons, stackcube, fig, stem), handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 
         ax6 = fig.add_subplot(336)
 

@@ -56,6 +56,7 @@ class IO_params:
         # self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5')  # a x/y/t/w cube of data
         self.fields = os.path.join(self.testdir, 'fields.h5')
         self.obs_table = os.path.join(self.testdir, 'ObsTable.h5')  # a photon table with 4 coloumns
+        self.form_photons = os.path.join(self.testdir, 'formatted_photons.pkl')
         self.device_params = os.path.join(self.testdir, 'deviceParams.pkl')  # detector metadata
         self.coron_temp = os.path.join(self.testdir, 'coron_maps/') # required by vortex coron function
         self.realtime_save = os.path.join(self.testdir, 'rt_temp_txxxx.pkl')
@@ -177,7 +178,7 @@ class Telescope_params:
         self.use_atmos = True  # have to for now because ao wfs reads in map produced but not neccessary
         self.use_ao = True  # True
         self.include_dm = True
-        self.include_tiptilt = True
+        self.include_tiptilt = False
         self.quick_ao = True
         self.ao_act = 60  # 41 #32
         self.servo_error = [0, 1]  # [0,1] # False # No delay and rate of 1/frame_time

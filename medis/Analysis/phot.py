@@ -471,15 +471,15 @@ def SDI_each_exposure(obs_sequence, binning=10):
     #     plt.plot(20,0.144, 'o')
     #     plt.show()
 
-def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=4, star_phot=1):
+def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=4, star_phot=1, dp=None):
     fulloutput = metrics.contrcurve.contrast_curve(cube=cube, interp_order=1,
                                    angle_list=angle_list, psf_template=psf_template,
-                                   fwhm=fwhm, pxscale=tp.platescale/1000,
-                                   starphot=star_phot, algo=algo, nbranch=3,
-                                    adimsdi = 'double', ncomp = 7, ncomp2=None,
-                                   debug=True, plot=False, theta=0,full_output=True, fc_snr=10, **algo_dict)
+                                   fwhm=fwhm, pxscale=tp.platescale/1000, #wedge=(-45, 45),
+                                   starphot=star_phot, algo=algo, nbranch=1,
+                                    adimsdi = 'double', ncomp=7, ncomp2=None,
+                                   debug=False, plot=False, theta=0, full_output=True, fc_snr=100, dp=dp, **algo_dict)
     plt.show()
-    metrics_out = [fulloutput[0]['throughput'], fulloutput[0]['noise'], fulloutput[0]['sensitivity_student']]
+    metrics_out = [fulloutput[0]['throughput'], fulloutput[0]['noise'], fulloutput[0]['sensitivity_student'], fulloutput[0]['sigma corr']]
     metrics_out = np.array(metrics_out)
     return metrics_out, fulloutput[2]
 
