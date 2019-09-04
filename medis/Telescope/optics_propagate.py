@@ -34,18 +34,29 @@ class Wavefronts():
         # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
 
+        # eso_samp = np.arange(115, 2500, 5)
+        # cut = np.logical_or(eso_samp<ap.band[0], eso_samp>ap.band[1])
+        # eso_samp = np.delete(eso_samp, cut)
+
         if ap.star_spec == 'ref':
-            eso_samp = np.arange(115, 2500, 5)
-            cut = np.logical_or(eso_samp<ap.band[0], eso_samp>ap.band[1])
-            with open(iop.stellardata) as fn:
-                self.starspectrum = fn.readlines()
-            self.starspectrum = np.delete(self.starspectrum, cut)
+            self.stardata = np.loadtxt(iop.stellardata, skiprows=3)
+            eso_samp = self.stardata[:,0]/10 #angstroms to nm
+            self.starspectrum = self.stardata[:,1]
+            keep = np.logical_and(eso_samp > ap.band[0], eso_samp < ap.band[1])
+            eso_samp = eso_samp[keep]
+            self.starspectrum = self.starspectrum[keep]
+            self.starspectrum = np.interp(wsamples*1e9, eso_samp, self.starspectrum)
         else:
             self.starspectrum = np.ones((ap.nwsamp))
+
         if ap.planet_spec == 'ref':
-            with open(iop.planetspectra) as fn:
-                self.planetspectrum = fn.readlines()
-            self.planetspectrum = np.delete(self.planetspectrum, cut)
+            self.planetdata = np.loadtxt(iop.stellardata, skiprows=3)
+            eso_samp = self.planetdata[:,0]/10 #angstroms to nm
+            self.planetspectrum = self.planetdata[:,1]
+            keep = np.logical_and(eso_samp > ap.band[0], eso_samp < ap.band[1])
+            eso_samp = eso_samp[keep]
+            self.planetspectrum = self.planetspectrum[keep]
+            self.planetspectrum = np.interp(wsamples*1e9, eso_samp, self.planetspectrum)
         else:
             self.planetspectrum = np.ones((ap.nwsamp))
         # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
@@ -58,9 +69,9 @@ class Wavefronts():
 
         # shape is (screens, wavelengths, objects, width, length)
         self.save_E_fields = np.empty((0,np.shape(self.wf_array)[0],
-                                        np.shape(self.wf_array)[1],
-                                        ap.grid_size,
-                                        ap.grid_size), dtype=np.complex64)
+                                       np.shape(self.wf_array)[1],
+                                       ap.grid_size,
+                                       ap.grid_size), dtype=np.complex64)
 
         # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
         self.beam_ratios = np.zeros_like((wsamples))
@@ -68,7 +79,7 @@ class Wavefronts():
             # Initialize the wavefront at entrance pupil
             self.beam_ratios[iw] = tp.beam_ratio * ap.band[0] / w * 1e-9
             wfp = proper.prop_begin(tp.diam, w, ap.grid_size, self.beam_ratios[iw])
-            # wfp *= self.starspectrum[iw]
+            wfp.wfarr = np.multiply(wfp.wfarr, self.starspectrum[iw], out=wfp.wfarr, casting='unsafe')
 
             wfs = [wfp]
             names = ['primary']
@@ -76,7 +87,7 @@ class Wavefronts():
             if ap.companion:
                 for id in range(len(ap.contrast)):
                     wfc = proper.prop_begin(tp.diam, w, ap.grid_size, self.beam_ratios[iw])
-                    wfc *= self.planetspectrum[iw]
+                    wfc.wfarr = (wfc.wfarr * self.planetspectrum[iw])
                     wfs.append(wfc)
                     names.append('companion_%i' % id)
 
