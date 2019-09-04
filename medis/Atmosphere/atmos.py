@@ -9,6 +9,7 @@ from medis.Dashboard.twilight import sunlight
 from medis.params import cp, ap, tp, iop
 from medis.Utils.misc import dprint
 from medis.Utils.plot_tools import quicklook_wf, quicklook_im
+import medis.Utils.rawImageIO as rawImageIO
 
 
 def eformat(f, prec, exp_digits):
@@ -111,7 +112,10 @@ def generate_maps(plot=False):
 
             filename = get_filename(it, wsamples[iw])
             print(filename)
-            hdu = fits.ImageHDU(wf2.phase.reshape(ap.grid_size, ap.grid_size))
+            scale = ap.band[0] / wsamples[iw] * 1e-9
+            obj_map = wf2.phase.reshape(ap.grid_size, ap.grid_size)
+            obj_map = rawImageIO.clipped_zoom(obj_map, scale)
+            hdu = fits.ImageHDU(obj_map)
             hdu.header['PIXSIZE'] = tp.diam/ap.grid_size
             hdu.writeto(filename, overwrite=True)
 
