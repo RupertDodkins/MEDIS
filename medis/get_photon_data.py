@@ -228,6 +228,7 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
     check = read.check_exists_fields(plot)
     if check:
         e_fields_sequence = read.open_fields(iop.fields)
+        print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes x savelocs x nwsamp x nobj x grid x grid)")
         return e_fields_sequence
 
     # Start the clock
@@ -287,7 +288,7 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
     if sp.timing is True:
         print(f'Time elapsed: {(finish-begin)/60:.2f} minutes')
     print('**************************************')
-    print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)}")
+    print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes x savelocs x nwsamp x nobj x grid x grid)")
 
     if sp.save_fields:
         dprint(iop.fields)

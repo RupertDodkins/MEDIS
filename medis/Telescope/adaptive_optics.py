@@ -82,8 +82,6 @@ def deformable_mirror(wfo, CPA_maps, astrogrid=False):
             waffle = DM.make_speckle_kxy(xloc, yloc, s_amp, phase)
             waffle += DM.make_speckle_kxy(xloc, -yloc, s_amp, phase)
 
-
-
             if tp.piston_error:
                 mean_dm_map = np.mean(np.abs(dm_map))
                 var = 1e-4  # 1e-11

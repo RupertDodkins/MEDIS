@@ -241,5 +241,5 @@ def make_input():
 if __name__ == "__main__":
     # make_input()
     # reformat_obs_sem(save=True, plot=False)
-    reformat_obs_sem(save=False, plot=False, study_stats=True)
+    reformat_obs_sem(save=False, plot=True, study_stats=False)
     # train.train()

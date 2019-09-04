@@ -4,7 +4,7 @@ import numpy as np
 import pickle as pickle
 import proper
 from proper_mod import prop_psd_errormap
-# from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
+from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
 import medis.Atmosphere.atmos as atmos
 import medis.Utils.rawImageIO as rawImageIO
 import medis.Utils.misc as misc
