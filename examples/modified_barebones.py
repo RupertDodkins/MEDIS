@@ -8,6 +8,7 @@ ap.companion=False #is there a planet in there?
 ap.exposure_time = 0.001 #exposure time in [???units]
 ap.numframes = 1
 ap.nwsamp = 1 #number of wavefronts in proper to sample from
+ap.grid_size = 256
 
 ##set telescope parameters
 tp.use_spiders =False #spiders off/on
@@ -25,7 +26,10 @@ sp.num_processes = 1
 sp.save_locs = np.array(['add_atmos', 'coronagraph'])
 sp.return_E = True
 
-iop.update("mod_barebones/")
+# iop.update("mod_barebones/")
+
+iop.set_testdir('mod_barebones')
+iop.set_atmosdata('190905')
 
 if __name__ == '__main__':
     save_E_fields = gpd.run_medis(plot=False)

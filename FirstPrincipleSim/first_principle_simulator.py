@@ -133,12 +133,12 @@ def make_figure2(normalize_spec=False):
         # throughput = np.sum(spectralcube, axis=(1, 2))
         # np.savetxt(iop.throughputfile, throughput)
 
-        if normalize_spec:
-            throughput = np.loadtxt(iop.throughputfile)
-            plt.plot(throughput)
-            plt.figure()
-            plt.plot(1./throughput)
-            plt.show()
+        # if normalize_spec:
+        #     throughput = np.loadtxt(iop.throughputfile)
+        #     plt.plot(throughput)
+        #     plt.figure()
+        #     plt.plot(1./throughput)
+        #     plt.show()
 
         if os.path.exists(iop.form_photons):
             print(f'loading formatted photon data from {iop.form_photons}')

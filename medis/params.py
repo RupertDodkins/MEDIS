@@ -15,7 +15,7 @@ class IO_params:
     """
     Define file tree/structure to import and save data
     """
-    def __init__(self, testname='example1', datadir=None):  # testname should be the name of the particular example you are running,
+    def __init__(self, atmosdata='190501', aberdata='Palomar', testname='example1', datadir=None):  # testname should be the name of the particular example you are running,
                                                 # for example 'BetaPic' or 'simple_telescope'
         # High Level Paths
         if datadir is None:
@@ -24,19 +24,9 @@ class IO_params:
             self.datadir = datadir
         self.rootdir = os.path.dirname(os.path.realpath(__file__))  # Path to Codebase (location of repository)
 
-        # Atmosphere Metadata
-        self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos (get this from Rupert, don't recreate this on your own!!)
-        self.atmosdata = '190501'
-        self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
-        self.atmosconfig = os.path.join(self.atmosdir, 'config.txt')
-
-        # Aberration Metadata
-        self.aberroot = 'aberrations'
-        self.aberdata = 'Palomar'
-        self.aberdir = os.path.join(self.datadir, self.aberroot, self.aberdata)
-        self.NCPA_meas = os.path.join(self.aberdir, 'NCPA_meas.pkl') #
-        self.CPA_meas = os.path.join(self.aberdir, 'CPA_meas.pkl')
-        self.quasi = os.path.join(self.aberdir, 'quasi')
+        self.set_atmosdata(atmosdata)
+        self.set_aberdata(aberdata)
+        self.set_testdir(testname)
 
         self.ref_spectra = 'reference_spectra'
         self.stellarfile = 'ukg0i.dat'
@@ -44,9 +34,23 @@ class IO_params:
         # self.planetfile = 'ukg0i.dat'
         # self.planetdata = os.path.join(self.datadir, self.ref_spectra, self.planetfile)
 
-        self.throughput = 'throughput'
-        self.throughputfile = os.path.join(self.datadir, self.throughput, 'throughput.txt')
+    def set_atmosdata(self, atmosdata):
+        # Atmosphere Metadata
+        self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos (get this from Rupert, don't recreate this on your own!!)
+        self.atmosdata = atmosdata
+        self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
+        self.atmosconfig = os.path.join(self.atmosdir, 'config.txt')
 
+    def set_aberdata(self, aberdata):
+        # Aberration Metadata
+        self.aberroot = 'aberrations'
+        self.aberdata = 'Palomar'
+        self.aberdir = os.path.join(self.datadir, self.aberroot, aberdata)
+        self.NCPA_meas = os.path.join(self.aberdir, 'NCPA_meas.pkl') #
+        self.CPA_meas = os.path.join(self.aberdir, 'CPA_meas.pkl')
+        self.quasi = os.path.join(self.aberdir, 'quasi')
+
+    def set_testdir(self, testname):
         # Unprocessed Photon Science Data
         self.sciroot = 'observations'
         self.scidir = os.path.join(self.datadir, self.sciroot)  # self.savedata
@@ -72,7 +76,6 @@ class IO_params:
         # Machine Learning
         self.ml_meta = os.path.join(self.testdir, 'ml_meta.pkl')
         self.hdf5_data_dir = self.testdir
-        print(self.datadir)
 
     def __iter__(self):
         for attr, value in self.__dict__.items():
@@ -82,6 +85,7 @@ class IO_params:
         return self.__str__().split(' ')[0].split('.')[-1]
 
     def update(self, new_name='example1'):
+        """ Should be redundant soon """
         datadir = self.datadir
         self.__init__(testname=new_name, datadir=datadir)
 
