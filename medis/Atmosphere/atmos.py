@@ -20,24 +20,36 @@ def eformat(f, prec, exp_digits):
 
 def get_filename(it, wsamp):
     wave = eformat(wsamp, 3, 2)
-    return f'{iop.atmosdir}/{cp.model}/telz_t{ap.sample_time*it:.5f}_w{wave}.fits'
+    return f'{iop.atmosdir}/telz_t{ap.sample_time*it:.5f}_w{wave}.fits'
 
 def prepare_maps():
-    atmosfolder = f'{iop.atmosdir}/{cp.model}'
-    if not os.path.exists(atmosfolder):
+    if not os.path.exists(iop.atmosdir):
         generate_maps()
-    elif not (np.loadtxt(iop.atmosconfig) == [ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h]).all():
-        from datetime import datetime
-        now = datetime.now().strftime("%m:%d:%Y_%H-%M-%S")
-        os.rename(atmosfolder, atmosfolder+'_backup_'+now)
+    elif not os.path.exists(iop.atmosconfig):
+        backup_old_maps()
+        generate_maps()
+    elif not compare_configs():
+        backup_old_maps()
         generate_maps()
 
+def backup_old_maps():
+    from datetime import datetime
+    now = datetime.now().strftime("%m:%d:%Y_%H-%M-%S")
+    os.rename(iop.atmosdir, iop.atmosdir + '_backup_' + now)
+
+def compare_configs():
+    old_config = np.genfromtxt(iop.atmosconfig, delimiter=',', dtype=None)
+    this_config = [ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h, cp.model]
+    floats = (np.float_(old_config[:-1]) == np.float_(this_config[:-1])).all()
+    strings = old_config[-1] == np.array(this_config[-1], dtype='|S6')
+    match = np.array([floats, strings]).all()
+    return match
 
 def generate_maps(plot=False):
     dprint("Making New Atmosphere Model")
 
-    if not os.path.isdir(os.path.join(iop.atmosdir, cp.model)):
-        os.makedirs(os.path.join(iop.atmosdir, cp.model), exist_ok=True)
+    if not os.path.isdir(os.path.join(iop.atmosdir)):
+        os.makedirs(os.path.join(iop.atmosdir), exist_ok=True)
 
     wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
 
@@ -100,7 +112,7 @@ def generate_maps(plot=False):
     for wavelength in wsamples:
         wavefronts.append(hcipy.Wavefront(hcipy.Field(np.ones(pupil_grid.size), pupil_grid), wavelength))
 
-    np.savetxt(iop.atmosconfig, [ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h])
+    np.savetxt(iop.atmosconfig, [ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h, cp.model], fmt='%s')
 
     for it, t in enumerate(np.arange(0, ap.numframes*ap.sample_time, ap.sample_time)):
         print(t)

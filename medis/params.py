@@ -28,7 +28,6 @@ class IO_params:
         self.atmosroot = 'atmos'  # directory with the FITS Files for Atmosphere created by caos (get this from Rupert, don't recreate this on your own!!)
         self.atmosdata = '190501'
         self.atmosdir = os.path.join(self.datadir, self.atmosroot, self.atmosdata)  # full path to FITS files
-        self.idl_params = os.path.join(self.atmosroot, 'idl_params.csv')  # path to params files to make new atmosphere model using caos
         self.atmosconfig = os.path.join(self.atmosdir, 'config.txt')
 
         # Aberration Metadata
