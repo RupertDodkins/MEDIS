@@ -75,6 +75,13 @@ class IO_params:
         self.hdf5_data_dir = self.testdir
         print(self.datadir)
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
     def update(self, new_name='example1'):
         datadir = self.datadir
         self.__init__(testname=new_name, datadir=datadir)
@@ -130,6 +137,12 @@ class Simulation_params:
         self.gui_samp = 5  # display the field on multiples of this number
         self.save_fields = True
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 class Astro_params:
     """
@@ -152,7 +165,7 @@ class Astro_params:
         # given by ap.nwsamp. Later, in gen_timeseries(), the 3rd axis of the spectral cube is interpolated so that
         # there are ap.w_bins over the range in ap.band.
         self.nwsamp = 3  # initial number of wavefronts in spectral cube (later sampled by MKID detector)
-        self.w_bins = 8  # final number of wavefronts in spectral cube after interpolation
+        self.w_bins = 3  # final number of wavefronts in spectral cube after interpolation
         self.band = np.array([800, 1500])  # wavelength range in nm
         # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
         self.samp = 0.2  # 0.125  This is a hacked parameter, to scale the atmos fits files to the wf_array
@@ -162,6 +175,13 @@ class Astro_params:
         self.interp_sample = True  # Set to interpolate wavelengths from ap.nwsamp to ap.w_bins
         self.star_spec = 'ref'
         self.planet_spec = None
+
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 
 class Telescope_params:
@@ -229,6 +249,13 @@ class Telescope_params:
         # dish_area = 20. # Palomar is 20 m^2 including hole.
         # total_ct_rate = ct_rate * dish_area/1e-4
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
     def check_args(self):
         assert self.occulter_type in [None, 'None', 'Solid', 'Gaussian', '8th_Order', 'Vortex', 'None (Lyot Stop)']
         # assert self.aber_params['CPA'] in [None, 'Static', 'Quasi', 'Wave', 'Amp', 'test','Both','Phase']
@@ -279,6 +306,13 @@ class MKID_params:
         self.lod = 8  # 8 pixels in these upsampled images = one lambda/d
         self.nlod = 10  # 3 #how many lambda/D do we want to calculate out to
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
 
 class Device_params:
     """
@@ -293,6 +327,13 @@ class Device_params:
         self.hot_pix = None
         self.dark_pix = None
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
+
 
 class H2RG_params:
     def __init__(self):
@@ -300,6 +341,12 @@ class H2RG_params:
         self.readnoise = 30
         self.erate = 1
 
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 class FPWFS_params:
     """Replaces the role of M. Bottom's Config file for speckle_killer_v3"""
@@ -310,6 +357,13 @@ class FPWFS_params:
         self.exclusionzone = 12.
         # self.controlregion = [50,80,35,50] # x1, x2, y1, y2
         self.controlregion = [40,100,20,60] # y1, y2, x1, x2
+
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 
 class CAOS_params:
@@ -341,6 +395,13 @@ class CAOS_params:
         # atm_scale = 512.
         # atm_size = 1. # m
         # atm_spat_rate = 1. # pix shift
+
+    def __iter__(self):
+        for attr, value in self.__dict__.items():
+            yield attr, value
+
+    def __name__(self):
+        return self.__str__().split(' ')[0].split('.')[-1]
 
 
 ap = Astro_params()

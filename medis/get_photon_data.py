@@ -56,6 +56,7 @@ class Timeseries():
 
             # wfo = Wavefronts(inqueue, outqueue, conf_obj_tup)
 
+            now = time.time()
             for it, t in enumerate(iter(self.inqueue.get, sentinel)):
                 print('using process %i' % i)
                 kwargs = {'iter': t, 'params': [ap, tp, iop, sp], 'CPA_maps': self.CPA_maps, 'tiptilt': self.tiptilt}
@@ -66,9 +67,9 @@ class Timeseries():
                 #     outqueue.put((t, save_E_fields[:, :, o]))
                 self.outqueue.put((t, save_E_fields))
 
-                now = time.time()
-                elapsed = float(now - start) / 60.
-                each_iter = float(elapsed) / (it + 1)
+
+            elapsed = float(now - start) / 60.
+            each_iter = float(elapsed) / (it + 1)
 
             print('***********************************')
             dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #

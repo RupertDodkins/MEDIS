@@ -15,7 +15,7 @@ from copy import copy
 import tables as pt
 import h5py
 import pickle as pickle
-from medis.params import ap, cp, tp, mp, iop, hp, sp
+from medis.params import ap, cp, tp, mp, hp, sp, iop, dp, fp
 from . import mkid_artefacts as MKIDs
 import proper
 from medis.Utils.plot_tools import view_datacube, loop_frames, quicklook_im
@@ -278,6 +278,14 @@ def save_fields(e_fields_sequence, fields_file='hyper.pkl'):
     elif fields_file[-3:] == 'hdf' or fields_file[-3:] == '.h5':
         with h5py.File(fields_file, 'w') as hf:
             hf.create_dataset('data', data=e_fields_sequence)
+            for param in [iop, cp, tp, mp, sp, iop, dp, fp]:
+                for key, value in dict(param).items():
+                    if type(value) == str or value is None:
+                        value = np.string_(value)
+                    try:
+                        hf.attrs.create(f'{param.__name__()}.{key}', value)
+                    except TypeError:
+                        print('WARNING skipping some attributes - probably the aber dictionaries or save locs')
     else:
         print('Extension not recognised')
 
