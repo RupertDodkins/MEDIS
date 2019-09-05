@@ -103,7 +103,7 @@ class Simulation_params:
         self.timing = True  # True will print timing statements in run_medis()
         self.num_processes = 1 #multiprocessing.cpu_count()
         self.show_wframe = False
-        self.show_cube = True
+        self.show_cube = False
         self.use_gui = False
         self.play_gui = True
         self.cbar = None
@@ -146,7 +146,7 @@ class Astro_params:
         # given by ap.nwsamp. Later, in gen_timeseries(), the 3rd axis of the spectral cube is interpolated so that
         # there are ap.w_bins over the range in ap.band.
         self.nwsamp = 3  # initial number of wavefronts in spectral cube (later sampled by MKID detector)
-        self.w_bins = 8  # final number of wavefronts in spectral cube after interpolation
+        self.w_bins = 3  # final number of wavefronts in spectral cube after interpolation
         self.band = np.array([800, 1500])  # wavelength range in nm
         # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
         self.samp = 0.2  # 0.125  This is a hacked parameter, to scale the atmos fits files to the wf_array

@@ -50,68 +50,62 @@ def gen_timeseries(inqueue, photon_table_queue, outqueue, conf_obj_tup):
         for it, t in enumerate(iter(inqueue.get, sentinel)):
 
             kwargs = {'iter': t, 'params': [ap, tp, iop, sp]}
-            spectralcube, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
+            _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                                    VERBOSE=False, PHASE_OFFSET=1)
 
-            for o in range(len(ap.contrast) + 1):
+            print(save_E_fields.shape)
+            spectralcube = np.sum(np.abs(save_E_fields[-1, :, :]) ** 2, axis=1)
 
-                print(save_E_fields.shape)
-                spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
+            if tp.detector == 'ideal':
+                image = np.sum(spectralcube, axis=0)
+                vmin = np.min(spectralcube)*10
+                # cube = ideal.assign_calibtime(spectralcube,PASSVALUE['iter'])
+                # cube = rawImageIO.arange_into_cube(packets, value='phase')
+                # rawImageIO.make_phase_map(cube, plot=True)
+                # return ''
+            elif tp.detector == 'MKIDs':
+                packets = read.get_packets(spectralcube, t, dp, mp)
+                # packets = read.get_packets(save_E_fields, t, dp, mp)
 
-                if tp.detector == 'ideal':
-                    image = np.sum(spectralcube, axis=0)
-                    vmin = np.min(spectralcube)*10
-                    # cube = ideal.assign_calibtime(spectralcube,PASSVALUE['iter'])
-                    # cube = rawImageIO.arange_into_cube(packets, value='phase')
-                    # rawImageIO.make_phase_map(cube, plot=True)
-                    # return ''
-                elif tp.detector == 'H2RG':
-
-                    image = np.sum(spectralcube, axis=0)
-                    vmin = np.min(spectralcube)*10
-                elif tp.detector == 'MKIDs':
-                    packets = read.get_packets(spectralcube, t, dp, mp)
-                    # packets = read.get_packets(save_E_fields, t, dp, mp)
-
-                    # if sp.show_wframe or sp.show_cube or sp.return_spectralcube:
-                    cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
-                    if mp.remove_close:
-                        timecube = read.remove_close_photons(cube)
-
-                    if sp.show_wframe:
-                        image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
-
-                    # Interpolating spectral cube from ap.nwsamp discreet wavelengths
-                    # if sp.show_cube or sp.return_spectralcube:
-                    spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
-
-                    if sp.save_obs:
-                        command = read.get_obs_command(packets,t)
-                        photon_table_queue.put(command)
-
-                    vmin = 0.9
+                # if sp.show_wframe or sp.show_cube or sp.return_spectralcube:
+                cube = pipe.arange_into_cube(packets, (mp.array_size[0], mp.array_size[1]))
+                if mp.remove_close:
+                    timecube = read.remove_close_photons(cube)
 
                 if sp.show_wframe:
-                    dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
-                    quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
+                    image = pipe.make_intensity_map(cube, (mp.array_size[0], mp.array_size[1]))
 
-                if sp.show_cube:
-                    view_datacube(spectralcube, logAmp=True, vmin=vmin)
+                # Interpolating spectral cube from ap.nwsamp discreet wavelengths
+                # if sp.show_cube or sp.return_spectralcube:
+                spectralcube = pipe.make_datacube(cube, (mp.array_size[0], mp.array_size[1], ap.w_bins))
 
-                if sp.use_gui:
-                    gui_images = np.zeros_like(save_E_fields, dtype=np.float)
-                    phase_ind = sp.gui_map_type == 'phase'
-                    amp_ind = sp.gui_map_type == 'amp'
+                if sp.save_obs:
+                    command = read.get_obs_command(packets,t)
+                    photon_table_queue.put(command)
 
-                    gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
-                    gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
+                vmin = 0.9
 
-                    outqueue.put((t, gui_images, spectralcube))
+            if sp.show_wframe:
+                dprint((sp.show_wframe, sp.show_wframe == 'continuous'))
+                quicklook_im(image, logAmp=True, show=sp.show_wframe, vmin=vmin)
 
-                elif sp.return_E:
-                    outqueue.put((t, save_E_fields))
-                else:
-                    outqueue.put((t, spectralcube))
+            if sp.show_cube:
+                view_datacube(spectralcube, logAmp=True, vmin=vmin)
+
+            if sp.use_gui:
+                gui_images = np.zeros_like(save_E_fields, dtype=np.float)
+                phase_ind = sp.gui_map_type == 'phase'
+                amp_ind = sp.gui_map_type == 'amp'
+
+                gui_images[phase_ind] = np.angle(save_E_fields[phase_ind], deg=False)
+                gui_images[amp_ind] = np.absolute(save_E_fields[amp_ind])
+
+                outqueue.put((t, gui_images, spectralcube))
+
+            elif sp.return_E:
+                outqueue.put((t, save_E_fields))
+            else:
+                outqueue.put((t, spectralcube))
 
         now = time.time()
         elapsed = float(now - start) / 60.
@@ -189,6 +183,12 @@ def run_medis(EfieldsThread=None, plot=False):
 
     if tp.active_null:
         aber.initialize_NCPA_meas()
+
+    if sp.save_locs is None:
+        sp.save_locs = []
+    if 'detector' not in sp.save_locs:
+        sp.save_locs = np.append(sp.save_locs, 'detector')
+        sp.gui_map_type = np.append(sp.gui_map_type, 'amp')
 
     # initialize MKIDs
     if tp.detector == 'MKIDs' and not os.path.isfile(iop.device_params):
@@ -292,8 +292,8 @@ def run_medis(EfieldsThread=None, plot=False):
             t, spectralcube = outqueue.get()
             obs_sequence[t - ap.startframe] = spectralcube  # should be in the right order now because of the identifier
 
-    for i, p in enumerate(jobs):
-        p.join()
+    # for i, p in enumerate(jobs):
+    #     p.join()
 
     photon_table_queue.put(None)
     outqueue.put(None)

@@ -28,6 +28,7 @@ class Wavefronts():
     """
     def __init__(self):
         self.save_locs = sp.save_locs
+        self.locs_seen = []
 
         # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
@@ -89,6 +90,7 @@ class Wavefronts():
 
         if self.save_locs is not None and func.__name__ in self.save_locs:
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
+            self.locs_seen.append(func.__name__)
 
     def test_save(self, funcname):
         """
@@ -109,7 +111,28 @@ class Wavefronts():
                     wf = proper.prop_shift_center(self.wf_array[iw, iwf].wfarr)
                     optic_E_fields[0, iw, iwf] = copy.copy(wf)
             self.save_E_fields = np.vstack((self.save_E_fields, optic_E_fields))
+            self.locs_seen.append(funcname)
 
+    def end(self):
+        """
+        Checks if the save_locs matches the functions seen otherwise save_E_fields is the wrong size for the output
+        :return:
+        """
+        self.iter_func(detector)
+
+        unseen_funcs = list(set(self.locs_seen).symmetric_difference(set(list(sp.save_locs))))
+        if len(unseen_funcs) > 0:
+            for func in unseen_funcs:
+                print('Function %s() not used' % func)
+            print('Check your sp.save_locs match the optics set by telescope parameters (tp)')
+            raise AssertionError
+
+def detector(wfo):
+    """
+    Empty function for the purpose of telling the sim to save the final efield screen
+    :return:
+    """
+    return
 
 def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     """
@@ -236,8 +259,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     ########################################
 
     wfo.iter_func(coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
-    # if sp.get_ints: get_intensity(wfo.wf_array, sp, phase=False)
 
+    # **** probably want to remove this *****
     shape = wfo.wf_array.shape
     for iw in range(shape[0]):
         wframes = np.zeros((ap.grid_size, ap.grid_size))
@@ -251,6 +274,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     datacube = np.array(datacube)
     datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)  # cirshift array for off-axis observing
     datacube = np.abs(datacube)  # get intensity from datacube
+    # ****************************************
 
     ########################################
     # Focal Plane
@@ -263,8 +287,9 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         new_heights = np.linspace(0, 1, ap.w_bins)
         datacube = f_out(new_heights)
 
+    wfo.end()
 
     print('Finished datacube at single timestep')
     wfo.save_E_fields = np.array(wfo.save_E_fields)
 
-    return datacube, wfo.save_E_fields
+    return 1, wfo.save_E_fields
