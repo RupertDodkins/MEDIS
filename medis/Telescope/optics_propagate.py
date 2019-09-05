@@ -260,22 +260,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     wfo.iter_func(coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
 
-    # **** probably want to remove this *****
-    shape = wfo.wf_array.shape
-    for iw in range(shape[0]):
-        wframes = np.zeros((ap.grid_size, ap.grid_size))
-        for io in range(shape[1]):
-            (wframe, sampling) = proper.prop_end(wfo.wf_array[iw, io])
-
-            wframes += wframe
-
-        datacube.append(wframes)
-
-    datacube = np.array(datacube)
-    datacube = np.roll(np.roll(datacube, tp.pix_shift[0], 1), tp.pix_shift[1], 2)  # cirshift array for off-axis observing
-    datacube = np.abs(datacube)  # get intensity from datacube
-    # ****************************************
-
     ########################################
     # Focal Plane
     # #######################################
