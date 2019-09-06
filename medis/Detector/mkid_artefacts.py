@@ -118,7 +118,7 @@ def responvisity_scaling_map(plot=False):
 
 def array_QE(plot=False):
     """Assigns each pixel a phase responsivity between 0 and 1"""
-    dist = Distribution(gaussian(mp.g_mean, mp.g_sig, np.linspace(0, 1.2, mp.res_elements)), interpolation=True)
+    dist = Distribution(gaussian(mp.g_mean, mp.g_sig, np.linspace(0, 1, mp.res_elements)), interpolation=True)
     QE = dist(mp.array_size[0] * mp.array_size[1])[0]/float(mp.res_elements)
     if plot:
         plt.xlabel('Responsivity')

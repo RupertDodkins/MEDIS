@@ -28,7 +28,7 @@ from medis.Analysis.phot import get_unoccult_psf, eval_method
 
 # Renaming obs_sequence directory location
 # iop.update(new_name='HCIdemo_onaxisdimmer10frames/')
-iop.update(new_name='QE_test1/')
+iop.update(new_name='QE_test3/')
 iop.atmosdata = '190801'
 iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
 
@@ -36,7 +36,7 @@ iop.aberdir = os.path.join(iop.datadir, iop.aberroot, 'Palomar256')
 iop.quasi = os.path.join(iop.aberdir, 'quasi')
 iop.atmosdata = '190823'
 iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
-iop.atmosconfig = os.path.join(iop.atmosdir, cp.model, 'config.txt')
+iop.atmosconfig = os.path.join(iop.atmosdir,'config.txt')
 
 # Parameters specific to this script
 sp.show_wframe = False
@@ -100,7 +100,7 @@ mp.hot_pix = None
 mp.hot_bright = 1e3
 
 mp.R_mean = 8
-mp.g_mean = 0.2
+mp.g_mean = 0.3
 mp.g_sig = 0.04
 mp.bg_mean = -10
 mp.bg_sig = 40
@@ -200,8 +200,11 @@ def make_figure(comps=True):
         # view_datacube(spectralcube[0], logAmp=True, show=False)
         # view_datacube(spectralcube[:, 0], logAmp=True, show=False)
         #
-        # view_datacube(stackcube[0], logAmp=True, show=False)
-        # view_datacube(stackcube[:, 0], logAmp=True, show=True)
+        plt.figure()
+        plt.hist(stackcube[stackcube!=0].flatten(), bins=np.linspace(0,1e4, 50))
+        plt.yscale('log')
+        view_datacube(stackcube[0], logAmp=True, show=False)
+        view_datacube(stackcube[:, 0], logAmp=True, show=False)
 
         stackcube = stackcube/np.sum(stackcube)
         stackcube = stackcube
@@ -219,6 +222,8 @@ def make_figure(comps=True):
             algo_dict = {'scale_list': scale_list}
             with open(iop.device_params, 'rb') as handle:
                 dp = pickle.load(handle)
+            dprint(iop.device_params)
+            quicklook_im(dp.QE_map)
             method_out = eval_method(stackcube, pca.pca, psf_template,
                                      np.zeros((stackcube.shape[1])), algo_dict,
                                      fwhm=lod, star_phot=star_phot, dp=dp)
@@ -257,15 +262,21 @@ def make_figure(comps=True):
 def adapt_dp_master(dp_master, g_means):
     with open(dp_master, 'rb') as handle:
         dp = pickle.load(handle)
-    g_mean_orig = 0.2
+    g_mean_orig = 0.3
+    dprint(mp.g_mean)
     import copy as copy
     new_dp = copy.copy(dp)
     quicklook_im(dp.QE_map)
     for g_mean in g_means:
-        new_dp.QE_map = dp.QE_map*g_mean/g_mean_orig
+        # new_dp.QE_map = dp.QE_map*g_mean/g_mean_orig
+        new_dp.QE_map = dp.QE_map - g_mean_orig + g_mean
+        new_dp.QE_map[new_dp.QE_map < 0] = 0
+        new_dp.QE_map[dp.QE_map == 0] = 0
         iop.device_params = iop.device_params.split('_QE_mean')[0] + f'_QE_mean={g_mean}.pkl'
         dprint((iop.device_params, g_mean))
         quicklook_im(new_dp.QE_map)
+        plt.hist(new_dp.QE_map.flatten())
+        plt.show(block=True)
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
