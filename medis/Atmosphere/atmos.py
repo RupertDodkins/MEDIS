@@ -8,7 +8,7 @@ import proper
 from medis.Dashboard.twilight import sunlight
 from medis.params import cp, ap, tp, iop
 from medis.Utils.misc import dprint
-from medis.Utils.plot_tools import quicklook_wf, quicklook_im
+# from medis.Utils.plot_tools import quicklook_wf, quicklook_im
 import medis.Utils.rawImageIO as rawImageIO
 
 
@@ -38,10 +38,10 @@ def backup_old_maps():
     os.rename(iop.atmosdir, iop.atmosdir + '_backup_' + now)
 
 def compare_configs():
-    old_config = np.genfromtxt(iop.atmosconfig, delimiter=',', dtype=None)
-    this_config = [ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h, cp.model]
+    old_config = np.genfromtxt(iop.atmosconfig, delimiter=',', dtype=None, encoding='ASCII')
+    this_config = [ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h, cp.model]
     floats = (np.float_(old_config[:-1]) == np.float_(this_config[:-1])).all()
-    strings = old_config[-1] == np.array(this_config[-1], dtype='|S6')
+    strings = old_config[-1] == this_config[-1]
     match = np.array([floats, strings]).all()
     return match
 
@@ -112,7 +112,7 @@ def generate_maps(plot=False):
     for wavelength in wsamples:
         wavefronts.append(hcipy.Wavefront(hcipy.Field(np.ones(pupil_grid.size), pupil_grid), wavelength))
 
-    np.savetxt(iop.atmosconfig, [ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h, cp.model], fmt='%s')
+    np.savetxt(iop.atmosconfig, [ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h, cp.model], fmt='%s')
 
     for it, t in enumerate(np.arange(0, ap.numframes*ap.sample_time, ap.sample_time)):
         print(t)
