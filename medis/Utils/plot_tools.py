@@ -129,14 +129,14 @@ def indep_images(datacube, logAmp=False, axis=None, width=None, titles=None, ann
             if np.min(datacube[m]) <= 0:
                 # datacube[m] = np.abs(datacube[m]) + 1e-20
                 im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmins[m], vmax=vmaxs[m],
-                               norm=SymLogNorm(linthresh=1e-7), cmap="YlGnBu_r")
+                               norm=SymLogNorm(linthresh=1e-7), cmap="inferno")
             else:
                 im = ax.imshow(datacube[m], interpolation='none', origin='lower',  vmin=vmins[m],
-                               vmax=vmaxs[m], norm=LogNorm(), cmap="YlGnBu_r")
+                               vmax=vmaxs[m], norm=LogNorm(), cmap="inferno")
 
         else:
             im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmins[m],
-                           vmax=vmaxs[m], cmap="YlGnBu_r")
+                           vmax=vmaxs[m], cmap="inferno")
         props = dict(boxstyle='square', facecolor='k', alpha=0.5)
         if annos:
             ax.text(0.05, 0.05, annos[m],transform=ax.transAxes, fontweight='bold', color='w', fontsize=22, bbox=props)
@@ -158,8 +158,8 @@ def indep_images(datacube, logAmp=False, axis=None, width=None, titles=None, ann
         # circle2 = plt.Circle((103,28), radius=4, color='w', fill=False, linewidth=1)
         # ax.add_artist(circle1)
         # ax.add_artist(circle2)
-        ax.arrow(105, 43, -10, 0, head_width=5, head_length=3, fc='r', ec='r')
-        ax.arrow(122,28, -10, 0, head_width=5, head_length=3, fc='r', ec='r')
+        # ax.arrow(105, 43, -10, 0, head_width=5, head_length=3, fc='r', ec='r')
+        # ax.arrow(122,28, -10, 0, head_width=5, head_length=3, fc='r', ec='r')
 
         # ax.text(0.05, 0.9, labels[m], transform=ax.transAxes, fontweight='bold', color='w', fontsize=22, family='serif',bbox=props)
     axes[0].text(0.84, 0.9, '0.2"', transform=axes[0].transAxes, fontweight='bold', color='w', ha='center', fontsize=14, family='serif')
@@ -190,20 +190,21 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
         title = r'  $I / I^{*}$'
     # fig =plt.figure(figsize=(14,7))
 
-    if width == 4 or width != 2:
+    dprint(width)
+    if width == 4:
         fig, axes = plt.subplots(nrows=2, ncols=width,figsize=(14,3.4))
     elif width == 2:
         fig, axes = plt.subplots(nrows=2, ncols=width,figsize=(7,3.1))
     else:
-        fig, axes = plt.subplots(nrows=1, ncols=width, figsize=(14, 8))
-        axes = axes.reshape(1, width)
+        fig, axes = plt.subplots(nrows=1, ncols=width, figsize=(12, 4))
+        # axes = axes.reshape(1, width)
     # maps = len(datacube)
 
     # norm = np.sum(datacube[0])
     # datacube = datacube/norm
 
     peaks, troughs = [], []
-    dprint(f"datacube shape={datacube.shape}, axis shape={axes.shape}, width={width}")
+    # dprint(f"datacube shape={datacube.shape}, axis shape={axes.shape}, width={width}")
     for image in datacube:
         peaks.append(np.max(image))
         troughs.append(np.min(image))
@@ -223,15 +224,15 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
             vmax*= max_scale
     # if vmax <= 0: vmax = np.abs(vmax) + 1e-20
 
-    # labels = ['a','b','c','d','e']
+    labels = ['a','b','c','d','e']
     # labels = ['a i', 'ii', 'iii', 'iv', 'v', 'vi']
-    labels = list(range(width))
+    # labels = list(range(width))
     for m, ax in enumerate(axes):
         # ax = fig.add_subplot(1,width,m+1)
         # axes.append(ax)
         if logAmp:
             if np.min(datacube[m]) <= 0.:
-                im = ax[m].imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
+                im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                norm=SymLogNorm(linthresh=1e-7), cmap="inferno")
                 # datacube[m] = np.abs(datacube[m]) + 1e-20
                 dprint(('corrected', np.min(datacube[m]), np.max(datacube[m]), vmin, vmax))
@@ -246,6 +247,7 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
             annotate_axis(im, ax, datacube.shape[1])
         if axis is None:
             ax.axis('off')
+
         # ax.plot(image.shape[0] / 2, image.shape[1] / 2, marker='*', color='r')
         # import matplotlib.patches as patches#40,100,20,60
         # rect = patches.Rectangle((68, 28), 40, 60, linewidth=1, edgecolor='r', facecolor='none')
@@ -258,17 +260,17 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
         # circle1 = plt.Circle((2, 34), radius=4, color='w', fill=False, linewidth=2)
         # ax.add_artist(circle1)
         ax.text(0.04, 0.9, labels[m], transform=ax.transAxes, fontweight='bold', color='w', fontsize=22, family='serif')
-    # axes[0].text(0.84, 0.9, '0.2"', transform=axes[0].transAxes, fontweight='bold', color='w', ha='center', fontsize=14, family='serif')
 
-    # axes[0].plot([0.78, 0.9], [0.87, 0.87],transform=axes[0].transAxes, color='w', linestyle='-', linewidth=3)
+    axes[0].text(0.84, 0.9, '0.2"', transform=axes[0].transAxes, fontweight='bold', color='w', ha='center', fontsize=14, family='serif')
+    axes[0].plot([0.78, 0.9], [0.87, 0.87],transform=axes[0].transAxes, color='w', linestyle='-', linewidth=3)
 
     if width == 3:
-        cax = fig.add_axes([0.9, 0.01, 0.015, 0.87])
+        cax = fig.add_axes([0.93, 0.02, 0.015, 0.87])
     elif width == 2:
         cax = fig.add_axes([0.84, 0.01, 0.02, 0.89])
     else:
         # cax = fig.add_axes([0.94, 0.01, 0.01, 0.87])
-        cax = fig.add_axes([0.94, 0.04, 0.01, 0.86])
+        cax = fig.add_axes([0.9, 0.06, 0.01, 0.86])
     cb = fig.colorbar(im, cax=cax, orientation='vertical', norm=LogNorm(), format=ticker.FuncFormatter(fmt))
     # cb = fig.colorbar(im, cax=cax, orientation='vertical', format=ticker.FuncFormatter(fmt))
     cb.ax.set_title(title, fontsize=16)#
@@ -278,7 +280,7 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
     # cb.set_ticks(cbar_ticks)
 
     if width != 2:
-        plt.subplots_adjust(left=0.01, right=0.92, top=0.9, bottom=0.01, wspace=0.12)
+        plt.subplots_adjust(left=0.01, right=0.92, top=0.9, bottom=0.01, wspace=0.06)
     elif width == 2:
         plt.subplots_adjust(left=0.01, right=0.82, top=0.9, bottom=0.01, wspace=0.05)
     plt.show()
@@ -368,8 +370,8 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
             if True:#vmin <= 0:
                 # datacube[w] = np.abs(datacube[w] + 1e-9)
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
-                                    norm=SymLogNorm(linthresh=1e-5),
-                                    cmap="inferno")
+                               norm=SymLogNorm(linthresh=1e-5),
+                               cmap="inferno")
             else:
                 ax.set_title(w_string[w])
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, norm=LogNorm(), cmap="inferno")
@@ -393,8 +395,8 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
     # figManager.window.move(-1920, 0)
     # figManager.window.setFocus()
 
+    plt.tight_layout()
     if show is True:
-        plt.tight_layout()
         plt.show(block=True)
 
 def initialize_GUI():
