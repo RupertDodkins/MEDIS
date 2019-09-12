@@ -60,6 +60,33 @@ def read_obs(max_photons=1e8, start=0):
 
     return allpackets
 
+
+def make_datacube(cube, size):
+    # print 'Making an xyw cube'
+    datacube = np.zeros((size[2],size[1],size[0]))
+    phase_band = spec.phase_cal(ap.band)
+    bins = np.linspace(phase_band[0], phase_band[1], size[2]+1)
+
+    for x in range(size[1]):
+        for y in range(size[0]):
+            if cube[x][y] == []:
+                datacube[:, x, y] = np.zeros((size[2]))
+            else:
+                datacube[:, x, y] = np.histogram(np.array(cube[x][y])[:,1], bins=bins)[0]#[::-1]
+                datacube[0, x, y] += len(np.where(np.array(cube[x][y])[:,1]<phase_band[0])[0])
+                datacube[-1, x, y] += len(np.where(np.array(cube[x][y])[:,1]>phase_band[1])[0])
+
+    return datacube
+
+def make_datacube_from_list(packets, shape):
+    phase_band = spec.phase_cal(ap.band)
+    bins = [np.linspace(phase_band[0], phase_band[1], shape[0] + 1),
+            range(shape[1]+1),
+            range(shape[2]+1)]
+    datacube, _ = np.histogramdd(packets[:,1:], bins)
+
+    return datacube
+
 def arange_into_stem(packets, size):
     # print 'Sorting packets into xy grid (no phase or time sorting)'
     stem = [[[] for i in range(size[0])] for j in range(size[1])]
@@ -200,23 +227,6 @@ def make_phase_map(cube, plot=False):
         plt.figure()
         plt.imshow(np.log10(phase_map), origin='lower', interpolation='none')
     return phase_map
-
-def make_datacube(cube, size):
-    # print 'Making an xyw cube'
-    datacube = np.zeros((size[2],size[1],size[0]))
-    phase_band = spec.phase_cal(ap.band)
-    bins = np.linspace(phase_band[0], phase_band[1], size[2]+1)
-
-    for x in range(size[1]):
-        for y in range(size[0]):
-            if cube[x][y] == []:
-                datacube[:, x, y] = np.zeros((size[2]))
-            else:
-                datacube[:, x, y] = np.histogram(np.array(cube[x][y])[:,1], bins=bins)[0]#[::-1]
-                datacube[0, x, y] += len(np.where(np.array(cube[x][y])[:,1]<phase_band[0])[0])
-                datacube[-1, x, y] += len(np.where(np.array(cube[x][y])[:,1]>phase_band[1])[0])
-
-    return datacube
 
 def scale_to_luminos(obs_sequence):
     obs_sequence *= ap.star_photons_per_s*np.ones((ap.grid_size,ap.grid_size))
