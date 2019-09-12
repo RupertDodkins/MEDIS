@@ -69,8 +69,6 @@ mp.bg_mean = -10
 mp.bg_sig = 40
 mp.pix_yield = 0.7  # check dis
 
-# sp.get_ints = {'w': [0], 'c': [0]}
-
 # ***** These need to be outside the if statement to have an effect!! ****
 iop.aberdata = 'Palomar' # Rename Data Directory
 iop.update("MKID_pic-ideal/")

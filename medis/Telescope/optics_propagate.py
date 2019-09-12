@@ -192,6 +192,7 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     # Defines aperture (baffle-before primary)
     wfo.iter_func(proper.prop_circular_aperture, **{'radius': tp.diam/2})
+    # wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
 
     # Pass through a mini-atmosphere inside the telescope baffle
     #  The atmospheric model used here (as of 3/5/19) uses different scale heights,
@@ -215,8 +216,6 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
 
     if tp.use_hex:
         fo.add_hex(wfo.wf_array)
-
-    # wfo.iter_func(proper.prop_define_entrance)  # normalizes the intensity
 
     # Both offsets and scales the companion wavefront
     if wfo.wf_array.shape[1] > 1:
@@ -281,16 +280,14 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
     # Coronagraph
     ########################################
     wfo.iter_func(coronagraph, *(tp.f_lens, tp.occulter_type, tp.occult_loc, tp.diam))
+    # dprint((proper.prop_get_sampling_arcsec(wfo.wf_array[0,0]),
+    #         proper.prop_get_sampling_arcsec(wfo.wf_array[1,0]),
+    #         proper.prop_get_sampling_arcsec(wfo.wf_array[0,1])))
     # Final e_fields tests and saving
     wfo.end()
 
     wfo.save_E_fields = np.array(wfo.save_E_fields)
-
-    # hack to get prop_run to return what we want the psf variable is just an int that we don't care about
-    # the e fields get passed as the pixscale variable in prop_run
-
-    # spectralcube = np.abs(wfo.save_E_fields[-1]) ** 2
-    # plt.plot(np.sum(spectralcube, axis=(1,2,3)))
-    # plt.show()
+    # plt.plot((np.abs(np.sum(wfo.save_E_fields[-1,:,0], axis = (1,2))))**2)
+    # plt.show(block=True)
 
     return 1, wfo.save_E_fields

@@ -43,7 +43,6 @@ sp.show_cube=False
 sp.num_processes = 4
 
 ap.companion = False
-sp.get_ints=False
 ap.star_photons_per_s = int(1e5)#1e6
 # ap.contrast = [10**-3.5,10**-2.5,10**-2,10**-3]#,10**-3.1,10**-4,10**-4,10**-4]
 # ap.lods = [[6,0.0],[-6,0.0],[0.0,6],[0.0,-6]]#,[-5,0.0],[1.6,0.0],[3.2,0.0],[5,0.0]]

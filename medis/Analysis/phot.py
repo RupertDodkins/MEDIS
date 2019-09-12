@@ -1,24 +1,13 @@
 '''This code scipt handles the photon data once it has passed through the system'''
 
-# import pyfits
-import astropy.io.fits as pyfits
 import numpy as np
-import os
 from matplotlib import pyplot as plt
-from matplotlib.ticker import MultipleLocator
-# from datacube import read_folder
-# from distribution import *
-# import subprocess
-# import vip_hci as vip
-# plots = vip.var.pp_subplots
-from medis.params import cp, mp, tp, iop, ap
-# import medis.Detector.pipeline as pipe
+import copy
+from medis.params import cp, mp, tp, iop, ap, sp
 import medis.get_photon_data as gpd
-from medis.Utils.plot_tools import quicklook_im, loop_frames
+from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint
 from vip_hci import phot, metrics
-
-# import MKIDs
 
 def annuli(inner, outer):
     mask = aperture(np.floor(ap.grid_size / 2) - 1, np.floor(ap.grid_size / 2), outer)
@@ -50,15 +39,6 @@ def aper_phot(image, inner, outer, plot=False):
 
     photometry = np.sum(image) / np.sum(mask)
     return photometry
-
-
-# def truncate_array(image):
-#     '''Make non-square array'''
-#     orig_shape = np.shape(image)
-#     diff = orig_shape - array_size
-#     image = image[:, :-diff[1]]
-
-#     return image
 
 def aperture(startpx, startpy, radius, image=np.zeros((ap.grid_size,ap.grid_size)), plot=False):
     r = radius
@@ -207,6 +187,7 @@ def get_unoccult_hyper(fields = '/RefPSF_wLyotStop.pkl', numframes=1):
     # ap.nwsamp = 1
     # ap.w_bins = 1
     print(iop.obs_table, 'obs')
+    dprint(ap.grid_size)
     fields = gpd.run_medis()
     tp.__dict__ = tp_orig.__dict__
     ap.__dict__ = ap_orig.__dict__
@@ -216,7 +197,6 @@ def get_unoccult_hyper(fields = '/RefPSF_wLyotStop.pkl', numframes=1):
 
 
 def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
-    import copy
     tp_orig = copy.copy(tp)
     ap_orig = copy.copy(ap)
     iop_orig = copy.copy(iop)
@@ -255,85 +235,15 @@ def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
     return PSF
 
 def get_unoccult_psf(plot=False, fields = '/IntHyperUnOccult.pkl', numframes=1000):
-    # import copy
-    # tp_orig = copy.copy(tp)
-    # ap_orig = copy.copy(ap)
-    # iop_orig = copy.copy(iop)
-    #
-    # tp.detector = 'ideal'
-    # ap.companion = False
-    # # tp.NCPA_type = 'Wave'
-    #
-    # iop.obs_seq = iop.datadir + '/IntHyperUnOccult.pkl'
-    # tp.occulter_type = 'None'
-    # num_exp = 1
-    # ap.exposure_time = 0.001  # 0.001
-    # ap.numframes = int(num_exp * ap.exposure_time / ap.sample_time)
-    # ap.nwsamp = 1
-    # # Yup this is 'if' is necessary
-    # obs_sequence = run_medis()
+    sp_orig = copy.copy(sp)
+    sp.save_fields = True
     fields = get_unoccult_hyper(fields, numframes=numframes)
-    # PSF = obs_sequence[0,0]
-    # PSF = (read.take_exposure(obs_sequence))[0,0]
-    # PSF = (read.take_exposure(obs_sequence))
-    if plot:
-        quicklook_im(fields)
     psf_template = np.abs(fields[0, -1, :, 0, 1:, 1:])**2
-    # tp.__dict__ = tp_orig.__dict__
-    # ap.__dict__ = ap_orig.__dict__
-    # iop.__dict__ = iop_orig.__dict__
-    # # print tp.occulter_type
-
+    if plot:
+        view_datacube(psf_template, logAmp=True)
+    sp.__dict__ = sp_orig.__dict__
     return psf_template
 
-
-# def make_cont_plot(images, labels):
-#     '''No clever datareduction done here yet, just looking at a few frames and the PCA'''
-#
-#     sep = np.arange(mp.nlod)+1
-#     sepAS = (sep*0.025*2)/8
-#
-#     #pixel coords of center of images
-#     centerx=int(mp.xnum/2)
-#     centery=int(mp.ynum/2)
-#     print centerx
-#     norm = np.zeros((len(images))) #center intensity hard coded for now
-#
-#     radii = np.arange(mp.nlod)+1
-#     psfMeans = np.zeros((len(images),len(radii)))
-#
-#
-#     for ir, r in enumerate(radii):
-#         for im, image in enumerate(images):
-#             psf_an = vip.phot.snr_ss(image,(centerx+r*mp.lod,centery), fwhm=mp.lod, plot=False,seth_hack=True)
-#             # print psf_an
-#             psfMeans[im, ir] = psf_an[3]
-#     # print type(images[0]), np.shape(images[0])
-#     for im, image in enumerate(images):
-#         norm[im] = np.sum(image[centerx-2:centerx+2,centery-2:centery+2])/16 #psfMeans[:, 0]
-#
-#     fig,ax1 = plt.subplots()
-#     for im in range(len(images)):
-#         ax1.plot(sep,psfMeans[im]/norm[im],linewidth=2,label=r'%s'%labels[im], alpha=0.7)
-#
-#     # ax1.set_xlim([10**-8,10**-1])
-#     # ax1.errorbar(sep,spMeans/norm,yerr=spStds/norm,linestyle='-.',linewidth=2,label=r'Mean Coronagraphic Raw Contrast')
-#     # ax1.errorbar(sep,psfMeans/norm+5*psfStds/norm,linewidth=2,label=r'5-$\sigma$ Unocculted PSF Contrast')
-#     # ax1.errorbar(sep,spMeans/norm+5*spStds/norm,linestyle='-.',linewidth=2,label=r'5-$\sigma$ Coronagraphic Raw Contrast')
-#
-#     ax1.axvline(x=3.2,linestyle='--',color='black',linewidth=2,label = 'FPM Radius')
-#     ax1.set_xlabel(r'Separation ($\lambda$/D)',fontsize=14)
-#     ax1.set_ylabel(r'Contrast',fontsize=14)
-#     #ax1.set_xlim(1,12)
-#     ax1.set_ylim([1e-5,1.])
-#     ax1.set_yscale('log')
-#
-#     ax2 = ax1.twiny()
-#     ax2.plot(sepAS,psfMeans[0],alpha=0)
-#     ax2.set_xlabel(r'Separation (as)',fontsize=14)
-#
-#     ax1.legend()
-#     plt.show()
 
 def make_cont_plot(images, labels, sigma=5, norms=None, student=True):
     # sep = np.arange(mp.lod,images.shape[1]/2 mp.nlod+1)#+1
@@ -472,14 +382,15 @@ def SDI_each_exposure(obs_sequence, binning=10):
     #     plt.show()
 
 def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=4, star_phot=1, dp=None):
-    fulloutput = metrics.contrcurve.contrast_curve(cube=cube, interp_order=1,
+    fulloutput = metrics.contrcurve.contrast_curve(cube=cube, interp_order=2,
                                    angle_list=angle_list, psf_template=psf_template,
                                    fwhm=fwhm, pxscale=tp.platescale/1000, #wedge=(-45, 45),
                                    starphot=star_phot, algo=algo, nbranch=1,
                                     adimsdi = 'double', ncomp=7, ncomp2=None,
                                    debug=False, plot=False, theta=0, full_output=True, fc_snr=100, dp=dp, **algo_dict)
     plt.show()
-    metrics_out = [fulloutput[0]['throughput'], fulloutput[0]['noise'], fulloutput[0]['sensitivity_student'], fulloutput[0]['sigma corr']]
+    metrics_out = [fulloutput[0]['throughput'], fulloutput[0]['noise'], fulloutput[0]['sensitivity_student'],
+                   fulloutput[0]['sigma corr'], fulloutput[0]['distance']]
     metrics_out = np.array(metrics_out)
     return metrics_out, fulloutput[2]
 

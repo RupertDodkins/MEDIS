@@ -377,11 +377,14 @@ class MyWindow(QWidget):
         self.metricsGrid.ims[0,0] = self.metricsGrid.axes[0,0].imshow(np.sum(self.EfieldsThread.sct.integration,
                                                                              axis=0), norm=LogNorm(),
                                                                       origin='lower', cmap='inferno')
-        for i, loc in enumerate(sp.metric_args[0]):
-            circle1 = plt.Circle(loc, radius=4, color=colors[i], fill=False, linewidth=2)
-            self.metricsGrid.axes[0,0].add_artist(circle1)
-        self.metricsGrid.figure.colorbar(self.metricsGrid.ims[0,0], cax=self.metricsGrid.cax[0],
-                                         orientation='vertical')
+
+        # was getting a index error because sp.metric_args = [] by default so added if sp.metric_args
+        if sp.metric_args:
+            for i, loc in enumerate(sp.metric_args[0]):
+                circle1 = plt.Circle(loc, radius=4, color=colors[i], fill=False, linewidth=2)
+                self.metricsGrid.axes[0,0].add_artist(circle1)
+            self.metricsGrid.figure.colorbar(self.metricsGrid.ims[0,0], cax=self.metricsGrid.cax[0],
+                                             orientation='vertical')
 
         for r, (func, args) in enumerate(zip(sp.metric_funcs, sp.metric_args)):
             import traceback
