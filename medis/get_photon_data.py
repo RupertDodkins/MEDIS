@@ -60,7 +60,7 @@ class Timeseries():
             for it, t in enumerate(iter(self.inqueue.get, sentinel)):
                 print('using process %i' % i)
                 kwargs = {'iter': t, 'params': [ap, tp, iop, sp], 'CPA_maps': self.CPA_maps, 'tiptilt': self.tiptilt}
-                _, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
+                sampling, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                                        VERBOSE=False, PHASE_OFFSET=1)
 
                 # for o in range(len(ap.contrast) + 1):
@@ -69,7 +69,7 @@ class Timeseries():
 
 
             elapsed = float(now - start) / 60.
-            each_iter = float(elapsed) / (it + 1)
+            each_iter = float(elapsed) / (len(save_E_fields) + 1)
 
             print('***********************************')
             dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #
@@ -210,14 +210,12 @@ def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
             if tp.detector == 'MKIDs':
                 applymkideffects(spectralcube, t, o, photon_table_queue, return_spectralcube=False)
 
-        if sp.save_fields:
-            # save_E_fields[-1] = spectralcube
+        if sp.save_fields or sp.save_ints:
             e_fields_sequence[qt - ap.startframe] = save_E_fields
 
-    if sp.save_fields:
+    # if just saving MKID obsfiles then you can save a lot of time by not returning e_fields_sequence
+    if sp.save_fields or sp.save_ints:
         return e_fields_sequence
-    else:
-        return None
 
 def run_medis(EfieldsThread=None, realtime=False, plot=False):
 
@@ -229,7 +227,7 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
     check = read.check_exists_fields(plot)
     if check:
         e_fields_sequence = read.open_fields(iop.fields)
-        print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes x savelocs x nwsamp x nobj x grid x grid)")
+        print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes [x savelocs] x nwsamp x nobj x grid x grid)")
         return e_fields_sequence
 
     # Start the clock
@@ -279,6 +277,8 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
         new_heights = np.linspace(0, 1, ap.w_bins)
         e_fields_sequence = f_out(new_heights)
 
+    # e_fields_sequence /= np.sum(np.abs(e_fields_sequence[0,-1,:,0,:,:])**2)
+
     photon_table_queue.put(None)
     outqueue.put(None)
     if sp.save_obs and tp.detector == 'MKIDs':
@@ -293,6 +293,15 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
 
     if sp.save_fields:
         dprint(iop.fields)
+        read.save_fields(e_fields_sequence, fields_file=iop.fields)
+    elif sp.save_ints and ap.companion:
+        print('Integrating and collapsing the companion axes. Returning collapsed cube')
+        obs_seq = np.abs(e_fields_sequence[:, -1]) ** 2
+        collapse_comps = np.sum(obs_seq[:,:,1:], axis=2)
+        e_fields_sequence = np.zeros_like(obs_seq[:,:,:2])
+        e_fields_sequence[:,:,0] = obs_seq[:,:,0]
+        e_fields_sequence[:,:,1] = collapse_comps
+        print(f"Reduced shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes x nwsamp x nobj x grid x grid)")
         read.save_fields(e_fields_sequence, fields_file=iop.fields)
 
     return e_fields_sequence
