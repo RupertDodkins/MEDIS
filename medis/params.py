@@ -56,7 +56,7 @@ class IO_params:
         self.scidir = os.path.join(self.datadir, self.sciroot)  # self.savedata
         self.testname = testname  # set this up in the definition line, but can update it with iop.update('newname')
         self.testdir = os.path.join(self.scidir, self.testname)  # Save results in new sub-directory
-        # self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5')  # a x/y/t/w cube of data
+        self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5')  # a x/y/t/w cube of data
         self.fields = os.path.join(self.testdir, 'fields.h5')
         self.obs_table = os.path.join(self.testdir, 'ObsTable.h5')  # a photon table with 4 coloumns
         self.form_photons = os.path.join(self.testdir, 'formatted_photons.pkl')
@@ -131,7 +131,6 @@ class Simulation_params:
         self.variable = None
         self.save_obs = False
         self.return_E = False
-        # self.get_ints = False
         self.save_locs = None
         self.gui_map_type = None
         self.metric_funcs = []
@@ -292,6 +291,7 @@ class MKID_params:
         self.total_int = 1 #second
         self.frame_int = 1./20
         self.t_frames = int(self.total_int/self.frame_int)
+        self.platescale = 10 *1e-3
         # self.xnum= self.array_size[0]
         # self.ynum= self.array_size[1]
 

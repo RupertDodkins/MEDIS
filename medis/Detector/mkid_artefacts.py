@@ -55,6 +55,8 @@ def makecube(packets, array_size):
 def initialize():
     # dp = device_params()
     dprint(f"dp.hot_pix set to {dp.hot_pix}")
+    dp.platescale = mp.platescale
+    dp.array_size = mp.array_size
     dp.QE_map_all = array_QE(plot=False)
     dp.responsivity_error_map = responvisity_scaling_map(plot=False)
     if mp.pix_yield == 1:
@@ -159,7 +161,7 @@ def get_R_hyper(Rs, plot=False):
     c = Rs-m*ap.band[0] # each c depends on the R @ 800
     # plt.plot(c)
     # plt.show()
-    dprint(ap.w_bins)
+    # dprint(ap.w_bins)
     waves = np.ones((np.shape(m)[1],np.shape(m)[0],ap.w_bins+5))*np.linspace(ap.band[0],ap.band[1],ap.w_bins+5)
     waves = np.transpose(waves) # make a tensor of 128x128x10 where every 10 vector is 800... 1500
     R_spec = m * waves + c # 128x128x10 tensor is now lots of simple linear lines e.g. 50,49,.. 45
@@ -225,12 +227,27 @@ def apply_phase_offset_array(photons, sigs):
     # plt.hist(idx, bins=800)
     # plt.show()
     # dprint((sigs[0,:25,:25],idx.shape,sigs.shape))#,sigs[idx].shape))
+    # dprint(sigs.shape)
 
     distortion = np.random.normal(np.zeros((photons[1].shape[0])),
                                   sigs[idx,np.int_(photons[3]), np.int_(photons[2])])
+    # plt.hist(distortion)
+    # plt.show()
     # dprint((distortion[:25], distortion.shape,sigs[idx,np.int_(photons[3]), np.int_(photons[2])].shape))
     good_pix = np.logical_and(photons[1] != 0, idx < len(sigs))
+    # plt.figure()
+    # plt.hist(photons[1][good_pix])
+    # plt.show()
+    # plt.figure()
+    # plt.hist(photons[1])
+    # plt.show()
     photons[1][good_pix] += distortion[good_pix]
+    # plt.figure()
+    # plt.hist(photons[1][good_pix])
+    # plt.show()
+    # plt.figure()
+    # plt.hist(photons[1])
+    # plt.show()
 
     return photons
 
