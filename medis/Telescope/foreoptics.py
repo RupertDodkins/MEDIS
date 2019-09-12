@@ -48,7 +48,7 @@ def add_obscurations(wf, M2_frac=0, d_primary=0, d_secondary=0, legs_frac=0.05):
     else:
         raise ValueError('must either specify M2_frac and d_primary or d_secondary')
     if legs_frac > 0:
-        proper.prop_rectangular_obscuration(wf, legs_frac * d_primary, d_primary*1.3, ROTATION=40)
+        proper.prop_rectangular_obscuration(wf, legs_frac * d_primary, d_primary*1.3, ROTATION=20)
         proper.prop_rectangular_obscuration(wf, d_primary*1.3, legs_frac * d_primary, ROTATION=20)
 
 
