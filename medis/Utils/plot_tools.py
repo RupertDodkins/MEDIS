@@ -487,6 +487,8 @@ def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=Fals
         plt.tight_layout()
         plt.show(block=True)
 
+    return fig, ax
+
 
 def annotate_axis(im, ax, width):
     rad = tp.platescale / 1000 * width/ 2

@@ -7,16 +7,9 @@ import hcipy
 import proper
 from medis.Dashboard.twilight import sunlight
 from medis.params import cp, ap, tp, iop
-from medis.Utils.misc import dprint
+from medis.Utils.misc import dprint, eformat
 # from medis.Utils.plot_tools import quicklook_wf, quicklook_im
 import medis.Utils.rawImageIO as rawImageIO
-
-
-def eformat(f, prec, exp_digits):
-    s = "%.*e" % (prec, f)
-    mantissa, exp = s.split('e')
-    # add 1 to digits as 1 is taken by sign +/-
-    return "%se%+0*d" % (mantissa, exp_digits + 1, int(exp))
 
 def get_filename(it, wsamp):
     wave = eformat(wsamp, 3, 2)

@@ -92,6 +92,8 @@ def get_packets(datacube, step, dp, mp):
 
     if mp.dark_counts:
         dark_photons = MKIDs.get_dark_packets(dp, step)
+        # cube = pipe.make_datacube_from_list(dark_photons.T, (ap.w_bins, dp.array_size[0], dp.array_size[1]))
+        # view_datacube(cube, logAmp=False)
         photons = np.hstack((photons, dark_photons))
         # photons = MKIDs.add_dark(photons)
 
@@ -139,6 +141,7 @@ def get_packets(datacube, step, dp, mp):
     # photons = pipe.ungroup(stem)
 
     # dprint(photons.shape)
+
 
     dprint("Measured photons with MKIDs")
 
@@ -304,14 +307,14 @@ def save_fields(e_fields_sequence, fields_file='hyper.pkl'):
     elif fields_file[-3:] == 'hdf' or fields_file[-3:] == '.h5':
         with h5py.File(fields_file, 'w') as hf:
             hf.create_dataset('data', data=e_fields_sequence)
-            for param in [iop, cp, tp, mp, sp, iop, dp, fp]:
-                for key, value in dict(param).items():
-                    if type(value) == str or value is None:
-                        value = np.string_(value)
-                    try:
-                        hf.attrs.create(f'{param.__name__()}.{key}', value)
-                    except TypeError:
-                        print('WARNING skipping some attributes - probably the aber dictionaries or save locs')
+            # for param in [iop, cp, tp, mp, sp, iop, dp, fp]:
+            #     for key, value in dict(param).items():
+            #         if type(value) == str or value is None:
+            #             value = np.string_(value)
+            #         try:
+            #             hf.attrs.create(f'{param.__name__()}.{key}', value)
+            #         except TypeError:
+            #             print('WARNING skipping some attributes - probably the aber dictionaries or save locs')
     else:
         print('Extension not recognised')
 

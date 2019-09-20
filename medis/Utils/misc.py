@@ -30,8 +30,22 @@ def debug_program():
 
     sys.stdout = TracePrints()
 
-
-
 def dprint(message):
     caller = getframeinfo(stack()[1][0])
     print("%s:%d - %s" % (caller.filename, caller.lineno, message))
+
+def eformat(f, prec, exp_digits):
+    s = "%.*e" % (prec, f)
+    mantissa, exp = s.split('e')
+    # add 1 to digits as 1 is taken by sign +/-
+    return "%se%+0*d" % (mantissa, exp_digits + 1, int(exp))
+
+def expformat(f, prec, exp_digits):
+    s = "%.*e" % (prec, f)
+    mantissa, exp = s.split('e')
+    reform = r"$%s\times10^%0*d$" % (mantissa, exp_digits, int(exp))
+    # import matplotlib.pylab as plt
+    # plt.plot(range(5))
+    # plt.xlabel(result)
+    # plt.show(block=True)
+    return reform
