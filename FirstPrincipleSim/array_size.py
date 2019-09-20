@@ -46,32 +46,34 @@ def adapt_dp_master():
         quicklook_im(new_dp.QE_map)
         plt.hist(new_dp.QE_map.flatten())
         plt.show(block=True)
+        new_dp.lod = int((metric_val[0]/metric_orig[0])*mp.lod)
+        dprint(new_dp.lod)
         new_dp.platescale = mp.platescale * metric_orig[0]/metric_val[0]
         new_dp.array_size = metric_val
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-if __name__ == '__main__':
-    # print(iop.fields)
-    # master.set_field_params()
-    # ap.grid_size = 512
-    # tp.beam_ratio = 0.25
-    #
-    # # sp.save_locs = np.array(['add_atmos', 'deformable_mirror', 'prop_mid_optics', 'coronagraph'])
-    # # sp.gui_map_type = np.array(['phase', 'phase', 'amp', 'amp'])
-    # # from medis.Dashboard.run_dashboard import run_dashboard
-    # # run_dashboard()
-    # fields = gpd.run_medis()
-    # # tess = np.abs(np.sum(fields[:, -1, :, :], axis=2)) ** 2
-    # # view_datacube(tess[0], logAmp=True, show=False)
-    # # view_datacube(tess[:, 0], logAmp=True, show=True)
-    # master.set_mkid_params()
+def form():
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
         adapt_dp_master()
-    # ap.star_photons_per_s = 1e6
-    stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)
-    master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
-    # iop.device_params = iop.device_params[:-4] + '_' + metric_name
-    # for metric_val in metric_vals:
-    #     iop.device_params = iop.device_params.split('_' + metric_name)[0] + f'_{metric_name}={metric_val}.pkl'
-    #     master.get_form_photons(fields)
+    # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
+    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+
+    comps_ = [True, False]
+    pca_products = []
+    for comps in comps_:
+        stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+        pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
+
+    maps = pca_products[0]
+    rad_samps = pca_products[1][1]
+    conts = pca_products[1][4]
+
+    master.combo_performance(maps, rad_samps, conts, metric_vals)
+
+if __name__ == '__main__':
+    form()
+
+    # comps = False
+    # stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)
+    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)

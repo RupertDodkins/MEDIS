@@ -13,21 +13,23 @@ from medis.Utils.misc import dprint
 import master
 
 metric_name = __file__.split('/')[-1].split('.')[0]
-metric_vals = [0.01, 0.04, 0.16]
+metric_vals = [0.16, 0.04, 0.01]
 
 master.set_field_params()
 master.set_mkid_params()
 
 iop.set_testdir(f'FirstPrincipleSim/{metric_name}')
 iop.set_atmosdata('190823')
-iop.set_aberdata('Palomar256')
+iop.set_aberdata('Palomar512')
 
 print(ap.numframes)
 
 comps = False
 
-def adapt_dp_master(dp_master, metric_vals, metric_name='g_sig'):
-    with open(dp_master, 'rb') as handle:
+def adapt_dp_master():
+    if not os.path.exists(iop.testdir):
+        os.mkdir(iop.testdir)
+    with open(master.dp, 'rb') as handle:
         dp = pickle.load(handle)
     metric_orig = getattr(mp,metric_name)#0.04
     QE_mean_orig = mp.g_mean
@@ -42,13 +44,32 @@ def adapt_dp_master(dp_master, metric_vals, metric_name='g_sig'):
         dprint(np.std(new_dp.QE_map))
         iop.device_params = iop.device_params.split('_'+metric_name)[0] + f'_{metric_name}={metric_val}.pkl'
         dprint((iop.device_params, metric_val))
-        # quicklook_im(new_dp.QE_map)
+        quicklook_im(new_dp.QE_map)
         plt.hist(new_dp.QE_map.flatten())
         plt.show(block=True)
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+def form():
+    if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
+        adapt_dp_master()
+    # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
+    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+
+    comps_ = [True, False]
+    pca_products = []
+    for comps in comps_:
+        stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+        pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
+
+    maps = pca_products[0]
+    rad_samps = pca_products[1][1]
+    conts = pca_products[1][4]
+
+    master.combo_performance(maps, rad_samps, conts, metric_vals)
+
 if __name__ == '__main__':
+    # form()
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
         adapt_dp_master(master.dp, metric_vals, 'g_sig')
     stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)

@@ -9,12 +9,12 @@ import copy as copy
 import pickle as pickle
 from medis.params import ap, iop
 import medis.get_photon_data as gpd
-from medis.Utils.plot_tools import quicklook_im, view_datacube
-from medis.Utils.misc import dprint
+from medis.Utils.plot_tools import view_datacube
+from medis.Utils.misc import dprint, expformat
 import master
 
 metric_name = __file__.split('/')[-1].split('.')[0]
-metric_vals = [1e3, 1e5, 1e6]
+metric_vals = [1e4, 1e5, 1e6]
 
 master.set_field_params()
 master.set_mkid_params()
@@ -76,8 +76,38 @@ def get_stackcubes(metric_vals, metric_name, comps=True, plot=False):
 
     return stackcubes, dps
 
-if __name__ == '__main__':
+def form():
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
         adapt_dp_master()
-    stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
+
+    # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
+    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+
+    comps_ = [True, False]
+    pca_products = []
+    for comps in comps_:
+        stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+        pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
+
+    maps = pca_products[0]
+    rad_samps = pca_products[1][1]
+    conts = pca_products[1][4]
+
+    annos = [expformat(metric_val,0,1) for metric_val in metric_vals]
+    master.combo_performance(maps, rad_samps, conts, annos)
+
+def plot_sum_perf():
+    comps = False
+    stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps)
+    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+    master.eval_performance_sum(stackcubes, dps, metric_vals, comps=comps)
+
+if __name__ == '__main__':
+    # form()
+
+    # plot_sum_perf()
+
+    comps = False
+    stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)
     master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+

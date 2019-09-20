@@ -210,16 +210,15 @@ def postfacto(e_fields_sequence, inqueue, photon_table_queue, outqueue):
             if tp.detector == 'MKIDs':
                 applymkideffects(spectralcube, t, o, photon_table_queue, return_spectralcube=False)
 
-        if sp.save_fields or sp.save_ints:
+        if sp.save_fields or sp.save_ints or not sp.save_obs:
             e_fields_sequence[qt - ap.startframe] = save_E_fields
 
     # if just saving MKID obsfiles then you can save a lot of time by not returning e_fields_sequence
-    if sp.save_fields or sp.save_ints:
+    if sp.save_fields or sp.save_ints or not sp.save_obs:
         return e_fields_sequence
 
 def run_medis(EfieldsThread=None, realtime=False, plot=False):
 
-    dprint((iop.fields, sp.save_fields))
     if EfieldsThread is not None:
         realtime = True
 
@@ -294,14 +293,9 @@ def run_medis(EfieldsThread=None, realtime=False, plot=False):
     if sp.save_fields:
         dprint(iop.fields)
         read.save_fields(e_fields_sequence, fields_file=iop.fields)
-    elif sp.save_ints and ap.companion:
-        print('Integrating and collapsing the companion axes. Returning collapsed cube')
-        obs_seq = np.abs(e_fields_sequence[:, -1]) ** 2
-        collapse_comps = np.sum(obs_seq[:,:,1:], axis=2)
-        e_fields_sequence = np.zeros_like(obs_seq[:,:,:2])
-        e_fields_sequence[:,:,0] = obs_seq[:,:,0]
-        e_fields_sequence[:,:,1] = collapse_comps
-        print(f"Reduced shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes x nwsamp x nobj x grid x grid)")
+    elif sp.save_ints:
+        print('Integrating at science plane')
+        e_fields_sequence = np.abs(e_fields_sequence[:, -1]) ** 2
         read.save_fields(e_fields_sequence, fields_file=iop.fields)
 
     return e_fields_sequence

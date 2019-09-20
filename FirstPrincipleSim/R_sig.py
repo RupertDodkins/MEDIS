@@ -21,7 +21,7 @@ master.set_mkid_params()
 
 iop.set_testdir(f'FirstPrincipleSim/{metric_name}')
 iop.set_atmosdata('190823')
-iop.set_aberdata('Palomar256')
+iop.set_aberdata('Palomar512')
 
 print(ap.numframes)
 
@@ -53,9 +53,28 @@ def adapt_dp_master():
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-if __name__ == '__main__':
+def form():
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
         adapt_dp_master()
-    stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)
-    # plt.show(block=True)
-    master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+    # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
+    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+
+    comps_ = [True, False]
+    pca_products = []
+    for comps in comps_:
+        stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+        pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
+
+    maps = pca_products[0]
+    rad_samps = pca_products[1][1]
+    conts = pca_products[1][4]
+
+    master.combo_performance(maps, rad_samps, conts, metric_vals)
+
+if __name__ == '__main__':
+    form()
+    # if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
+    #     adapt_dp_master()
+    # stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)
+    # # plt.show(block=True)
+    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)

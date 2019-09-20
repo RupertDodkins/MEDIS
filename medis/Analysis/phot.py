@@ -7,11 +7,17 @@ from medis.params import cp, mp, tp, iop, ap, sp
 import medis.get_photon_data as gpd
 from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint
-from vip_hci import phot, metrics
+from vip_hci import phot, metrics, pca
+import inspect
+from vip_hci.metrics.contrcurve import noise_per_annulus, aperture_flux
+from vip_hci.var.shapes import get_ell_annulus
+from scipy import stats
+from scipy.interpolate import InterpolatedUnivariateSpline
+from scipy.signal import savgol_filter
 
 def annuli(inner, outer):
     mask = aperture(np.floor(ap.grid_size / 2) - 1, np.floor(ap.grid_size / 2), outer)
-
+    dprint(ap.grid_size)
     if inner > 0:
         in_mask = aperture(np.floor(ap.grid_size / 2) - 1, np.floor(ap.grid_size / 2), inner)
         in_mask[in_mask == 0] = -1
@@ -381,18 +387,6 @@ def SDI_each_exposure(obs_sequence, binning=10):
     #     plt.plot(20,0.144, 'o')
     #     plt.show()
 
-def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=4, star_phot=1, dp=None):
-    fulloutput = metrics.contrcurve.contrast_curve(cube=cube, interp_order=2,
-                                   angle_list=angle_list, psf_template=psf_template,
-                                   fwhm=fwhm, pxscale=tp.platescale/1000, #wedge=(-45, 45),
-                                   starphot=star_phot, algo=algo, nbranch=1,
-                                    adimsdi = 'double', ncomp=7, ncomp2=None,
-                                   debug=False, plot=False, theta=0, full_output=True, fc_snr=100, dp=dp, **algo_dict)
-    plt.show()
-    metrics_out = [fulloutput[0]['throughput'], fulloutput[0]['noise'], fulloutput[0]['sensitivity_student'],
-                   fulloutput[0]['sigma corr'], fulloutput[0]['distance']]
-    metrics_out = np.array(metrics_out)
-    return metrics_out, fulloutput[2]
 
 def make_mosaic_cube(hyper):
     """ I eat other cubes for breakfast """
@@ -415,3 +409,336 @@ def make_mosaic_cube(hyper):
             st+=1
 
     return super_obs_sequence
+
+def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=6, star_phot=1, dp=None):
+    dprint(fwhm)
+    fulloutput = metrics.contrcurve.contrast_curve(cube=cube, interp_order=2,
+                                   angle_list=angle_list, psf_template=psf_template,
+                                   fwhm=fwhm, pxscale=tp.platescale/1000, #wedge=(-45, 45), int(dp.lod[0])
+                                   starphot=star_phot, algo=algo, nbranch=1,
+                                    adimsdi = 'double', ncomp=7, ncomp2=None,
+                                   debug=False, plot=False, theta=0, full_output=True, fc_snr=100, dp=dp, **algo_dict)
+    plt.show()
+    metrics_out = [fulloutput[0]['throughput'], fulloutput[0]['noise'], fulloutput[0]['sensitivity_student'],
+                   fulloutput[0]['sigma corr'], fulloutput[0]['distance']]
+    metrics_out = np.array(metrics_out)
+    return metrics_out, fulloutput[2]
+
+def sum_contrast(cube, algo_dict, fwhm=6, star_phot=1, dp=None):
+
+    algo = pca.pca
+    parangles = np.zeros((cube.shape[1]))
+    # frame_nofc = algo(cube[0], angle_list=parangles, **algo_dict)
+    dprint(cube.shape)
+    dprint(parangles)
+    # view_datacube(cube[0], logAmp=True, show=False)
+    # view_datacube(cube[:,0], logAmp=True)
+    frame = pca.pca(cube, angle_list=parangles, scale_list=algo_dict['scale_list'],
+                  mask_center_px=None, adimsdi='double', ncomp=7, ncomp2=None,
+                  collapse='median')
+    # quicklook_im(frame, logAmp=True)
+    nannuli = int(np.floor((mp.array_size[0]//2) / fwhm))
+    dprint(nannuli)
+    contrast = np.zeros((nannuli-1))
+    for i, rad in enumerate(range(1, nannuli)):
+        mask = get_ell_annulus(frame, rad*fwhm, rad*fwhm, 0, fwhm, mode='mask')
+        # quicklook_im(mask)
+        contrast[i] = np.var(mask)
+
+    rad_vec = np.arange(1, nannuli)*fwhm
+    return contrast, rad_vec
+
+
+def contrcurve_old(objcube, fwhm=4, star_phot=0.5*10**-1, dp=None):
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
+    scale_list = wsamples / (ap.band[1] - ap.band[0])
+    algo_dict = {'scale_list': scale_list}
+    cont_data = contrast_curve_old(cube=objcube, interp_order=2,
+                               fwhm=fwhm, pxscale=tp.platescale/1000,
+                               starphot=star_phot, adimsdi = 'double', ncomp=7, ncomp2=None,
+                               debug=False, plot=False, dp=dp, **algo_dict)
+
+    return cont_data
+
+def contrcurve(objcube, fwhm=4, star_phot=0.5*10**-1, dp=None):
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
+    scale_list = wsamples / (ap.band[1] - ap.band[0])
+    algo_dict = {'scale_list': scale_list}
+    cont_data = direct_contrast(cube=objcube, interp_order=2,
+                               fwhm=fwhm, dp=dp, **algo_dict)
+
+    return cont_data
+
+def direct_contrast(cube, fwhm, interp_order=2, dp=None, **algo_dict):
+
+    algo = pca.pca
+    parangles = np.zeros((cube[0].shape[1]))
+    mask = dp.QE_map == 0
+    frame_nofc = algo(cube[0], angle_list=parangles, **algo_dict)
+    frame_fc = algo(cube[1], angle_list=parangles, **algo_dict)
+
+    fcy = np.array([75, 44, 75, 116, 75, 23, 75, 137])
+    fcx = np.array([49, 75, 111, 75, 28, 75, 132, 75])
+    vector_radd = np.sqrt((fcx-75)**2 + (fcy-75)**2)
+
+    injected_flux = aperture_flux(np.mean(cube[1], axis=(0, 1)), fcy, fcx, np.mean(fwhm), ap_factor=1)
+    recovered_flux = aperture_flux(frame_fc, fcy,
+                                   fcx, np.mean(fwhm), ap_factor=1,)
+
+    noise_samp, rad_samp = noise_per_annulus(frame_nofc, separation=10,
+                                             fwhm=fwhm, init_rad=25, mask=mask)
+
+    plt.plot(injected_flux)
+    plt.plot(recovered_flux)
+    plt.figure()
+    plt.plot(recovered_flux/injected_flux)
+    plt.figure()
+    plt.plot(rad_samp, noise_samp)
+    plt.show(block=True)
+
+    # res_throug = throughput(cube, fwhm, dp=dp, inner_rad=1, **algo_dict)
+
+def throughput(cube, fwhm, dp=None, inner_rad=1, **algo_dict):
+    """ Adapted from vip_hci metrics.contrcurve"""
+
+    array = cube
+    algo = pca.pca
+    parangles = np.zeros((cube[0].shape[1]))
+    mask = dp.QE_map == 0
+
+    #***************************************************************************
+    # Compute noise in concentric annuli on the "empty frame"
+
+    # frame_nofc = pca.pca(cube[0], angle_list=parangles, scale_list=algo_dict['scale_list'],
+    #               mask_center_px=None, adimsdi='double', ncomp=7, ncomp2=None,
+    #               collapse='median')
+    # quicklook_im(frame_nofc, logAmp=True)
+
+    frame_nofc = algo(array[0], angle_list=parangles, **algo_dict)
+    frame_fc = algo(array[1], angle_list=parangles, **algo_dict)
+    frame_diffc = algo(array[0] + array[2], angle_list=parangles, **algo_dict)
+    # quicklook_im(frame_nofc, logAmp=True, show=False)
+
+    # noise, vector_radd = noise_per_annulus(frame_nofc, separation=fwhm,
+    #                                        fwhm=fwhm, mask=mask)
+    # vector_radd = vector_radd[inner_rad-1:]
+    # noise = noise[inner_rad-1:]
+
+    w, n, y, x = array[0].shape
+    if isinstance(fwhm, (int, float)):
+        fwhm = [fwhm] * w
+    #
+    # fcy = np.array([75, 75, 23, 44, 75, 75, 116, 137])
+    # fcx = np.array([28, 49, 75, 75, 111, 132, 75, 75])
+    # vector_radd = np.sqrt((fcx-75)**2 + (fcy-75)**2)
+    # order = np.argsort(vector_radd)
+    # fcy = fcy[order]
+    # fcx = fcx[order]
+    fcy = np.array([75, 44, 75, 116, 75, 23, 75, 137])
+    fcx = np.array([49, 75, 111, 75, 28, 75, 132, 75])
+    vector_radd = np.sqrt((fcx-75)**2 + (fcy-75)**2)
+
+    dprint((range(cube[1].shape[0]), cube[1].shape, fcy, fcx))
+    # injected_flux = np.array([[aperture_flux(cube[1][j,i], fcy, fcx, fwhm[i], ap_factor=1)
+    #                   for i in range(cube.shape[2])] for j in range(cube.shape[1])])
+    # injected_flux = np.mean(injected_flux, axis=(0,1))
+    injected_flux = aperture_flux(np.mean(cube[1], axis=(0,1)), fcy, fcx, np.mean(fwhm), ap_factor=1)
+    dprint((injected_flux, injected_flux.shape))
+    recovered_flux = aperture_flux(frame_fc, fcy,
+                                   fcx, np.mean(fwhm), ap_factor=1,)
+
+    thruput = recovered_flux / injected_flux
+    print((injected_flux, recovered_flux, thruput))
+    dprint(cube[0].shape)
+    # view_datacube(cube[1,0], logAmp=True, show=False)
+    # view_datacube(cube[1,:,0], logAmp=True, show=False)
+
+    quicklook_im(np.mean(cube[1], axis=(0,1)), logAmp=True, show=False)
+    fig, ax = quicklook_im(frame_fc, logAmp=True, show=False)
+    # fig, ax = plt.subplots()
+    for xx, yy in zip(fcx, fcy):
+        dprint((xx, yy))
+        aper = plt.Circle((xx, yy), radius=fwhm[0] / 2, color='r',
+                          fill=False, alpha=0.8)
+        ax.add_artist(aper)
+    plt.show(block=True)
+    plt.figure()
+    plt.plot(injected_flux)
+    plt.plot(recovered_flux)
+    plt.figure()
+    plt.plot(thruput)
+    plt.show(block=True)
+    base = 1e-3
+    thruput[np.where(thruput < 0)] = base#0
+
+    return (thruput, vector_radd, frame_nofc, frame_diffc)
+
+def contrast_curve_old(cube, fwhm, pxscale, starphot,
+                   sigma=5,  transmission=None,
+                   interp_order=2, plot=True, debug=False, dp=None, **algo_dict):
+
+    res_throug = throughput(cube, fwhm, dp=dp, inner_rad=1, **algo_dict)
+
+    if not isinstance(fwhm, (int, float)):
+        fwhm = np.mean(fwhm)
+    dprint(fwhm)
+    # for i in range(nbranch):
+    #     plt.plot(res_throug[0][i])
+    # plt.show(block=True)
+    thruput_mean = res_throug[0]
+    vector_radd = res_throug[1]
+    frame_nofc = res_throug[2]
+    # frame_fc = res_throug[3]
+    frame_diffc = res_throug[3]
+
+    mask = dp.QE_map == 0
+
+    # noise measured in the empty frame with better sampling, every px
+    # starting from 1*FWHM
+    noise_samp, rad_samp = noise_per_annulus(frame_nofc, separation=1,
+                                             fwhm=fwhm, init_rad=fwhm, mask=mask)
+    dprint(noise_samp)
+    radmin = vector_radd.astype(int).min()
+    cutin1 = np.where(rad_samp.astype(int) == radmin)[0][0]
+    noise_samp = noise_samp[cutin1:]
+    rad_samp = rad_samp[cutin1:]
+    radmax = vector_radd.astype(int).max()
+    cutin2 = np.where(rad_samp.astype(int) == radmax)[0][0]
+    noise_samp = noise_samp[:cutin2 + 1]
+    rad_samp = rad_samp[:cutin2 + 1]
+
+    # plt.figure()
+    # plt.plot(thruput_mean)
+    # plt.figure()
+    # plt.plot(vector_radd)
+    # plt.figure()
+    # plt.plot(rad_samp)
+    # dprint((vector_radd.shape, thruput_mean.shape))
+    # plt.show(block=True)
+
+
+    # interpolating the throughput vector, spline order 2
+    f = InterpolatedUnivariateSpline(vector_radd, thruput_mean,
+                                     k=interp_order)
+    thruput_interp = f(rad_samp)
+
+    # interpolating the transmission vector, spline order 1
+    if transmission is not None:
+        trans = transmission[0]
+        radvec_trans = transmission[1]
+        f2 = InterpolatedUnivariateSpline(radvec_trans, trans, k=1)
+        trans_interp = f2(rad_samp)
+        thruput_interp *= trans_interp
+
+    rad_samp_arcsec = rad_samp * pxscale
+
+    # smoothing the noise vector using a Savitzky-Golay filter
+    win = min(noise_samp.shape[0] - 2, int(2 * fwhm))
+    if win % 2 == 0:
+        win += 1
+    noise_samp_sm = savgol_filter(noise_samp, polyorder=2, mode='nearest',
+                                  window_length=win)
+
+
+    # calculating the contrast
+    if isinstance(starphot, float) or isinstance(starphot, int):
+        cont_curve_samp = ((sigma * noise_samp_sm) / thruput_interp) / starphot
+    else:
+        cont_curve_samp = (sigma * noise_samp_sm) / thruput_interp
+    cont_curve_samp[np.where(cont_curve_samp < 0)] = 1
+    cont_curve_samp[np.where(cont_curve_samp > 1)] = 1
+
+    # calculating the Student corrected contrast
+    n_res_els = np.floor(rad_samp / fwhm * 2 * np.pi)
+    ss_corr = np.sqrt(1 + 1 / (n_res_els - 1))
+    sigma_corr = stats.t.ppf(stats.norm.cdf(sigma), n_res_els) * ss_corr
+    if isinstance(starphot, float) or isinstance(starphot, int):
+        cont_curve_samp_corr = ((sigma_corr * noise_samp_sm) / thruput_interp
+                                ) / starphot
+    else:
+        cont_curve_samp_corr = (sigma_corr * noise_samp_sm) / thruput_interp
+    cont_curve_samp_corr[np.where(cont_curve_samp_corr < 0)] = 1
+    cont_curve_samp_corr[np.where(cont_curve_samp_corr > 1)] = 1
+
+    if debug:
+        plt.rc("savefig")
+        plt.figure()
+        plt.plot(vector_radd * pxscale, thruput_mean, '.', label='computed',
+                 alpha=0.6)
+        plt.plot(rad_samp_arcsec, thruput_interp, ',-', label='interpolated',
+                 lw=2, alpha=0.5)
+        plt.grid('on', which='both', alpha=0.2, linestyle='solid')
+        plt.xlabel('Angular separation [arcsec]')
+        plt.ylabel('Throughput')
+        plt.legend(loc='best')
+        plt.xlim(0, np.max(rad_samp * pxscale))
+        plt.figure()
+        plt.plot(rad_samp_arcsec, noise_samp, '.', label='computed', alpha=0.6)
+        plt.plot(rad_samp_arcsec, noise_samp_sm, ',-', label='noise smoothed',
+                 lw=2, alpha=0.5)
+        plt.grid('on', alpha=0.2, linestyle='solid')
+        plt.xlabel('Angular separation [arcsec]')
+        plt.ylabel('Noise')
+        plt.legend(loc='best')
+        plt.xlim(0, np.max(rad_samp_arcsec))
+
+    # plotting
+    if plot or debug:
+        label = ['Sensitivity (Gaussian)',
+                 'Sensitivity (Student-t correction)']
+
+
+        plt.rc("savefig")
+        fig = plt.figure()
+        ax1 = fig.add_subplot(111)
+        con1, = ax1.plot(rad_samp_arcsec, cont_curve_samp, '-',
+                         alpha=0.2, lw=2, color='green')
+        con2, = ax1.plot(rad_samp_arcsec, cont_curve_samp, '.',
+                         alpha=0.2, color='green')
+        con3, = ax1.plot(rad_samp_arcsec, cont_curve_samp_corr, '-',
+                         alpha=0.4, lw=2, color='blue')
+        con4, = ax1.plot(rad_samp_arcsec, cont_curve_samp_corr, '.',
+                         alpha=0.4, color='blue')
+        lege = [(con1, con2), (con3, con4)]
+        plt.legend(lege, label, fancybox=True, fontsize='medium')
+        plt.xlabel('Angular separation [arcsec]')
+        plt.ylabel(str(sigma) + ' sigma contrast')
+        plt.grid('on', which='both', alpha=0.2, linestyle='solid')
+        ax1.set_yscale('log')
+        ax1.set_xlim(0, np.max(rad_samp_arcsec))
+
+        if debug:
+            fig2 = plt.figure()
+            ax3 = fig2.add_subplot(111)
+            cc_mags = -2.5 * np.log10(cont_curve_samp)
+            con4, = ax3.plot(rad_samp_arcsec, cc_mags, '-',
+                             alpha=0.2, lw=2, color='green')
+            con5, = ax3.plot(rad_samp_arcsec, cc_mags, '.', alpha=0.2,
+                             color='green')
+            cc_mags_corr = -2.5 * np.log10(cont_curve_samp_corr)
+            con6, = ax3.plot(rad_samp_arcsec, cc_mags_corr, '-',
+                             alpha=0.4, lw=2, color='blue')
+            con7, = ax3.plot(rad_samp_arcsec, cc_mags_corr, '.',
+                             alpha=0.4, color='blue')
+            lege = [(con4, con5), (con6, con7)]
+
+            plt.legend(lege, label, fancybox=True, fontsize='medium')
+            plt.xlabel('Angular separation [arcsec]')
+            plt.ylabel('Delta magnitude')
+            plt.gca().invert_yaxis()
+            plt.grid('on', which='both', alpha=0.2, linestyle='solid')
+            ax3.set_xlim(0, np.max(rad_samp * pxscale))
+            ax4 = ax3.twiny()
+            ax4.set_xlabel('Distance [pixels]')
+            ax4.plot(rad_samp, cc_mags, '', alpha=0.)
+            ax4.set_xlim(0, np.max(rad_samp))
+
+    # datafr = {'sensitivity_gaussian': cont_curve_samp,
+    #                        'sensitivity_student': cont_curve_samp_corr,
+    #                        'throughput': thruput_interp,
+    #                        'distance': rad_samp,
+    #                        'distance_arcsec': rad_samp_arcsec,
+    #                        'noise': noise_samp_sm,
+    #                        'sigma corr': sigma_corr}
+
+    return [frame_diffc, rad_samp_arcsec, cont_curve_samp_corr]

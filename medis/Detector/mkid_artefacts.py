@@ -57,17 +57,22 @@ def initialize():
     dprint(f"dp.hot_pix set to {dp.hot_pix}")
     dp.platescale = mp.platescale
     dp.array_size = mp.array_size
+    dp.dark_pix = mp.dark_pix
+    dp.hot_pix = mp.hot_pix
+    dp.lod = mp.lod
     dp.QE_map_all = array_QE(plot=False)
     dp.responsivity_error_map = responvisity_scaling_map(plot=False)
     if mp.pix_yield == 1:
         mp.bad_pix =False
+    dprint((mp.bad_pix, mp.dark_counts))
     if mp.bad_pix == True:
         dp.QE_map = create_bad_pix(dp.QE_map_all)
         # dp.QE_map = create_hot_pix(dp.QE_map)
         # quicklook_im(dp.QE_map_all)
         if mp.dark_counts:
-            # dp.dark_locs = create_false_pix(mp, amount = mp.dark_pix)
+            dp.dark_locs = create_false_pix(mp, amount = mp.dark_pix)
             dp.dark_per_step = int(np.round(ap.sample_time*mp.dark_bright))
+            dprint(dp.dark_per_step)
         if mp.hot_pix:
             dp.hot_locs = create_false_pix(mp, amount = mp.hot_pix)
             dp.hot_per_step = int(np.round(ap.sample_time*mp.hot_bright))
@@ -161,7 +166,7 @@ def get_R_hyper(Rs, plot=False):
     c = Rs-m*ap.band[0] # each c depends on the R @ 800
     # plt.plot(c)
     # plt.show()
-    # dprint(ap.w_bins)
+    dprint(ap.w_bins)
     waves = np.ones((np.shape(m)[1],np.shape(m)[0],ap.w_bins+5))*np.linspace(ap.band[0],ap.band[1],ap.w_bins+5)
     waves = np.transpose(waves) # make a tensor of 128x128x10 where every 10 vector is 800... 1500
     R_spec = m * waves + c # 128x128x10 tensor is now lots of simple linear lines e.g. 50,49,.. 45
@@ -215,7 +220,13 @@ def apply_phase_offset_array(photons, sigs):
     # plt.hist(photons[1], bins=800)
     # plt.figure()
     idx = spec.wave_idx(wavelength)
-    bad = np.where(idx<0)[0]
+
+    bad = np.where(np.logical_or(idx>=len(sigs), idx<0))[0]
+
+    photons = np.delete(photons, bad, axis=1)
+    idx = np.delete(idx, bad)
+
+    # dprint((len(sigs), bad, np.shape(photons)))
     # plt.hist(wavelength, bins=800)
     # plt.xlabel('Wavelength')
     # plt.ylabel('#')
@@ -345,25 +356,36 @@ def get_dark_packets(dp, step):
     photons = np.zeros((4, dp.dark_per_step))
     dist = Distribution(gaussian(0, 0.25, np.linspace(0, 1, mp.res_elements)), interpolation=False)
     # phases = (dist(dp.dark_per_step)[0]) / float(dp.dark_per_step - 0.5) * 45e3 - 120
+    # dprint(dp.dark_per_step)
     phases = dist(dp.dark_per_step)[0]
     max_phase = max(phases)
     phases = -phases*120/max_phase
+    # dprint(phases)
     # phases = np.random.uniform(-120, 0, dp.dark_per_step) *
     print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
     meantime = step*ap.sample_time
     photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
     photons[1, :] = phases
-    photons[2:,:] = create_false_pix(mp, dp.dark_per_step)
+
+    # dprint(dp.dark_pix)
+    bad_pix_options = create_false_pix(mp, dp.dark_pix)
+    bad_ind = np.random.choice(range(len(bad_pix_options[0])),dp.dark_per_step)
+    # dprint((dp.dark_per_step, bad_ind, np.shape(bad_pix_options)))
+    bad_pix = bad_pix_options[:,bad_ind]
+    # dprint(bad_pix)
+    photons[2:,:] = bad_pix
+
     return photons
 
 
 def create_false_pix(mp, amount):
     # dprint(f"amount = {amount}")
+    dprint(amount)
     bad_ind = random.sample(list(range(mp.array_size[0]*mp.array_size[1])), amount)
     bad_y = np.int_(np.floor(bad_ind / mp.array_size[1]))
     bad_x = bad_ind % mp.array_size[1]
 
-    return [bad_x, bad_y]
+    return np.array([bad_x, bad_y])
 
 
 def remove_bad(frame, QE):
