@@ -72,10 +72,11 @@ def initialize():
         if mp.dark_counts:
             dp.dark_locs = create_false_pix(mp, amount = mp.dark_pix)
             dp.dark_per_step = int(np.round(ap.sample_time*mp.dark_bright))
-            dprint(dp.dark_per_step)
+            dprint(dp.dark_locs)
         if mp.hot_pix:
             dp.hot_locs = create_false_pix(mp, amount = mp.hot_pix)
             dp.hot_per_step = int(np.round(ap.sample_time*mp.hot_bright))
+            dprint(dp.hot_per_step)
         # dp.QE_map = create_bad_pix_center(dp.QE_map)
     dp.Rs = assign_spectral_res(plot=False)
     dp.sigs = get_R_hyper(dp.Rs, plot=False)
@@ -349,7 +350,9 @@ def get_hot_packets(dp, step):
     meantime = step*ap.sample_time
     photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
     photons[1] = phases
-    photons[2:] = dp.hot_locs
+    hot_ind = np.random.choice(range(len(dp.hot_locs[0])), dp.hot_per_step)
+    hot_pix = dp.hot_locs[:, hot_ind]
+    photons[2:] = hot_pix
     return photons
 
 def get_dark_packets(dp, step):
@@ -368,7 +371,7 @@ def get_dark_packets(dp, step):
     photons[1, :] = phases
 
     # dprint(dp.dark_pix)
-    bad_pix_options = create_false_pix(mp, dp.dark_pix)
+    bad_pix_options = create_false_pix(dp, dp.dark_pix)
     bad_ind = np.random.choice(range(len(bad_pix_options[0])),dp.dark_per_step)
     # dprint((dp.dark_per_step, bad_ind, np.shape(bad_pix_options)))
     bad_pix = bad_pix_options[:,bad_ind]
@@ -378,12 +381,12 @@ def get_dark_packets(dp, step):
     return photons
 
 
-def create_false_pix(mp, amount):
+def create_false_pix(dp, amount):
     # dprint(f"amount = {amount}")
     dprint(amount)
-    bad_ind = random.sample(list(range(mp.array_size[0]*mp.array_size[1])), amount)
-    bad_y = np.int_(np.floor(bad_ind / mp.array_size[1]))
-    bad_x = bad_ind % mp.array_size[1]
+    bad_ind = random.sample(list(range(dp.array_size[0]*dp.array_size[1])), amount)
+    bad_y = np.int_(np.floor(bad_ind / dp.array_size[1]))
+    bad_x = bad_ind % dp.array_size[1]
 
     return np.array([bad_x, bad_y])
 
