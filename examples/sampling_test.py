@@ -73,7 +73,7 @@ mp.QE_var = True
 mp.bad_pix = True
 mp.dark_counts = True
 mp.hot_pix = 1
-mp.dark_pix = 10000
+mp.dark_pix_frac = 0.5
 mp.array_size = np.array([142,146])
 mp.R_mean = 8
 mp.g_mean = 0.2
@@ -91,22 +91,28 @@ mp.wavecal_coeffs = [1./6, -250]
 # sp.save_fields = False
 ap.nwsamp = 3
 ap.w_bins = 3
-ap.numframes = 1
+ap.numframes = 5
 
 sp.save_locs = np.array(['add_atmos', 'add_aber', 'deformable_mirror', 'add_aber', 'prop_mid_optics'])
 sp.gui_map_type = np.array(['phase', 'phase', 'phase', 'phase', 'amp'])
 
 from medis.Dashboard.run_dashboard import run_dashboard
 
+tp.detector = 'ideal'
+
 def make_figure0():
 
-    tp.detector = 'ideal'
-    iop.update("first_principle/figure0")
-    iop.aberdir = os.path.join(iop.datadir, iop.aberroot, 'Palomar256')
-    iop.quasi = os.path.join(iop.aberdir, 'quasi')
-    iop.atmosdata = '190823'
-    iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
-    iop.atmosconfig = os.path.join(iop.atmosdir, cp.model, 'config.txt')
+    # iop.update("first_principle/figure0")
+    # iop.aberdir = os.path.join(iop.datadir, iop.aberroot, 'Palomar256')
+    # iop.quasi = os.path.join(iop.aberdir, 'quasi')
+    # iop.atmosdata = '190823'
+    # iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
+    # iop.atmosconfig = os.path.join(iop.atmosdir, 'config.txt')
+
+    filename = __file__.split('/')[-1].split('.')[0]
+    iop.set_testdir(f'{filename}/')
+    iop.set_atmosdata('190823')
+    iop.set_aberdata(f'Palomar{ap.grid_size}')
 
 
     phase_ind = range(4)
