@@ -192,8 +192,6 @@ def get_unoccult_hyper(fields = '/RefPSF_wLyotStop.pkl', numframes=1):
     ap.sample_time = 1e-3
     # ap.nwsamp = 1
     # ap.w_bins = 1
-    print(iop.obs_table, 'obs')
-    dprint(ap.grid_size)
     fields = gpd.run_medis()
     tp.__dict__ = tp_orig.__dict__
     ap.__dict__ = ap_orig.__dict__
@@ -418,7 +416,6 @@ def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=6, star_ph
                                    starphot=star_phot, algo=algo, nbranch=1,
                                     adimsdi = 'double', ncomp=7, ncomp2=None,
                                    debug=False, plot=False, theta=0, full_output=True, fc_snr=100, dp=dp, **algo_dict)
-    plt.show()
     metrics_out = [fulloutput[0]['throughput'], fulloutput[0]['noise'], fulloutput[0]['sensitivity_student'],
                    fulloutput[0]['sigma corr'], fulloutput[0]['distance']]
     metrics_out = np.array(metrics_out)

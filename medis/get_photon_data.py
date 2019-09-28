@@ -69,7 +69,7 @@ class Timeseries():
 
 
             elapsed = float(now - start) / 60.
-            each_iter = float(elapsed) / (len(save_E_fields) + 1)
+            each_iter = float(elapsed) / (ap.numframes + 1)
 
             print('***********************************')
             dprint(f'{elapsed:.2f} minutes elapsed, each time step took {each_iter:.2f} minutes') #* ap.numframes/sp.num_processes TODO change to log #

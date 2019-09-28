@@ -224,7 +224,7 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
             vmax*= max_scale
     # if vmax <= 0: vmax = np.abs(vmax) + 1e-20
 
-    labels = ['a','b','c','d','e']
+    labels = ['a','b','c','d','e','f','g','h']
     # labels = ['a i', 'ii', 'iii', 'iv', 'v', 'vi']
     # labels = list(range(width))
     for m, ax in enumerate(axes):
@@ -235,7 +235,6 @@ def compare_images(datacube, logAmp=False, axis=None, width=None, title=None, an
                 im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                norm=SymLogNorm(linthresh=1e-7), cmap="inferno")
                 # datacube[m] = np.abs(datacube[m]) + 1e-20
-                dprint(('corrected', np.min(datacube[m]), np.max(datacube[m]), vmin, vmax))
             else:
                 im = ax.imshow(datacube[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                norm=LogNorm(), cmap="inferno")
