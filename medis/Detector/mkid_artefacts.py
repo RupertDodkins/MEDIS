@@ -57,7 +57,7 @@ def initialize():
     dprint(f"dp.hot_pix set to {dp.hot_pix}")
     dp.platescale = mp.platescale
     dp.array_size = mp.array_size
-    dp.dark_pix = mp.dark_pix
+    dp.dark_pix_frac = mp.dark_pix_frac
     dp.hot_pix = mp.hot_pix
     dp.lod = mp.lod
     dp.QE_map_all = array_QE(plot=False)
@@ -70,9 +70,8 @@ def initialize():
         # dp.QE_map = create_hot_pix(dp.QE_map)
         # quicklook_im(dp.QE_map_all)
         if mp.dark_counts:
-            dp.dark_locs = create_false_pix(mp, amount = mp.dark_pix)
+            dp.dark_locs = create_false_pix(mp, amount = int(mp.dark_pix_frac*mp.array_size[0]*mp.array_size[1]))
             dp.dark_per_step = int(np.round(ap.sample_time*mp.dark_bright))
-            dprint(dp.dark_locs)
         if mp.hot_pix:
             dp.hot_locs = create_false_pix(mp, amount = mp.hot_pix)
             dp.hot_per_step = int(np.round(ap.sample_time*mp.hot_bright))
@@ -346,7 +345,7 @@ def create_bad_pix_center(responsivities):
 def get_hot_packets(dp, step):
     photons = np.zeros((4, dp.hot_per_step))
     phases = np.random.uniform(-120, 0, dp.hot_per_step)
-    print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
+    # print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
     meantime = step*ap.sample_time
     photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
     photons[1] = phases
@@ -356,35 +355,42 @@ def get_hot_packets(dp, step):
     return photons
 
 def get_dark_packets(dp, step):
-    photons = np.zeros((4, dp.dark_per_step))
-    dist = Distribution(gaussian(0, 0.25, np.linspace(0, 1, mp.res_elements)), interpolation=False)
-    # phases = (dist(dp.dark_per_step)[0]) / float(dp.dark_per_step - 0.5) * 45e3 - 120
-    # dprint(dp.dark_per_step)
-    phases = dist(dp.dark_per_step)[0]
-    max_phase = max(phases)
-    phases = -phases*120/max_phase
-    # dprint(phases)
-    # phases = np.random.uniform(-120, 0, dp.dark_per_step) *
-    print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
-    meantime = step*ap.sample_time
-    photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
-    photons[1, :] = phases
+    n_device_counts = dp.dark_per_step * dp.dark_pix_frac * mp.array_size[0] * mp.array_size[1]
+    if n_device_counts % 1 > np.random.uniform(0,1,1):
+        n_device_counts += 1
 
-    # dprint(dp.dark_pix)
-    bad_pix_options = create_false_pix(dp, dp.dark_pix)
-    bad_ind = np.random.choice(range(len(bad_pix_options[0])),dp.dark_per_step)
-    # dprint((dp.dark_per_step, bad_ind, np.shape(bad_pix_options)))
-    bad_pix = bad_pix_options[:,bad_ind]
-    # dprint(bad_pix)
-    photons[2:,:] = bad_pix
+    n_device_counts = int(n_device_counts)
+    # dprint((n_device_counts, dp.dark_per_step))
+    photons = np.zeros((4, n_device_counts))
+    if n_device_counts > 0:
+        dist = Distribution(gaussian(0, 0.25, np.linspace(0, 1, mp.res_elements)), interpolation=False)
+        # phases = (dist(dp.dark_per_step)[0]) / float(dp.dark_per_step - 0.5) * 45e3 - 120
+        # dprint(dp.dark_per_step)
+        phases = dist(n_device_counts)[0]
+        max_phase = max(phases)
+        phases = -phases*120/max_phase
+        # dprint(phases)
+        # phases = np.random.uniform(-120, 0, dp.dark_per_step) *
+        # print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
+        meantime = step*ap.sample_time
+        photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
+        photons[1] = phases
 
+        # dprint(dp.dark_pix)
+        bad_pix_options = create_false_pix(dp, dp.dark_pix_frac * dp.array_size[0]*dp.array_size[1])
+        bad_ind = np.random.choice(range(len(bad_pix_options[0])),n_device_counts)
+        # dprint((dp.dark_per_step, bad_ind, np.shape(bad_pix_options)))
+        bad_pix = bad_pix_options[:,bad_ind]
+        # dprint(bad_pix)
+        photons[2:] = bad_pix
+
+    # dprint(photons.shape)
     return photons
 
 
 def create_false_pix(dp, amount):
     # dprint(f"amount = {amount}")
-    dprint(amount)
-    bad_ind = random.sample(list(range(dp.array_size[0]*dp.array_size[1])), amount)
+    bad_ind = random.sample(list(range(dp.array_size[0]*dp.array_size[1])), int(amount))
     bad_y = np.int_(np.floor(bad_ind / dp.array_size[1]))
     bad_x = bad_ind % dp.array_size[1]
 

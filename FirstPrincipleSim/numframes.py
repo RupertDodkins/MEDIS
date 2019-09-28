@@ -15,14 +15,15 @@ from medis.Analysis.phot import contrcurve
 import master
 
 metric_name = __file__.split('/')[-1].split('.')[0]
-metric_vals = [2,5,10] #[1,2]#
 
 master.set_field_params()
 master.set_mkid_params()
 
-iop.set_testdir(f'FirstPrincipleSim/{metric_name}')
-iop.set_atmosdata('190823')
-iop.set_aberdata('Palomar512')
+median_val = 5
+metric_multiplier = np.logspace(np.log10(0.5), np.log10(2), 7)
+metric_vals = np.int_(np.round(median_val * metric_multiplier))
+
+iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}')
 
 print(ap.numframes)
 
@@ -126,23 +127,26 @@ def detect_obj_photons(metric_vals, metric_name, plot=False):
 
     return objcubes, dps
 
-def form():
-    if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
-        adapt_dp_master()
-    # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
-    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
-
-    comps_ = [True, False]
-    pca_products = []
-    for comps in comps_:
-        stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
-        pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
-
-    maps = pca_products[0]
-    rad_samps = pca_products[1][1]
-    conts = pca_products[1][4]
-
-    master.combo_performance(maps, rad_samps, conts, metric_vals)
+# def form(plot=True):
+#     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
+#         adapt_dp_master()
+#     # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
+#     # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+#
+#     comps_ = [True, False]
+#     pca_products = []
+#     for comps in comps_:
+#         stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+#         pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
+#
+#     maps = pca_products[0]
+#     rad_samps = pca_products[1][1]
+#     conts = pca_products[1][4]
+#
+#     if plot:
+#         master.combo_performance(maps, rad_samps, conts, metric_vals)
+#
+#     return rad_samps, conts
 
 def form2():
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
@@ -166,5 +170,5 @@ def form2():
 #     master.eval_performance_sum(stackcubes, dps, metric_vals, comps=comps)
 
 if __name__ == '__main__':
-    form()
+    master.form()
     # plot_sum_perf()

@@ -36,24 +36,23 @@ from scipy.interpolate import interpn
 ## Modules Relating to Formatting Data in Photon Lists ##
 ####################################################################################################
 
-def get_packets(datacube, step, dp, mp):
+def get_packets(datacube, step, dp, mp, plot=False):
     # view_datacube(datacube, logAmp=True)
 
-    nyq_sampling = ap.band[0]*1e-9*360*3600/(4*np.pi*tp.diam)
-    sampling = nyq_sampling*tp.beam_ratio*2  # nyq sampling happens at tp.beam_ratio = 0.5
-    x = np.arange(-ap.grid_size*sampling/2, ap.grid_size*sampling/2, sampling)
-    xnew = np.arange(-dp.array_size[0]*dp.platescale/2, dp.array_size[0]*dp.platescale/2, dp.platescale)
-    dprint((np.sum(datacube), dp.array_size, nyq_sampling, sampling))
-    mkid_cube = np.zeros((len(datacube), dp.array_size[0], dp.array_size[1]))
-    for s, slice in enumerate(datacube):
-        f = interpolate.interp2d(x, x, slice, kind='cubic')
-        mkid_cube[s] = f(xnew, xnew)
-    mkid_cube = mkid_cube*np.sum(datacube)/np.sum(mkid_cube)
-    bad_inds = mkid_cube<=0
-    mkid_cube[bad_inds] *= -1
-    # view_datacube(mkid_cube, logAmp=True, show=False)
-    datacube = mkid_cube
+    if mp.resamp:
+        nyq_sampling = ap.band[0]*1e-9*360*3600/(4*np.pi*tp.diam)
+        sampling = nyq_sampling*tp.beam_ratio*2  # nyq sampling happens at tp.beam_ratio = 0.5
+        x = np.arange(-ap.grid_size*sampling/2, ap.grid_size*sampling/2, sampling)
+        xnew = np.arange(-dp.array_size[0]*dp.platescale/2, dp.array_size[0]*dp.platescale/2, dp.platescale)
+        mkid_cube = np.zeros((len(datacube), dp.array_size[0], dp.array_size[1]))
+        for s, slice in enumerate(datacube):
+            f = interpolate.interp2d(x, x, slice, kind='cubic')
+            mkid_cube[s] = f(xnew, xnew)
+        mkid_cube = mkid_cube*np.sum(datacube)/np.sum(mkid_cube)
+        # view_datacube(mkid_cube, logAmp=True, show=False)
+        datacube = mkid_cube
 
+    datacube[datacube < 0] *= -1
     # if (dp.array_size != datacube[0].shape + np.array([1,1])).all():
     #     left = int(np.floor(float(ap.grid_size-mp.array_size[0])/2))
     #     right = int(np.ceil(float(ap.grid_size-mp.array_size[0])/2))
@@ -73,10 +72,10 @@ def get_packets(datacube, step, dp, mp):
     #     datacube = MKIDs.add_hot_pix(datacube, dp, step)
 
     # quicklook_im(dp.QE_map)
-    # view_datacube(datacube, logAmp=True)
+    if plot: view_datacube(datacube, logAmp=True, show=False)
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
 
-    dprint((np.sum(datacube), num_events))
+    # dprint((np.sum(datacube), num_events))
     # import matplotlib.pylab as plt
     # plt.figure()
     # plt.plot(np.sum(datacube, axis=(1,2)))
@@ -84,16 +83,22 @@ def get_packets(datacube, step, dp, mp):
     photons = temp.sample_cube(datacube, num_events)
 
     photons = spec.calibrate_phase(photons)
-    photons = temp.assign_calibtime(photons, step)
 
-    # stem = pipe.arange_into_stem(photons.T, (dp.array_size[0], dp.array_size[1]))
-    # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
-    # view_datacube(cube, logAmp=True, vmin=1)
+    photons = temp.assign_calibtime(photons, step)
+    # dprint(photons[:,5])
+
+    if plot:
+        cube = pipe.make_datacube_from_list(photons.T, (ap.w_bins, dp.array_size[0], dp.array_size[1]))
+        dprint(cube.shape)
+        view_datacube(cube, logAmp=True)
 
     if mp.dark_counts:
         dark_photons = MKIDs.get_dark_packets(dp, step)
         # cube = pipe.make_datacube_from_list(dark_photons.T, (ap.w_bins, dp.array_size[0], dp.array_size[1]))
         # view_datacube(cube, logAmp=False)
+        # plt.hist(dark_photons[3], bins=25)
+        # plt.yscale('log')
+        # plt.show(block=True)
         photons = np.hstack((photons, dark_photons))
         # photons = MKIDs.add_dark(photons)
 
@@ -102,6 +107,9 @@ def get_packets(datacube, step, dp, mp):
         photons = np.hstack((photons, hot_photons))
         # stem = MKIDs.add_hot(stem)
 
+    # plt.hist(photons[3], bins=25)
+    # plt.yscale('log')
+    # plt.show(block=True)
     # stem = pipe.arange_into_stem(photons.T, (dp.array_size[0], dp.array_size[1]))
     # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
     # view_datacube(cube, logAmp=True, vmin=0.01)
@@ -143,7 +151,7 @@ def get_packets(datacube, step, dp, mp):
     # dprint(photons.shape)
 
 
-    dprint("Measured photons with MKIDs")
+    # dprint("Measured photons with MKIDs")
 
     return photons.T
 

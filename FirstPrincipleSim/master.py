@@ -20,7 +20,7 @@ from medis.Detector import pipeline as pipe
 from medis.Analysis.phot import get_unoccult_psf, eval_method, sum_contrast
 
 metric = __file__.split('/')[-1].split('.')[0]
-iop.set_testdir(f'FirstPrincipleSim/{metric}_old/')
+iop.set_testdir(f'FirstPrincipleSim2/{metric}_old/')
 iop.set_atmosdata('190823')
 iop.set_aberdata('Palomar512')
 iop.fields = iop.testdir + 'fields_master_reform.h5'
@@ -124,11 +124,12 @@ def set_mkid_params():
     mp.QE_var = True
     mp.bad_pix = True
     mp.dark_counts = True
-    mp.dark_pix = 10
-    mp.dark_bright = 50
+    mp.dark_pix_frac = 0.1
+    mp.dark_bright = 20
     mp.hot_pix = None
-    mp.hot_bright = 1e3
+    mp.hot_bright = 2.5*10**3
     mp.R_mean = 8
+    mp.R_sig = 2
     mp.g_mean = 0.3
     mp.g_sig = 0.04
     mp.bg_mean = -10
@@ -136,6 +137,7 @@ def set_mkid_params():
     mp.pix_yield = 0.9
     mp.array_size = np.array([150, 150])
     mp.lod = 6
+    mp.quantize_FCs = True
 
 def make_dp_master():
     """
@@ -160,6 +162,8 @@ def get_form_photons(fields, comps=True):
         else:
             spectralcube = fields[step, :, 0]
 
+        dprint(iop.device_params)
+        dprint(dp.QE_map.shape)
         step_packets = read.get_packets(spectralcube, step, dp, mp)
         cube = pipe.make_datacube_from_list(step_packets, (ap.w_bins,dp.array_size[0],dp.array_size[1]))
         stackcube[step] = cube
@@ -292,6 +296,7 @@ def pca_stackcubes(stackcubes, dps, comps=True):
             method_out = eval_method(stackcube, pca.pca, psf_template,
                                      np.zeros((stackcube.shape[1])), algo_dict,
                                      fwhm=fwhm, star_phot=star_phot, dp=dp)
+
             thruput, noise, cont, sigma_corr, dist = method_out[0]
             thruputs.append(thruput)
             noises.append(noise)
@@ -299,6 +304,7 @@ def pca_stackcubes(stackcubes, dps, comps=True):
             rad_samp = dp.platescale * dist
             rad_samps.append(rad_samp)
             maps.append(method_out[1])
+        plt.show(block=True)
         return maps, rad_samps, thruputs, noises, conts
 
 def eval_performance(stackcubes, dps, metric_vals, comps=True):
@@ -355,7 +361,7 @@ def contrcurve_plot(metric_vals, rad_samps, thruputs, noises, conts):
     axes[2].set_ylabel('5$\sigma$ Contrast')
     axes[2].legend([str(metric_val) for metric_val in metric_vals])
 
-def combo_performance(maps, rad_samps, conts, annos):
+def combo_performance(maps, rad_samps, conts, annos, plot_inds=[0,3,6]):
     labels = ['a', 'b', 'c', 'd', 'e']
     title = r'  $I / I^{*}$'
     vmin = -1e-8
@@ -373,20 +379,20 @@ def combo_performance(maps, rad_samps, conts, annos):
     # contrast = np.array([[e,e] for e in np.arange(-3.5,-5.5,-0.5)]).flatten()
     contrast = np.array([-3.5, -4, -4.5, -5] * 2)
     axes[0].scatter(planet_seps, 10**contrast, marker='o', color='k')
-    axes[0].legend([str(metric_val) for metric_val in annos])
+    axes[0].legend([str(metric_val) for metric_val in annos], ncol=4, fontsize=8)
     axes[0].text(0.04, 0.9, labels[0], transform=axes[0].transAxes, fontweight='bold', color='k', fontsize=22, family='serif')
 
     for m, ax in enumerate(axes[1:]):
-        im = ax.imshow(maps[m], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
+        im = ax.imshow(maps[plot_inds[m]], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                        norm=SymLogNorm(linthresh=1e-8), cmap="inferno")
-        ax.text(0.05, 0.05, annos[m], transform=ax.transAxes, fontweight='bold', color='w', fontsize=16)
+        ax.text(0.05, 0.05, annos[plot_inds[m]], transform=ax.transAxes, fontweight='bold', color='w', fontsize=16)
         ax.text(0.04, 0.9, labels[m+1], transform=ax.transAxes, fontweight='bold', color='w', fontsize=22, family='serif')
         ax.axis('off')
 
     axes[1].text(0.84, 0.9, '0.2"', transform=axes[1].transAxes, fontweight='bold', color='w', ha='center', fontsize=14,
                  family='serif')
-    axes[1].plot([114, 134], [130, 130], color='w', linestyle='-', linewidth=3)
-    # axes[1].plot([76, 89], [87, 87], color='w', linestyle='-', linewidth=3)
+    # axes[1].plot([114, 134], [130, 130], color='w', linestyle='-', linewidth=3)
+    axes[1].plot([0.76, 0.89], [0.87, 0.87], transform=axes[1].transAxes, color='w', linestyle='-', linewidth=3)
 
     divider = make_axes_locatable(axes[3])
     cax = divider.append_axes("right", size="5%", pad=0.05)
@@ -483,6 +489,57 @@ def reformat_planets_triple(fields):
     print(f"Reduced shape of obs_seq = {np.shape(triple_cube)} (numframes x nwsamp x 3 x grid x grid)")
     read.save_fields(triple_cube, fields_file=iop.fields)
     return triple_cube
+
+def form(metric_vals, metric_name, plot=True, plot_inds=[0,3,6]):
+    iop.perf_data = os.path.join(iop.testdir, 'performance_data.pkl')
+    dprint(iop.perf_data)
+    if not os.path.exists(iop.perf_data):
+        import importlib
+
+        param = importlib.import_module(metric_name)
+
+        if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
+            param.adapt_dp_master()
+
+        dprint(dir(param))
+        comps_ = [True, False]
+        pca_products = []
+        for comps in comps_:
+            if 'get_stackcubes' in dir(param):
+                stackcubes, dps = param.get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+            else:
+                stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+
+            if 'pca_stackcubes' in dir(param):
+                pca_products.append(param.pca_stackcubes(stackcubes, dps, comps))
+            else:
+                pca_products.append(pca_stackcubes(stackcubes, dps, comps))
+
+        maps = pca_products[0]
+        rad_samps = pca_products[1][1]
+        conts = pca_products[1][4]
+
+        with open(iop.perf_data, 'wb') as handle:
+            pickle.dump((maps, rad_samps, conts, metric_vals), handle, protocol=pickle.HIGHEST_PROTOCOL)
+    else:
+        with open(iop.perf_data, 'rb') as handle:
+            maps, rad_samps, conts, metric_vals = pickle.load(handle)
+
+    if plot:
+        combo_performance(maps, rad_samps, conts, metric_vals, plot_inds)
+
+    return rad_samps, conts
+
+def check_contrast_contriubtions(metric_vals, metric_name, comps = False):
+    import importlib
+
+    param = importlib.import_module(metric_name)
+
+    if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
+        param.adapt_dp_master()
+    stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps)
+    # plt.show(block=True)
+    eval_performance(stackcubes, dps, metric_vals, comps=comps)
 
 if __name__ == '__main__':
     # fields = make_fields_master()

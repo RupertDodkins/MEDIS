@@ -14,18 +14,16 @@ from medis.Detector.mkid_artefacts import get_R_hyper
 import master
 
 metric_name = __file__.split('/')[-1].split('.')[0]
-metric_vals = [4,1,0.25]
+# metric_vals = [4,1,0.25]
 
 master.set_field_params()
 master.set_mkid_params()
 
-iop.set_testdir(f'FirstPrincipleSim/{metric_name}')
-iop.set_atmosdata('190823')
-iop.set_aberdata('Palomar512')
+median_val = mp.R_sig
+metric_multiplier = np.logspace(np.log10(0.1), np.log10(10), 7)
+metric_vals = median_val * metric_multiplier
 
-print(ap.numframes)
-
-comps = False
+iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}')
 
 def adapt_dp_master():
     if not os.path.exists(iop.testdir):
@@ -53,7 +51,7 @@ def adapt_dp_master():
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-def form():
+def form(plot=True):
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
         adapt_dp_master()
     # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
@@ -69,7 +67,10 @@ def form():
     rad_samps = pca_products[1][1]
     conts = pca_products[1][4]
 
-    master.combo_performance(maps, rad_samps, conts, metric_vals)
+    if plot:
+        master.combo_performance(maps, rad_samps, conts, metric_vals)
+
+    return rad_samps, conts
 
 if __name__ == '__main__':
     form()

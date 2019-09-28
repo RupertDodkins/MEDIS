@@ -19,7 +19,7 @@ from medis.Detector import temporal as temp
 from medis.Detector import spectral as spec
 from medis.Detector import pipeline as pipe
 
-make_figure = 2
+make_figure = 8
 
 sp.num_processes = 8
 sp.return_E = True
@@ -75,7 +75,7 @@ mp.QE_var = True
 mp.bad_pix = True
 mp.dark_counts = True
 mp.hot_pix = 1
-mp.dark_pix = 10000
+mp.dark_pix_frac = 0.5
 mp.array_size = np.array([142,146])
 mp.R_mean = 8
 mp.g_mean = 0.2
@@ -85,7 +85,7 @@ mp.r_sig = 0.1
 mp.bg_mean = -10
 mp.bg_sig = 10
 mp.pix_yield = 0.8  # check dis
-mp.dark_bright = 5e4
+mp.dark_bright = 5
 mp.hot_bright = 4e3
 mp.dead_time = 1e-5
 mp.wavecal_coeffs = [1./6, -250]
@@ -510,9 +510,83 @@ def get_packets_plots(datacube, step, dp, mp, plot=False):
     else:
         return photons.T
 
-if make_figure == 1:
-    make_figure1()
-elif make_figure == 2:
-    make_figure2()
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
+
+def param_compare():
+    import master
+    n = 7
+    plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.viridis(np.linspace(0, 1, n)))
+
+    dprint(iop.testdir)
+    param_names = ['array_size', 'pix_yield', 'numframes', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']
+    import importlib
+
+    param_array, metric_vals_list = [], []
+    for param_name in param_names:
+        param = importlib.import_module(param_name)
+        if len(param.metric_multiplier) == 7: plot_inds = np.linspace(0,6,3, dtype=int)
+        if len(param.metric_multiplier) == 4: plot_inds = [0,2,3]
+        dprint((param_name,param.metric_multiplier,param.metric_vals))
+        param_array.append(master.form(param.metric_vals, param.metric_name, plot=True, plot_inds=plot_inds))
+        if param_name in ['dark_bright', 'R_sig', 'g_sig']:
+            metric_vals_list.append(param.metric_multiplier[::-1])
+        else:
+            metric_vals_list.append(param.metric_multiplier)
+
+    param_array = np.array(param_array)
+
+    dprint(param_array.shape)
+    # mpl.rcParams['axes.prop_cycle'] = plt.cycler(color='bgrcmyk')
+    plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1)))
+    pix_yield_ind = np.where(np.array(param_names) == 'pix_yield')[0][0]
+    # metric_samp = np.logspace(np.log10(0.5), np.log10(2), n)
+    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(8,4))
+    three_lod_sep = 0.3
+    six_lod_sep = 2*three_lod_sep
+    fhqm = 0.03
+    for p, (rad_samps, conts) in enumerate(param_array):
+        dprint((p, len(rad_samps), len(conts), pix_yield_ind))
+        three_lod_conts = []
+        six_lod_conts = []
+        for i in range(len(conts)):
+            # three_lod_ind = find_nearest(np.array(rad_samps[i]), 0.3)
+            three_lod_ind = np.where((np.array(rad_samps[i]) > three_lod_sep-fhqm) & (np.array(rad_samps[i]) < three_lod_sep+fhqm))
+            three_lod_conts.append(np.sum(conts[i][three_lod_ind]))
+            six_lod_ind = np.where((np.array(rad_samps[i]) > six_lod_sep - fhqm) & (np.array(rad_samps[i]) < six_lod_sep + fhqm))
+            six_lod_conts.append(np.sum(conts[i][six_lod_ind]))
+        metric_samp = metric_vals_list[p]
+        ax1.plot(metric_samp, three_lod_conts, label=param_names[p], linewidth=2)
+        ax2.plot(metric_samp, six_lod_conts, label=param_names[p], linewidth=2)
+        if param_names[p] in ['pix_yield', 'g_mean']:
+            ax1.scatter(metric_samp[-1], three_lod_conts[-1], marker='x', color='grey', linewidths=3)
+            ax2.scatter(metric_samp[-1], six_lod_conts[-1], marker='x', color='grey', linewidths=3)
+    ax2.legend(ncol=2)
+    ax1.set_ylabel(('5$\sigma$ Contrast'))
+    ax1.set_title('$3\lambda/D$')
+    ax2.set_title('$6\lambda/D$')
+    for ax in [ax1, ax2]:
+        ax.set_yscale('log')
+        ax.set_xscale('log')
+        ax.set_xlabel('$P/P_{med}$')
+        ax.tick_params(direction='in', which='both', right=True, top=True)
+
+    # for i in range(len(conts)):
+    #     plt.yscale('log')
+    #     plt.plot(rad_samps[i], conts[i])
+    plt.tight_layout()
+    plt.show()
+
+    return
+
+if __name__ == '__main__':
+    if make_figure == 1:
+        make_figure1()
+    elif make_figure == 2:
+        make_figure2()
+    elif make_figure == 8:
+        param_compare()
 
 

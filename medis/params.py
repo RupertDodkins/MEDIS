@@ -276,12 +276,14 @@ class MKID_params:
         self.remove_close = False
         self.dark_counts = False
         self.array_size = np.array([129,129])#np.array([125,80])#np.array([125,125])#
+        self.resamp = True
+        self.quantize_FCs = False
         # self.total_pix = self.array_size[0] * self.array_size[1]
         self.pix_yield = 0.9
         self.hot_pix = 0  # Number of hot pixels
         self.hot_bright = 1e3  # Number of counts/s a hot pixel registers
-        self.dark_pix = 100  # Number of dark count pixels
-        self.dark_bright = 50  # Number of counts/s on average for dark count pixels
+        self.dark_pix_frac = 0.1  # Number of dark count pixels
+        self.dark_bright = 10  # Number of counts/s on average for dark count pixels
         self.threshold_phase = 0#-30 # quite close to 0, basically all photons will be detected.
 
         self.max_count = 2500.  # cts/s
@@ -328,7 +330,7 @@ class Device_params:
         self.sigs = None
         self.basesDeg = None
         self.hot_pix = None
-        self.dark_pix = None
+        self.dark_pix_frac = None
 
     def __iter__(self):
         for attr, value in self.__dict__.items():
