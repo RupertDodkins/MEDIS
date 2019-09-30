@@ -517,11 +517,18 @@ def find_nearest(array, value):
 
 def param_compare():
     import master
+    master.set_field_params()
+    master.set_mkid_params()
+
     n = 7
     plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.viridis(np.linspace(0, 1, n)))
 
+    if not os.path.exists(iop.median_noise):
+        master.get_median_noise(master.dp)
+
     dprint(iop.testdir)
-    param_names = ['array_size', 'pix_yield', 'numframes', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']
+    param_names = ['array_size', 'array_size_(rebin)', 'pix_yield', 'numframes', 'dark_bright', 'R_mean']#, 'R_sig', 'g_mean', 'g_sig']
+    # param_names = ['g_sig']
     import importlib
 
     param_array, metric_vals_list = [], []
@@ -529,8 +536,9 @@ def param_compare():
         param = importlib.import_module(param_name)
         if len(param.metric_multiplier) == 7: plot_inds = np.linspace(0,6,3, dtype=int)
         if len(param.metric_multiplier) == 4: plot_inds = [0,2,3]
+        else: plot_inds = range(3)
         dprint((param_name,param.metric_multiplier,param.metric_vals))
-        param_array.append(master.form(param.metric_vals, param.metric_name, plot=True, plot_inds=plot_inds))
+        param_array.append(master.form(param.metric_vals, param.metric_name, plot=False, plot_inds=plot_inds))
         if param_name in ['dark_bright', 'R_sig', 'g_sig']:
             metric_vals_list.append(param.metric_multiplier[::-1])
         else:
@@ -541,14 +549,12 @@ def param_compare():
     dprint(param_array.shape)
     # mpl.rcParams['axes.prop_cycle'] = plt.cycler(color='bgrcmyk')
     plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1)))
-    pix_yield_ind = np.where(np.array(param_names) == 'pix_yield')[0][0]
     # metric_samp = np.logspace(np.log10(0.5), np.log10(2), n)
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(8,4))
+    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,4))
     three_lod_sep = 0.3
     six_lod_sep = 2*three_lod_sep
     fhqm = 0.03
     for p, (rad_samps, conts) in enumerate(param_array):
-        dprint((p, len(rad_samps), len(conts), pix_yield_ind))
         three_lod_conts = []
         six_lod_conts = []
         for i in range(len(conts)):
@@ -558,12 +564,19 @@ def param_compare():
             six_lod_ind = np.where((np.array(rad_samps[i]) > six_lod_sep - fhqm) & (np.array(rad_samps[i]) < six_lod_sep + fhqm))
             six_lod_conts.append(np.sum(conts[i][six_lod_ind]))
         metric_samp = metric_vals_list[p]
-        ax1.plot(metric_samp, three_lod_conts, label=param_names[p], linewidth=2)
-        ax2.plot(metric_samp, six_lod_conts, label=param_names[p], linewidth=2)
+        ax1.plot(metric_samp, three_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2)
+        ax2.plot(metric_samp, six_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2)
         if param_names[p] in ['pix_yield', 'g_mean']:
             ax1.scatter(metric_samp[-1], three_lod_conts[-1], marker='x', color='grey', linewidths=3)
             ax2.scatter(metric_samp[-1], six_lod_conts[-1], marker='x', color='grey', linewidths=3)
-    ax2.legend(ncol=2)
+    # ax2.legend(ncol=2)
+
+    from matplotlib.font_manager import FontProperties
+
+    fontP = FontProperties()
+    fontP.set_size('small')
+    # Put a legend to the right of the current axis
+    ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5), prop=fontP)
     ax1.set_ylabel(('5$\sigma$ Contrast'))
     ax1.set_title('$3\lambda/D$')
     ax2.set_title('$6\lambda/D$')

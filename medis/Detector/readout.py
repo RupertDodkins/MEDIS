@@ -22,14 +22,8 @@ from medis.Utils.plot_tools import view_datacube, loop_frames, quicklook_im
 from . import temporal as temp
 from . import spectral as spec
 from . import pipeline as pipe
-# import matplotlib.pyplot as plt
-from . import H2RG
-
 from medis.Utils.misc import dprint
-from medis.Utils.rawImageIO import clipped_zoom
 from scipy import interpolate
-from scipy.interpolate import RegularGridInterpolator as rgi
-from scipy.interpolate import interpn
 
 
 ####################################################################################################

@@ -9,7 +9,7 @@ from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint
 from vip_hci import phot, metrics, pca
 import inspect
-from vip_hci.metrics.contrcurve import noise_per_annulus, aperture_flux
+# from vip_hci.metrics.contrcurve import noise_per_annulus, aperture_flux
 from vip_hci.var.shapes import get_ell_annulus
 from scipy import stats
 from scipy.interpolate import InterpolatedUnivariateSpline

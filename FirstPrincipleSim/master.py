@@ -12,7 +12,7 @@ import pickle as pickle
 from vip_hci import phot, pca
 from medis.params import tp, mp, sp, ap, iop
 import medis.get_photon_data as gpd
-from medis.Utils.plot_tools import view_datacube, compare_images, fmt
+from medis.Utils.plot_tools import view_datacube, compare_images, fmt, quicklook_im
 from medis.Utils.misc import dprint
 import medis.Detector.readout as read
 from medis.Detector import mkid_artefacts as MKIDs
@@ -20,13 +20,14 @@ from medis.Detector import pipeline as pipe
 from medis.Analysis.phot import get_unoccult_psf, eval_method, sum_contrast
 
 metric = __file__.split('/')[-1].split('.')[0]
-iop.set_testdir(f'FirstPrincipleSim2/{metric}_old/')
+iop.set_testdir(f'FirstPrincipleSim3/{metric}_old/')
 iop.set_atmosdata('190823')
 iop.set_aberdata('Palomar512')
 iop.fields = iop.testdir + 'fields_master_reform.h5'
 master_fields = iop.fields
 iop.form_photons = os.path.join(iop.testdir, 'formatted_photons_master.pkl')
 iop.device_params = os.path.join(iop.testdir, 'deviceParams_master.pkl')
+iop.median_noise= os.path.join(iop.testdir, 'median_noise_master.txt')
 
 dp = iop.device_params
 
@@ -163,7 +164,6 @@ def get_form_photons(fields, comps=True):
             spectralcube = fields[step, :, 0]
 
         dprint(iop.device_params)
-        dprint(dp.QE_map.shape)
         step_packets = read.get_packets(spectralcube, step, dp, mp)
         cube = pipe.make_datacube_from_list(step_packets, (ap.w_bins,dp.array_size[0],dp.array_size[1]))
         stackcube[step] = cube
@@ -261,7 +261,6 @@ def get_stackcubes(metric_vals, metric_name, comps=True, plot=False):
             view_datacube(stackcube[:, 0], logAmp=True, show=True)
 
         stackcube /= np.sum(stackcube)  # /ap.numframes
-        stackcube = stackcube
         stackcube = np.transpose(stackcube, (1, 0, 2, 3))
         stackcubes.append(stackcube)
         dps.append(dp)
@@ -421,74 +420,36 @@ def reformat_planets(fields):
     read.save_fields(double_cube, fields_file=iop.fields)
     return double_cube
 
-def reformat_planets_triple(fields):
-    from skimage.draw import circle
-    from medis.Utils.plot_tools import quicklook_im
-    print('Collapsing the companion axes')
+def get_median_noise(master_dp):
+    from vip_hci.metrics.contrcurve import noise_per_annulus
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
+    scale_list = wsamples / (ap.band[1] - ap.band[0])
 
-    obs_seq = fields
-    dprint(fields.shape)
-    tess = np.sum(obs_seq[:,:,1:], axis=2)
-    view_datacube(tess[0], logAmp=True, show=False)
-    # view_datacube(tess[:,0], logAmp=True, show=True)
-    # quicklook_im(tess[0,-1],logAmp=True, show=True)
-    triple_cube = np.zeros((ap.numframes, ap.w_bins, 3, ap.grid_size, ap.grid_size))
-    # target_contrast = [10 ** -3.5, 10 ** -3.5, 10 ** -4, 10 ** -4, 10 ** -4.5, 10 ** -4.5, 10 ** -5, 10 ** -5]
-    target_contrast = list(10**np.arange(-3.5, -5.5, -0.5))*2
-    # plt.figure()
-    # plt.plot(np.sum(obs_seq[:,:,1:], axis=(0, 1, 3, 4)))
-    # norm_fac = (np.mean(obs_seq[:,:,1:])/np.mean(obs_seq[:,:,1:], axis = (0,1,3,4)))[np.newaxis, np.newaxis,:, np.newaxis, np.newaxis]
-    # dprint(norm_fac.shape)
-    # obs_seq[:,:,1:] = obs_seq[:,:,1:]*norm_fac# normalise_comps
-    # plt.plot(np.sum(obs_seq[:, :, 1:], axis=(0, 1, 3, 4)))
-    rescale_comps = obs_seq[:, :, 1:] * (target_contrast / np.array(ap.contrast))[np.newaxis, np.newaxis, :,np.newaxis, np.newaxis]
+    fields = gpd.run_medis()
 
-    fcy = np.array([256, 196, 256, 336, 256, 157, 256, 376])
-    fcx = np.array([207, 256, 327, 256, 167, 256, 367, 256])
+    comps = False
+    if os.path.exists(iop.form_photons):
+        dprint(f'Formatted photon data already exists at {iop.form_photons}')
+        with open(iop.form_photons, 'rb') as handle:
+            stackcube, dp = pickle.load(handle)
+    else:
+        stackcube, dp = get_form_photons(fields, comps=comps)
 
-    # fcy = np.array([75, 75, 23, 44, 75, 75, 116, 137])
-    # fcx = np.array([28, 49, 75, 75, 111, 132, 75, 75])
+    stackcube /= np.sum(stackcube)  # /ap.numframes
+    stackcube = np.transpose(stackcube, (1, 0, 2, 3))
 
-    mask = np.zeros_like((obs_seq[0,0,0]))
-    for fx, fy in zip(fcx, fcy):
-        ind = circle(fy, fx, 25)
-        mask[ind] = 1
-    # quicklook_im(mask, logAmp=True)
-    mask_cube = obs_seq[:,:,1:]*mask[np.newaxis,np.newaxis,np.newaxis]
-    # print(np.shape(obs_seq[:,:,1:,ind[0],ind[1]]))
+    frame_nofc = pca.pca(stackcube, angle_list=np.zeros((stackcube.shape[1])), scale_list=scale_list,
+                  mask_center_px=None, adimsdi='double', ncomp=7, ncomp2=None,
+                  collapse='median')
 
-    view_datacube(obs_seq[0,-1,:]*mask, logAmp=True)
-        # view_datacube(obs_seq[:,:,0,ind[0],ind[1]])
+    quicklook_im(frame_nofc, logAmp=True)
+    fwhm = mp.lod
+    with open(master_dp, 'rb') as handle:
+        dp = pickle.load(handle)
 
-    collapse_comps = np.sum(mask_cube, axis=2)
-    view_datacube(collapse_comps[0], logAmp=True)
-    # vector_radd = np.sqrt((fcx - 75) ** 2 + (fcy - 75) ** 2)
-    # order = np.argsort(vector_radd)
-    # fcy = fcy[order]
-    # fcx = fcx[order]
-
-    from vip_hci.metrics.contrcurve import noise_per_annulus, aperture_flux
-    injected_flux = aperture_flux(np.mean(collapse_comps, axis=(0, 1)), fcy, fcx, 4, ap_factor=1)
-
-    plt.plot(injected_flux)
-    norm_fac = (np.mean(injected_flux)/injected_flux)[np.newaxis, np.newaxis,:, np.newaxis, np.newaxis]
-    obs_seq[:, :, 1:] = obs_seq[:, :, 1:] * norm_fac  # normalise_comps
-    collapse_comps = np.sum(obs_seq[:, :, 1:], axis=2)
-    injected_flux = aperture_flux(np.mean(collapse_comps, axis=(0, 1)), fcy, fcx, 4, ap_factor=1)
-    plt.plot(injected_flux)
-    plt.show()
-
-    collapse_target = np.sum(rescale_comps, axis=2)
-    dprint((triple_cube.shape, obs_seq.shape))
-    triple_cube[:, :, 0] = obs_seq[:, :, 0]
-    triple_cube[:, :, 1] = collapse_comps
-    triple_cube[:, :, 2] = collapse_target
-    view_datacube(triple_cube[0,:,0], logAmp=True, show=False)
-    view_datacube(triple_cube[0,:,1], logAmp=True, show=False)
-    view_datacube(triple_cube[0,:,2], logAmp=True, show=True)
-    print(f"Reduced shape of obs_seq = {np.shape(triple_cube)} (numframes x nwsamp x 3 x grid x grid)")
-    read.save_fields(triple_cube, fields_file=iop.fields)
-    return triple_cube
+    mask = dp.QE_map == 0
+    median_noise, vector_radd = noise_per_annulus(frame_nofc, separation=fwhm, fwhm=fwhm, mask=mask)
+    np.savetxt(iop.median_noise, median_noise)
 
 def form(metric_vals, metric_name, plot=True, plot_inds=[0,3,6]):
     iop.perf_data = os.path.join(iop.testdir, 'performance_data.pkl')
@@ -501,7 +462,6 @@ def form(metric_vals, metric_name, plot=True, plot_inds=[0,3,6]):
         if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
             param.adapt_dp_master()
 
-        dprint(dir(param))
         comps_ = [True, False]
         pca_products = []
         for comps in comps_:
