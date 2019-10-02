@@ -83,38 +83,5 @@ def add_bad_pix(QE_map_all, bad_ind, plot=False):
 
     return QE_map
 
-# def form(metric_vals, metric_name, plot=True):
-#     iop.perf_data = os.path.join(iop.testdir, 'perf_data.pkl')
-#     if not os.path.exists(iop.perf_data):
-#
-#         if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
-#             adapt_dp_master()
-#
-#         comps_ = [True, False]
-#         pca_products = []
-#         for comps in comps_:
-#             stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
-#             pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
-#
-#         maps = pca_products[0]
-#         rad_samps = pca_products[1][1]
-#         conts = pca_products[1][4]
-#
-#         with open(iop.perf_data, 'wb') as handle:
-#             pickle.dump((maps, rad_samps, conts, metric_vals), handle, protocol=pickle.HIGHEST_PROTOCOL)
-#     else:
-#         with open(iop.perf_data, 'rb') as handle:
-#             maps, rad_samps, conts, metric_vals = pickle.load(handle)
-#
-#     if plot:
-#         master.combo_performance(maps, rad_samps, conts, metric_vals)
-#
-#     return rad_samps, conts
-
 if __name__ == '__main__':
     master.form()
-    # if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
-    #     adapt_dp_master()
-    # stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
-    # # plt.show(block=True)
-    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)

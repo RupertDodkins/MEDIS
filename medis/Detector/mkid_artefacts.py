@@ -64,7 +64,6 @@ def initialize():
     dp.responsivity_error_map = responvisity_scaling_map(plot=False)
     if mp.pix_yield == 1:
         mp.bad_pix =False
-    dprint((mp.bad_pix, mp.dark_counts))
     if mp.bad_pix == True:
         dp.QE_map = create_bad_pix(dp.QE_map_all)
         # dp.QE_map = create_hot_pix(dp.QE_map)
@@ -142,7 +141,7 @@ def array_QE(plot=False):
 def assign_spectral_res(plot=False):
     """Assigning each pixel a spectral resolution (at 800nm)"""
     dist = Distribution(gaussian(0.5, 0.25, np.linspace(-0.2, 1.2, mp.res_elements)), interpolation=True)
-    dprint(f"Mean R = {mp.R_mean}")
+    # dprint(f"Mean R = {mp.R_mean}")
     Rs = (dist(mp.array_size[0]*mp.array_size[1])[0]/float(mp.res_elements)-0.5)*mp.R_sig + mp.R_mean#
     if plot:
         plt.xlabel('R')
@@ -308,7 +307,7 @@ def create_bad_pix(QE_map_all, plot=False):
     bad_ind = random.sample(list(range(mp.array_size[0]*mp.array_size[1])), amount)
 
     dprint(f"Bad indices = {len(bad_ind)}, # MKID pix = { mp.array_size[0]*mp.array_size[1]}, "
-           f"Pixel Yield = {mp.pix_yield}, amount?? = {amount}")
+           f"Pixel Yield = {mp.pix_yield}, amount? = {amount}")
 
     # bad_y = random.sample(y, amount)
     bad_y = np.int_(np.floor(bad_ind/mp.array_size[1]))

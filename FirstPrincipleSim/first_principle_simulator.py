@@ -1,6 +1,7 @@
 '''Implementation and Analysis plots from first principle simulator publication'''
 
-import os
+import os, sys
+import importlib
 import numpy as np
 import matplotlib as mpl
 # mpl.use('Qt5Agg')
@@ -8,7 +9,6 @@ from matplotlib.colors import LogNorm, SymLogNorm
 import medis.get_photon_data as gpd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-# from matplotlib.colors import LogNorm
 import pickle as pickle
 from medis.Utils.plot_tools import loop_frames, quicklook_im, view_datacube, compare_images, indep_images, grid
 from medis.Utils.misc import dprint
@@ -515,68 +515,87 @@ def find_nearest(array, value):
     idx = (np.abs(array - value)).argmin()
     return idx
 
+def config_images(num_tests):
+    plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.viridis(np.linspace(0, 1, num_tests)))
+    if num_tests == 7:
+        return np.linspace(0, 6, 3, dtype=int)
+    if num_tests == 4:
+        return [0, 2, 3]
+    else:
+        return range(3)
+
+def parse_cont_data(all_cont_data, p):
+    rad_samps = all_cont_data[0, p, 0]  # both repeats should be equivalent
+    all_conts = np.array(all_cont_data[:, p, 1].tolist())
+    mean_conts = np.mean(all_conts, axis=0)
+    if len(all_conts.shape)==3:
+        err_conts = np.std(all_conts, axis=0)
+    else:
+        err_conts = [np.std(all_conts[:,i])/np.sqrt(len(all_conts)) for i in range(len(all_conts[0]))]  #can't do std if one axis is different size (unlike mean)
+
+    return rad_samps, mean_conts, err_conts
+
 def param_compare():
     import master
-    master.set_field_params()
-    master.set_mkid_params()
 
-    n = 7
-    plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.viridis(np.linspace(0, 1, n)))
+    # master.set_field_params()
+    # master.set_mkid_params()
 
-    if not os.path.exists(iop.median_noise):
-        master.get_median_noise(master.dp)
+    # fields = make_fields_master()
+    # make_dp_master()
 
-    dprint(iop.testdir)
-    param_names = ['array_size', 'array_size_(rebin)', 'pix_yield', 'numframes', 'dark_bright', 'R_mean']#, 'R_sig', 'g_mean', 'g_sig']
-    # param_names = ['g_sig']
-    import importlib
+    repeats = 2  # number of medis runs to average over for the cont plots
+    param_names = ['array_size', 'array_size_(rebin)']#, 'pix_yield', 'numframes', 'dark_bright', 'R_mean']#, 'R_sig', 'g_mean', 'g_sig']
 
-    param_array, metric_vals_list = [], []
-    for param_name in param_names:
+    all_cont_data = []
+    for r in range(repeats):
+
+        # each repeat has new fields, device params and noise data
+        iop.set_testdir(f'FirstPrincipleSim_repeat{r}/master/')
+        master_dp, master_fields = master.config_cache()
+        master.make_fields_master()
+        master.make_dp_master()
+
+        if not os.path.exists(iop.median_noise):
+            master.get_median_noise(master_dp)
+
+        dprint(iop.testdir)
+
+        comp_images, cont_data, metric_vals_list = [], [], []
+        for param_name in param_names:
+            param = importlib.import_module(param_name)
+            if param_name in sys.modules:  # if the module has been loaded before it would be skipped and the params not initialized
+                dprint(param_name)
+                param = importlib.reload(param)
+            plot_inds = config_images(len(param.metric_multiplier))  # the line colors and map inds depend on the amount
+            # being plotted
+            param_data = master.form(param.metric_vals, param.metric_name, master_cache=(master_dp, master_fields),
+                                     plot=False, plot_inds=plot_inds)
+            comp_images.append(param_data[0])
+            cont_data.append(param_data[1:])
+
+            # store the mutlipliers but flip those that achieve better contrast when the metric is decreasing
+            if param_name in ['dark_bright', 'R_sig', 'g_sig']:
+                metric_vals_list.append(param.metric_multiplier[::-1])
+            else:
+                metric_vals_list.append(param.metric_multiplier)
+
+        cont_data = np.array(cont_data)
+        dprint(cont_data.shape)
+        all_cont_data.append(cont_data)
+    all_cont_data = np.array(all_cont_data)  # (repeats x num_params x rad+cont x num_multi (changes)
+
+    # plot the summed data
+    for p, param_name in enumerate(param_names):
         param = importlib.import_module(param_name)
-        if len(param.metric_multiplier) == 7: plot_inds = np.linspace(0,6,3, dtype=int)
-        if len(param.metric_multiplier) == 4: plot_inds = [0,2,3]
-        else: plot_inds = range(3)
-        dprint((param_name,param.metric_multiplier,param.metric_vals))
-        param_array.append(master.form(param.metric_vals, param.metric_name, plot=False, plot_inds=plot_inds))
-        if param_name in ['dark_bright', 'R_sig', 'g_sig']:
-            metric_vals_list.append(param.metric_multiplier[::-1])
-        else:
-            metric_vals_list.append(param.metric_multiplier)
-
-    param_array = np.array(param_array)
-
-    dprint(param_array.shape)
-    # mpl.rcParams['axes.prop_cycle'] = plt.cycler(color='bgrcmyk')
-    plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1)))
-    # metric_samp = np.logspace(np.log10(0.5), np.log10(2), n)
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,4))
-    three_lod_sep = 0.3
-    six_lod_sep = 2*three_lod_sep
-    fhqm = 0.03
-    for p, (rad_samps, conts) in enumerate(param_array):
-        three_lod_conts = []
-        six_lod_conts = []
-        for i in range(len(conts)):
-            # three_lod_ind = find_nearest(np.array(rad_samps[i]), 0.3)
-            three_lod_ind = np.where((np.array(rad_samps[i]) > three_lod_sep-fhqm) & (np.array(rad_samps[i]) < three_lod_sep+fhqm))
-            three_lod_conts.append(np.sum(conts[i][three_lod_ind]))
-            six_lod_ind = np.where((np.array(rad_samps[i]) > six_lod_sep - fhqm) & (np.array(rad_samps[i]) < six_lod_sep + fhqm))
-            six_lod_conts.append(np.sum(conts[i][six_lod_ind]))
+        plot_inds = config_images(len(param.metric_multiplier))  # config each loop
+        maps = comp_images[p]
         metric_samp = metric_vals_list[p]
-        ax1.plot(metric_samp, three_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2)
-        ax2.plot(metric_samp, six_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2)
-        if param_names[p] in ['pix_yield', 'g_mean']:
-            ax1.scatter(metric_samp[-1], three_lod_conts[-1], marker='x', color='grey', linewidths=3)
-            ax2.scatter(metric_samp[-1], six_lod_conts[-1], marker='x', color='grey', linewidths=3)
-    # ax2.legend(ncol=2)
+        rad_samps, mean_conts, err_conts = parse_cont_data(all_cont_data, p)
+        master.combo_performance(maps, rad_samps, mean_conts, metric_samp, plot_inds, err_conts)
 
-    from matplotlib.font_manager import FontProperties
-
-    fontP = FontProperties()
-    fontP.set_size('small')
-    # Put a legend to the right of the current axis
-    ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5), prop=fontP)
+    plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1)))
+    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,4))
     ax1.set_ylabel(('5$\sigma$ Contrast'))
     ax1.set_title('$3\lambda/D$')
     ax2.set_title('$6\lambda/D$')
@@ -586,9 +605,40 @@ def param_compare():
         ax.set_xlabel('$P/P_{med}$')
         ax.tick_params(direction='in', which='both', right=True, top=True)
 
-    # for i in range(len(conts)):
-    #     plt.yscale('log')
-    #     plt.plot(rad_samps[i], conts[i])
+    three_lod_sep = 0.3
+    six_lod_sep = 2*three_lod_sep
+    fhqm = 0.03
+    for p, param_name in enumerate(param_names):
+        metric_samp = metric_vals_list[p]
+        rad_samps, mean_conts, err_conts = parse_cont_data(all_cont_data, p)
+
+        three_lod_conts = np.zeros((len(metric_samp)))
+        six_lod_conts = np.zeros((len(metric_samp)))
+        three_lod_errs = np.zeros((len(metric_samp)))
+        six_lod_errs = np.zeros((len(metric_samp)))
+        for i in range(len(mean_conts)):
+            three_lod_ind = np.where((np.array(rad_samps[i]) > three_lod_sep-fhqm) & (np.array(rad_samps[i]) < three_lod_sep+fhqm))
+            three_lod_conts[i] = np.sum(mean_conts[i][three_lod_ind])
+            three_lod_errs[i] = np.sqrt(np.sum(err_conts[i][three_lod_ind]**2))
+
+            six_lod_ind = np.where((np.array(rad_samps[i]) > six_lod_sep - fhqm) & (np.array(rad_samps[i]) < six_lod_sep + fhqm))
+            six_lod_conts[i] = np.sum(mean_conts[i][six_lod_ind])
+            six_lod_errs[i] = np.sqrt(np.sum(err_conts[i][six_lod_ind] ** 2))
+
+        ax1.plot(metric_samp, three_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2)
+        ax1.errorbar(metric_samp, three_lod_conts, yerr=three_lod_errs, linewidth=2, marker='.')
+
+        ax2.plot(metric_samp, six_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2)
+        ax2.errorbar(metric_samp, six_lod_conts, yerr=six_lod_errs, linewidth=2, marker='.')
+        dprint(six_lod_errs)
+        if param_names[p] in ['pix_yield', 'g_mean']:
+            ax1.scatter(metric_samp[-1], three_lod_conts[-1], marker='x', color='grey', linewidths=3)
+            ax2.scatter(metric_samp[-1], six_lod_conts[-1], marker='x', color='grey', linewidths=3)
+
+    from matplotlib.font_manager import FontProperties
+    fontP = FontProperties()
+    fontP.set_size('small')
+    ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5), prop=fontP) # Put a legend to the right of the current axis
     plt.tight_layout()
     plt.show()
 

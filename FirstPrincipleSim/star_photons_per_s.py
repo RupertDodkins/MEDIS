@@ -40,7 +40,11 @@ def adapt_dp_master():
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-def get_stackcubes(metric_vals, metric_name, comps=True, plot=False):
+def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=False):
+    _, master_fields = master_cache
+    raise NotImplementedError
+
+    # TODO might have to delete next two lines and change one after
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 

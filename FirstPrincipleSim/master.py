@@ -20,19 +20,25 @@ from medis.Detector import pipeline as pipe
 from medis.Analysis.phot import get_unoccult_psf, eval_method, sum_contrast
 
 metric = __file__.split('/')[-1].split('.')[0]
-iop.set_testdir(f'FirstPrincipleSim3/{metric}_old/')
-iop.set_atmosdata('190823')
-iop.set_aberdata('Palomar512')
-iop.fields = iop.testdir + 'fields_master_reform.h5'
-master_fields = iop.fields
-iop.form_photons = os.path.join(iop.testdir, 'formatted_photons_master.pkl')
-iop.device_params = os.path.join(iop.testdir, 'deviceParams_master.pkl')
-iop.median_noise= os.path.join(iop.testdir, 'median_noise_master.txt')
+iop.set_testdir(f'FirstPrincipleSim3/{metric}/')
 
-dp = iop.device_params
+def config_cache():
+    iop.set_atmosdata('190823')
+    iop.set_aberdata('Palomar512')
+    iop.fields = iop.testdir + 'fields_master_reform.h5'
+    master_fields = iop.fields
+    dprint(master_fields)
+    iop.form_photons = os.path.join(iop.testdir, 'formatted_photons_master.pkl')
+    iop.device_params = os.path.join(iop.testdir, 'deviceParams_master.pkl')
+    iop.median_noise= os.path.join(iop.testdir, 'median_noise_master.txt')
+    master_dp = iop.device_params
+    return master_dp, master_fields
+
+master_dp, master_fields = config_cache()
+dprint((iop.device_params, master_dp))
 
 ap.sample_time = 0.05
-ap.numframes = 20
+ap.numframes = 10
 
 def set_field_params():
     sp.show_wframe = False
@@ -103,19 +109,18 @@ def make_fields_master(monitor=False):
 
     else:
         fields = gpd.run_medis()
-        dprint(fields.shape)
         # tess = np.sum(fields, axis=2)
         # view_datacube(tess[0], logAmp=True, show=False)
         # view_datacube(tess[:,0], logAmp=True, show=True)
-        dprint(fields.shape)
-        plt.plot(np.sum(fields, axis = (0,1,3,4)))
-        plt.show()
+
+        # plt.plot(np.sum(fields, axis = (0,1,3,4)))
+        # plt.show()
         if fields.shape[2] == len(ap.contrast)+1:
             fields = reformat_planets(fields)
-        else:
-            view_datacube(fields[0, :, 0], logAmp=True, show=False)
-            view_datacube(fields[0, :, 1], logAmp=True, show=True)
-            # view_datacube(fields[:, -1, 2], logAmp=True, show=False)
+        # else:
+        #     view_datacube(fields[0, :, 0], logAmp=True, show=False)
+        #     view_datacube(fields[0, :, 1], logAmp=True, show=True)
+        #     # view_datacube(fields[:, -1, 2], logAmp=True, show=False)
 
     return fields
 
@@ -138,7 +143,7 @@ def set_mkid_params():
     mp.pix_yield = 0.9
     mp.array_size = np.array([150, 150])
     mp.lod = 6
-    mp.quantize_FCs = True
+    mp.quantize_FCs = False
 
 def make_dp_master():
     """
@@ -147,7 +152,9 @@ def make_dp_master():
     """
     set_field_params()
     set_mkid_params()
-    MKIDs.initialize()
+    dprint(iop.device_params)
+    if not os.path.exists(iop.device_params):
+        MKIDs.initialize()
 
 def get_form_photons(fields, comps=True):
     dprint('Making new formatted photon data')
@@ -233,18 +240,25 @@ def detect_obj_photons(metric_vals, metric_name, plot=False):
 
     return objcubes, dps
 
-def get_stackcubes(metric_vals, metric_name, comps=True, plot=False):
+def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=False):
+    _, master_fields = master_cache
+    iop.fields = master_fields
+
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 
-    iop.fields = master_fields
+    dprint(iop.device_params)
+    dprint(iop.form_photons)
+    dprint(iop.testdir)
+    dprint(master_fields)
     fields = gpd.run_medis()
 
     stackcubes, dps =  [], []
     for metric_val in metric_vals:
         iop.form_photons = iop.form_photons.split('_'+metric_name)[0] + f'_{metric_name}={metric_val}_comps={comps}.pkl'
         iop.device_params = iop.device_params.split('_'+metric_name)[0] + f'_{metric_name}={metric_val}.pkl'
-
+        dprint(iop.device_params)
+        dprint(iop.form_photons)
         if os.path.exists(iop.form_photons):
             dprint(f'Formatted photon data already exists at {iop.form_photons}')
             with open(iop.form_photons, 'rb') as handle:
@@ -360,15 +374,18 @@ def contrcurve_plot(metric_vals, rad_samps, thruputs, noises, conts):
     axes[2].set_ylabel('5$\sigma$ Contrast')
     axes[2].legend([str(metric_val) for metric_val in metric_vals])
 
-def combo_performance(maps, rad_samps, conts, annos, plot_inds=[0,3,6]):
+def combo_performance(maps, rad_samps, conts, annos, plot_inds=[0,3,6], err=None):
+    # plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.viridis(np.linspace(0, 1, len(conts))))
     labels = ['a', 'b', 'c', 'd', 'e']
     title = r'  $I / I^{*}$'
     vmin = -1e-8
     vmax = 1e-6
 
     fig, axes = plt.subplots(nrows=1, ncols=4, figsize=(13, 3.4))
-    for rad_samp, cont in zip(rad_samps, conts):
+    for f, (rad_samp, cont) in enumerate(zip(rad_samps, conts)):
         axes[0].plot(rad_samp, cont)
+        if err is not None:
+            axes[0].errorbar(rad_samp, cont, yerr=err[f])
 
     axes[0].set_yscale('log')
     axes[0].set_xlabel('Radial Separation')
@@ -416,7 +433,7 @@ def reformat_planets(fields):
     double_cube[:, :, 1] = collapse_comps
     view_datacube(double_cube[0,:,0], logAmp=True, show=False)
     view_datacube(double_cube[0,:,1], logAmp=True, show=True)
-    print(f"Reduced shape of obs_seq = {np.shape(double_cube)} (numframes x nwsamp x 3 x grid x grid)")
+    print(f"Reduced shape of obs_seq = {np.shape(double_cube)} (numframes x nwsamp x 2 x grid x grid)")
     read.save_fields(double_cube, fields_file=iop.fields)
     return double_cube
 
@@ -425,6 +442,8 @@ def get_median_noise(master_dp):
     wsamples = np.linspace(ap.band[0], ap.band[1], ap.w_bins)
     scale_list = wsamples / (ap.band[1] - ap.band[0])
 
+    dprint(iop.testdir)
+    dprint(iop.fields)
     fields = gpd.run_medis()
 
     comps = False
@@ -451,7 +470,7 @@ def get_median_noise(master_dp):
     median_noise, vector_radd = noise_per_annulus(frame_nofc, separation=fwhm, fwhm=fwhm, mask=mask)
     np.savetxt(iop.median_noise, median_noise)
 
-def form(metric_vals, metric_name, plot=True, plot_inds=[0,3,6]):
+def form(metric_vals, metric_name, master_cache, plot=True, plot_inds=[0,3,6]):
     iop.perf_data = os.path.join(iop.testdir, 'performance_data.pkl')
     dprint(iop.perf_data)
     if not os.path.exists(iop.perf_data):
@@ -466,9 +485,9 @@ def form(metric_vals, metric_name, plot=True, plot_inds=[0,3,6]):
         pca_products = []
         for comps in comps_:
             if 'get_stackcubes' in dir(param):
-                stackcubes, dps = param.get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+                stackcubes, dps = param.get_stackcubes(metric_vals, metric_name, master_cache, comps=comps, plot=False)
             else:
-                stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+                stackcubes, dps = get_stackcubes(metric_vals, metric_name, master_cache, comps=comps, plot=False)
 
             if 'pca_stackcubes' in dir(param):
                 pca_products.append(param.pca_stackcubes(stackcubes, dps, comps))
@@ -488,7 +507,7 @@ def form(metric_vals, metric_name, plot=True, plot_inds=[0,3,6]):
     if plot:
         combo_performance(maps, rad_samps, conts, metric_vals, plot_inds)
 
-    return rad_samps, conts
+    return maps, rad_samps, conts
 
 def check_contrast_contriubtions(metric_vals, metric_name, comps = False):
     import importlib
@@ -497,7 +516,7 @@ def check_contrast_contriubtions(metric_vals, metric_name, comps = False):
 
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
         param.adapt_dp_master()
-    stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps)
+    stackcubes, dps = get_stackcubes(metric_vals, metric_name, master_cache, comps=comps)
     # plt.show(block=True)
     eval_performance(stackcubes, dps, metric_vals, comps=comps)
 

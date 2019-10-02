@@ -6,29 +6,23 @@ import numpy as np
 from scipy import interpolate
 mpl.use("Qt5Agg")
 import matplotlib.pylab as plt
-import copy as copy
 import pickle as pickle
 import medis.get_photon_data as gpd
-from medis.params import mp, ap, iop, tp, sp
+from medis.params import mp, ap, iop
 from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint
 import master
 import array_size
 
 metric_name = __file__.split('/')[-1].split('.')[0]
-# metric_vals = np.array([[100,100],[150,150],[200,200]])
 
 master.set_field_params()
 master.set_mkid_params()
 
 median_val = mp.array_size[0]
-metric_multiplier = np.logspace(np.log10(0.25), np.log10(4), 7)
-metric_vals = np.int_(median_val * np.sqrt(metric_multiplier))#[:,np.newaxis])
-iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}')
-
-print(ap.numframes)
-
-comps = True
+metric_multiplier = np.logspace(np.log10(0.25), np.log10(4), 7)[::3]
+metric_vals = np.int_(median_val * np.sqrt(metric_multiplier))
+iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}/')
 
 adapt_dp_master = array_size.adapt_dp_master
 
@@ -46,14 +40,17 @@ def rebin_factor(stackcube):
 
     return binned_cube
 
-def get_stackcubes(metric_vals, metric_name, comps=True, plot=False):
+def get_stackcubes(metric_vals, _, master_cache, comps=True, plot=False):
+    """ check iop.device params and form_photons """
+    master_dp, master_fields = master_cache
+
     metric_name = 'array_size'
 
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 
     dprint((iop.device_params))
-    iop.fields = master.master_fields
+    iop.fields = master_fields
     fields = gpd.run_medis()
 
     stackcubes, dps =  [], []
@@ -86,7 +83,7 @@ def get_stackcubes(metric_vals, metric_name, comps=True, plot=False):
 
         stackcubes.append(stackcube)
 
-        with open(master.dp, 'rb') as handle:
+        with open(master_dp, 'rb') as handle:
             dp = pickle.load(handle)
         dps.append(dp)
 

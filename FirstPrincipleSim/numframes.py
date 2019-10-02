@@ -23,7 +23,7 @@ median_val = 5
 metric_multiplier = np.logspace(np.log10(0.5), np.log10(2), 7)
 metric_vals = np.int_(np.round(median_val * metric_multiplier))
 
-iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}')
+iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}/')
 
 print(ap.numframes)
 
@@ -40,7 +40,11 @@ def adapt_dp_master():
     with open(iop.device_params, 'wb') as handle:
         pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-def get_stackcubes(metric_vals, metric_name, comps=True, plot=False):
+def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=False):
+    _, master_fields = master_cache
+    """ TODO might have to delete next two lines and change one after """
+    raise NotImplementedError
+
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 
@@ -126,27 +130,6 @@ def detect_obj_photons(metric_vals, metric_name, plot=False):
         dps.append(dp)
 
     return objcubes, dps
-
-# def form(plot=True):
-#     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
-#         adapt_dp_master()
-#     # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
-#     # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
-#
-#     comps_ = [True, False]
-#     pca_products = []
-#     for comps in comps_:
-#         stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
-#         pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
-#
-#     maps = pca_products[0]
-#     rad_samps = pca_products[1][1]
-#     conts = pca_products[1][4]
-#
-#     if plot:
-#         master.combo_performance(maps, rad_samps, conts, metric_vals)
-#
-#     return rad_samps, conts
 
 def form2():
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
