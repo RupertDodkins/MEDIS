@@ -20,7 +20,7 @@ from medis.Detector import pipeline as pipe
 from medis.Analysis.phot import get_unoccult_psf, eval_method, sum_contrast
 
 metric = __file__.split('/')[-1].split('.')[0]
-iop.set_testdir(f'FirstPrincipleSim3/{metric}/')
+# iop.set_testdir(f'FirstPrincipleSim3/{metric}/')
 
 def config_cache():
     iop.set_atmosdata('190823')
@@ -39,6 +39,7 @@ dprint((iop.device_params, master_dp))
 
 ap.sample_time = 0.05
 ap.numframes = 10
+sp.uniform_flux =False
 
 def set_field_params():
     sp.show_wframe = False
@@ -426,13 +427,13 @@ def reformat_planets(fields):
     obs_seq = fields
     dprint(fields.shape)
     tess = np.sum(obs_seq[:,:,1:], axis=2)
-    view_datacube(tess[0], logAmp=True, show=False)
+    # view_datacube(tess[0], logAmp=True, show=False)
     double_cube = np.zeros((ap.numframes, ap.w_bins, 2, ap.grid_size, ap.grid_size))
     double_cube[:, :, 0] = obs_seq[:, :, 0]
     collapse_comps = np.sum(obs_seq[:, :, 1:], axis=2)
     double_cube[:, :, 1] = collapse_comps
-    view_datacube(double_cube[0,:,0], logAmp=True, show=False)
-    view_datacube(double_cube[0,:,1], logAmp=True, show=True)
+    # view_datacube(double_cube[0,:,0], logAmp=True, show=False)
+    # view_datacube(double_cube[0,:,1], logAmp=True, show=True)
     print(f"Reduced shape of obs_seq = {np.shape(double_cube)} (numframes x nwsamp x 2 x grid x grid)")
     read.save_fields(double_cube, fields_file=iop.fields)
     return double_cube

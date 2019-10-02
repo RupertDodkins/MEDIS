@@ -544,14 +544,14 @@ def param_compare():
     # fields = make_fields_master()
     # make_dp_master()
 
-    repeats = 2  # number of medis runs to average over for the cont plots
-    param_names = ['array_size', 'array_size_(rebin)']#, 'pix_yield', 'numframes', 'dark_bright', 'R_mean']#, 'R_sig', 'g_mean', 'g_sig']
+    repeats = 3  # number of medis runs to average over for the cont plots
+    param_names = ['array_size', 'array_size_(rebin)', 'g_sig']#'pix_yield']#, 'numframes', 'dark_bright', 'R_mean']#, 'R_sig', 'g_mean', 'g_sig']
 
     all_cont_data = []
     for r in range(repeats):
 
         # each repeat has new fields, device params and noise data
-        iop.set_testdir(f'FirstPrincipleSim_repeat{r}/master/')
+        iop.set_testdir(f'FirstPrincipleSim_repeat{r}_changingflux/master/')
         master_dp, master_fields = master.config_cache()
         master.make_fields_master()
         master.make_dp_master()
@@ -570,7 +570,7 @@ def param_compare():
             plot_inds = config_images(len(param.metric_multiplier))  # the line colors and map inds depend on the amount
             # being plotted
             param_data = master.form(param.metric_vals, param.metric_name, master_cache=(master_dp, master_fields),
-                                     plot=False, plot_inds=plot_inds)
+                                     plot=True, plot_inds=plot_inds)
             comp_images.append(param_data[0])
             cont_data.append(param_data[1:])
 
