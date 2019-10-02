@@ -84,4 +84,4 @@ def add_bad_pix(QE_map_all, bad_ind, plot=False):
     return QE_map
 
 if __name__ == '__main__':
-    master.form()
+    master.check_contrast_contriubtions(metric_vals, metric_name)

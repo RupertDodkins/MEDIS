@@ -87,8 +87,6 @@ def get_stackcubes(metric_vals, _, master_cache, comps=True, plot=False):
             dp = pickle.load(handle)
         dps.append(dp)
 
-
-
     return stackcubes, dps
 
 if __name__ == '__main__':

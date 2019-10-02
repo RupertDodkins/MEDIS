@@ -151,5 +151,5 @@ def form2():
 #     master.eval_performance_sum(stackcubes, dps, metric_vals, comps=comps)
 
 if __name__ == '__main__':
-    master.form()
+    master.check_contrast_contriubtions(metric_vals, metric_name)
     # plot_sum_perf()

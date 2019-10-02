@@ -53,9 +53,4 @@ def adapt_dp_master():
 
 
 if __name__ == '__main__':
-    form()
-    # if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
-    #     adapt_dp_master()
-    # stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)
-    # # plt.show(block=True)
-    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+    master.check_contrast_contriubtions(metric_vals, metric_name)

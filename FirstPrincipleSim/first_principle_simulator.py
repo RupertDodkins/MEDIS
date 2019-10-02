@@ -536,19 +536,9 @@ def parse_cont_data(all_cont_data, p):
     return rad_samps, mean_conts, err_conts
 
 def param_compare():
-    from scipy.optimize import curve_fit
-
-    def func(x, a, b, c):
-        return a * np.exp(-b * x) + c
-
-    # master.set_field_params()
-    # master.set_mkid_params()
-
-    # fields = make_fields_master()
-    # make_dp_master()
 
     repeats = 3  # number of medis runs to average over for the cont plots
-    param_names = ['array_size_(rebin)', 'pix_yield', 'numframes', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']
+    param_names = ['array_size', 'array_size_(rebin)', 'pix_yield', 'numframes', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']
 
     all_cont_data = []
     for r in range(repeats):
@@ -565,7 +555,7 @@ def param_compare():
 
         dprint(iop.testdir)
 
-        comp_images, cont_data, metric_vals_list = [], [], []
+        comp_images, cont_data, metric_multi_list, metric_vals_list = [], [], [], []
         for param_name in param_names:
             param = importlib.import_module(param_name)
             if param_name in sys.modules:  # if the module has been loaded before it would be skipped and the params not initialized
@@ -580,9 +570,11 @@ def param_compare():
 
             # store the mutlipliers but flip those that achieve better contrast when the metric is decreasing
             if param_name in ['dark_bright', 'R_sig', 'g_sig']:
-                metric_vals_list.append(param.metric_multiplier[::-1])
+                metric_multi_list.append(param.metric_multiplier[::-1])
+                metric_vals_list.append(param.metric_vals[::-1])
             else:
-                metric_vals_list.append(param.metric_multiplier)
+                metric_multi_list.append(param.metric_multiplier)
+                metric_vals_list.append(param.metric_vals)
 
         cont_data = np.array(cont_data)
         dprint(cont_data.shape)
@@ -598,79 +590,30 @@ def param_compare():
     #     rad_samps, mean_conts, err_conts = parse_cont_data(all_cont_data, p)
     #     master.combo_performance(maps, rad_samps, mean_conts, metric_samp, plot_inds, err_conts)
 
-    # plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1)))
-    colors = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1))).by_key()["color"]
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,4))
-    ax1.set_ylabel(('5$\sigma$ Contrast'))
-    ax1.set_title('$3\lambda/D$')
-    ax2.set_title('$6\lambda/D$')
-    for ax in [ax1, ax2]:
-        ax.set_yscale('log')
-        ax.set_xscale('log')
-        ax.set_xlabel('$P/P_{med}$')
-        ax.tick_params(direction='in', which='both', right=True, top=True)
-
     three_lod_sep = 0.3
     six_lod_sep = 2*three_lod_sep
     fhqm = 0.03
     for p, param_name in enumerate(param_names):
-        metric_samp = metric_vals_list[p]
+        metric_multi = metric_multi_list[p]
+        metric_vals = metric_vals_list[p]
         rad_samps, mean_conts, err_conts = parse_cont_data(all_cont_data, p)
 
-        three_lod_conts = np.zeros((len(metric_samp)))
-        six_lod_conts = np.zeros((len(metric_samp)))
-        three_lod_errs = np.zeros((len(metric_samp)))
-        six_lod_errs = np.zeros((len(metric_samp)))
+        three_lod_conts = np.zeros((len(metric_multi)))
+        six_lod_conts = np.zeros((len(metric_multi)))
+        three_lod_errs = np.zeros((len(metric_multi)))
+        six_lod_errs = np.zeros((len(metric_multi)))
         for i in range(len(mean_conts)):
             three_lod_ind = np.where((np.array(rad_samps[i]) > three_lod_sep-fhqm) & (np.array(rad_samps[i]) < three_lod_sep+fhqm))
-            three_lod_conts[i] = np.sum(mean_conts[i][three_lod_ind])
+            three_lod_conts[i] = np.mean(mean_conts[i][three_lod_ind])
             three_lod_errs[i] = np.sqrt(np.sum(err_conts[i][three_lod_ind]**2))
 
             six_lod_ind = np.where((np.array(rad_samps[i]) > six_lod_sep - fhqm) & (np.array(rad_samps[i]) < six_lod_sep + fhqm))
-            six_lod_conts[i] = np.sum(mean_conts[i][six_lod_ind])
+            six_lod_conts[i] = np.mean(mean_conts[i][six_lod_ind])
             six_lod_errs[i] = np.sqrt(np.sum(err_conts[i][six_lod_ind] ** 2))
 
-        popt3, pcov3 = curve_fit(func, metric_samp, three_lod_conts, sigma=three_lod_errs)
-        popt6, pcov6 = curve_fit(func, metric_samp, six_lod_conts, sigma=six_lod_errs)
-
-
-        # if param_name == 'array_size':
-        #     ax1.plot(metric_samp, func(metric_samp, *popt3),
-        #              label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt3), color=colors[p], linestyle='--')
-        #     ax2.plot(metric_samp, func(metric_samp, *popt6),
-        #              label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt6), color=colors[p], linestyle='--')
-            # base_line, = ax1.plot(metric_samp, three_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2,
-            #                       color=colors[p], linestyle='--')
-            # # ax1.errorbar(metric_samp, three_lod_conts, yerr=three_lod_errs, linewidth=2, marker='.',
-            # #              color=base_line.get_color(), linestyle='--')
-            # base_line, = ax2.plot(metric_samp, six_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2,
-            #                       color=colors[p], linestyle='--')
-            # # ax2.errorbar(metric_samp, six_lod_conts, yerr=six_lod_errs, linewidth=2, marker='.',
-            # #              color=base_line.get_color(), linestyle='--')
-        # else:
-        ax1.plot(metric_samp, func(metric_samp, *popt3),
-                 label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt3), color=colors[p])
-        ax2.plot(metric_samp, func(metric_samp, *popt6),
-                 label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt6), color=colors[p])
-        ax1.plot(metric_samp, three_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2,
-                              color=colors[p], linestyle='--')
-        # ax1.errorbar(metric_samp, three_lod_conts, yerr=three_lod_errs, linewidth=2, marker='.',
-        #              color=base_line.get_color())
-        ax2.plot(metric_samp, six_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2,
-                              color=colors[p], linestyle='--')
-            # # ax2.errorbar(metric_samp, six_lod_conts, yerr=six_lod_errs, linewidth=2, marker='.',
-            # #              color=base_line.get_color())
-        dprint(six_lod_errs)
-        if param_names[p] in ['pix_yield', 'g_mean']:
-            ax1.scatter(metric_samp[-1], three_lod_conts[-1], marker='x', color='grey', linewidths=3)
-            ax2.scatter(metric_samp[-1], six_lod_conts[-1], marker='x', color='grey', linewidths=3)
-
-    from matplotlib.font_manager import FontProperties
-    fontP = FontProperties()
-    fontP.set_size('small')
-    ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5), prop=fontP) # Put a legend to the right of the current axis
-    plt.tight_layout()
-    plt.show()
+        maps = comp_images[p]
+        master.combo_performance(maps, rad_samps, mean_conts, metric_multi, metric_vals, param_name, [0,-1], err_conts,
+                                 three_lod_conts, three_lod_errs, six_lod_conts, six_lod_errs)
 
     return
 
