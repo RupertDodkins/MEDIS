@@ -31,12 +31,12 @@ comps = False
 def adapt_dp_master():
     if not os.path.exists(iop.testdir):
         os.mkdir(iop.testdir)
-    with open(master.dp, 'rb') as handle:
+    with open(master.master_dp, 'rb') as handle:
         dp = pickle.load(handle)
     metric_orig = getattr(mp,metric_name)#0.04
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     new_dp = copy.copy(dp)
-    quicklook_im(dp.QE_map)
+    # quicklook_im(dp.QE_map)
     for metric_val in metric_vals:
         dprint((np.std(dp.QE_map)))
         new_dp.QE_map = dp.QE_map - metric_orig + metric_val
@@ -46,9 +46,9 @@ def adapt_dp_master():
         dprint(np.std(new_dp.QE_map))
         iop.device_params = iop.device_params.split('_'+metric_name)[0] + f'_{metric_name}={metric_val}.pkl'
         dprint((iop.device_params, metric_val))
-        quicklook_im(new_dp.QE_map)
-        plt.hist(new_dp.QE_map.flatten())
-        plt.show(block=True)
+        # quicklook_im(new_dp.QE_map)
+        # plt.hist(new_dp.QE_map.flatten())
+        # plt.show(block=True)
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 

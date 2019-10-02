@@ -144,7 +144,7 @@ def set_mkid_params():
     mp.pix_yield = 0.9
     mp.array_size = np.array([150, 150])
     mp.lod = 6
-    mp.quantize_FCs = False
+    mp.quantize_FCs = True
 
 def make_dp_master():
     """
@@ -462,7 +462,7 @@ def get_median_noise(master_dp):
                   mask_center_px=None, adimsdi='double', ncomp=7, ncomp2=None,
                   collapse='median')
 
-    quicklook_im(frame_nofc, logAmp=True)
+    # quicklook_im(frame_nofc, logAmp=True)
     fwhm = mp.lod
     with open(master_dp, 'rb') as handle:
         dp = pickle.load(handle)

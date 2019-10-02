@@ -27,7 +27,7 @@ iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}')
 def adapt_dp_master():
     if not os.path.exists(iop.testdir):
         os.mkdir(iop.testdir)
-    with open(master.dp, 'rb') as handle:
+    with open(master.master_dp, 'rb') as handle:
         dp = pickle.load(handle)
     metric_orig = getattr(mp,metric_name)#0.04
     QE_mean_orig = mp.g_mean
@@ -42,9 +42,9 @@ def adapt_dp_master():
         dprint(np.std(new_dp.QE_map))
         iop.device_params = iop.device_params.split('_'+metric_name)[0] + f'_{metric_name}={metric_val}.pkl'
         dprint((iop.device_params, metric_val))
-        quicklook_im(new_dp.QE_map)
-        plt.hist(new_dp.QE_map.flatten())
-        plt.show(block=True)
+        # quicklook_im(new_dp.QE_map)
+        # plt.hist(new_dp.QE_map.flatten())
+        # plt.show(block=True)
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)
 

@@ -20,7 +20,7 @@ master.set_mkid_params()
 
 # metric_vals = np.int_(np.round(mp.dark_bright * np.logspace(np.log10(0.1), np.log10(10), 7)))[::-1]
 median_val = mp.dark_bright
-metric_multiplier = np.logspace(np.log10(10), np.log10(0.1), 7)  # flip metric_vals because fewer dark counts is better
+metric_multiplier = np.logspace(np.log10(10), np.log10(0.1), 7) # flip metric_vals because fewer dark counts is better
 metric_vals = np.int_(np.round(median_val * metric_multiplier))
 
 iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}')
@@ -32,7 +32,7 @@ comps = False
 def adapt_dp_master():
     if not os.path.exists(iop.testdir):
         os.mkdir(iop.testdir)
-    with open(master.dp, 'rb') as handle:
+    with open(master.master_dp, 'rb') as handle:
         dp = pickle.load(handle)
     metric_orig = getattr(mp,metric_name)#0.04
     # QE_mean_orig = mp.dark_bright

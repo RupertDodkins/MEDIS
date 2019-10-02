@@ -20,7 +20,7 @@ master.set_field_params()
 master.set_mkid_params()
 
 median_val = mp.array_size[0]
-metric_multiplier = np.logspace(np.log10(0.25), np.log10(4), 7)[::3]
+metric_multiplier = np.logspace(np.log10(0.25), np.log10(4), 7)
 metric_vals = np.int_(median_val * np.sqrt(metric_multiplier))
 iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}/')
 

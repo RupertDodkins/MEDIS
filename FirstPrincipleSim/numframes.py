@@ -32,7 +32,7 @@ comps = False
 def adapt_dp_master():
     if not os.path.exists(iop.testdir):
         os.mkdir(iop.testdir)
-    with open(master.dp, 'rb') as handle:
+    with open(master.master_dp, 'rb') as handle:
         dp = pickle.load(handle)
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.device_params = iop.device_params.split('_' + metric_name)[0] + f'_{metric_name}={metric_vals}.pkl'
@@ -42,8 +42,6 @@ def adapt_dp_master():
 
 def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=False):
     _, master_fields = master_cache
-    """ TODO might have to delete next two lines and change one after """
-    raise NotImplementedError
 
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name

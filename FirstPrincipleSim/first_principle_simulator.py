@@ -536,7 +536,10 @@ def parse_cont_data(all_cont_data, p):
     return rad_samps, mean_conts, err_conts
 
 def param_compare():
-    import master
+    from scipy.optimize import curve_fit
+
+    def func(x, a, b, c):
+        return a * np.exp(-b * x) + c
 
     # master.set_field_params()
     # master.set_mkid_params()
@@ -545,13 +548,14 @@ def param_compare():
     # make_dp_master()
 
     repeats = 3  # number of medis runs to average over for the cont plots
-    param_names = ['array_size', 'array_size_(rebin)', 'g_sig']#'pix_yield']#, 'numframes', 'dark_bright', 'R_mean']#, 'R_sig', 'g_mean', 'g_sig']
+    param_names = ['array_size_(rebin)', 'pix_yield', 'numframes', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']
 
     all_cont_data = []
     for r in range(repeats):
 
         # each repeat has new fields, device params and noise data
-        iop.set_testdir(f'FirstPrincipleSim_repeat{r}_changingflux/master/')
+        iop.set_testdir(f'FirstPrincipleSim_repeat{r}_quantize_fcs/master/')
+        import master
         master_dp, master_fields = master.config_cache()
         master.make_fields_master()
         master.make_dp_master()
@@ -570,7 +574,7 @@ def param_compare():
             plot_inds = config_images(len(param.metric_multiplier))  # the line colors and map inds depend on the amount
             # being plotted
             param_data = master.form(param.metric_vals, param.metric_name, master_cache=(master_dp, master_fields),
-                                     plot=True, plot_inds=plot_inds)
+                                     plot=False, plot_inds=plot_inds)
             comp_images.append(param_data[0])
             cont_data.append(param_data[1:])
 
@@ -585,16 +589,17 @@ def param_compare():
         all_cont_data.append(cont_data)
     all_cont_data = np.array(all_cont_data)  # (repeats x num_params x rad+cont x num_multi (changes)
 
-    # plot the summed data
-    for p, param_name in enumerate(param_names):
-        param = importlib.import_module(param_name)
-        plot_inds = config_images(len(param.metric_multiplier))  # config each loop
-        maps = comp_images[p]
-        metric_samp = metric_vals_list[p]
-        rad_samps, mean_conts, err_conts = parse_cont_data(all_cont_data, p)
-        master.combo_performance(maps, rad_samps, mean_conts, metric_samp, plot_inds, err_conts)
+    # # plot the summed data
+    # for p, param_name in enumerate(param_names):
+    #     param = importlib.import_module(param_name)
+    #     plot_inds = config_images(len(param.metric_multiplier))  # config each loop
+    #     maps = comp_images[p]
+    #     metric_samp = metric_vals_list[p]
+    #     rad_samps, mean_conts, err_conts = parse_cont_data(all_cont_data, p)
+    #     master.combo_performance(maps, rad_samps, mean_conts, metric_samp, plot_inds, err_conts)
 
-    plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1)))
+    # plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1)))
+    colors = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, len(param_names)+1))).by_key()["color"]
     f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,4))
     ax1.set_ylabel(('5$\sigma$ Contrast'))
     ax1.set_title('$3\lambda/D$')
@@ -625,11 +630,36 @@ def param_compare():
             six_lod_conts[i] = np.sum(mean_conts[i][six_lod_ind])
             six_lod_errs[i] = np.sqrt(np.sum(err_conts[i][six_lod_ind] ** 2))
 
-        ax1.plot(metric_samp, three_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2)
-        ax1.errorbar(metric_samp, three_lod_conts, yerr=three_lod_errs, linewidth=2, marker='.')
+        popt3, pcov3 = curve_fit(func, metric_samp, three_lod_conts, sigma=three_lod_errs)
+        popt6, pcov6 = curve_fit(func, metric_samp, six_lod_conts, sigma=six_lod_errs)
 
-        ax2.plot(metric_samp, six_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2)
-        ax2.errorbar(metric_samp, six_lod_conts, yerr=six_lod_errs, linewidth=2, marker='.')
+
+        # if param_name == 'array_size':
+        #     ax1.plot(metric_samp, func(metric_samp, *popt3),
+        #              label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt3), color=colors[p], linestyle='--')
+        #     ax2.plot(metric_samp, func(metric_samp, *popt6),
+        #              label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt6), color=colors[p], linestyle='--')
+            # base_line, = ax1.plot(metric_samp, three_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2,
+            #                       color=colors[p], linestyle='--')
+            # # ax1.errorbar(metric_samp, three_lod_conts, yerr=three_lod_errs, linewidth=2, marker='.',
+            # #              color=base_line.get_color(), linestyle='--')
+            # base_line, = ax2.plot(metric_samp, six_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2,
+            #                       color=colors[p], linestyle='--')
+            # # ax2.errorbar(metric_samp, six_lod_conts, yerr=six_lod_errs, linewidth=2, marker='.',
+            # #              color=base_line.get_color(), linestyle='--')
+        # else:
+        ax1.plot(metric_samp, func(metric_samp, *popt3),
+                 label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt3), color=colors[p])
+        ax2.plot(metric_samp, func(metric_samp, *popt6),
+                 label='fit: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt6), color=colors[p])
+        ax1.plot(metric_samp, three_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2,
+                              color=colors[p], linestyle='--')
+        # ax1.errorbar(metric_samp, three_lod_conts, yerr=three_lod_errs, linewidth=2, marker='.',
+        #              color=base_line.get_color())
+        ax2.plot(metric_samp, six_lod_conts, label=param_names[p].replace('_', ' '), linewidth=2,
+                              color=colors[p], linestyle='--')
+            # # ax2.errorbar(metric_samp, six_lod_conts, yerr=six_lod_errs, linewidth=2, marker='.',
+            # #              color=base_line.get_color())
         dprint(six_lod_errs)
         if param_names[p] in ['pix_yield', 'g_mean']:
             ax1.scatter(metric_samp[-1], three_lod_conts[-1], marker='x', color='grey', linewidths=3)
