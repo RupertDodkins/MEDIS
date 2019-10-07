@@ -56,13 +56,13 @@ class Timeseries():
 
             # wfo = Wavefronts(inqueue, outqueue, conf_obj_tup)
 
-            now = time.time()
+
             for it, t in enumerate(iter(self.inqueue.get, sentinel)):
                 print('using process %i' % i)
                 kwargs = {'iter': t, 'params': [ap, tp, iop, sp], 'CPA_maps': self.CPA_maps, 'tiptilt': self.tiptilt}
                 sampling, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                                        VERBOSE=False, PHASE_OFFSET=1)
-
+                now = time.time()
                 # for o in range(len(ap.contrast) + 1):
                 #     outqueue.put((t, save_E_fields[:, :, o]))
                 self.outqueue.put((t, save_E_fields))

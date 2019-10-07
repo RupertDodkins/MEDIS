@@ -67,9 +67,10 @@ def get_packets(datacube, step, dp, mp, plot=False):
 
     # quicklook_im(dp.QE_map)
     if plot: view_datacube(datacube, logAmp=True, show=False)
+    if hasattr(dp,'star_phot'): ap.star_photons_per_s = dp.star_phot
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
 
-    # dprint((np.sum(datacube), num_events))
+    dprint((ap.star_photons_per_s, np.sum(datacube), num_events))
     # import matplotlib.pylab as plt
     # plt.figure()
     # plt.plot(np.sum(datacube, axis=(1,2)))
@@ -134,6 +135,10 @@ def get_packets(datacube, step, dp, mp, plot=False):
     # plt.show(block=True)
 
     # dprint(photons.shape)
+    if mp.remove_close:
+        stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
+        stem = MKIDs.remove_close(stem)
+        photons = pipe.ungroup(stem)
 
     # This step was taking a long time
     # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))

@@ -14,23 +14,22 @@ from medis.Utils.misc import dprint, expformat
 import master
 
 metric_name = __file__.split('/')[-1].split('.')[0]
-metric_vals = [1e4, 1e5, 1e6]
+# metric_vals = [1e4,1e5,1e6]
 
 master.set_field_params()
 master.set_mkid_params()
 
-iop.set_testdir(f'FirstPrincipleSim/{metric_name}')
-iop.set_atmosdata('190823')
-iop.set_aberdata('Palomar512')
+median_val = ap.star_photons_per_s
+# metric_multiplier = np.logspace(np.log10(0.01), np.log10(10), 7)
+metric_multiplier = np.logspace(np.log10(0.1), np.log10(10), 7)
+metric_vals = np.int_(np.round(median_val * metric_multiplier))
 
-print(ap.numframes)
-
-comps = True
+iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}')
 
 def adapt_dp_master():
     if not os.path.exists(iop.testdir):
         os.mkdir(iop.testdir)
-    with open(master.dp, 'rb') as handle:
+    with open(master.master_dp, 'rb') as handle:
         dp = pickle.load(handle)
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     for metric_val in metric_vals:
@@ -42,9 +41,7 @@ def adapt_dp_master():
 
 def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=False):
     _, master_fields = master_cache
-    raise NotImplementedError
 
-    # TODO might have to delete next two lines and change one after
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 
@@ -79,26 +76,26 @@ def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=Fals
         dps.append(dp)
 
     return stackcubes, dps
-
-def form():
-    if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
-        adapt_dp_master()
-
-    # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
-    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
-
-    comps_ = [True, False]
-    pca_products = []
-    for comps in comps_:
-        stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
-        pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
-
-    maps = pca_products[0]
-    rad_samps = pca_products[1][1]
-    conts = pca_products[1][4]
-
-    annos = [expformat(metric_val,0,1) for metric_val in metric_vals]
-    master.combo_performance(maps, rad_samps, conts, annos)
+#
+# def form():
+#     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
+#         adapt_dp_master()
+#
+#     # stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=True)
+#     # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+#
+#     comps_ = [True, False]
+#     pca_products = []
+#     for comps in comps_:
+#         stackcubes, dps = get_stackcubes(metric_vals, metric_name, comps=comps, plot=False)
+#         pca_products.append(master.pca_stackcubes(stackcubes, dps, comps))
+#
+#     maps = pca_products[0]
+#     rad_samps = pca_products[1][1]
+#     conts = pca_products[1][4]
+#
+#     annos = [expformat(metric_val,0,1) for metric_val in metric_vals]
+#     master.combo_performance(maps, rad_samps, conts, annos)
 
 def plot_sum_perf():
     comps = False
@@ -107,11 +104,8 @@ def plot_sum_perf():
     master.eval_performance_sum(stackcubes, dps, metric_vals, comps=comps)
 
 if __name__ == '__main__':
-    # form()
-
-    # plot_sum_perf()
-
-    comps = False
-    stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)
-    master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
+    master.check_contrast_contriubtions(metric_vals, metric_name, (master.master_dp, master.master_fields))
+    # comps = False
+    # stackcubes, dps = master.get_stackcubes(metric_vals, metric_name, comps=comps)
+    # master.eval_performance(stackcubes, dps, metric_vals, comps=comps)
 

@@ -351,8 +351,8 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
     fig =plt.figure(figsize=(14,7))
     colors = len(datacube)
     height = int(np.ceil(colors/float(width)))
-    peak= np.max(datacube)
-    trough= np.min(datacube)
+    # peak= np.max(datacube)
+    # trough= np.min(datacube)
     # dprint{f"peak={peak}, trough={trough}")
 
 

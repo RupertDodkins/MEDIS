@@ -19,7 +19,7 @@ def remove_close(stem):
     dprint('removing close photons')
     for x in range(mp.array_size[1]):
         for y in range(mp.array_size[0]):
-            print(x,y)
+            # print(x,y)
             if len(stem[x][y]) > 1:
                 events = np.array(stem[x][y])
                 timesort = np.argsort(events[:, 0])
@@ -33,7 +33,7 @@ def remove_close(stem):
                         detect += idx
                         detected.append(detect)
                     idx = detect
-
+                dprint((x, len(detected)))
                 missed = [ele for ele in range(detected[-1] + 1) if ele not in detected]
                 events = np.delete(events, missed, axis=0)
                 stem[x][y] = events

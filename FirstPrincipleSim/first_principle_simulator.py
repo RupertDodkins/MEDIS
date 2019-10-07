@@ -538,13 +538,14 @@ def parse_cont_data(all_cont_data, p):
 def param_compare():
 
     repeats = 3  # number of medis runs to average over for the cont plots
-    param_names = ['array_size', 'array_size_(rebin)', 'pix_yield', 'numframes', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']
+    param_names = ['array_size', 'array_size_(rebin)', 'pix_yield', 'numframes', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']#'g_mean_sig']# 'star_photons_per_s'
 
     all_cont_data = []
     for r in range(repeats):
 
         # each repeat has new fields, device params and noise data
-        iop.set_testdir(f'FirstPrincipleSim_repeat{r}_quantize_fcs/master/')
+        iop.set_testdir(f'FirstPrincipleSim_numframes50_repeat{r}/master/')
+        # iop.set_testdir(f'FirstPrincipleSim_repeat{r}_quantize_fcs/master/')
         import master
         master_dp, master_fields = master.config_cache()
         master.make_fields_master()
@@ -564,7 +565,7 @@ def param_compare():
             plot_inds = config_images(len(param.metric_multiplier))  # the line colors and map inds depend on the amount
             # being plotted
             param_data = master.form(param.metric_vals, param.metric_name, master_cache=(master_dp, master_fields),
-                                     plot=False, plot_inds=plot_inds)
+                                     debug=False)
             comp_images.append(param_data[0])
             cont_data.append(param_data[1:])
 
@@ -612,7 +613,7 @@ def param_compare():
             six_lod_errs[i] = np.sqrt(np.sum(err_conts[i][six_lod_ind] ** 2))
 
         maps = comp_images[p]
-        master.combo_performance(maps, rad_samps, mean_conts, metric_multi, metric_vals, param_name, [0,-1], err_conts,
+        master.combo_performance(maps, rad_samps, mean_conts, metric_vals, param_name, [0,-1], err_conts, metric_multi,
                                  three_lod_conts, three_lod_errs, six_lod_conts, six_lod_errs)
 
     return

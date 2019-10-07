@@ -20,6 +20,7 @@ from medis.Detector import pipeline as pipe
 from medis.Analysis.phot import get_unoccult_psf, eval_method, sum_contrast
 
 metric = __file__.split('/')[-1].split('.')[0]
+# iop.set_testdir(f'FirstPrincipleSim_repeat{0}_quantize_fcs/master/')
 # iop.set_testdir(f'FirstPrincipleSim3/{metric}/')
 
 def config_cache():
@@ -38,7 +39,7 @@ master_dp, master_fields = config_cache()
 dprint((iop.device_params, master_dp))
 
 ap.sample_time = 0.05
-ap.numframes = 10
+ap.numframes = 50
 sp.uniform_flux =False
 
 def set_field_params():
@@ -144,6 +145,7 @@ def set_mkid_params():
     mp.pix_yield = 0.9
     mp.array_size = np.array([150, 150])
     mp.lod = 6
+    mp.remove_close = False
     mp.quantize_FCs = True
 
 def make_dp_master():
@@ -329,7 +331,7 @@ def eval_performance(stackcubes, dps, metric_vals, comps=True):
         maps, rad_samps, thruputs, noises, conts = pca_products
         contrcurve_plot(metric_vals, rad_samps, thruputs, noises, conts)
 
-    compare_images(maps, logAmp=True, vmin=-1e-7, vmax=1e-7)
+    view_datacube(maps, logAmp=True, vmin=-1e-7, vmax=1e-7, show=True)
     # from medis.Utils.plot_tools import quicklook_im
     # new_maps = []
     # for map in maps:
@@ -375,7 +377,7 @@ def contrcurve_plot(metric_vals, rad_samps, thruputs, noises, conts):
     axes[2].set_ylabel('5$\sigma$ Contrast')
     axes[2].legend([str(metric_val) for metric_val in metric_vals])
 
-def combo_performance(maps, rad_samps, conts, metric_multi, metric_vals, param_name, plot_inds=[0,3,6], err=None, three_lod_conts=None,
+def combo_performance(maps, rad_samps, conts, metric_vals, param_name, plot_inds=[0,3,6], err=None, metric_multi=None, three_lod_conts=None,
                       three_lod_errs=None, six_lod_conts=None, six_lod_errs=None):
     # plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.viridis(np.linspace(0, 1, len(conts))))
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
@@ -435,21 +437,23 @@ def combo_performance(maps, rad_samps, conts, metric_multi, metric_vals, param_n
     axes[2].text(0.04, 0.9, labels[2], transform=axes[2].transAxes, fontweight='bold', color='k', fontsize=22, family='serif')
 
     colors = plt.cycler("color", plt.cm.gnuplot2(np.linspace(0, 1, 3))).by_key()["color"]
-    if np.any([three_lod_conts, three_lod_errs, six_lod_conts, six_lod_errs]):
+    if np.any([metric_multi, three_lod_conts, three_lod_errs, six_lod_conts, six_lod_errs]):
         from scipy.optimize import curve_fit
 
         def func(x, a, b, c):
             return a * np.exp(-b * x) + c
 
-        popt3, pcov3 = curve_fit(func, metric_multi, three_lod_conts, sigma=three_lod_errs)
-        popt6, pcov6 = curve_fit(func, metric_multi, six_lod_conts, sigma=six_lod_errs)
+        if np.any(three_lod_errs==0) or np.any(six_lod_errs==0):
+            popt3, pcov3 = curve_fit(func, metric_multi, three_lod_conts)
+            popt6, pcov6 = curve_fit(func, metric_multi, six_lod_conts)
+        else:
+            popt3, pcov3 = curve_fit(func, metric_multi, three_lod_conts, sigma=three_lod_errs)
+            popt6, pcov6 = curve_fit(func, metric_multi, six_lod_conts, sigma=six_lod_errs)
 
         # axes[2].get_shared_y_axes().join(axes[2], axes[3])
         axes[3].set_yscale('log')
         axes[3].set_xscale('log')
         axes[3].set_xlabel('$P/P_{med}$')
-
-
 
         axes[3].tick_params(direction='in', which='both', right=True, top=True)
 
@@ -520,7 +524,10 @@ def get_median_noise(master_dp):
     median_noise, vector_radd = noise_per_annulus(frame_nofc, separation=fwhm, fwhm=fwhm, mask=mask)
     np.savetxt(iop.median_noise, median_noise)
 
-def form(metric_vals, metric_name, master_cache, plot=True, plot_inds=[0,3,6]):
+def form(metric_vals, metric_name, master_cache, debug=True):
+    # if debug:
+    #     check_contrast_contriubtions(metric_vals, metric_name, master_cache, comps=False)
+
     iop.perf_data = os.path.join(iop.testdir, 'performance_data.pkl')
     dprint(iop.perf_data)
     if not os.path.exists(iop.perf_data):
@@ -546,27 +553,43 @@ def form(metric_vals, metric_name, master_cache, plot=True, plot_inds=[0,3,6]):
 
         maps = pca_products[0]
         rad_samps = pca_products[1][1]
+        thruputs = pca_products[1][2]
+        noises = pca_products[1][3]
         conts = pca_products[1][4]
 
         with open(iop.perf_data, 'wb') as handle:
-            pickle.dump((maps, rad_samps, conts, metric_vals), handle, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump((maps, rad_samps, thruputs, noises, conts, metric_vals), handle, protocol=pickle.HIGHEST_PROTOCOL)
     else:
         with open(iop.perf_data, 'rb') as handle:
-            maps, rad_samps, conts, metric_vals = pickle.load(handle)
+            perf_data = pickle.load(handle)
+            if len(perf_data) == 6:
+                maps, rad_samps, thruputs, noises, conts, metric_vals = perf_data
+            else:
+                maps, rad_samps, conts, metric_vals = perf_data
 
-    if plot:
-        combo_performance(maps, rad_samps, conts, metric_vals, plot_inds)
+    if debug:
+        try:
+            contrcurve_plot(metric_vals, rad_samps, thruputs, noises, conts)
+            view_datacube(maps, logAmp=True, vmin=-1e-7, vmax=1e-7, show=False)
+        except UnboundLocalError:
+            pass
+
+        combo_performance(maps, rad_samps, conts, metric_vals, metric_name, [0,-1])
 
     return maps, rad_samps, conts
 
-def check_contrast_contriubtions(metric_vals, metric_name, comps = False):
+def check_contrast_contriubtions(metric_vals, metric_name, master_cache, comps = False):
     import importlib
 
     param = importlib.import_module(metric_name)
 
     if not os.path.exists(f'{iop.device_params[:-4]}_{metric_name}={metric_vals[0]}.pkl'):
         param.adapt_dp_master()
-    stackcubes, dps = get_stackcubes(metric_vals, metric_name, master_cache, comps=comps)
+
+    if 'get_stackcubes' in dir(param):
+        stackcubes, dps = param.get_stackcubes(metric_vals, metric_name, master_cache, comps=comps, plot=False)
+    else:
+        stackcubes, dps = get_stackcubes(metric_vals, metric_name, master_cache, comps=comps)
     # plt.show(block=True)
     eval_performance(stackcubes, dps, metric_vals, comps=comps)
 
