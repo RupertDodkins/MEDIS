@@ -240,6 +240,18 @@ def get_obs_command(packets, t, o):
     command = ('create_array', ('/t%i' % t, 'o%i' % o, packets))
     return command
 
+def save_step(args):
+    """
+    Append fields to cont_fields
+
+    :param args:
+    :return:
+    """
+    with pt.open_file(iop.cont_fields, mode='a') as hdf:
+        method, args = args
+        dprint((method, args[0], len(args[1])))
+        getattr(hdf, method)(*args)
+
 def handle_output(output, filename):
     """
     For reatime saving of photon data together with get_obs_command
@@ -251,6 +263,8 @@ def handle_output(output, filename):
     with pt.open_file(filename, mode='a') as hdf:
         while True:
             args = output.get()
+            dprint(type(args))
+            dprint((args[0], np.shape(args[1][-1])))
             if args:
                 method, args = args
                 getattr(hdf, method)(*args)
@@ -344,7 +358,7 @@ def check_exists_fields(plot=False):
         data is saved in location specified in iop
         data can be saved as obs_table (photon table) if detector type is MKIDs
     """
-    import os
+
     if os.path.isfile(iop.fields):
         print(f"File already exists at {iop.fields}")
         return True

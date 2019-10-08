@@ -8,7 +8,7 @@ import matplotlib.pylab as plt
 import copy as copy
 import pickle as pickle
 from medis.params import ap, iop
-import medis.get_photon_data as gpd
+import medis.save_photon_data as spd
 from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint, expformat
 from medis.Analysis.phot import contrcurve
@@ -24,10 +24,6 @@ metric_multiplier = np.logspace(np.log10(0.5), np.log10(2), 7)
 metric_vals = np.int_(np.round(median_val * metric_multiplier))
 
 iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}/')
-
-print(ap.numframes)
-
-comps = False
 
 def adapt_dp_master():
     if not os.path.exists(iop.testdir):
@@ -47,7 +43,7 @@ def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=Fals
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 
     iop.fields = master.master_fields
-    fields = gpd.run_medis()
+    fields = spd.run_medis()
 
     stackcubes, dps =  [], []
     iop.device_params = iop.device_params.split('_'+metric_name)[0] + f'_{metric_name}={metric_vals}.pkl'

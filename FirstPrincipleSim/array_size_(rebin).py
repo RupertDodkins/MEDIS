@@ -7,7 +7,7 @@ from scipy import interpolate
 mpl.use("Qt5Agg")
 import matplotlib.pylab as plt
 import pickle as pickle
-import medis.get_photon_data as gpd
+import medis.save_photon_data as spd
 from medis.params import mp, ap, iop
 from medis.Utils.plot_tools import quicklook_im, view_datacube
 from medis.Utils.misc import dprint
@@ -51,7 +51,7 @@ def get_stackcubes(metric_vals, _, master_cache, comps=True, plot=False):
 
     dprint((iop.device_params))
     iop.fields = master_fields
-    fields = gpd.run_medis()
+    fields = spd.run_medis()
 
     stackcubes, dps =  [], []
     for metric_val in metric_vals:

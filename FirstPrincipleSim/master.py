@@ -11,7 +11,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import pickle as pickle
 from vip_hci import phot, pca
 from medis.params import tp, mp, sp, ap, iop
-import medis.get_photon_data as gpd
+import medis.save_photon_data as spd
 from medis.Utils.plot_tools import view_datacube, compare_images, fmt, quicklook_im
 from medis.Utils.misc import dprint
 import medis.Detector.readout as read
@@ -40,7 +40,7 @@ dprint((iop.device_params, master_dp))
 
 ap.sample_time = 0.05
 ap.numframes = 50
-sp.uniform_flux =False
+sp.uniform_flux = False
 
 def set_field_params():
     sp.show_wframe = False
@@ -49,6 +49,7 @@ def set_field_params():
     sp.num_processes = 1
     sp.save_fields = False
     sp.save_ints = True
+    sp.cont_save = True
 
     ap.companion = True
     ap.star_photons_per_s = int(1e5)
@@ -64,7 +65,7 @@ def set_field_params():
     ap.nwsamp = 8
     ap.w_bins = 16
 
-    tp.save_locs = np.empty((0, 1))
+    # sp.save_locs = np.empty((0, 1))
     tp.diam = 8.
     tp.obscure = True
     tp.use_ao = True
@@ -110,14 +111,15 @@ def make_fields_master(monitor=False):
         return None
 
     else:
-        fields = gpd.run_medis()
+        fields = spd.run_medis()
         # tess = np.sum(fields, axis=2)
         # view_datacube(tess[0], logAmp=True, show=False)
         # view_datacube(tess[:,0], logAmp=True, show=True)
 
         # plt.plot(np.sum(fields, axis = (0,1,3,4)))
         # plt.show()
-        if fields.shape[2] == len(ap.contrast)+1:
+        dprint(fields.shape)
+        if fields.shape[3] == len(ap.contrast)+1:
             fields = reformat_planets(fields)
         # else:
         #     view_datacube(fields[0, :, 0], logAmp=True, show=False)
@@ -166,6 +168,7 @@ def get_form_photons(fields, comps=True):
         dp = pickle.load(handle)
 
     stackcube = np.zeros((len(fields), ap.w_bins, dp.array_size[1], dp.array_size[0]))
+    # dprint(fields.shape)
     for step in range(len(fields)):
         dprint(step)
         if comps:
@@ -173,7 +176,8 @@ def get_form_photons(fields, comps=True):
         else:
             spectralcube = fields[step, :, 0]
 
-        dprint(iop.device_params)
+        dprint((iop.device_params, spectralcube.shape))
+        # view_datacube(spectralcube, logAmp=True)
         step_packets = read.get_packets(spectralcube, step, dp, mp)
         cube = pipe.make_datacube_from_list(step_packets, (ap.w_bins,dp.array_size[0],dp.array_size[1]))
         stackcube[step] = cube
@@ -211,7 +215,7 @@ def detect_obj_photons(metric_vals, metric_name, plot=False):
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 
     iop.fields = master_fields
-    fields = gpd.run_medis()
+    fields = spd.run_medis()
 
     objcubes, dps =  [], []
     for metric_val in metric_vals:
@@ -254,7 +258,8 @@ def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=Fals
     dprint(iop.form_photons)
     dprint(iop.testdir)
     dprint(master_fields)
-    fields = gpd.run_medis()
+    fields = spd.run_medis()
+    # fields = pipe.load_fields()
 
     stackcubes, dps =  [], []
     for metric_val in metric_vals:
@@ -477,16 +482,25 @@ def combo_performance(maps, rad_samps, conts, metric_vals, param_name, plot_inds
     plt.show(block=True)
 
 def reformat_planets(fields):
-    obs_seq = fields
+    """
+    reformat the output of make_sixcube into what master.form() requires
+
+    Takes a complex sixcube, removes the save_locs axis, modulos the complex data, sums the planets of object axis and
+    stacks that four cube with the parent star fourcube to create a fivecube and overwrites iop.fields
+
+    :param fields:
+    :return:
+    """
+    obs_seq = np.abs(fields[:,-1]) ** 2
     dprint(fields.shape)
     tess = np.sum(obs_seq[:,:,1:], axis=2)
-    # view_datacube(tess[0], logAmp=True, show=False)
+    view_datacube(tess[0], logAmp=True, show=False)
     double_cube = np.zeros((ap.numframes, ap.w_bins, 2, ap.grid_size, ap.grid_size))
     double_cube[:, :, 0] = obs_seq[:, :, 0]
     collapse_comps = np.sum(obs_seq[:, :, 1:], axis=2)
     double_cube[:, :, 1] = collapse_comps
-    # view_datacube(double_cube[0,:,0], logAmp=True, show=False)
-    # view_datacube(double_cube[0,:,1], logAmp=True, show=True)
+    view_datacube(double_cube[0,:,0], logAmp=True, show=False)
+    view_datacube(double_cube[0,:,1], logAmp=True, show=True)
     print(f"Reduced shape of obs_seq = {np.shape(double_cube)} (numframes x nwsamp x 2 x grid x grid)")
     read.save_fields(double_cube, fields_file=iop.fields)
     return double_cube
@@ -498,7 +512,9 @@ def get_median_noise(master_dp):
 
     dprint(iop.testdir)
     dprint(iop.fields)
-    fields = gpd.run_medis()
+    fields = spd.run_medis()
+    dprint(fields.shape)
+    # fields = pipe.load_fields()
 
     comps = False
     if os.path.exists(iop.form_photons):

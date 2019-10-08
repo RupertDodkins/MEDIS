@@ -8,7 +8,7 @@ import matplotlib.pylab as plt
 import copy as copy
 import pickle as pickle
 from medis.params import ap, iop
-import medis.get_photon_data as gpd
+import medis.save_photon_data as spd
 from medis.Utils.plot_tools import view_datacube
 from medis.Utils.misc import dprint, expformat
 import master
@@ -46,7 +46,7 @@ def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=Fals
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 
     iop.fields = master.master_fields
-    fields = gpd.run_medis()
+    fields = spd.run_medis()
 
     stackcubes, dps =  [], []
     for metric_val in metric_vals:
