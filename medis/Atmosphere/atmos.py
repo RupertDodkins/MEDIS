@@ -31,11 +31,16 @@ def backup_old_maps():
     os.rename(iop.atmosdir, iop.atmosdir + '_backup_' + now)
 
 def compare_configs():
-    old_config = np.genfromtxt(iop.atmosconfig, delimiter=',', dtype=None, encoding='ASCII')
-    this_config = [ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h, cp.model]
-    floats = (np.float_(old_config[:-1]) == np.float_(this_config[:-1])).all()
-    strings = old_config[-1] == this_config[-1]
-    match = np.array([floats, strings]).all()
+    try:
+        old_config = np.genfromtxt(iop.atmosconfig, delimiter=',', dtype=None, encoding='ASCII')
+        this_config = [ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.h, cp.v, cp.model]
+        dprint(np.float_(old_config[:-1]) == np.float_(this_config[:-1]))
+        floats = (np.float_(old_config[:-2]) == np.float_(this_config[:-2])).all()
+        arrays = old_config[-2] == this_config[-2]
+        strings = old_config[-1] == this_config[-1]
+        match = np.array([floats, arrays, strings]).all()
+    except:
+        match = False
     return match
 
 def generate_maps(plot=False):
@@ -105,7 +110,7 @@ def generate_maps(plot=False):
     for wavelength in wsamples:
         wavefronts.append(hcipy.Wavefront(hcipy.Field(np.ones(pupil_grid.size), pupil_grid), wavelength))
 
-    np.savetxt(iop.atmosconfig, [ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.v, cp.h, cp.model], fmt='%s')
+    np.savetxt(iop.atmosconfig, [ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.h, cp.v, cp.model], fmt='%s')
 
     for it, t in enumerate(np.arange(0, ap.numframes*ap.sample_time, ap.sample_time)):
         print(t)

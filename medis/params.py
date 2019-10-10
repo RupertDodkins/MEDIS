@@ -139,6 +139,7 @@ class Simulation_params:
         self.initial_ob = 0  # star
         self.gui_samp = 5  # display the field on multiples of this number
         self.save_fields = True
+        self.cont_save = True
 
     def __iter__(self):
         for attr, value in self.__dict__.items():

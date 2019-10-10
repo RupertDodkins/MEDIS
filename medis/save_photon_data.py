@@ -22,8 +22,9 @@ import medis.Atmosphere.atmos as atmos
 from scipy.interpolate import interp1d
 
 class Timeseries():
-    def __init__(self, inqueue, conf_obj_tup):
+    def __init__(self, inqueue, savequeue, conf_obj_tup):
         self.inqueue = inqueue
+        self.savequeue = savequeue
         self.conf_obj_tup = conf_obj_tup
         required_servo = int(tp.servo_error[0])
         required_band = int(tp.servo_error[1])
@@ -65,7 +66,8 @@ class Timeseries():
                 now = time.time()
 
                 if sp.cont_save:
-                    realtime_save(save_E_fields, t)
+                    # realtime_save(save_E_fields, t)
+                    realtime_save_cont(save_E_fields, t, self.savequeue)
                 elif tp.detector == 'MKIDs':
                     for o in range(len(ap.contrast) + 1):
                         spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
@@ -161,6 +163,18 @@ def realtime_save(spectralcube, t):
     read.save_step(('create_group', ('/', 't%i' % t)))
     read.save_step(('create_array', ('/t%i' % t, 'data', spectralcube)))
 
+def realtime_save_cont(spectralcube, t, savequeue):
+    if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:
+
+        wave_samps = np.linspace(0, 1, ap.nwsamp)
+        f_out = interp1d(wave_samps, spectralcube, axis=1)
+        new_heights = np.linspace(0, 1, ap.w_bins)
+        spectralcube = f_out(new_heights)
+
+    # savequeue.put(('create_group', ('/', 't%i' % t)))
+    # savequeue.put(('create_array', ('/t%i' % t, 'data', spectralcube)))
+    savequeue.put(spectralcube)
+
 sentinel = None
 def postfacto(inqueue):
     for t in range(ap.startframe, ap.numframes):
@@ -184,27 +198,39 @@ def run_medis():
         initialize_telescope()
 
         inqueue = multiprocessing.Queue()
+        save_queue = multiprocessing.Queue()
 
         jobs = []
 
+        if sp.cont_save and tp.detector == 'ideal':
+            shape = (0, len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size)
+            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.cont_fields, shape))
+            proc.start()
+
         for i in range(sp.num_processes):
-            p = multiprocessing.Process(target=Timeseries, args=(inqueue, (tp,ap,sp,iop,cp,mp,i)))
+            p = multiprocessing.Process(target=Timeseries, args=(inqueue, save_queue, (tp,ap,sp,iop,cp,mp,i)))
             jobs.append(p)
             p.start()
 
         postfacto(inqueue)
 
+
         #todo hanging here for some reason
         for i, p in enumerate(jobs):
             p.join()
 
+        save_queue.put(None)
+
+        if sp.cont_save and tp.detector == 'ideal':
+            proc.join()
         print('MEDIS Data Run Completed')
         finish = time.time()
         if sp.timing is True:
             print(f'Time elapsed: {(finish-begin)/60:.2f} minutes')
         print('**************************************')
 
-    fields = pipe.make_sixcube()
+    # fields = pipe.make_sixcube()
+    fields = read.open_fields(iop.cont_fields)
     return fields
 
 if __name__ == '__main__':

@@ -53,8 +53,6 @@ def make_sixcube():
             # view_datacube(np.abs(timestep[-1,:,0]) ** 2, logAmp=True)
             fields[t] = timestep
 
-
-
     return fields
 
 

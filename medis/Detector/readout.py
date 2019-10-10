@@ -252,6 +252,28 @@ def save_step(args):
         dprint((method, args[0], len(args[1])))
         getattr(hdf, method)(*args)
 
+def save_step_const(output, filename, shape):
+    dprint(shape)
+
+    with h5py.File(filename, mode='a') as hdf:
+        dset = hdf.create_dataset('fields', shape,
+                                  maxshape=(None,shape[1],shape[2],shape[3],shape[4],shape[5]),
+                                  dtype=np.complex64, chunks=True)
+        while True:
+            fields = output.get()
+            hdf.visititems(lambda name,obj:print(name, obj))
+            dprint(type(fields))
+            # dprint((args[0], np.shape(args[1][-1])))
+            if fields is not None:
+                # method, args = args
+                # getattr(hdf, method)(*args)
+                dprint((dset))
+                dprint((dset.shape[0]))
+                dset.resize((dset.shape[0] + len(fields)), axis=0)
+                dset[-len(fields):] = fields
+            else:
+                break
+
 def handle_output(output, filename):
     """
     For reatime saving of photon data together with get_obs_command
@@ -376,22 +398,16 @@ def open_rt_save(savename, t):
         field_tup = pickle.load(handle)
     return field_tup
 
-def open_obs_sequence_hdf5(obs_seq_file = 'hyper.h5'):
-    # hdf5_path = "my_data.hdf5"
-    read_hdf5_file = pt.open_file(obs_seq_file, mode='r')
-    # Here we slice [:] all the data back into memory, then operate on it
+def open_fields(filename = 'hyper.h5'):
+    read_hdf5_file = pt.open_file(filename, mode='r')
     obs_sequence = read_hdf5_file.root.data[:]
-    # hdf5_clusters = read_hdf5_file.root.clusters[:]
     read_hdf5_file.close()
     return obs_sequence
 
-# def open_pseudo_obs():
-#     with pt.open_file(iop.obs_table, mode='r') as f:
-
-def open_fields(fields_file):
-    with h5py.File(fields_file, 'r') as hf:
-        data = hf['data'][:]
-    return data
+# def open_fields(fields_file):
+#     with h5py.File(fields_file, 'r') as hf:
+#         data = hf['data'][:]
+#     return data
 
 def take_exposure(obs_sequence):
     factor = ap.exposure_time/ ap.sample_time
