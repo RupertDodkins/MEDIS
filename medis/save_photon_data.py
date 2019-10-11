@@ -214,7 +214,6 @@ def run_medis():
 
         postfacto(inqueue)
 
-
         #todo hanging here for some reason
         for i, p in enumerate(jobs):
             p.join()
@@ -230,7 +229,7 @@ def run_medis():
         print('**************************************')
 
     # fields = pipe.make_sixcube()
-    fields = read.open_fields(iop.cont_fields)
+    fields = read.open_fields_cont(iop.cont_fields)
     return fields
 
 if __name__ == '__main__':

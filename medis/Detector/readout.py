@@ -114,7 +114,7 @@ def get_packets(datacube, step, dp, mp, plot=False):
         # stem = pipe.arange_into_stem(photons.T, (dp.array_size[0], dp.array_size[1]))
         # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
         # view_datacube(cube, logAmp=True, vmin=0.01)
-        photons[1] *= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
+        photons[1] *= dp.vi[np.int_(photons[2]), np.int_(photons[3])]
 
     # stem = pipe.arange_into_stem(photons.T, (dp.array_size[0], dp.array_size[1]))
     # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
@@ -398,16 +398,16 @@ def open_rt_save(savename, t):
         field_tup = pickle.load(handle)
     return field_tup
 
-def open_fields(filename = 'hyper.h5'):
+def open_fields_cont(filename = 'hyper.h5'):
     read_hdf5_file = pt.open_file(filename, mode='r')
-    obs_sequence = read_hdf5_file.root.data[:]
+    fields = read_hdf5_file.root.fields[:]
     read_hdf5_file.close()
-    return obs_sequence
+    return fields
 
-# def open_fields(fields_file):
-#     with h5py.File(fields_file, 'r') as hf:
-#         data = hf['data'][:]
-#     return data
+def open_fields(fields_file):
+    with h5py.File(fields_file, 'r') as hf:
+        data = hf['data'][:]
+    return data
 
 def take_exposure(obs_sequence):
     factor = ap.exposure_time/ ap.sample_time
