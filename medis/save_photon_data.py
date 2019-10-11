@@ -231,7 +231,7 @@ def run_medis():
             print(f'Time elapsed: {(finish-begin)/60:.2f} minutes')
         print('**************************************')
 
-    fields = read.open_fields_cont(iop.fields)
+    fields = read.open_fields(iop.fields)
     return fields
 
 if __name__ == '__main__':

@@ -57,7 +57,6 @@ class IO_params:
         self.testname = testname  # set this up in the definition line, but can update it with iop.update('newname')
         self.testdir = os.path.join(self.scidir, self.testname)  # Save results in new sub-directory
         self.obs_seq = os.path.join(self.testdir, 'ObsSeq.h5')  # a x/y/t/w cube of data
-        self.cont_fields = os.path.join(self.testdir, 'cont_fields.h5')  # a x/y/t/w cube of data
         self.fields = os.path.join(self.testdir, 'fields.h5')
         self.obs_table = os.path.join(self.testdir, 'ObsTable.h5')  # a photon table with 4 coloumns
         self.form_photons = os.path.join(self.testdir, 'formatted_photons.pkl')
