@@ -172,7 +172,7 @@ def realtime_save_cont(spectralcube, t, savequeue):
 
     # savequeue.put(('create_group', ('/', 't%i' % t)))
     # savequeue.put(('create_array', ('/t%i' % t, 'data', spectralcube)))
-    savequeue.put(spectralcube)
+    savequeue.put((t, spectralcube))
 
 sentinel = None
 def postfacto(inqueue):
@@ -185,10 +185,6 @@ def postfacto(inqueue):
         inqueue.put(sentinel)
 
 def run_medis():
-    # if os.path.isfile(iop.fields):
-    #     e_fields_sequence = read.open_fields(iop.fields)
-    #     print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes [x savelocs] x nwsamp x nobj x grid x grid)")
-    #     return e_fields_sequence
 
     if not os.path.isfile(iop.fields):
         print(f'No file found at {iop.fields}')
@@ -205,8 +201,8 @@ def run_medis():
         jobs = []
 
         if sp.cont_save and tp.detector == 'ideal':
-            shape = (0, len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size)
-            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.fields, shape))
+            eshape = (len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size)
+            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.fields, eshape))
             proc.start()
 
         for i in range(sp.num_processes):
@@ -220,7 +216,7 @@ def run_medis():
         for i, p in enumerate(jobs):
             p.join()
 
-        save_queue.put(None)
+        save_queue.put((None, None))
 
         if sp.cont_save and tp.detector == 'ideal':
             proc.join()

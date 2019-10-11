@@ -252,18 +252,15 @@ def save_step(args):
         dprint((method, args[0], len(args[1])))
         getattr(hdf, method)(*args)
 
-def save_step_const(output, fields_filename, shape):
+def save_step_const(output_queue, fields_filename, shape):
     with h5py.File(fields_filename, mode='a') as hdf:
         print(f'Saving observation data at {fields_filename}')
-        dset = hdf.create_dataset('fields', shape,
-                                  maxshape=(None,shape[1],shape[2],shape[3],shape[4],shape[5]),
-                                  dtype=np.complex64, chunks=True)
         while True:
-            fields = output.get()
+            t, fields = output_queue.get()
             if fields is not None:
                 print(f'Appending to {fields_filename}')
-                dset.resize((dset.shape[0] + len(fields)), axis=0)
-                dset[-len(fields):] = fields
+                dset = hdf.create_dataset(f't{t}', shape, maxshape=shape, dtype=np.complex64, chunks=True)
+                dset[:] = fields
             else:
                 print('Finished saving observation data')
                 break
@@ -392,11 +389,23 @@ def open_rt_save(savename, t):
         field_tup = pickle.load(handle)
     return field_tup
 
-def open_fields(fields_file = 'hyper.h5'):
-    print('Opening continuous fields file ' + fields_file)
-    read_hdf5_file = pt.open_file(fields_file, mode='r')
-    fields = read_hdf5_file.root.fields[:]
-    read_hdf5_file.close()
+def open_fields(fields_file):
+    """
+    Take the continuously saved sequence of fivecubes and load a sixcube into memory
+    :return:
+    """
+    with h5py.File(fields_file, 'r') as hf:
+        keys = list(hf.keys())
+        step_shape = hf.get('t0').shape
+        fields = np.zeros(
+            (len(keys), step_shape[0], step_shape[1], step_shape[2], step_shape[3], step_shape[4]),
+            dtype=np.complex64)
+        for t in range(len(keys)):
+            timestep = hf.get(f't{t}')
+            # from medis.Utils.plot_tools import view_datacube
+            # view_datacube(np.abs(timestep[-1,:,0]) ** 2, logAmp=True)
+            fields[t] = timestep
+
     return fields
 
 def take_exposure(obs_sequence):
