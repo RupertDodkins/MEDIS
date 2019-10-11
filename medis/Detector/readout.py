@@ -114,7 +114,7 @@ def get_packets(datacube, step, dp, mp, plot=False):
         # stem = pipe.arange_into_stem(photons.T, (dp.array_size[0], dp.array_size[1]))
         # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
         # view_datacube(cube, logAmp=True, vmin=0.01)
-        photons[1] *= dp.vi[np.int_(photons[2]), np.int_(photons[3])]
+        photons[1] *= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
 
     # stem = pipe.arange_into_stem(photons.T, (dp.array_size[0], dp.array_size[1]))
     # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
@@ -252,26 +252,20 @@ def save_step(args):
         dprint((method, args[0], len(args[1])))
         getattr(hdf, method)(*args)
 
-def save_step_const(output, filename, shape):
-    dprint(shape)
-
-    with h5py.File(filename, mode='a') as hdf:
+def save_step_const(output, fields_filename, shape):
+    with h5py.File(fields_filename, mode='a') as hdf:
+        print(f'Saving observation data at {fields_filename}')
         dset = hdf.create_dataset('fields', shape,
                                   maxshape=(None,shape[1],shape[2],shape[3],shape[4],shape[5]),
                                   dtype=np.complex64, chunks=True)
         while True:
             fields = output.get()
-            hdf.visititems(lambda name,obj:print(name, obj))
-            dprint(type(fields))
-            # dprint((args[0], np.shape(args[1][-1])))
             if fields is not None:
-                # method, args = args
-                # getattr(hdf, method)(*args)
-                dprint((dset))
-                dprint((dset.shape[0]))
+                print(f'Appending to {fields_filename}')
                 dset.resize((dset.shape[0] + len(fields)), axis=0)
                 dset[-len(fields):] = fields
             else:
+                print('Finished saving observation data')
                 break
 
 def handle_output(output, filename):
@@ -398,13 +392,16 @@ def open_rt_save(savename, t):
         field_tup = pickle.load(handle)
     return field_tup
 
-def open_fields_cont(filename = 'hyper.h5'):
-    read_hdf5_file = pt.open_file(filename, mode='r')
+def open_fields_cont(cont_fields_file = 'hyper.h5'):
+    print('Opening continuous fields file ' + cont_fields_file)
+    read_hdf5_file = pt.open_file(cont_fields_file, mode='r')
     fields = read_hdf5_file.root.fields[:]
     read_hdf5_file.close()
     return fields
 
 def open_fields(fields_file):
+    """This is for the original fields format"""
+    print('Opening fields file from location '+fields_file)
     with h5py.File(fields_file, 'r') as hf:
         data = hf['data'][:]
     return data

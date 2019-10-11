@@ -57,13 +57,12 @@ class Timeseries():
 
             # wfo = Wavefronts(inqueue, outqueue, conf_obj_tup)
 
-
             for it, t in enumerate(iter(self.inqueue.get, sentinel)):
+
                 print('using process %i' % i)
                 kwargs = {'iter': t, 'params': [ap, tp, iop, sp], 'CPA_maps': self.CPA_maps, 'tiptilt': self.tiptilt}
                 sampling, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
-                                                       VERBOSE=False, PHASE_OFFSET=1)
-                now = time.time()
+                                                   VERBOSE=False, PHASE_OFFSET=1)
 
                 if sp.cont_save:
                     # realtime_save(save_E_fields, t)
@@ -73,6 +72,7 @@ class Timeseries():
                         spectralcube = np.abs(save_E_fields[-1, :, o]) ** 2
                         applymkideffects(spectralcube, t, o, return_spectralcube=False)
 
+            now = time.time()
             elapsed = float(now - start) / 60.
             each_iter = float(elapsed) / (ap.numframes + 1)
 
@@ -90,7 +90,6 @@ def update_realtime_save():
 def initialize_telescope():
     iop.makedir()  # make the directories at this point in case the user doesn't want to keep changing params.py
 
-    print('Creating New MEDIS Simulation')
     print('********** Taking Obs Data ***********')
 
     try:
@@ -186,12 +185,15 @@ def postfacto(inqueue):
         inqueue.put(sentinel)
 
 def run_medis():
-    if os.path.isfile(iop.fields):
-        e_fields_sequence = read.open_fields(iop.fields)
-        print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes [x savelocs] x nwsamp x nobj x grid x grid)")
-        return e_fields_sequence
+    # if os.path.isfile(iop.fields):
+    #     e_fields_sequence = read.open_fields(iop.fields)
+    #     print(f"Shape of e_fields_sequence = {np.shape(e_fields_sequence)} (numframes [x savelocs] x nwsamp x nobj x grid x grid)")
+    #     return e_fields_sequence
 
-    elif not os.path.isfile(iop.cont_fields):
+    if not os.path.isfile(iop.fields):
+        print(f'No file found at {iop.fields}')
+        print('Creating New MEDIS Simulation')
+
         # Start the clock
         begin = time.time()
 
@@ -204,7 +206,7 @@ def run_medis():
 
         if sp.cont_save and tp.detector == 'ideal':
             shape = (0, len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size)
-            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.cont_fields, shape))
+            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.fields, shape))
             proc.start()
 
         for i in range(sp.num_processes):
@@ -222,14 +224,14 @@ def run_medis():
 
         if sp.cont_save and tp.detector == 'ideal':
             proc.join()
+
         print('MEDIS Data Run Completed')
         finish = time.time()
         if sp.timing is True:
             print(f'Time elapsed: {(finish-begin)/60:.2f} minutes')
         print('**************************************')
 
-    # fields = pipe.make_sixcube()
-    fields = read.open_fields_cont(iop.cont_fields)
+    fields = read.open_fields_cont(iop.fields)
     return fields
 
 if __name__ == '__main__':

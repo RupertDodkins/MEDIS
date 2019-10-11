@@ -38,24 +38,6 @@ def traverse_datasets(hdf_file):
         for path, _ in h5py_dataset_iterator(f):
             yield path
 
-def make_sixcube():
-    """
-    Take the continuously saved sequence of fivecubes and load a sixcube into memory
-    :return:
-    """
-    with h5py.File(iop.cont_fields, 'r') as hf:
-        keys = list(hf.keys())
-        step_shape = hf.get('t%i/data' % 0).shape
-        fields = np.zeros((len(keys), step_shape[0], step_shape[1], step_shape[2], step_shape[3], step_shape[4]), dtype=np.complex64)
-        for t in range(len(keys)):
-            timestep = hf.get('t%i/data' % t)
-            # from medis.Utils.plot_tools import view_datacube
-            # view_datacube(np.abs(timestep[-1,:,0]) ** 2, logAmp=True)
-            fields[t] = timestep
-
-    return fields
-
-
 def read_obs(max_photons=1e8, start=0):
     filename =iop.obs_table
     print('Getting max %.0e photon packets from pseudo obsfile %s' % (max_photons,filename))
