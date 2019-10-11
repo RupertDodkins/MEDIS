@@ -392,19 +392,12 @@ def open_rt_save(savename, t):
         field_tup = pickle.load(handle)
     return field_tup
 
-def open_fields_cont(cont_fields_file = 'hyper.h5'):
-    print('Opening continuous fields file ' + cont_fields_file)
-    read_hdf5_file = pt.open_file(cont_fields_file, mode='r')
+def open_fields(fields_file = 'hyper.h5'):
+    print('Opening continuous fields file ' + fields_file)
+    read_hdf5_file = pt.open_file(fields_file, mode='r')
     fields = read_hdf5_file.root.fields[:]
     read_hdf5_file.close()
     return fields
-
-def open_fields(fields_file):
-    """This is for the original fields format"""
-    print('Opening fields file from location '+fields_file)
-    with h5py.File(fields_file, 'r') as hf:
-        data = hf['data'][:]
-    return data
 
 def take_exposure(obs_sequence):
     factor = ap.exposure_time/ ap.sample_time
