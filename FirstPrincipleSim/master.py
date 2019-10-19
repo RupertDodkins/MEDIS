@@ -10,7 +10,7 @@ import matplotlib.ticker as ticker
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import pickle as pickle
 from vip_hci import phot, pca
-from medis.params import tp, mp, sp, ap, iop
+from medis.params import tp, mp, sp, ap, iop, cp
 import medis.save_photon_data as spd
 from medis.Utils.plot_tools import view_datacube, compare_images, fmt, quicklook_im
 from medis.Utils.misc import dprint
@@ -38,8 +38,8 @@ def config_cache():
 master_dp, master_fields = config_cache()
 dprint((iop.device_params, master_dp))
 
-ap.sample_time = 0.05
-ap.numframes = 50
+ap.sample_time = 0.5
+ap.numframes = 20
 sp.uniform_flux = False
 
 def set_field_params():
@@ -52,18 +52,17 @@ def set_field_params():
     sp.cont_save = True
 
     ap.companion = True
-    ap.star_photons_per_s = int(1e5)
-    # ap.contrast = [10 ** -3.5, 10 ** -3.5, 10 ** -4, 10 ** -4, 10 ** -4.5, 10 ** -4.5, 10 ** -5, 10 ** -5]
-    # ap.contrast = [10 ** -4]*8
-    ap.contrast = 10**np.array([-3.5, -4, -4.5, -5] * 2)
-    # ap.lods = [[4.5,0], [2.5,0], [0,3], [0,5], [-5.5,0], [-3.5,0], [0,-4],[0,-6]]
-    ap.lods = [[2.5,0], [0,3], [-3.5,0], [0,-4], [4.5,0], [0,5], [-5.5,0],[0,-6]]
-    # ap.grid_size = 256
-    # tp.beam_ratio = 0.5
+    ap.star_photons_per_s = int(1e4)
     ap.grid_size = 512
     tp.beam_ratio = 0.25
+    ap.contrast = 10**np.array([-3.5, -4, -4.5, -5] * 2)
+    ap.lods = [[2.5,0], [0,3], [-3.5,0], [0,-4], [4.5,0], [0,5], [-5.5,0],[0,-6]]
     ap.nwsamp = 8
     ap.w_bins = 16
+    # ap.contrast = [10**-3.5]
+    # ap.lods = [[2.5,0]]
+    # ap.nwsamp = 2
+    # ap.w_bins = 2
 
     # sp.save_locs = np.empty((0, 1))
     tp.diam = 8.
@@ -250,6 +249,11 @@ def detect_obj_photons(metric_vals, metric_name, plot=False):
 def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=False):
     _, master_fields = master_cache
     iop.fields = master_fields
+
+    dprint(iop.device_params)
+    dprint(iop.form_photons)
+    dprint(iop.testdir)
+    dprint(master_fields)
 
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name

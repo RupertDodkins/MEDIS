@@ -19,7 +19,7 @@ master.set_field_params()
 master.set_mkid_params()
 
 median_val = mp.g_mean
-metric_multiplier = np.logspace(np.log10(0.1), np.log10(10/3), 7)
+metric_multiplier = np.logspace(np.log10(0.5), np.log10(7/3), 7)
 # metric_multiplier = np.array([10/3, 5, 8, 12])
 metric_vals = median_val * metric_multiplier
 
@@ -47,9 +47,9 @@ def adapt_dp_master():
         dprint(np.std(new_dp.QE_map))
         iop.device_params = iop.device_params.split('_'+metric_name)[0] + f'_{metric_name}={metric_val}.pkl'
         dprint((iop.device_params, metric_val))
-        quicklook_im(new_dp.QE_map)
-        plt.hist(new_dp.QE_map.flatten())
-        plt.show(block=True)
+        # quicklook_im(new_dp.QE_map)
+        # plt.hist(new_dp.QE_map.flatten())
+        # plt.show(block=True)
 
         with open(iop.device_params, 'wb') as handle:
             pickle.dump(new_dp, handle, protocol=pickle.HIGHEST_PROTOCOL)

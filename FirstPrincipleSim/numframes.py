@@ -20,7 +20,7 @@ master.set_field_params()
 master.set_mkid_params()
 
 median_val = 5
-metric_multiplier = np.logspace(np.log10(0.5), np.log10(2), 7)
+metric_multiplier = np.logspace(np.log10(0.2), np.log10(4), 7)
 metric_vals = np.int_(np.round(median_val * metric_multiplier))
 
 iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}/')
@@ -39,10 +39,26 @@ def adapt_dp_master():
 def get_stackcubes(metric_vals, metric_name, master_cache, comps=True, plot=False):
     _, master_fields = master_cache
 
+    dprint(iop.device_params)
+    dprint(iop.form_photons)
+    dprint(iop.testdir)
+    dprint(master_fields)
+
+    iop.fields = master.master_fields
+
+    dprint(iop.device_params)
+    dprint(iop.form_photons)
+    dprint(iop.testdir)
+    dprint(master_fields)
+
     iop.device_params = iop.device_params[:-4] + '_'+metric_name
     iop.form_photons = iop.form_photons[:-4] +'_'+metric_name
 
-    iop.fields = master.master_fields
+    dprint(iop.device_params)
+    dprint(iop.form_photons)
+    dprint(iop.testdir)
+    dprint(master_fields)
+
     fields = spd.run_medis()
 
     stackcubes, dps =  [], []

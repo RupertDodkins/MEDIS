@@ -7,6 +7,7 @@ import matplotlib as mpl
 # mpl.use('Qt5Agg')
 from matplotlib.colors import LogNorm, SymLogNorm
 import medis.get_photon_data as gpd
+import medis.save_photon_data as spd
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pickle as pickle
@@ -19,103 +20,118 @@ from medis.Detector import temporal as temp
 from medis.Detector import spectral as spec
 from medis.Detector import pipeline as pipe
 
-make_figure = 8
+make_figure = 1
 
-sp.num_processes = 8
-sp.return_E = True
-
-# Astro Parameters
-ap.companion = False
-ap.star_photons_per_s = int(2e5)
-ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
-
-# Telescope/optics Parameters
-ap.grid_size = 256
-tp.diam = 8.
-tp.beam_ratio = 0.5
-tp.obscure = True
-tp.use_ao = True
-tp.include_tiptilt= False
-tp.ao_act = 50
-tp.use_atmos = True
-# tp.use_zern_ab = True
-tp.occulter_type = 'Vortex'  # 'None'
-tp.aber_params = {'CPA': True,
-                  'NCPA': True,
-                  'QuasiStatic': False,  # or Static
-                  'Phase': True,
-                  'Amp': False,
-                  'n_surfs': 8,
-                  'OOPP': False}#[16,8,8,16,4,4,8,16]}#False}#
-# tp.aber_vals = {'a': [1e-17, 0.2e-17],
-#                'b': [0.8, 0.2],
-#                'c': [3.1,0.5],
-#                'a_amp': [0.05,0.01]}
-tp.aber_vals = {'a': [1e-18, 2e-20],#'a': [5e-17, 1e-18],
-                'b': [2.0, 0.2],
-                'c': [3.1, 0.5],
-                'a_amp': [0.05, 0.01]}
-tp.legs_frac = 0.03
-
-tp.satelite_speck = True
-
-# Wavelength and Spectral Range
-ap.nwsamp = 8
-ap.w_bins = 8
-ap.sample_time = 0.1
-ap.numframes = 100 #100 #5000
-# tp.piston_error = True
-# tp.pix_shift = [[15,30],[-30,15],[-15,-30],[30,-15]]
-tp.pix_shift = [[15,30]]
-
-# MKID Parameters
-mp.phase_uncertainty = True
-mp.phase_background = True
-mp.QE_var = True
-mp.bad_pix = True
-mp.dark_counts = True
-mp.hot_pix = 1
-mp.dark_pix_frac = 0.5
-mp.array_size = np.array([142,146])
-mp.R_mean = 8
-mp.g_mean = 0.2
-mp.g_sig = 0.04
-mp.r_mean = 1
-mp.r_sig = 0.1
-mp.bg_mean = -10
-mp.bg_sig = 10
-mp.pix_yield = 0.8  # check dis
-mp.dark_bright = 5
-mp.hot_bright = 4e3
-mp.dead_time = 1e-5
-mp.wavecal_coeffs = [1./6, -250]
+# sp.num_processes = 8
+# sp.return_E = True
+#
+# # Astro Parameters
+# ap.companion = False
+# ap.star_photons_per_s = int(2e5)
+# ap.lods = [[-1.2, 4.5]] # initial location (no rotation)
+#
+# # Telescope/optics Parameters
+# ap.grid_size = 256
+# tp.diam = 8.
+# tp.beam_ratio = 0.5
+# tp.obscure = True
+# tp.use_ao = True
+# tp.include_tiptilt= False
+# tp.ao_act = 50
+# tp.use_atmos = True
+# # tp.use_zern_ab = True
+# tp.occulter_type = 'Vortex'  # 'None'
+# tp.aber_params = {'CPA': True,
+#                   'NCPA': True,
+#                   'QuasiStatic': False,  # or Static
+#                   'Phase': True,
+#                   'Amp': False,
+#                   'n_surfs': 8,
+#                   'OOPP': False}#[16,8,8,16,4,4,8,16]}#False}#
+# # tp.aber_vals = {'a': [1e-17, 0.2e-17],
+# #                'b': [0.8, 0.2],
+# #                'c': [3.1,0.5],
+# #                'a_amp': [0.05,0.01]}
+# tp.aber_vals = {'a': [1e-18, 2e-20],#'a': [5e-17, 1e-18],
+#                 'b': [2.0, 0.2],
+#                 'c': [3.1, 0.5],
+#                 'a_amp': [0.05, 0.01]}
+# tp.legs_frac = 0.03
+#
+# tp.satelite_speck = True
+#
+# # Wavelength and Spectral Range
+# ap.nwsamp = 8
+# ap.w_bins = 8
+# ap.sample_time = 0.1
+# ap.numframes = 100 #100 #5000
+# # tp.piston_error = True
+# # tp.pix_shift = [[15,30],[-30,15],[-15,-30],[30,-15]]
+# tp.pix_shift = [[15,30]]
+#
+# # MKID Parameters
+# mp.phase_uncertainty = True
+# mp.phase_background = True
+# mp.QE_var = True
+# mp.bad_pix = True
+# mp.dark_counts = True
+# mp.hot_pix = 1
+# mp.dark_pix_frac = 0.5
+# mp.array_size = np.array([142,146])
+# mp.R_mean = 8
+# mp.g_mean = 0.2
+# mp.g_sig = 0.04
+# mp.r_mean = 1
+# mp.r_sig = 0.1
+# mp.bg_mean = -10
+# mp.bg_sig = 10
+# mp.pix_yield = 0.8  # check dis
+# mp.dark_bright = 5
+# mp.hot_bright = 4e3
+# mp.dead_time = 1e-5
+# mp.wavecal_coeffs = [1./6, -250]
 
 # sp.save_fields = False
 
 def make_figure1():
-    ap.nwsamp = 1
-    ap.w_bins = 1
-    tp.detector = 'ideal'
-    iop.update("first_principle/figure1")
-    iop.aberdir = os.path.join(iop.datadir, iop.aberroot, 'Palomar256')
-    iop.quasi = os.path.join(iop.aberdir, 'quasi')
-    iop.atmosdata = '190823'
-    iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
+    ap.nwsamp = 3
+    ap.w_bins = 3
+    ap.numframes = 1
+    ap.contrast = [1e-3]
+    ap.companion = True
+    tp.obscure = True
+    tp.use_ao = True
+    tp.include_tiptilt= False
+    tp.ao_act = 50
+    tp.legs_frac = 0.03
 
-    sp.save_locs = np.array(['add_atmos', 'add_aber', 'deformable_mirror', 'add_aber', 'prop_mid_optics'])
-    sp.gui_map_type = np.array(['phase', 'phase', 'phase', 'phase', 'amp'])
-    phase_ind = range(4)
+    tp.satelite_speck = True
+    ap.grid_size = 512
+    tp.beam_ratio = 0.25
+    tp.detector = 'ideal'
+    tp.aber_params = {'CPA': True,
+                        'NCPA': True,
+                        'QuasiStatic': False,  # or 'Static'
+                        'Phase': True,
+                        'Amp': False,
+                        'n_surfs': 2,
+                        'OOPP': None}
+    tp.aber_vals = {'a': [5e-10, 0],  # 'a': [5e-17, 1e-18],
+                    'b': [0.0002, 0],
+                    'c': [2, 0]}
+    iop.update("first_principle/figure1")
+    iop.set_atmosdata('190823')
+    iop.set_aberdata('Palomar512')
+
+    sp.save_locs = np.array(['add_atmos', 'add_aber', 'deformable_mirror', 'add_aber', 'prop_mid_optics', 'coronagraph'])
+    sp.gui_map_type = np.array(['phase', 'phase', 'phase', 'phase', 'amp', 'amp'])
+    sp.save_labels = np.array(['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA', 'Before Coron.', 'After Coron.'])
+
+    from medis.Dashboard.run_dashboard import run_dashboard
 
     if __name__ == '__main__':  # required for multiprocessing - make sure globals are set before though
-        fields = gpd.run_medis()[0, :, 0, 0]#, ap.grid_size//4:-ap.grid_size//4, ap.grid_size//4:-ap.grid_size//4]
-        pupils = np.angle(fields[phase_ind], deg=False)
-        focals = np.absolute(fields[4:])
-
-        grid(pupils, logAmp=False, colormap=twilight, vmins=[-np.pi]*len(sp.save_locs), vmaxs=[np.pi]*len(sp.save_locs),
-             annos=['Entrance Pupil', 'After CPA', 'After AO', 'After NCPA'], ctitles=r'$\phi$')
-        grid(focals[:, ap.grid_size//4:-ap.grid_size//4,ap.grid_size//4:-ap.grid_size//4],
-             logAmp=True, annos=['Before Coron.', 'After Coron.'], ctitles='$I$', vmins=[0.001]*len(focals),
-             vmaxs=[0.05]*len(focals))
+        run_dashboard()
+        # fields = spd.run_medis()
 
 def make_figure2(normalize_spec=False):
     tp.detector = 'ideal'  #set ideal at first then do the mkid related stuff here
@@ -517,12 +533,6 @@ def find_nearest(array, value):
 
 def config_images(num_tests):
     plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.viridis(np.linspace(0, 1, num_tests)))
-    if num_tests == 7:
-        return np.linspace(0, 6, 3, dtype=int)
-    if num_tests == 4:
-        return [0, 2, 3]
-    else:
-        return range(3)
 
 def parse_cont_data(all_cont_data, p):
     rad_samps = all_cont_data[0, p, 0]  # both repeats should be equivalent
@@ -537,8 +547,8 @@ def parse_cont_data(all_cont_data, p):
 
 def param_compare():
 
-    repeats = 1  # number of medis runs to average over for the cont plots
-    param_names = ['array_size', 'array_size_(rebin)', 'pix_yield', 'numframes', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']#'g_mean_sig']# 'star_photons_per_s'
+    repeats = 3  # number of medis runs to average over for the cont plots
+    param_names = ['array_size', 'array_size_(rebin)', 'numframes', 'pix_yield', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']#'g_mean_sig']# 'star_photons_per_s'
 
     all_cont_data = []
     for r in range(repeats):
@@ -562,10 +572,10 @@ def param_compare():
             if param_name in sys.modules:  # if the module has been loaded before it would be skipped and the params not initialized
                 dprint(param_name)
                 param = importlib.reload(param)
-            plot_inds = config_images(len(param.metric_multiplier))  # the line colors and map inds depend on the amount
+            config_images(len(param.metric_multiplier))  # the line colors and map inds depend on the amount
             # being plotted
             param_data = master.form(param.metric_vals, param.metric_name, master_cache=(master_dp, master_fields),
-                                     debug=True)
+                                     debug=False)
             comp_images.append(param_data[0])
             cont_data.append(param_data[1:])
 
@@ -581,15 +591,6 @@ def param_compare():
         dprint(cont_data.shape)
         all_cont_data.append(cont_data)
     all_cont_data = np.array(all_cont_data)  # (repeats x num_params x rad+cont x num_multi (changes)
-
-    # # plot the summed data
-    # for p, param_name in enumerate(param_names):
-    #     param = importlib.import_module(param_name)
-    #     plot_inds = config_images(len(param.metric_multiplier))  # config each loop
-    #     maps = comp_images[p]
-    #     metric_samp = metric_vals_list[p]
-    #     rad_samps, mean_conts, err_conts = parse_cont_data(all_cont_data, p)
-    #     master.combo_performance(maps, rad_samps, mean_conts, metric_samp, plot_inds, err_conts)
 
     three_lod_sep = 0.3
     six_lod_sep = 2*three_lod_sep
