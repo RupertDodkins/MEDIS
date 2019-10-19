@@ -32,7 +32,9 @@ class MatplotlibWidget(QWidget):
 
         self.nrows, self.ncols = nrows, ncols
         dprint((self.nrows, self.ncols))
-        self.figure = Figure(figsize=(5*ncols,3*nrows))
+        self.figure = Figure(figsize=(4*ncols,3*nrows))
+        self.figure.subplots_adjust(left=0.01, bottom=0.01, right=0.89, top=0.96, wspace=0.005, hspace=0.07)
+
         # self.canvas = FigureCanvasQTAgg(self.figure)
         self.canvas = FigureCanvas(self.figure)
         self.toolbar = NavigationToolbar(self.canvas, self)
@@ -43,9 +45,7 @@ class MatplotlibWidget(QWidget):
             for c in range(self.ncols):
                 self.figure.add_subplot(gs[r,c])
 
-        dprint((self.nrows, self.ncols))
         self.axes = np.array(self.figure.axes).reshape(self.nrows, self.ncols)
-        dprint(self.axes.shape)
         self.cax = []
 
         self.layoutVertical = QFormLayout(self)
@@ -59,12 +59,14 @@ class MatplotlibWidget(QWidget):
             divider = make_axes_locatable(self.axes[r,-1])
             self.cax.append(divider.append_axes('right', size='5%', pad=0.15))
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp).astype(int)
-        dprint(wsamples)
         for c in range(self.ncols):
             self.axes[0, c].set_title('{} nm'.format(wsamples[c]))
         props = dict(boxstyle='square', facecolor='k', alpha=0.5)
         for r in range(self.nrows):
-            pretty_func_name = ' '.join(sp.save_locs[r].split('_'))
+            if sp.save_labels is not None:
+                pretty_func_name = ' '.join(sp.save_labels[r].split('_'))
+            else:
+                pretty_func_name = ' '.join(sp.save_locs[r].split('_'))
             self.axes[r, 0].text(0.05, 0.075, pretty_func_name, transform=self.axes[r, 0].transAxes, fontweight='bold', color='w',
                             fontsize=12, bbox=props)
 
@@ -82,7 +84,7 @@ class MatplotlibWidget(QWidget):
                                  fontsize=12, bbox=props)
 
 
-class MyWindow(QWidget):
+class Dashboard(QWidget):
     def __init__(self, nrows=len(sp.save_locs), ncols=ap.nwsamp, plot_metric=True):
         super().__init__()
 
@@ -226,7 +228,7 @@ class MyWindow(QWidget):
 
         self.left = 10
         self.top = 10
-        self.width = 1500
+        self.width = 1250
         self.height = 200 + 200*nrows
         self.title = 'MEDIS Dashboard'
         self.setWindowTitle(self.title)
@@ -329,6 +331,7 @@ class MyWindow(QWidget):
         cmap[~amp_ind] = twilight
         cmap[amp_ind] = 'inferno'
 
+        zeros_ind = int(np.floor(ap.grid_size * (1 - tp.beam_ratio) / 1.5)/2)
         for x in range(self.rows):
             for y in range(self.cols):
                 # self.EmapsGrid.axes[x, y].cla()
@@ -336,10 +339,17 @@ class MyWindow(QWidget):
                     self.EmapsGrid.ims[x, y].remove()
                 except (AttributeError, ValueError):
                     pass
-                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(self.EfieldsThread.gui_images[x, y, ::1, ::1], norm=norm[x],
+
+                self.EmapsGrid.ims[x, y] = self.EmapsGrid.axes[x, y].imshow(self.EfieldsThread.gui_images[x, y,
+                                                                            zeros_ind:-zeros_ind,
+                                                                            zeros_ind:-zeros_ind], norm=norm[x],
                                                      vmin=self.vmin[x], vmax=self.vmax[x], cmap=cmap[x], origin='lower')
                 self.EmapsGrid.axes[x, y].axis('off')
-
+                # if x == 2:
+                #     plt.figure()
+                #     dprint((x,y))
+                #     plt.hist(self.EfieldsThread.gui_images[x,y, zeros_ind:-zeros_ind, zeros_ind:-zeros_ind].flatten(), bins=250)
+                #     plt.show()
             self.EmapsGrid.figure.colorbar(self.EmapsGrid.ims[x,-1], cax=self.EmapsGrid.cax[x], orientation='vertical')
 
         self.EmapsGrid.canvas.draw()
@@ -363,7 +373,7 @@ class MyWindow(QWidget):
         # if self.obj == len(ap.contrast):
         #     self.obj = -1
         #     self.it += 1
-        dprint('running recieve function')
+        dprint('running receive function')
         try:
             self.metricsGrid.ims[0,0].remove()
         except AttributeError:
