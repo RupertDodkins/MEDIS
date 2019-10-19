@@ -30,9 +30,14 @@ def debug_program():
 
     sys.stdout = TracePrints()
 
-def dprint(message):
+def dprint(*vars):
     caller = getframeinfo(stack()[1][0])
-    print("%s:%d - %s" % (caller.filename, caller.lineno, message))
+    # message = []
+    # for var in vars:
+    #     message.append(var)
+    print("%s:%d - %s" % (caller.filename, caller.lineno, vars))
+
+
 
 def eformat(f, prec, exp_digits):
     s = "%.*e" % (prec, f)
