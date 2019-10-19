@@ -4,7 +4,6 @@ import os
 import numpy as np
 import traceback
 import multiprocessing
-import glob
 import random
 import pickle as pickle
 import time
@@ -103,10 +102,8 @@ def initialize_telescope():
         atmos.prepare_maps()
 
     # initialize telescope
-    if glob.glob(iop.quasi+'/*.fits') == []:
-        aber.generate_maps(tp.f_lens)
-        if tp.aber_params['NCPA']:
-            aber.generate_maps(tp.f_lens)
+    if tp.aber_params['CPA'] or tp.aber_params['NCPA']:
+        aber.initialize_aber_maps()
 
     # if tp.servo_error:
     #     aber.createObjMapsEmpty()
@@ -128,6 +125,7 @@ def initialize_telescope():
 
     if sp.save_locs is None:
         sp.save_locs = []
+
     if 'detector' not in sp.save_locs:
         sp.save_locs = np.append(sp.save_locs, 'detector')
         sp.gui_map_type = np.append(sp.gui_map_type, 'amp')
@@ -170,8 +168,6 @@ def realtime_save_cont(spectralcube, t, savequeue):
         new_heights = np.linspace(0, 1, ap.w_bins)
         spectralcube = f_out(new_heights)
 
-    # savequeue.put(('create_group', ('/', 't%i' % t)))
-    # savequeue.put(('create_array', ('/t%i' % t, 'data', spectralcube)))
     savequeue.put((t, spectralcube))
 
 sentinel = None

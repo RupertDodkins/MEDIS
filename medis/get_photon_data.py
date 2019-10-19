@@ -99,10 +99,8 @@ def initialize_telescope():
         atmos.prepare_maps()
 
     # initialize telescope
-    if glob.glob(iop.quasi+'/*.fits') == []:
-        aber.generate_maps(tp.f_lens)
-        if tp.aber_params['NCPA']:
-            aber.generate_maps(tp.f_lens)
+    if tp.aber_params['CPA'] or tp.aber_params['NCPA']:
+        aber.initialize_aber_maps()
 
     # if tp.servo_error:
     #     aber.createObjMapsEmpty()

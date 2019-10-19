@@ -36,24 +36,13 @@ def read_folder(wvlFrames_dir = '/Volumes/Data2/dodkins/FITS files/Wvl Frames (c
      
     return files 
 
-def read_image(filename = 'focalplane_1.fits', prob_map=True):
+def read_image(filename = 'focalplane_1.fits'):
     #hdulist = pyfits.open(directory + filename)
     hdulist = pyfits.open(filename)
     header = hdulist[0].header
     scidata = hdulist[0].data
 
-    xnum = np.shape(scidata)[0]
-    ynum = np.shape(scidata)[1]
-
-    if prob_map:
-        correction_factor = 1/np.max(scidata) #* 10
-        #print correction_factor
-        prob_array = scidata * correction_factor
-        #print prob_array, np.shape(prob_array)
-        return prob_array
-    
-    else:
-        return scidata*1., header
+    return scidata*1., header
 
 def add_header(self, fromfile = 'telescope_obj1.fits', tofile='telescope_obj_p0.fits'):
     os.chdir('/home/dodkins/')
@@ -169,24 +158,27 @@ def get_MR_pdf():
 
     return pdf
 
-# def plot_pix_time(cube, x=50, y=50):
-#     plt.figure()
-#     print cube[x][y], np.shape(cube[x][y])
-#     hist, bins = np.histogram(cube[x][y], bins='auto')
-#     #plt.xlabel('Time ms')
-#     #plt.plot(bins[:-1], hist)
-
-
-def saveFITS(image, name):
+def make_hdu(image, sampling, aber_vals):
     header = pyfits.Header()
-    header["PIXSIZE"] = (0.16, " spacing in meters")
+    if sampling:
+        header["PIXSIZE"] = (sampling, " spacing in meters")
+    if aber_vals:
+        header["a_mean"] = aber_vals["a"][0]
+        header["a_sig"] = aber_vals["a"][1]
+        header["b_mean"] = aber_vals["b"][0]
+        header["b_sig"] = aber_vals["b"][1]
+        header["c_mean"] = aber_vals["c"][0]
+        header["c_sig"] = aber_vals["c"][1]
 
     hdu = pyfits.PrimaryHDU(image, header=header)
+    return hdu
+
+def saveFITS(image, name, sampling=None, aber_vals=None):
+    hdu = make_hdu(image, sampling, aber_vals)
     hdu.writeto(name)
 
-
 def scale_image(filename, scalefactor):
-    scidata, hdr = read_image(filename, prob_map=False)
+    scidata, hdr = read_image(filename)
     scidata = scidata*scalefactor
     pyfits.update(filename, scidata, hdr,0)
 

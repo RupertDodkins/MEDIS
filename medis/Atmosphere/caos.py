@@ -93,7 +93,7 @@ def generate_maps():
     dprint('Generated maps using CAOS')
     # scale_phasemaps()
     # filename = '/Data/PythonProjects/MEDIS/data/atmos/180208/telz0.fits'
-    # scidata, hdr = rawImageIO.read_image(filename, prob_map=False)
+    # scidata, hdr = rawImageIO.read_image(filename, )
     # scidata = rawImageIO.resize_image(scidata, (4000,4000))
     # pyfits.update(filename, scidata, hdr,0)
     # rawImageIO.scale_phasemaps()
@@ -103,7 +103,7 @@ def scale_phasemaps():
     # filenames = rawImageIO.read_folder(iop.atmosdir)
     import multiprocessing
     filenames = glob.glob(iop.atmosdir + '*0.067*')
-    scidata, hdr = rawImageIO.read_image(filenames[0], prob_map=False)
+    scidata, hdr = rawImageIO.read_image(filenames[0])
     scalefactor = 5.19751 #np.pi * 1e-6 / np.max(np.abs(scidata))  # *0.8 * 4./3 #kludge for now until you include AO etc
     # print filenames
     # # print 'Stretching the phase maps to size (%i,%i)' % (size,size)
@@ -111,7 +111,7 @@ def scale_phasemaps():
     p = multiprocessing.Pool(10)
     for ifn, filename in enumerate(filenames):
         if ifn % 10 == 0: misc.progressBar(value=ifn, endvalue=len(filenames))
-        # scidata, hdr = rawImageIO.read_image(filename, prob_map=False)
+        # scidata, hdr = rawImageIO.read_image(filename)
         # scidata = rawImageIO.resize_image(scidata, (size,size), warn=False)
         # pyfits.update(filename, scidata, hdr,0)
 
@@ -129,7 +129,7 @@ def plot_phasemaps():
     cube = []
     import medis.Analysis.phot
     for filename in filenames:
-        phase = rawImageIO.read_image(filename, prob_map=False)[0]
+        phase = rawImageIO.read_image(filename)[0]
         ap.grid_size=80
         phase = phase*Analysis.phot.aperture(ap.grid_size/2,ap.grid_size/2,ap.grid_size/2)
         cube.append(phase)

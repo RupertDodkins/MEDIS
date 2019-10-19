@@ -1,10 +1,11 @@
 import os
 import numpy as np
+import glob
 # from scipy import interpolate
 import pickle as pickle
 import proper
 from proper_mod import prop_psd_errormap
-from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ
+from medis.Utils.plot_tools import quicklook_im, quicklook_wf, loop_frames,quicklook_IQ, view_datacube
 import medis.Atmosphere.atmos as atmos
 import medis.Utils.rawImageIO as rawImageIO
 import medis.Utils.misc as misc
@@ -14,6 +15,7 @@ from medis.Utils.misc import dprint
 import astropy.io.fits as fits
 # import matplotlib.pylab as plt
 from skimage.restoration import unwrap_phase
+from scipy import interpolate
 
 
 def initialize_CPA_meas():
@@ -68,8 +70,11 @@ def generate_maps(lens_diam, lens_name='lens'):
     """
     # TODO add different timescale aberrations
     dprint('Generating optic aberration maps using Proper')
+    dprint(lens_name)
     wfo = proper.prop_begin(lens_diam, 1., ap.grid_size, tp.beam_ratio)
-    aber_cube = np.zeros((ap.numframes, tp.aber_params['n_surfs'], ap.grid_size, ap.grid_size))
+    aber_cube = np.zeros((ap.nwsamp, tp.aber_params['n_surfs'], ap.grid_size, ap.grid_size))
+    wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
+
     for surf in range(tp.aber_params['n_surfs']):
 
         # Randomly select a value from the range of values for each constant
@@ -77,37 +82,40 @@ def generate_maps(lens_diam, lens_name='lens'):
         c_freq = np.random.normal(tp.aber_vals['b'][0], tp.aber_vals['b'][1])  # correlation frequency (cycles/meter)
         high_power = np.random.normal(tp.aber_vals['c'][0], tp.aber_vals['c'][1])  # high frewquency falloff (r^-high_power)
 
-        perms = np.random.rand(ap.numframes, ap.grid_size, ap.grid_size)-0.5
-        perms *= 1e-7
+        surf_map = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True)#, PHASE_HISTORY=phase)
+        x = np.arange(-ap.grid_size / 2, ap.grid_size / 2)
+        for iw, w in enumerate(wsamples):
+            wave_surf_map = np.zeros_like(surf_map)
+            beam_ratio = tp.beam_ratio * ap.band[0] / w * 1e-9
+            zeros_ind = int(ap.grid_size * (1 - beam_ratio) / 2)
+            xnew = np.arange(-ap.grid_size/2, ap.grid_size/2, 1./beam_ratio)
+            f = interpolate.interp2d(x, x, surf_map, kind='cubic')
+            shrink = f(xnew, xnew)
+            if len(shrink) % 2 == 0:
+                wave_surf_map[zeros_ind:-zeros_ind, zeros_ind:-zeros_ind] = shrink
+            else:
+                wave_surf_map[zeros_ind+1:-zeros_ind, zeros_ind+1:-zeros_ind] = shrink
+            aber_cube[iw, surf] = wave_surf_map
 
-        phase = 2 * np.pi * np.random.uniform(size=(ap.grid_size, ap.grid_size)) - np.pi
-        aber_cube[0, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power, TPF=True, PHASE_HISTORY=phase)
+    filename = f"{iop.quasi}/{lens_name}.fits"
+    if not os.path.isfile(filename):
+        rawImageIO.saveFITS(aber_cube, filename, aber_vals=tp.aber_vals)
 
-        filename = f"{iop.quasi}/t{0}_{lens_name}.fits"
-        print(filename)
-        if not os.path.isfile(filename):
-            rawImageIO.saveFITS(aber_cube[0, surf], filename)
+def check_header(aber_map):
+    _, header = rawImageIO.read_image(filename=aber_map)
+    image = np.ones((ap.nwsamp,tp.aber_params['n_surfs'],ap.grid_size,ap.grid_size))
+    required_header = rawImageIO.make_hdu(image, sampling=None, aber_vals=tp.aber_vals).header
+    return header==required_header
 
-        for a in range(1, ap.numframes):
-            if a % 100 == 0: misc.progressBar(value=a, endvalue=ap.numframes)
-            perms = np.random.rand(ap.grid_size, ap.grid_size) - 0.5
-            perms *= 0.05
-            phase += perms
-            aber_cube[a, surf] = prop_psd_errormap(wfo, rms_error, c_freq, high_power,
-                                 MAP="prim_map", TPF=True, PHASE_HISTORY=phase)
-
-            filename = f"{iop.quasi}/t{0}_{lens_name}.fits"
-            if not os.path.isfile(filename):
-                rawImageIO.saveFITS(aber_cube[0, surf], filename)
-
-    # for f in range(0,ap.numframes,1):
-    #     # print 'saving frame #', f
-    #     if f%100==0: misc.progressBar(value = f, endvalue=ap.numframes)
-    #     for surf in range(tp.aber_params['n_surfs']):
-    #         filename = '%s%s_Phase%f_v%i.fits' % (iop.aberdir, f * ap.sample_time, surf)
-    #         rawImageIO.saveFITS(aber_cube[f, surf], '%stelz%f.fits' % (iop.aberdir, f*ap.sample_time))
-            # quicklook_im(aber_cube[f], logAmp=False, show=True)
-
+def initialize_aber_maps():
+    aberration_type = ['CPA', 'NCPA']
+    for aberration in aberration_type:
+        aber_map = iop.quasi+f'/{aberration}.fits'
+        maps_exist = glob.glob(aber_map) != []
+        dprint(maps_exist, aber_map)
+        params_match = check_header(aber_map) if maps_exist else False
+        if np.all([maps_exist, params_match]) == False:
+            generate_maps(tp.f_lens, aberration)
 
 def circularise(prim_map):
     # TODO test this
@@ -150,10 +158,12 @@ def add_aber(wfo, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
             iop.aberdir = iop.aberdir+'quasi/'
 
     # Load in or Generate Aberration Map
-    filename = f"{iop.quasi}/t{step}_{lens_name}.fits"
+    filename = f"{iop.quasi}/{lens_name}.fits"
     if not os.path.isfile(filename):
-        generate_maps(d_lens, lens_name)
-    phase_map = rawImageIO.read_image(filename, prob_map=False)
+        # generate_maps(d_lens, lens_name)
+        initialize_aber_maps()
+    phase_map = rawImageIO.read_image(filename)
+    dprint(phase_map[0].shape)
 
     shape = wfo.wf_array.shape
     # The For Loop of Horror:
@@ -166,12 +176,23 @@ def add_aber(wfo, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
                         proper.prop_propagate(wfo.wf_array[iw,io], f_lens/aber_params['OOPP'][surf])
                         lens_name = f"OOPP{surf}"
                         filename = f"{iop.quasi}/t{step}_{lens_name}.fits"
-                        if not os.path.isfile(filename):
-                            generate_maps(d_lens, lens_name)
-                        phase_map = rawImageIO.read_image(filename, prob_map=False)
+                        # if not os.path.isfile(filename):
+                        #     generate_maps(d_lens, lens_name)
+                        phase_map = rawImageIO.read_image(filename)
 
                     # Add Phase Map
-                    proper.prop_add_phase(wfo.wf_array[iw, io], phase_map[0])
+                    # quicklook_wf(wfo.wf_array[iw, io], show=False)
+                    # dprint(iw, io, surf)
+                    # quicklook_im(phase_map[0][iw, surf], show=False)
+
+                    try:
+                        proper.prop_add_phase(wfo.wf_array[iw, io], phase_map[0][iw, surf])
+                    except ValueError:
+                        print(f'Looks like aberration maps at {filename} are the wrong size. Either remake them or look '
+                              f'in a different location')
+                        raise ValueError
+                    # show = True if surf == 1 else False
+                    # quicklook_wf(wfo.wf_array[iw,io], show=show)
 
                     if aber_params['OOPP']:
                         proper.prop_propagate(wfo.wf_array[iw,io], f_lens+f_lens*(1-1./aber_params['OOPP'][surf]))
@@ -253,7 +274,7 @@ def add_atmos(wfo, f_lens, it):
 
                 obj_map = unwrap_phase(obj_map)
 
-                obj_map *= wavelength/np.pi
+                obj_map *= wavelength/(2*np.pi)
                 proper.prop_add_phase(wfo.wf_array[iw,io], obj_map)
 
     wfo.wf_array = abs_zeros(wfo.wf_array)  # Zeroing outside the pupil

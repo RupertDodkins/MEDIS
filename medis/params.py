@@ -139,6 +139,7 @@ class Simulation_params:
         self.gui_samp = 5  # display the field on multiples of this number
         self.save_fields = True
         self.cont_save = True
+        self.verbose = False
 
     def __iter__(self):
         for attr, value in self.__dict__.items():
@@ -156,7 +157,7 @@ class Astro_params:
         # Total number of photons on the array for a timestep shared between all wavelengths
         self.star_photons_per_s = int(1e5) # # A 5 apparent mag star 1e6 cts/cm^2/s
         self.companion = True
-        self.contrast = [0.05]
+        self.contrast = [5e-4]
         self.C_spec = 1.5  # the gradient of the increase in contrast towards shorter wavelengths
         self.lods = [[-1.0, 1.0]]  # initial location (no rotation)
         self.sample_time = 0.01
