@@ -16,6 +16,7 @@ def get_filename(it, wsamp):
     return f'{iop.atmosdir}/telz_t{ap.sample_time*it:.5f}_w{wave}.fits'
 
 def prepare_maps():
+    dprint((os.path.exists(iop.atmosdir), os.path.exists(iop.atmosconfig), compare_configs()))
     if not os.path.exists(iop.atmosdir):
         generate_maps()
     elif not os.path.exists(iop.atmosconfig):
@@ -40,6 +41,7 @@ def compare_configs():
         strings = old_config[-1] == this_config[-1]
         match = np.array([floats, arrays, strings]).all()
     except:
+
         match = False
     return match
 

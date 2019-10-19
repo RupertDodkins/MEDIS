@@ -396,7 +396,11 @@ def open_fields(fields_file):
     """
     with h5py.File(fields_file, 'r') as hf:
         keys = list(hf.keys())
-        step_shape = hf.get('t0').shape
+        try:
+            step_shape = hf.get('t0').shape
+        except AttributeError:
+            print(f'Time 0 dataset does not exist for {fields_file}. Try recreating it')
+            raise AttributeError
         fields = np.zeros(
             (len(keys), step_shape[0], step_shape[1], step_shape[2], step_shape[3], step_shape[4]),
             dtype=np.complex64)
