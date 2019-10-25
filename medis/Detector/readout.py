@@ -12,6 +12,7 @@ The second half of the module has little/nothing to do with a readout system
 import os
 import numpy as np
 from copy import copy
+from scipy import interpolate
 import tables as pt
 import h5py
 import pickle as pickle
@@ -23,7 +24,6 @@ from . import temporal as temp
 from . import spectral as spec
 from . import pipeline as pipe
 from medis.Utils.misc import dprint
-from scipy import interpolate
 
 
 ####################################################################################################
@@ -70,17 +70,12 @@ def get_packets(datacube, step, dp, mp, plot=False):
     if hasattr(dp,'star_phot'): ap.star_photons_per_s = dp.star_phot
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
 
-    dprint((ap.star_photons_per_s, np.sum(datacube), num_events))
-    # import matplotlib.pylab as plt
-    # plt.figure()
-    # plt.plot(np.sum(datacube, axis=(1,2)))
-    # plt.show(block=True)
+    if sp.verbose:
+        dprint(ap.star_photons_per_s, np.sum(datacube), num_events)
+
     photons = temp.sample_cube(datacube, num_events)
-
     photons = spec.calibrate_phase(photons)
-
     photons = temp.assign_calibtime(photons, step)
-    # dprint(photons[:,5])
 
     if plot:
         cube = pipe.make_datacube_from_list(photons.T, (ap.w_bins, dp.array_size[0], dp.array_size[1]))
@@ -88,17 +83,11 @@ def get_packets(datacube, step, dp, mp, plot=False):
         view_datacube(cube, logAmp=True)
 
     if mp.dark_counts:
-        dark_photons = MKIDs.get_dark_packets(dp, step)
-        # cube = pipe.make_datacube_from_list(dark_photons.T, (ap.w_bins, dp.array_size[0], dp.array_size[1]))
-        # view_datacube(cube, logAmp=False)
-        # plt.hist(dark_photons[3], bins=25)
-        # plt.yscale('log')
-        # plt.show(block=True)
+        dark_photons = MKIDs.get_bad_packets(dp, step, type='dark')
         photons = np.hstack((photons, dark_photons))
-        # photons = MKIDs.add_dark(photons)
 
     if mp.hot_pix:
-        hot_photons = MKIDs.get_hot_packets(dp, step)
+        hot_photons = MKIDs.get_bad_packets(dp, step, type='hot')
         photons = np.hstack((photons, hot_photons))
         # stem = MKIDs.add_hot(stem)
 
@@ -258,7 +247,7 @@ def save_step_const(output_queue, fields_filename, shape):
         while True:
             t, fields = output_queue.get()
             if fields is not None:
-                print(f'Appending to {fields_filename}')
+                if sp.verbose: print(f'Appending to {fields_filename}')
                 dset = hdf.create_dataset(f't{t}', shape, maxshape=shape, dtype=np.complex64, chunks=True)
                 dset[:] = fields
             else:
@@ -396,20 +385,24 @@ def open_fields(fields_file):
     """
     with h5py.File(fields_file, 'r') as hf:
         keys = list(hf.keys())
-        try:
-            step_shape = hf.get('t0').shape
-        except AttributeError:
-            print(f'Time 0 dataset does not exist for {fields_file}. Try recreating it')
-            raise AttributeError
-        fields = np.zeros(
-            (len(keys), step_shape[0], step_shape[1], step_shape[2], step_shape[3], step_shape[4]),
-            dtype=np.complex64)
-        for t in range(len(keys)):
-            timestep = hf.get(f't{t}')
-            # from medis.Utils.plot_tools import view_datacube
-            # view_datacube(np.abs(timestep[-1,:,0]) ** 2, logAmp=True)
-            fields[t] = timestep
-
+        if 'data' in keys:
+            dprint('File in old format. Loading fields straight in')
+            fields = hf.get('data')[:]
+        else:
+            try:
+                step_shape = hf.get('t0').shape
+            except AttributeError:
+                print(f'Time 0 dataset does not exist for {fields_file}. Try recreating it')
+                raise AttributeError
+            fields = np.zeros(
+                (len(keys), step_shape[0], step_shape[1], step_shape[2], step_shape[3], step_shape[4]),
+                dtype=np.complex64)
+            for t in range(len(keys)):
+                timestep = hf.get(f't{t}')
+                # from medis.Utils.plot_tools import view_datacube
+                # view_datacube(np.abs(timestep[-1,:,0]) ** 2, logAmp=True)
+                fields[t] = timestep
+        if sp.verbose: print(f'fields sixcube has shape: {fields.shape}')
     return fields
 
 def take_exposure(obs_sequence):

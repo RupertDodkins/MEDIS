@@ -17,8 +17,8 @@ from medis.Utils.plot_tools import quicklook_im
 
 def remove_close(stem):
     dprint('removing close photons')
-    for x in range(mp.array_size[1]):
-        for y in range(mp.array_size[0]):
+    for x in range(len(stem)):
+        for y in range(len(stem[0])):
             # print(x,y)
             if len(stem[x][y]) > 1:
                 events = np.array(stem[x][y])
@@ -33,10 +33,11 @@ def remove_close(stem):
                         detect += idx
                         detected.append(detect)
                     idx = detect
-                dprint((x, len(detected)))
+
                 missed = [ele for ele in range(detected[-1] + 1) if ele not in detected]
                 events = np.delete(events, missed, axis=0)
                 stem[x][y] = events
+                # dprint(x, len(missed))
     return stem
 
 
@@ -69,12 +70,11 @@ def initialize():
         # dp.QE_map = create_hot_pix(dp.QE_map)
         # quicklook_im(dp.QE_map_all)
         if mp.dark_counts:
+            dp.dark_per_step = ap.sample_time * mp.dark_bright * mp.array_size[0] * mp.array_size[1] * dp.dark_pix_frac
             dp.dark_locs = create_false_pix(mp, amount = int(mp.dark_pix_frac*mp.array_size[0]*mp.array_size[1]))
-            dp.dark_per_step = int(np.round(ap.sample_time*mp.dark_bright))
         if mp.hot_pix:
+            dp.hot_per_step = ap.sample_time * mp.hot_bright * dp.hot_pix
             dp.hot_locs = create_false_pix(mp, amount = mp.hot_pix)
-            dp.hot_per_step = int(np.round(ap.sample_time*mp.hot_bright))
-            dprint(dp.hot_per_step)
         # dp.QE_map = create_bad_pix_center(dp.QE_map)
     dp.Rs = assign_spectral_res(plot=False)
     dp.sigs = get_R_hyper(dp.Rs, plot=False)
@@ -160,12 +160,7 @@ def get_R_hyper(Rs, plot=False):
     """Each pixel of the array has a matrix of probabilities that depends on the input wavelength"""
     print('Creating a cube of R standard deviations')
     m = (-1*Rs/10)/(ap.band[1] - ap.band[0]) # looses R of 10% over the 700 band
-    # plt.plot(m[0])
-    # plt.show()
     c = Rs-m*ap.band[0] # each c depends on the R @ 800
-    # plt.plot(c)
-    # plt.show()
-    dprint(ap.w_bins)
     waves = np.ones((np.shape(m)[1],np.shape(m)[0],ap.w_bins+5))*np.linspace(ap.band[0],ap.band[1],ap.w_bins+5)
     waves = np.transpose(waves) # make a tensor of 128x128x10 where every 10 vector is 800... 1500
     R_spec = m * waves + c # 128x128x10 tensor is now lots of simple linear lines e.g. 50,49,.. 45
@@ -213,11 +208,6 @@ def apply_phase_offset_array(photons, sigs):
     """
     wavelength = spec.wave_cal(photons[1])
 
-    # plt.xlabel('Photons')
-    # plt.ylabel('#')
-    # plt.title('Photons Distortion Histogram')
-    # plt.hist(photons[1], bins=800)
-    # plt.figure()
     idx = spec.wave_idx(wavelength)
 
     bad = np.where(np.logical_or(idx>=len(sigs), idx<0))[0]
@@ -225,41 +215,12 @@ def apply_phase_offset_array(photons, sigs):
     photons = np.delete(photons, bad, axis=1)
     idx = np.delete(idx, bad)
 
-    # dprint((len(sigs), bad, np.shape(photons)))
-    # plt.hist(wavelength, bins=800)
-    # plt.xlabel('Wavelength')
-    # plt.ylabel('#')
-    # plt.title('Wavelength Distortion Histogram')
-    # plt.figure()
-    # plt.xlabel('Index')
-    # plt.ylabel('#')
-    # plt.title('Index Distortion Histogram')
-    # plt.hist(idx, bins=800)
-    # plt.show()
-    # dprint((sigs[0,:25,:25],idx.shape,sigs.shape))#,sigs[idx].shape))
-    # dprint(sigs.shape)
-
     distortion = np.random.normal(np.zeros((photons[1].shape[0])),
                                   sigs[idx,np.int_(photons[3]), np.int_(photons[2])])
-    # plt.hist(distortion)
-    # plt.show()
-    # dprint((distortion[:25], distortion.shape,sigs[idx,np.int_(photons[3]), np.int_(photons[2])].shape))
-    good_pix = np.logical_and(photons[1] != 0, idx < len(sigs))
-    # plt.figure()
-    # plt.hist(photons[1][good_pix])
-    # plt.show()
-    # plt.figure()
-    # plt.hist(photons[1])
-    # plt.show()
-    photons[1][good_pix] += distortion[good_pix]
-    # plt.figure()
-    # plt.hist(photons[1][good_pix])
-    # plt.show()
-    # plt.figure()
-    # plt.hist(photons[1])
-    # plt.show()
 
-    return photons
+    photons[1] += distortion
+
+    return photons, idx
 
 def apply_phase_distort(phase, loc, sigs):
     """
@@ -326,7 +287,6 @@ def create_bad_pix(QE_map_all, plot=False):
 
     return QE_map
 
-
 def create_bad_pix_center(responsivities):
     res_elements=mp.array_size[0]
     # responsivities = np.zeros()
@@ -341,51 +301,41 @@ def create_bad_pix_center(responsivities):
 
     return responsivities
 
-def get_hot_packets(dp, step):
-    photons = np.zeros((4, dp.hot_per_step))
-    phases = np.random.uniform(-120, 0, dp.hot_per_step)
-    # print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
-    meantime = step*ap.sample_time
-    photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
-    photons[1] = phases
-    hot_ind = np.random.choice(range(len(dp.hot_locs[0])), dp.hot_per_step)
-    hot_pix = dp.hot_locs[:, hot_ind]
-    photons[2:] = hot_pix
-    return photons
+def get_bad_packets(dp, step, type='hot'):
+    if type == 'hot':
+        n_device_counts = dp.hot_per_step
+    elif type == 'dark':
+        n_device_counts = dp.dark_per_step
+    else:
+        print("type currently has to be 'hot' or 'dark'")
+        raise AttributeError
 
-def get_dark_packets(dp, step):
-    n_device_counts = dp.dark_per_step * dp.dark_pix_frac * mp.array_size[0] * mp.array_size[1]
     if n_device_counts % 1 > np.random.uniform(0,1,1):
         n_device_counts += 1
 
     n_device_counts = int(n_device_counts)
-    # dprint((n_device_counts, dp.dark_per_step))
+    dprint(dp.dark_per_step, dp.hot_per_step, dp.dark_pix_frac,dp.hot_pix, n_device_counts)
     photons = np.zeros((4, n_device_counts))
     if n_device_counts > 0:
-        dist = Distribution(gaussian(0, 0.25, np.linspace(0, 1, mp.res_elements)), interpolation=False)
-        # phases = (dist(dp.dark_per_step)[0]) / float(dp.dark_per_step - 0.5) * 45e3 - 120
-        # dprint(dp.dark_per_step)
-        phases = dist(n_device_counts)[0]
-        max_phase = max(phases)
-        phases = -phases*120/max_phase
-        # dprint(phases)
-        # phases = np.random.uniform(-120, 0, dp.dark_per_step) *
-        # print('**WARNING** adding photons in random locations with random phases between hardcoded values 0 and -120')
-        meantime = step*ap.sample_time
-        photons[0] = np.random.uniform(meantime-ap.sample_time/2, meantime+ap.sample_time/2, len(photons[0]))
-        photons[1] = phases
+        if type == 'hot':
+            phases = np.random.uniform(-120, 0, n_device_counts)
+            hot_ind = np.random.choice(range(len(dp.hot_locs[0])), n_device_counts)
+            bad_pix = dp.hot_locs[:, hot_ind]
+        elif type == 'dark':
+            dist = Distribution(gaussian(0, 0.25, np.linspace(0, 1, mp.res_elements)), interpolation=False)
+            phases = dist(n_device_counts)[0]
+            max_phase = max(phases)
+            phases = -phases*120/max_phase
+            bad_pix_options = create_false_pix(dp, dp.dark_pix_frac * dp.array_size[0] * dp.array_size[1])
+            bad_ind = np.random.choice(range(len(bad_pix_options[0])), n_device_counts)
+            bad_pix = bad_pix_options[:, bad_ind]
 
-        # dprint(dp.dark_pix)
-        bad_pix_options = create_false_pix(dp, dp.dark_pix_frac * dp.array_size[0]*dp.array_size[1])
-        bad_ind = np.random.choice(range(len(bad_pix_options[0])),n_device_counts)
-        # dprint((dp.dark_per_step, bad_ind, np.shape(bad_pix_options)))
-        bad_pix = bad_pix_options[:,bad_ind]
-        # dprint(bad_pix)
+        meantime = step * ap.sample_time
+        photons[0] = np.random.uniform(meantime - ap.sample_time / 2, meantime + ap.sample_time / 2, len(photons[0]))
+        photons[1] = phases
         photons[2:] = bad_pix
 
-    # dprint(photons.shape)
     return photons
-
 
 def create_false_pix(dp, amount):
     # dprint(f"amount = {amount}")

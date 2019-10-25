@@ -87,6 +87,12 @@ def assign_phase(photons, wavelengths):
     return photons
 
 def calibrate_phase(photons):
+    """
+    idx -> phase
+
+    :param photons:
+    :return:
+    """
     photons = np.array(photons)
     c = ap.band[0]
     m = (ap.band[1] - ap.band[0])/ap.w_bins

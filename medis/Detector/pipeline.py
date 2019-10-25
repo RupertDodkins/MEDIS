@@ -60,7 +60,6 @@ def read_obs(max_photons=1e8, start=0):
 
     return allpackets
 
-
 def make_datacube(cube, size):
     # print 'Making an xyw cube'
     datacube = np.zeros((size[2],size[1],size[0]))
