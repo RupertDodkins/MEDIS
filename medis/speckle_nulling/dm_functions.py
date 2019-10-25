@@ -21,7 +21,6 @@ def amplitudemodel(counts, k_rad, a=0, b=0, c=0):
     #fudge = 0.5
 
     fudge = 1
-    print(counts, a, k_rad, b, c)
     retval = fudge*np.sqrt((counts/(a*k_rad**2 + b*k_rad + c)))
     # print 'amplitudemodel', counts, k_rad, a, b, c, retval
     retval = counts/np.sqrt(c)

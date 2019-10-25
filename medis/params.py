@@ -139,7 +139,7 @@ class Simulation_params:
         self.gui_samp = 5  # display the field on multiples of this number
         self.save_fields = True
         self.cont_save = True
-        self.verbose = False
+        self.verbose = True
 
     def __iter__(self):
         for attr, value in self.__dict__.items():
@@ -194,7 +194,7 @@ class Telescope_params:
     """
     def __init__(self):
         # Foreoptics + AO Settings
-        self.pix_shift = [0, 0]  # False?  Shifts the central star to off-axis (circular shift) (mimics conex mirror)
+        self.pix_shift = [[0, 0]]  # False?  Shifts the central star to off-axis (circular shift) (mimics conex mirror)
         self.rot_rate = 0  # deg/s
         self.obscure = False  # Turns on obscurations (spiders and secondary obscuration,
                              # but can turn spiders off when called with legs=False)
@@ -303,7 +303,7 @@ class MKID_params:
         self.res_elements = self.array_size[0]
         self.g_mean = 0.95
         self.g_sig = 0.025
-        self.bg_mean = -10
+        self.bg_mean = 0
         self.bg_sig = 30
         self.r_mean = 1
         self.r_sig = 0.05

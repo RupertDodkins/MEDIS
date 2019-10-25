@@ -58,7 +58,7 @@ class Timeseries():
 
             for it, t in enumerate(iter(self.inqueue.get, sentinel)):
 
-                print('using process %i' % i)
+                if sp.verbose: print('timestep %i, using process %i' % (it, i))
                 kwargs = {'iter': t, 'params': [ap, tp, iop, sp], 'CPA_maps': self.CPA_maps, 'tiptilt': self.tiptilt}
                 sampling, save_E_fields = prop_run('medis.Telescope.optics_propagate', 1, ap.grid_size, PASSVALUE=kwargs,
                                                    VERBOSE=False, PHASE_OFFSET=1)
@@ -173,7 +173,6 @@ def realtime_save_cont(spectralcube, t, savequeue):
 sentinel = None
 def postfacto(inqueue):
     for t in range(ap.startframe, ap.numframes):
-        dprint(t)
         inqueue.put(t)
 
     for i in range(sp.num_processes):

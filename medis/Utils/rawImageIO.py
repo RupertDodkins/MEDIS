@@ -175,7 +175,7 @@ def make_hdu(image, sampling, aber_vals):
 
 def saveFITS(image, name, sampling=None, aber_vals=None):
     hdu = make_hdu(image, sampling, aber_vals)
-    hdu.writeto(name)
+    hdu.writeto(name, overwrite=True)
 
 def scale_image(filename, scalefactor):
     scidata, hdr = read_image(filename)
