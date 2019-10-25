@@ -6,7 +6,7 @@ import astropy.io.fits as fits
 import hcipy
 import proper
 from medis.Dashboard.twilight import sunlight
-from medis.params import cp, ap, tp, iop
+from medis.params import cp, ap, tp, iop, sp
 from medis.Utils.misc import dprint, eformat
 # from medis.Utils.plot_tools import quicklook_wf, quicklook_im
 import medis.Utils.rawImageIO as rawImageIO
@@ -16,7 +16,6 @@ def get_filename(it, wsamp):
     return f'{iop.atmosdir}/telz_t{ap.sample_time*it:.5f}_w{wave}.fits'
 
 def prepare_maps():
-    dprint((os.path.exists(iop.atmosdir), os.path.exists(iop.atmosconfig), compare_configs()))
     if not os.path.exists(iop.atmosdir):
         generate_maps()
     elif not os.path.exists(iop.atmosconfig):
@@ -34,14 +33,13 @@ def backup_old_maps():
 def compare_configs():
     try:
         old_config = np.genfromtxt(iop.atmosconfig, delimiter=',', dtype=None, encoding='ASCII')
-        this_config = [ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.h, cp.v, cp.model]
-        dprint(np.float_(old_config[:-1]) == np.float_(this_config[:-1]))
+        this_config = [ap.sample_time, ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.h, cp.v, cp.model]
         floats = (np.float_(old_config[:-2]) == np.float_(this_config[:-2])).all()
-        arrays = old_config[-2] == this_config[-2]
+        arrays = np.float_(old_config[-2]) == np.float_(this_config[-2])
         strings = old_config[-1] == this_config[-1]
         match = np.array([floats, arrays, strings]).all()
-    except:
-
+    except Exception as e:
+        if sp.verbose: print(e)
         match = False
     return match
 
@@ -55,14 +53,12 @@ def generate_maps(plot=False):
 
     if cp.model == 'zernike':
         beam_ratios = np.zeros_like((wsamples))
-        dprint((ap.numframes, ap.sample_time))
         for iw, w in enumerate(wsamples[:1]):
             beam_ratios[iw] = tp.beam_ratio * ap.band[0] / w * 1e-9
             wf = proper.prop_begin(tp.diam, w, ap.grid_size, beam_ratios[iw])
 
             for t, a in zip(np.arange(0, ap.numframes),
                             np.arange(0, ap.numframes*np.pi/512., np.pi/512.)):
-                print(t, a)
                 xloc = np.sin(a)
                 yloc = np.cos(a)
                 proper.prop_zernikes(wf, [2, 3], np.array([xloc, yloc]) * 1e-7)
@@ -82,7 +78,6 @@ def generate_maps(plot=False):
         # proper.prop_add_phase(wf, screen)
 
             filename = get_filename(t, wsamples[0])
-            print(filename)
             hdu = fits.ImageHDU(screen)
             hdu.header['PIXSIZE'] = tp.diam / ap.grid_size
             hdu.writeto(filename, overwrite=True)
@@ -112,18 +107,16 @@ def generate_maps(plot=False):
     for wavelength in wsamples:
         wavefronts.append(hcipy.Wavefront(hcipy.Field(np.ones(pupil_grid.size), pupil_grid), wavelength))
 
-    np.savetxt(iop.atmosconfig, [ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.h, cp.v, cp.model], fmt='%s')
+    np.savetxt(iop.atmosconfig, [ap.sample_time, ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.h, cp.v, cp.model], fmt='%s')
 
     for it, t in enumerate(np.arange(0, ap.numframes*ap.sample_time, ap.sample_time)):
-        print(t)
-
         atmos.evolve_until(t)
         for iw, wf in enumerate(wavefronts):
             wf2 = atmos.forward(wf)
 
 
             filename = get_filename(it, wsamples[iw])
-            print(filename)
+            if sp.verbose: print(f'saving {filename}')
             scale = ap.band[0] / wsamples[iw] * 1e-9
             obj_map = wf2.phase.reshape(ap.grid_size, ap.grid_size)
             obj_map = rawImageIO.clipped_zoom(obj_map, scale)

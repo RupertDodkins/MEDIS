@@ -102,7 +102,7 @@ def flat_outside(wf_array):
             proper.prop_circular_aperture(wf_array[iw,io], 1, NORM=True)
 
 def quick_wfs(wfo, scale_shortest=True):
-    if sp.verbose: dprint('running quick wfs')
+    if sp.verbose: print('running quick wfs')
 
     short_wf = wfo.wf_array[0, 0]
     CPA_maps = np.zeros((1,len(wfo.wf_array),ap.grid_size,ap.grid_size))

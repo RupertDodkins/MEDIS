@@ -98,8 +98,14 @@ def generate_maps(lens_diam, lens_name='lens'):
             aber_cube[iw, surf] = wave_surf_map
 
     filename = f"{iop.quasi}/{lens_name}.fits"
-    if not os.path.isfile(filename):
-        rawImageIO.saveFITS(aber_cube, filename, aber_vals=tp.aber_vals)
+    if os.path.isfile(filename):
+        backup_old_maps(filename)
+    rawImageIO.saveFITS(aber_cube, filename, aber_vals=tp.aber_vals)
+
+def backup_old_maps(aberdir):
+    from datetime import datetime
+    now = datetime.now().strftime("%m:%d:%Y_%H-%M-%S")
+    os.rename(aberdir, aberdir + '_backup_' + now)
 
 def check_header(aber_map):
     _, header = rawImageIO.read_image(filename=aber_map)
@@ -112,7 +118,6 @@ def initialize_aber_maps():
     for aberration in aberration_type:
         aber_map = iop.quasi+f'/{aberration}.fits'
         maps_exist = glob.glob(aber_map) != []
-        dprint(maps_exist, aber_map)
         params_match = check_header(aber_map) if maps_exist else False
         if np.all([maps_exist, params_match]) == False:
             generate_maps(tp.f_lens, aberration)
@@ -163,7 +168,6 @@ def add_aber(wfo, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
         # generate_maps(d_lens, lens_name)
         initialize_aber_maps()
     phase_map = rawImageIO.read_image(filename)
-    dprint(phase_map[0].shape)
 
     shape = wfo.wf_array.shape
     # The For Loop of Horror:
