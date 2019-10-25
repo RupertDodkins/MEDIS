@@ -12,6 +12,7 @@ from medis.Telescope.coronagraph import coronagraph
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im, quicklook_IQ, loop_frames, get_intensity
 from medis.params import ap, tp, iop, sp
 from medis.Utils.misc import dprint
+from medis.Detector.spectral import planck
 import matplotlib.pylab as plt
 
 class Wavefronts():
@@ -46,6 +47,9 @@ class Wavefronts():
             eso_samp = eso_samp[keep]
             self.starspectrum = self.starspectrum[keep]
             self.starspectrum = np.interp(wsamples*1e9, eso_samp, self.starspectrum)
+        elif isinstance(ap.star_spec, (int, float)):
+            self.starspectrum = planck(ap.star_spec, wsamples)
+            self.starspectrum/= np.sum(self.starspectrum)
         else:
             self.starspectrum = np.ones((ap.nwsamp))
 
@@ -57,6 +61,9 @@ class Wavefronts():
             eso_samp = eso_samp[keep]
             self.planetspectrum = self.planetspectrum[keep]
             self.planetspectrum = np.interp(wsamples*1e9, eso_samp, self.planetspectrum)
+        elif isinstance(ap.planet_spec, (int, float)):
+            self.planetspectrum = planck(ap.planet_spec, wsamples)
+            self.planetspectrum /= np.sum(self.planetspectrum)
         else:
             self.planetspectrum = np.ones((ap.nwsamp))
         # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
