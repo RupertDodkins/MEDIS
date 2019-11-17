@@ -7,6 +7,7 @@ mpl.use("Qt5Agg")
 import pickle as pickle
 from medis.params import mp, ap, iop, tp, sp
 from medis.Utils.plot_tools import quicklook_im, view_datacube
+from medis.Utils.misc import dprint
 import medis.Detector.mkid_artefacts as MKIDs
 import master
 
@@ -32,6 +33,7 @@ def adapt_dp_master():
         iop.device_params = iop.device_params.split('_'+metric_name)[0] + f'_{metric_name}={metric_val}.pkl'
         new_dp = MKIDs.initialize()
         new_dp.lod = (metric_val/metric_orig[0])*mp.lod
+        dprint(metric_val,metric_orig[0], new_dp.lod)
         new_dp.platescale = mp.platescale * metric_orig[0]/metric_val
         new_dp.array_size = np.array([metric_val, metric_val])
         with open(iop.device_params, 'wb') as handle:

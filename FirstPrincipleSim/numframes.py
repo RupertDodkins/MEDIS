@@ -19,8 +19,8 @@ metric_name = __file__.split('/')[-1].split('.')[0]
 master.set_field_params()
 master.set_mkid_params()
 
-median_val = 5
-metric_multiplier = np.logspace(np.log10(0.2), np.log10(4), 7)
+median_val = 10
+metric_multiplier = np.logspace(np.log10(0.2), np.log10(5), 7)
 metric_vals = np.int_(np.round(median_val * metric_multiplier))
 
 iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}/')

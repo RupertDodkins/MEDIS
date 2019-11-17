@@ -24,8 +24,18 @@ metric = __file__.split('/')[-1].split('.')[0]
 # iop.set_testdir(f'FirstPrincipleSim3/{metric}/')
 
 def config_cache():
-    iop.set_atmosdata('190823')
-    iop.set_aberdata('Palomar512')
+    # iop.set_atmosdata('190823')
+    iop.atmosroot = iop.testdir
+    iop.atmosdata = '190823'
+    iop.atmosdir = os.path.join(iop.datadir, iop.atmosroot, iop.atmosdata)  # full path to FITS files
+    iop.atmosconfig = os.path.join(iop.atmosdir, 'config.txt')
+    # iop.set_aberdata('Palomar512')
+    iop.aberroot = iop.testdir
+    iop.aberdata = 'Palomar'
+    iop.aberdir = os.path.join(iop.datadir, iop.aberroot, iop.aberdata)
+    iop.NCPA_meas = os.path.join(iop.aberdir, 'NCPA_meas.pkl')  #
+    iop.CPA_meas = os.path.join(iop.aberdir, 'CPA_meas.pkl')
+    iop.quasi = os.path.join(iop.aberdir, 'quasi')
     iop.fields = iop.testdir + 'fields_master_reform.h5'
     master_fields = iop.fields
     dprint(master_fields)
@@ -39,7 +49,7 @@ master_dp, master_fields = config_cache()
 dprint((iop.device_params, master_dp))
 
 ap.sample_time = 0.5
-ap.numframes = 20
+ap.numframes = 50
 sp.uniform_flux = False
 
 def set_field_params():
@@ -139,6 +149,7 @@ def set_mkid_params():
     mp.hot_bright = 2.5*10**3
     mp.R_mean = 8
     mp.R_sig = 2
+    mp.R_spec = 1.
     mp.g_mean = 0.3
     mp.g_sig = 0.04
     mp.bg_mean = -10
@@ -300,6 +311,7 @@ def pca_stackcubes(stackcubes, dps, comps=True):
 
     if comps:
         for stackcube in stackcubes:
+            dprint(stackcube.shape)
             SDI = pca.pca(stackcube, angle_list=np.zeros((stackcube.shape[1])), scale_list=scale_list,
                           mask_center_px=None, adimsdi='double', ncomp=7, ncomp2=None,
                           collapse='median')
@@ -310,14 +322,19 @@ def pca_stackcubes(stackcubes, dps, comps=True):
         rad_samps, thruputs, noises, conts = [], [], [], []
         for stackcube, dp in zip(stackcubes, dps):
             psf_template = get_unoccult_psf(fields=f'/IntHyperUnOccult_arraysize={dp.array_size}.h5', plot=False, numframes=1)
-            star_phot = phot.contrcurve.aperture_flux(np.sum(psf_template, axis=0), [dp.array_size[0] // 2],
-                                                      [dp.array_size[0] // 2], mp.lod, 1)[0]*10**1.5
+            # star_phot = phot.contrcurve.aperture_flux(np.sum(psf_template, axis=0), [ap.grid_size // 2],
+            #                                           [ap.grid_size // 2], mp.lod, 1)[0]*10**-3#1.5
+            star_phot = 1.1
+            dprint(star_phot)
+            # view_datacube(psf_template, logAmp=True)
             algo_dict = {'scale_list': scale_list}
             # temp for those older format cache files
             if hasattr(dp, 'lod'):
                 fwhm = dp.lod
+                dprint(fwhm)
             else:
                 fwhm = mp.lod
+                dprint(fwhm)
             method_out = eval_method(stackcube, pca.pca, psf_template,
                                      np.zeros((stackcube.shape[1])), algo_dict,
                                      fwhm=fwhm, star_phot=star_phot, dp=dp)
@@ -403,6 +420,7 @@ def combo_performance(maps, rad_samps, conts, metric_vals, param_name, plot_inds
     if param_name == 'g sig': param_name = r'QE$_\sigma$'
     fig.suptitle(param_name, x=0.515)
 
+    dprint(metric_vals, plot_inds)
     for m, ax in enumerate(axes[:2]):
         im = ax.imshow(maps[plot_inds[m]], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                        norm=SymLogNorm(linthresh=1e-8), cmap="inferno")
@@ -498,13 +516,13 @@ def reformat_planets(fields):
     obs_seq = np.abs(fields[:,-1]) ** 2
     dprint(fields.shape)
     tess = np.sum(obs_seq[:,:,1:], axis=2)
-    view_datacube(tess[0], logAmp=True, show=False)
+    # view_datacube(tess[0], logAmp=True, show=False)
     double_cube = np.zeros((ap.numframes, ap.w_bins, 2, ap.grid_size, ap.grid_size))
     double_cube[:, :, 0] = obs_seq[:, :, 0]
     collapse_comps = np.sum(obs_seq[:, :, 1:], axis=2)
     double_cube[:, :, 1] = collapse_comps
-    view_datacube(double_cube[0,:,0], logAmp=True, show=False)
-    view_datacube(double_cube[0,:,1], logAmp=True, show=True)
+    # view_datacube(double_cube[0,:,0], logAmp=True, show=False)
+    # view_datacube(double_cube[0,:,1], logAmp=True, show=True)
     print(f"Reduced shape of obs_seq = {np.shape(double_cube)} (numframes x nwsamp x 2 x grid x grid)")
     read.save_fields(double_cube, fields_file=iop.fields)
     return double_cube
@@ -592,6 +610,8 @@ def form(metric_vals, metric_name, master_cache, debug=True):
             contrcurve_plot(metric_vals, rad_samps, thruputs, noises, conts)
             view_datacube(maps, logAmp=True, vmin=-1e-7, vmax=1e-7, show=False)
         except UnboundLocalError:
+            dprint('thruputs and noises not saved in old versions :(')
+            # raise UnboundLocalError
             pass
 
         combo_performance(maps, rad_samps, conts, metric_vals, metric_name, [0,-1])

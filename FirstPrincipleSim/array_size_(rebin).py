@@ -27,12 +27,12 @@ iop.set_testdir(f'{os.path.dirname(iop.testdir[:-1])}/{metric_name}/')
 adapt_dp_master = array_size.adapt_dp_master
 
 
-def rebin_factor(stackcube):
+def rebin_factor(stackcube, factor=1):
     orig_shape = stackcube.shape
 
     x = np.linspace(-orig_shape[2]/2, orig_shape[3]/2, orig_shape[2])
-    xnew = np.linspace(-orig_shape[2]/2, orig_shape[3]/2, median_val)
-    binned_cube = np.zeros((orig_shape[0], orig_shape[1], median_val, median_val))
+    xnew = np.linspace(-orig_shape[2]/2, orig_shape[3]/2, int(median_val*factor))
+    binned_cube = np.zeros((orig_shape[0], orig_shape[1], int(median_val*factor), int(median_val*factor)))
     for d, datacube in enumerate(stackcube):
         for s, wslice in enumerate(datacube):
             f = interpolate.interp2d(x, x, wslice, kind='cubic')

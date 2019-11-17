@@ -12,7 +12,7 @@ from medis.params import mp, ap, tp, iop, dp, sp
 from medis.Utils.misc import dprint
 from . import spectral as spec
 import medis.Detector.pipeline as pipe
-from medis.Utils.plot_tools import quicklook_im
+from medis.Utils.plot_tools import quicklook_im, view_datacube
 
 
 def remove_close(stem):
@@ -159,7 +159,7 @@ def assign_spectral_res(plot=False):
 def get_R_hyper(Rs, plot=False):
     """Each pixel of the array has a matrix of probabilities that depends on the input wavelength"""
     print('Creating a cube of R standard deviations')
-    m = (-1*Rs/10)/(ap.band[1] - ap.band[0]) # looses R of 10% over the 700 band
+    m = (mp.R_spec*Rs)/(ap.band[1] - ap.band[0]) # looses R of 10% over the 700 band
     c = Rs-m*ap.band[0] # each c depends on the R @ 800
     waves = np.ones((np.shape(m)[1],np.shape(m)[0],ap.w_bins+5))*np.linspace(ap.band[0],ap.band[1],ap.w_bins+5)
     waves = np.transpose(waves) # make a tensor of 128x128x10 where every 10 vector is 800... 1500
@@ -176,18 +176,25 @@ def get_R_hyper(Rs, plot=False):
     sigs_p = spec.phase_cal(sigs_w) - spec.phase_cal(np.zeros_like((sigs_w)))
 
     if plot:
+        plt.figure()
         plt.plot(R_spec[:, 0, 0])
         plt.plot(R_spec[:,50,15])
+        # plt.figure()
+        # plt.plot(sigs_w[:,0,0])
+        # plt.plot(sigs_w[:,50,15])
+        # plt.figure()
+        # plt.plot(sigs_p[:, 0, 0])
+        # plt.plot(sigs_p[:, 50, 15])
+        # plt.figure()
+        # plt.imshow(sigs_p[:,:,0], aspect='auto')
+        view_datacube(sigs_w, show=False)
+        view_datacube(sigs_p, show=False)
         plt.figure()
-        plt.plot(sigs_w[:,0,0])
-        plt.plot(sigs_w[:,50,15])
+        plt.plot(np.mean(sigs_w, axis=(1,2)))
         plt.figure()
-        plt.plot(sigs_p[:, 0, 0])
-        plt.plot(sigs_p[:, 50, 15])
-        plt.figure()
-        plt.imshow(sigs_p[:,:,0], aspect='auto')
+        plt.plot(np.mean(sigs_p, axis=(1,2)))
         # plt.imshow(mp.R_probs[:,0,0,:])
-        plt.show()
+        plt.show(block=True)
     return sigs_p
 
 def apply_phase_scaling(photons, ):
@@ -314,7 +321,6 @@ def get_bad_packets(dp, step, type='hot'):
         n_device_counts += 1
 
     n_device_counts = int(n_device_counts)
-    dprint(dp.dark_per_step, dp.hot_per_step, dp.dark_pix_frac,dp.hot_pix, n_device_counts)
     photons = np.zeros((4, n_device_counts))
     if n_device_counts > 0:
         if type == 'hot':

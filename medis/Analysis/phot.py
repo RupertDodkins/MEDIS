@@ -238,7 +238,7 @@ def get_unoccult_perf_psf(plot=False, obs_seq='/IntHyperUnOccult.pkl'):
 
     return PSF
 
-def get_unoccult_psf(plot=False, fields = '/IntHyperUnOccult.pkl', numframes=1000):
+def get_unoccult_psf(plot=True, fields = '/IntHyperUnOccult.pkl', numframes=1000):
     sp_orig = copy.copy(sp)
     sp.save_fields = True
     fields = get_unoccult_hyper(fields, numframes=numframes)
@@ -409,7 +409,7 @@ def make_mosaic_cube(hyper):
     return super_obs_sequence
 
 def eval_method(cube, algo, psf_template, angle_list, algo_dict, fwhm=6, star_phot=1, dp=None):
-    dprint(fwhm)
+    dprint(fwhm, star_phot)
     fulloutput = metrics.contrcurve.contrast_curve(cube=cube, interp_order=2,
                                    angle_list=angle_list, psf_template=psf_template,
                                    fwhm=fwhm, pxscale=tp.platescale/1000, #wedge=(-45, 45), int(dp.lod[0])

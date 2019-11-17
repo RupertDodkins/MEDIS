@@ -60,8 +60,10 @@ def get_packets(datacube, step, dp, mp, plot=False):
     #     datacube = datacube[:, tp.pix_shift[dith_idx][0]+bottom:tp.pix_shift[dith_idx][0]-top,
     #                tp.pix_shift[dith_idx][1]+left:tp.pix_shift[dith_idx][1]-right]
 
+    if plot: view_datacube(datacube, logAmp=True)
     if mp.QE_var:
         datacube *= dp.QE_map[:datacube.shape[1],:datacube.shape[1]]
+    if plot: view_datacube(datacube, logAmp=True)
     # if mp.hot_pix:
     #     datacube = MKIDs.add_hot_pix(datacube, dp, step)
 
@@ -71,7 +73,7 @@ def get_packets(datacube, step, dp, mp, plot=False):
     num_events = int(ap.star_photons_per_s * ap.sample_time * np.sum(datacube))
 
     if sp.verbose:
-        dprint(ap.star_photons_per_s, np.sum(datacube), num_events)
+        dprint(f'star flux: {ap.star_photons_per_s}, cube sum: {np.sum(datacube)}, num events: {num_events}')
 
     photons = temp.sample_cube(datacube, num_events)
     photons = spec.calibrate_phase(photons)
@@ -98,12 +100,17 @@ def get_packets(datacube, step, dp, mp, plot=False):
     # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
     # view_datacube(cube, logAmp=True, vmin=0.01)
 
+    if plot:
+        cube = pipe.make_datacube_from_list(photons.T, (ap.w_bins, dp.array_size[0], dp.array_size[1]))
+        dprint(cube.shape)
+        view_datacube(cube, logAmp=True)
+
     if mp.phase_uncertainty:
-        photons = MKIDs.apply_phase_offset_array(photons, dp.sigs)
+        photons[1] *= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
+        photons, idx = MKIDs.apply_phase_offset_array(photons, dp.sigs)
         # stem = pipe.arange_into_stem(photons.T, (dp.array_size[0], dp.array_size[1]))
         # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
         # view_datacube(cube, logAmp=True, vmin=0.01)
-        photons[1] *= dp.responsivity_error_map[np.int_(photons[2]), np.int_(photons[3])]
 
     # stem = pipe.arange_into_stem(photons.T, (dp.array_size[0], dp.array_size[1]))
     # cube = pipe.make_datacube(stem, (dp.array_size[0], dp.array_size[1], ap.w_bins))
@@ -112,8 +119,10 @@ def get_packets(datacube, step, dp, mp, plot=False):
     # plt.imshow(cube[0], origin='lower', norm=LogNorm(), cmap='inferno', vmin=1)
     # plt.show(block=True)
 
-    thresh =  photons[1] < dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])]
-    photons = photons[:, thresh]
+    # thresh =  photons[1] < dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])]
+    if mp.phase_background:
+        thresh =  -photons[1] > 3*dp.sigs[-1,np.int_(photons[3]), np.int_(photons[2])]
+        photons = photons[:, thresh]
     # print(thresh)
 
     # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
@@ -129,6 +138,10 @@ def get_packets(datacube, step, dp, mp, plot=False):
         stem = MKIDs.remove_close(stem)
         photons = pipe.ungroup(stem)
 
+    if plot:
+        cube = pipe.make_datacube_from_list(photons.T, (ap.w_bins, dp.array_size[0], dp.array_size[1]))
+        dprint(cube.shape)
+        view_datacube(cube, logAmp=True)
     # This step was taking a long time
     # stem = pipe.arange_into_stem(photons.T, (mp.array_size[0], mp.array_size[1]))
     # cube = pipe.make_datacube(stem, (mp.array_size[0], mp.array_size[1], ap.w_bins))
@@ -248,7 +261,8 @@ def save_step_const(output_queue, fields_filename, shape):
             t, fields = output_queue.get()
             if fields is not None:
                 if sp.verbose: print(f'Appending to {fields_filename}')
-                dset = hdf.create_dataset(f't{t}', shape, maxshape=shape, dtype=np.complex64, chunks=True)
+                dset = hdf.create_dataset(f't{t}', shape, maxshape=shape, dtype=np.complex64, chunks=True,
+                                          compression="gzip")
                 dset[:] = fields
             else:
                 print('Finished saving observation data')
@@ -416,12 +430,15 @@ def take_exposure(obs_sequence):
 
 def take_fields_exposure(fields):
     factor = ap.exposure_time/ ap.sample_time
-    dprint(factor)
+    dprint(factor, fields.shape)
     num_exp = int(len(fields)/factor)
-    downsample_fields = np.zeros((num_exp,fields.shape[1],fields.shape[2],fields.shape[3],fields.shape[4],fields.shape[5]))
+    downsample_fields = np.zeros((num_exp,fields.shape[1],fields.shape[2],fields.shape[3],fields.shape[4]))
     for i in range(num_exp):
         # print np.shape(downsample_cube[i]), np.shape(obs_sequence), np.shape(np.sum(obs_sequence[i * factor : (i + 1) * factor], axis=0))
         downsample_fields[i] = np.sum(fields[int(i*factor):int((i+1)*factor)],axis=0)#/float(factor)
+    dprint(downsample_fields.shape)
+    # view_datacube(downsample_fields[0,:,0], logAmp=True, show=False)
+    # view_datacube(downsample_fields[:, 0, 0], logAmp=True)
     return downsample_fields
 
 def med_collapse(obs_sequence):

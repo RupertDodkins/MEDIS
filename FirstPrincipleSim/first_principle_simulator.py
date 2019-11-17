@@ -23,7 +23,7 @@ from medis.Detector import temporal as temp
 from medis.Detector import spectral as spec
 from medis.Detector import pipeline as pipe
 
-make_figure = 2
+make_figure = 3
 
 # sp.num_processes = 8
 sp.return_E = True
@@ -320,71 +320,68 @@ def make_figure2(normalize_spec=False):
         fig.tight_layout()
         plt.show(block=True)
 
-def make_figure3():
-    sp.use_gui = True
-    sp.show_cube = False
-
-    sp.save_locs = np.array(['add_atmos', 'prop_mid_optics'])
-    sp.gui_map_type = np.array(['phase', 'amp'])
-
-    sp.metric_funcs = [help.plot_counts, help.take_acf, help.plot_stats, help.plot_psd]
-    locs = [[70, 70], [80, 80], [90, 90], [100, 100]]
-    sp.metric_args = [locs, locs, locs, locs]
-    tp.include_dm = False
-    tp.include_tiptilt = True
-    tp.occulter_type = None
-    ap.companion = False
-    ap.contrast = []  # [1e-2]
-    ap.star_photons = 1e8
-    ap.sample_time = 1e-3
-    ap.exposure_time = 1e-3
-    tp.beam_ratio = 0.5  # 0.75
-    ap.grid_size = 128
-    tp.use_atmos = True
-    tp.use_ao = True
-    # tp.detector = 'MKIDs'
-    tp.detector = 'ideal'
-    tp.quick_ao = False
-    tp.servo_error = [0, 1]
-    tp.aber_params['CPA'] = True
-    tp.aber_params['NCPA'] = True
-
-    ap.numframes = 13000
-    sp.num_processes = 1
-    sp.gui_samp = sp.num_processes * 50  # display the field on multiples of this number
-    cp.model = 'single'
-    # iop.datadir = '/mnt/data0/dodkins/medis_save'
-    iop.update('first_principle/figure3')
-
-    # *** This has to go here. Don't put at top! ***
-    from medis.Dashboard.run_dashboard import run_dashboard
-    from scipy.signal import savgol_filter
-    from statsmodels.tsa.stattools import acf
-
-    if __name__ == "__main__":
-        if os.path.exists(iop.fields):
-            run_dashboard()
-        else:
-            e_fields_sequence = gpd.run_medis(realtime=False)
-            fig = plt.figure()
-            ax1 = fig.add_subplot(121)
-            ax2 = fig.add_subplot(122)
-            for loc in locs:
-                print(loc)
-                counts = np.mean(
-                    np.abs(e_fields_sequence[:, -1, 0, 0, loc[0] - 3:loc[0] + 3, loc[1] - 3:loc[1] + 3]) ** 2,
-                    axis=(1, 2))
-                ax1.plot(acf(counts, nlags=1000), label='pix %i, %i' % (loc[0], loc[1]), linewidth=2)
-                ax2.plot(help.plot_stats(counts), linewidth=2)
-            ax1.xlabel(r'$\tau$ (ms)')
-            ax1.ylabel(r'$C_1(\tau)$')
-            ax2.xlabel(r'$I$ (counts)')
-            # ax2.ylabel()
-            ax1.legend(loc = 'lower left')
-            plt.show()
-
-def make_figure4():
-    raise NotImplementedError
+# def make_figure3():
+#     sp.use_gui = True
+#     sp.show_cube = False
+#
+#     sp.save_locs = np.array(['add_atmos', 'prop_mid_optics'])
+#     sp.gui_map_type = np.array(['phase', 'amp'])
+#
+#     sp.metric_funcs = [help.plot_counts, help.take_acf, help.plot_stats, help.plot_psd]
+#     locs = [[70, 70], [80, 80], [90, 90], [100, 100]]
+#     sp.metric_args = [locs, locs, locs, locs]
+#     tp.include_dm = False
+#     tp.include_tiptilt = True
+#     tp.occulter_type = None
+#     ap.companion = False
+#     ap.contrast = []  # [1e-2]
+#     ap.star_photons = 1e8
+#     ap.sample_time = 1e-3
+#     ap.exposure_time = 1e-3
+#     tp.beam_ratio = 0.5  # 0.75
+#     ap.grid_size = 128
+#     tp.use_atmos = True
+#     tp.use_ao = True
+#     # tp.detector = 'MKIDs'
+#     tp.detector = 'ideal'
+#     tp.quick_ao = False
+#     tp.servo_error = [0, 1]
+#     tp.aber_params['CPA'] = True
+#     tp.aber_params['NCPA'] = True
+#
+#     ap.numframes = 13000
+#     sp.num_processes = 1
+#     sp.gui_samp = sp.num_processes * 50  # display the field on multiples of this number
+#     cp.model = 'single'
+#     # iop.datadir = '/mnt/data0/dodkins/medis_save'
+#     iop.update('first_principle/figure3')
+#
+#     # *** This has to go here. Don't put at top! ***
+#     from medis.Dashboard.run_dashboard import run_dashboard
+#     from scipy.signal import savgol_filter
+#     from statsmodels.tsa.stattools import acf
+#
+#     if __name__ == "__main__":
+#         if os.path.exists(iop.fields):
+#             run_dashboard()
+#         else:
+#             e_fields_sequence = gpd.run_medis(realtime=False)
+#             fig = plt.figure()
+#             ax1 = fig.add_subplot(121)
+#             ax2 = fig.add_subplot(122)
+#             for loc in locs:
+#                 print(loc)
+#                 counts = np.mean(
+#                     np.abs(e_fields_sequence[:, -1, 0, 0, loc[0] - 3:loc[0] + 3, loc[1] - 3:loc[1] + 3]) ** 2,
+#                     axis=(1, 2))
+#                 ax1.plot(acf(counts, nlags=1000), label='pix %i, %i' % (loc[0], loc[1]), linewidth=2)
+#                 ax2.plot(help.plot_stats(counts), linewidth=2)
+#             ax1.xlabel(r'$\tau$ (ms)')
+#             ax1.ylabel(r'$C_1(\tau)$')
+#             ax2.xlabel(r'$I$ (counts)')
+#             # ax2.ylabel()
+#             ax1.legend(loc = 'lower left')
+#             plt.show()
 
 def get_packets_plots(datacubes, step, dp, mp, plot=False):
 
@@ -543,7 +540,7 @@ def get_packets_plots(datacubes, step, dp, mp, plot=False):
     # plt.hist(dp.sigs[idx,np.int_(photons[3]), np.int_(photons[2])], bins=50)
 
     dprint(photons.shape)
-    thresh =  -photons[1] > 3*dp.sigs[idx,np.int_(photons[3]), np.int_(photons[2])]#dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])]
+    thresh =  -photons[1] > 3*dp.sigs[0,np.int_(photons[3]), np.int_(photons[2])]#dp.basesDeg[np.int_(photons[3]),np.int_(photons[2])]
     photons = photons[:, thresh]
 
     # plt.figure()
@@ -627,14 +624,16 @@ def parse_cont_data(all_cont_data, p):
 def param_compare():
 
     repeats = 3  # number of medis runs to average over for the cont plots
-    param_names = ['array_size', 'array_size_(rebin)', 'numframes', 'pix_yield', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']#'g_mean_sig']# 'star_photons_per_s'
+    # param_names = ['numframes', 'array_size', 'array_size_(rebin)', 'pix_yield', 'dark_bright', 'R_mean', 'R_sig', 'g_mean', 'g_sig']#'g_mean_sig']# 'star_photons_per_s', 'exp_time'
+    # param_names = ['exp_time']
+    param_names = ['dark_bright']
 
     all_cont_data = []
     for r in range(repeats):
 
         # each repeat has new fields, device params and noise data
-        iop.set_testdir(f'FirstPrincipleSim_numframes50_repeat{r}/master/')
-        # iop.set_testdir(f'FirstPrincipleSim_repeat{r}_quantize_fcs/master/')
+        # iop.set_testdir(f'FirstPrincipleSim_multiaber{r}/master/')
+        iop.set_testdir(f'FirstPrincipleSim_repeat{r}_quantize_fcs/master/')
         import master
         master_dp, master_fields = master.config_cache()
         master.make_fields_master()
@@ -654,12 +653,12 @@ def param_compare():
             config_images(len(param.metric_multiplier))  # the line colors and map inds depend on the amount
             # being plotted
             param_data = master.form(param.metric_vals, param.metric_name, master_cache=(master_dp, master_fields),
-                                     debug=False)
+                                     debug=True)
             comp_images.append(param_data[0])
             cont_data.append(param_data[1:])
 
             # store the mutlipliers but flip those that achieve better contrast when the metric is decreasing
-            if param_name in ['dark_bright', 'R_sig', 'g_sig']:
+            if param_name in ['R_sig', 'g_sig']: #'dark_bright',
                 metric_multi_list.append(param.metric_multiplier[::-1])
                 metric_vals_list.append(param.metric_vals[::-1])
             else:
@@ -703,7 +702,7 @@ if __name__ == '__main__':
         make_figure1()
     elif make_figure == 2:
         make_figure2()
-    elif make_figure == 8:
+    elif make_figure == 3:
         param_compare()
 
 

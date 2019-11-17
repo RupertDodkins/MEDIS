@@ -303,12 +303,14 @@ class MKID_params:
         self.res_elements = self.array_size[0]
         self.g_mean = 0.95
         self.g_sig = 0.025
+        self.g_spec = -1/10.
         self.bg_mean = 0
         self.bg_sig = 30
         self.r_mean = 1
         self.r_sig = 0.05
         self.R_mean = 50
         self.R_sig = 2
+        self.R_spec = -1./10
 
         self.lod = 8  # 8 pixels in these upsampled images = one lambda/d
         self.nlod = 10  # 3 #how many lambda/D do we want to calculate out to
