@@ -8,8 +8,8 @@ import os
 def update(conf_obj_list):
     print('calling user_params update')
     ap, cp, tp, mp, hp, sp, iop, dp, fp = conf_obj_list
-    # datadir = '/home/captainkay/mazinlab/MKIDSim/CDIsim_data/'  # personal datadir instead
-    iop.datadir = os.path.join(str(Path.home()), 'dummy1')#'medis_data')
+    iop.datadir = os.path.join(str(Path.home()), 'medis_save')  # MEDIS will create a folder in your home under
+                                                                # this name
     iop.update()
 
     return ap, cp, tp, mp, hp, sp, iop, dp, fp

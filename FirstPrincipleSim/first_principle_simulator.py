@@ -658,7 +658,7 @@ def param_compare():
             cont_data.append(param_data[1:])
 
             # store the mutlipliers but flip those that achieve better contrast when the metric is decreasing
-            if param_name in ['R_sig', 'g_sig']: #'dark_bright',
+            if param_name in ['R_sig', 'g_sig', 'dark_bright']: #'dark_bright',
                 metric_multi_list.append(param.metric_multiplier[::-1])
                 metric_vals_list.append(param.metric_vals[::-1])
             else:
