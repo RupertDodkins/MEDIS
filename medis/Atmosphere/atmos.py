@@ -16,6 +16,14 @@ def get_filename(it, wsamp):
     return f'{iop.atmosdir}/telz_t{ap.sample_time*it:.5f}_w{wave}.fits'
 
 def prepare_maps():
+    """
+    Wrapper for generate maps that takes backups if neccessary
+
+    Returns
+    -------
+    A series of phase maps with time and wavelength
+
+    """
     if not os.path.exists(iop.atmosdir):
         generate_maps()
     elif not os.path.exists(iop.atmosconfig):
@@ -26,11 +34,24 @@ def prepare_maps():
         generate_maps()
 
 def backup_old_maps():
+    """
+    Copy and rename the dir containing the maps
+    Returns
+    -------
+
+    """
     from datetime import datetime
     now = datetime.now().strftime("%m:%d:%Y_%H-%M-%S")
     os.rename(iop.atmosdir, iop.atmosdir + '_backup_' + now)
 
 def compare_configs():
+    """
+    Compare a text file of the relevant atmosphere parameters to a previously made one
+
+    Returns
+    -------
+    False if anything is awry
+    """
     try:
         old_config = np.genfromtxt(iop.atmosconfig, delimiter=',', dtype=None, encoding='ASCII')
         this_config = [ap.sample_time, ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.h, cp.v, cp.model]

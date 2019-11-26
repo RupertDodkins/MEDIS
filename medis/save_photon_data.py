@@ -21,7 +21,40 @@ import medis.Atmosphere.atmos as atmos
 from scipy.interpolate import interp1d
 
 class Timeseries():
+    """
+    This object stores the relevant info for different timesteps to communicate and generates a timeseries of
+    obeservations with them.
+
+    Parameters
+    ----------
+
+    inqueue : mp.queue
+        used to pass the simulation timestep indices to this object
+    savequeue : mp.queue
+        used to pass the timestep output to detector.readout and get saved
+    conf_obj_tup : tuple
+        "global" configuration parameters need to be passed as args to gen_timesteries and proper.prop_run for
+        multiprocessing reasons
+
+    Returns
+    -------
+     A series of E fields arrays (spatial, wavelengths, different objects, different optical planes) that are added to
+     a h5 file with detector.readout
+
+    """
     def __init__(self, inqueue, savequeue, conf_obj_tup):
+        """
+        inqueue:
+            time index for parallelization (used by multiprocess)
+        savequeue:
+            photon table (list of photon packets) in the multiprocessing format
+        CPA_maps : np.array
+            a list of the 2D wavefront phase maps measured by the WFS to iterative converge on the optimal DM map (closed
+            loop mode), or to be averaged or np.roll()ed to account for AO frame rate or servo lag
+        tiptilt: np.array
+            a list of 2D wavefront phase maps to be used to converge on the optimal tiptilt map
+
+        """
         self.inqueue = inqueue
         self.savequeue = savequeue
         self.conf_obj_tup = conf_obj_tup
@@ -42,19 +75,18 @@ class Timeseries():
         this is where the observation sequence is generated (timeseries of observations by the detector)
         thus, where the detector observes the wavefront created by optics_propagate (for MKIDs, the probability distribution)
 
-        :param inqueue: time index for parallelization (used by multiprocess)
-        :param save_queue: photon table (list of photon packets) in the multiprocessing format
-        :param spectralcube_queue: series of intensity images (spectral image cube) in the multiprocessing format
-        :param conf_obj_tup:
-        :return:
+        Returns
+        -------
+        Series of e fields
+
+
         """
-        (tp,ap,sp,iop,cp,mp,i) = self.conf_obj_tup
+
+        (tp,ap,sp,iop,cp,mp,i) = self.conf_obj_tup  # This is neccessary AFAICT
 
         try:
 
             start = time.time()
-
-            # wfo = Wavefronts(inqueue, outqueue, conf_obj_tup)
 
             for it, t in enumerate(iter(self.inqueue.get, sentinel)):
 
@@ -64,7 +96,6 @@ class Timeseries():
                                                    VERBOSE=False, PHASE_OFFSET=1)
 
                 if sp.cont_save:
-                    # realtime_save(save_E_fields, t)
                     realtime_save_cont(save_E_fields, t, self.savequeue)
                 elif tp.detector == 'MKIDs':
                     for o in range(len(ap.contrast) + 1):
@@ -149,18 +180,26 @@ def applymkideffects(spectralcube, t, o, save_queue, return_spectralcube=False):
 
         return spectralcube
 
-def realtime_save(spectralcube, t):
-    if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:
-
-        wave_samps = np.linspace(0, 1, ap.nwsamp)
-        f_out = interp1d(wave_samps, spectralcube, axis=1)
-        new_heights = np.linspace(0, 1, ap.w_bins)
-        spectralcube = f_out(new_heights)
-
-    read.save_step(('create_group', ('/', 't%i' % t)))
-    read.save_step(('create_array', ('/t%i' % t, 'data', spectralcube)))
-
 def realtime_save_cont(spectralcube, t, savequeue):
+    """
+    Handle the passing othe E fields to the h5 saving function, but also interpolate before hand
+
+    TODO
+    Asses perhaps this isn't the best place for the interpolation in terms of code layout?
+
+    Parameters
+    ----------
+    spectralcube : np.ndarray
+        single timestep, multiwavelength, multiobject, multiplane complex E field
+    t : int
+        the timestep index to locate where to save the spectral cube
+    savequeue : mp.queue
+        queue to store the timestep
+
+    Returns
+    -------
+
+    """
     if ap.interp_sample and ap.nwsamp>1 and ap.nwsamp<ap.w_bins:
 
         wave_samps = np.linspace(0, 1, ap.nwsamp)
@@ -170,8 +209,22 @@ def realtime_save_cont(spectralcube, t, savequeue):
 
     savequeue.put((t, spectralcube))
 
-sentinel = None
+sentinel = None  # initialise outside of run_medis()
+
 def postfacto(inqueue):
+    """
+    Name comes from the origin of this function in get_photon_data where it (as opposed to realtime()) was called if
+    the user didn't want to see the E fields in realtime with the GUI
+
+    TODO
+    Assess whether GUI functionality should be added here
+
+    Parameters
+    ----------
+    inqueue : mp.queue
+        timestep indices
+
+    """
     for t in range(ap.startframe, ap.numframes):
         inqueue.put(t)
 
@@ -195,19 +248,21 @@ def run_medis():
 
         jobs = []
 
+        # start the process responsible for taking the save_queue and adding to the h5 file
         if sp.cont_save and tp.detector == 'ideal':
             eshape = (len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size)
             proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.fields, eshape))
             proc.start()
 
+        # start the process that generates the data as timesteps are fed
         for i in range(sp.num_processes):
             p = multiprocessing.Process(target=Timeseries, args=(inqueue, save_queue, (tp,ap,sp,iop,cp,mp,i)))
             jobs.append(p)
             p.start()
 
+        # feed the timesteps
         postfacto(inqueue)
 
-        #todo hanging here for some reason
         for i, p in enumerate(jobs):
             p.join()
 
@@ -222,7 +277,8 @@ def run_medis():
             print(f'Time elapsed: {(finish-begin)/60:.2f} minutes')
         print('**************************************')
 
-    fields = read.open_fields(iop.fields)
+    # This takes the data saved to disk. Reads it in to memory to be returned
+    fields = read.open_fields(iop.fields)  #TODO make this optional for larger datasets
     return fields
 
 if __name__ == '__main__':

@@ -108,12 +108,31 @@ def backup_old_maps(aberdir):
     os.rename(aberdir, aberdir + '_backup_' + now)
 
 def check_header(aber_map):
+    """
+    Compare the header that would be made, with the one that exists
+
+    Parameters
+    ----------
+    aber_map : str
+        filename of cache
+
+    Returns
+    -------
+    True if headers match
+
+    """
     _, header = rawImageIO.read_image(filename=aber_map)
     image = np.ones((ap.nwsamp,tp.aber_params['n_surfs'],ap.grid_size,ap.grid_size))
     required_header = rawImageIO.make_hdu(image, sampling=None, aber_vals=tp.aber_vals).header
     return header==required_header
 
 def initialize_aber_maps():
+    """
+    Check if aberration maps cache exists and that it is made with the same configuration
+    Returns
+    -------
+    True if all criteria are met
+    """
     aberration_type = ['CPA', 'NCPA']
     for aberration in aberration_type:
         aber_map = iop.quasi+f'/{aberration}.fits'

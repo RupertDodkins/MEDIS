@@ -19,14 +19,26 @@ class Wavefronts():
     """
     An object containing all of the complex E fields (for each sample wavelength and astronomical object) for this timestep
 
-    :params
-    :save_locs e.g. np.array(['entrance pupil', 'after ao', 'before coron.'])
-    :gui_maps_type np.array(['phase', 'phase', 'amp'])
-    The shape of self.selec_E_fiels is probe locs x nwsamp x nobjects x tp.grid_size
+    Params
+    ------
+    save_locs : list of strings
+        list of planes, identified by the function name at that location to save E field
+        e.g. np.array(['entrance pupil', 'after ao', 'before coron.'])
+    gui_maps_type : list
+        which real valued map (phase or amp) should the GUI display for each plane
+        eg np.array(['phase', 'phase', 'amp'])
+    The shape of self.selec_E_fiels is probe locs x nwsamp x nobjects x tp.grid_size x tp.grid_size
 
-    :returns
-    self.wf_array: a matrix of proper wavefront objects after all optic modifications have been applied
-    self.save_E_fields: a matrix of E fields (proper.WaveFront.wfarr) at specified locations in the chain
+    ap.star_spec : multi type
+        Star and planet spectra can be from reference, BB spectra, or uniform
+
+    Returns
+    -------
+    wf_array : ndarray
+        a matrix of proper wavefronts after all optic modifications have been applied
+    save_E_fields : ndarray
+        a matrix of E fields (proper.WaveFront.wfarr) at specified locations in the chain
+
     """
     def __init__(self):
         self.save_locs = sp.save_locs
@@ -34,10 +46,6 @@ class Wavefronts():
 
         # Using Proper to propagate wavefront from primary through optical system, loop over wavelength
         wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
-
-        # eso_samp = np.arange(115, 2500, 5)
-        # cut = np.logical_or(eso_samp<ap.band[0], eso_samp>ap.band[1])
-        # eso_samp = np.delete(eso_samp, cut)
 
         if ap.star_spec == 'ref':
             self.stardata = np.loadtxt(iop.stellardata, skiprows=3)
@@ -66,6 +74,7 @@ class Wavefronts():
             self.planetspectrum /= np.sum(self.planetspectrum)
         else:
             self.planetspectrum = np.ones((ap.nwsamp))
+
         # wf_array is an array of arrays; the wf_array is (number_wavelengths x number_astro_objects)
         # each field in the wf_array is the complex E-field at that wavelength, per object
         # the E-field size is given by (ap.grid_size x ap.grid_size)

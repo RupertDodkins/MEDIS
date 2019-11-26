@@ -255,6 +255,24 @@ def save_step(args):
         getattr(hdf, method)(*args)
 
 def save_step_const(output_queue, fields_filename, shape):
+    """
+    Appends the E field for each timestep under the heading t<iteration> as Timeseries.gen_timeseries is running
+
+    TODO convert this a big table that gets populated using the timestep ind rather than a series of smaller tables
+
+    Parameters
+    ----------
+    output_queue : mp.queue
+        queueue containing each E field that needs to be saved
+    fields_filename : str
+        where's the h5 to be saved
+    shape
+        Shape of the full h5 file
+
+    Returns
+    -------
+    h5 list of tables of E fields
+    """
     with h5py.File(fields_filename, mode='a') as hdf:
         print(f'Saving observation data at {fields_filename}')
         while True:
