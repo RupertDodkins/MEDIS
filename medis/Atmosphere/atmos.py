@@ -109,7 +109,7 @@ def generate_maps(plot=False):
     if cp.model == 'single':
         # cn = hcipy.Cn_squared_from_fried_parameter(cp.r0, 1000e-9)
         layers = [hcipy.InfiniteAtmosphericLayer(pupil_grid, cp.cn, cp.L0, cp.v, cp.h, 2)]
-    elif cp.model == 'double':
+    elif cp.model == 'multiple':
         layers = []
         cp.cn = 0.2 * 1e-12
         layers.append(hcipy.InfiniteAtmosphericLayer(pupil_grid, cp.cn, cp.L0, 10, cp.h, 2))

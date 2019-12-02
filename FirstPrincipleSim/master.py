@@ -405,6 +405,9 @@ def contrcurve_plot(metric_vals, rad_samps, thruputs, noises, conts):
 
 def combo_performance(maps, rad_samps, conts, metric_vals, param_name, plot_inds=[0,3,6], err=None, metric_multi=None, three_lod_conts=None,
                       three_lod_errs=None, six_lod_conts=None, six_lod_errs=None):
+    from matplotlib.ticker import ScalarFormatter
+    import matplotlib.ticker as ticker
+
     # plt.rcParams["axes.prop_cycle"] = plt.cycler("color", plt.cm.viridis(np.linspace(0, 1, len(conts))))
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
     labels = ['i', 'ii', 'iii', 'iv', 'v']
@@ -424,9 +427,9 @@ def combo_performance(maps, rad_samps, conts, metric_vals, param_name, plot_inds
     for m, ax in enumerate(axes[:2]):
         im = ax.imshow(maps[plot_inds[m]], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                        norm=SymLogNorm(linthresh=1e-8), cmap="inferno")
-        ax.text(0.05, 0.05, metric_vals[plot_inds[m]], transform=ax.transAxes, fontweight='bold', color='w', fontsize=16)
-        anno = labels[m]
-        ax.text(0.04, 0.9, anno, transform=ax.transAxes, fontweight='bold', color='w', fontsize=22, family='serif')
+        ax.text(0.05, 0.05, r'$P=$' + str(metric_vals[plot_inds[m]]), transform=ax.transAxes, fontweight='bold', color='w', fontsize=16)
+        # anno =
+        ax.text(0.04, 0.9, labels[m], transform=ax.transAxes, fontweight='bold', color='w', fontsize=22, family='serif')
         ax.axis('off')
 
     axes[0].text(0.84, 0.9, '0.2"', transform=axes[0].transAxes, fontweight='bold', color='w', ha='center', fontsize=14,
@@ -470,22 +473,29 @@ def combo_performance(maps, rad_samps, conts, metric_vals, param_name, plot_inds
         def func(x, a, b, c):
             return a * np.exp(-b * x) + c
 
-        if np.any(three_lod_errs==0) or np.any(six_lod_errs==0):
-            popt3, pcov3 = curve_fit(func, metric_multi, three_lod_conts)
-            popt6, pcov6 = curve_fit(func, metric_multi, six_lod_conts)
-        else:
-            popt3, pcov3 = curve_fit(func, metric_multi, three_lod_conts, sigma=three_lod_errs)
-            popt6, pcov6 = curve_fit(func, metric_multi, six_lod_conts, sigma=six_lod_errs)
+        fit = True
+        try:
+            if np.any(three_lod_errs==0) or np.any(six_lod_errs==0):
+                popt3, pcov3 = curve_fit(func, metric_multi, three_lod_conts)
+                popt6, pcov6 = curve_fit(func, metric_multi, six_lod_conts)
+            else:
+                popt3, pcov3 = curve_fit(func, metric_multi, three_lod_conts, sigma=three_lod_errs)
+                popt6, pcov6 = curve_fit(func, metric_multi, six_lod_conts, sigma=six_lod_errs)
+        except RuntimeError as e:
+            print(e)
+            print('Could not find fit')
+            fit = False
 
         # axes[2].get_shared_y_axes().join(axes[2], axes[3])
         axes[3].set_yscale('log')
         axes[3].set_xscale('log')
-        axes[3].set_xlabel('$P/P_{med}$')
+        axes[3].set_xlabel(r'$P/P_\mathrm{med}$')
 
         axes[3].tick_params(direction='in', which='both', right=True, top=True)
 
-        axes[3].plot(metric_multi, func(metric_multi, *popt3), label=r'$3\lambda/D$: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt3),c=colors[0])
-        axes[3].plot(metric_multi, func(metric_multi, *popt6), label=r'$6\lambda/D$: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt6),c=colors[1])
+        if fit:
+            axes[3].plot(metric_multi, func(metric_multi, *popt3), label=r'$3\lambda/D$: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt3),c=colors[0])
+            axes[3].plot(metric_multi, func(metric_multi, *popt6), label=r'$6\lambda/D$: a=%5.3f, b=%5.3f, c=%5.3f' % tuple(popt6),c=colors[1])
         axes[3].errorbar(metric_multi, three_lod_conts, yerr=three_lod_errs, linewidth=0,  linestyle=None, marker='o',c=colors[0])
         axes[3].errorbar(metric_multi, six_lod_conts, yerr=six_lod_errs, linewidth=0, linestyle=None, marker='o',c=colors[1])
         axes[3].legend(fontsize=8)
@@ -496,7 +506,14 @@ def combo_performance(maps, rad_samps, conts, metric_vals, param_name, plot_inds
         ax3_top.set_xscale('log')
         ax3_top.tick_params(direction='in', which='both', right=True, top=True)
         ax3_top.set_xlabel(r'$P$')
-        ax3_top.plot(metric_vals, func(metric_multi, *popt3), linewidth=0)
+        if fit: ax3_top.plot(metric_vals, func(metric_multi, *popt3), linewidth=0)
+
+
+        # for ax in [axes[3], ax3_top]:
+        #     for axis in [ax.xaxis, ax.yaxis]:
+        #         axis.set_major_formatter(ScalarFormatter())
+        for ax in [axes[3], ax3_top]:
+            ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda y,pos: ('{{:.{:1d}f}}'.format(int(np.maximum(-np.log10(y),0)))).format(y)))
 
     # plt.tight_layout()
     plt.subplots_adjust(left=0.045, bottom=0.145, right=0.985, top=0.87, wspace=0.31)
