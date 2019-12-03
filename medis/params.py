@@ -140,6 +140,7 @@ class Simulation_params:
         self.save_fields = True
         self.cont_save = True
         self.verbose = True
+        self.save_labels = None
 
     def __iter__(self):
         for attr, value in self.__dict__.items():
@@ -173,7 +174,7 @@ class Astro_params:
         self.band = np.array([800, 1500])  # wavelength range in nm
         # eg. DARKNESS band is [800, 1500], J band =  [1100,1400])
         self.samp = 0.2  # 0.125  This is a hacked parameter, to scale the atmos fits files to the wf_array
-        self.grid_size = 128  # creates a nxn array (of samples of the wavefront)
+        self.grid_size = 512  # creates a nxn array (of samples of the wavefront)
         # must be bigger than the beam size to avoid FT effects at edges; must be factor of 2
         # NOT the size of your detector/# of pixels
         self.interp_sample = True  # Set to interpolate wavelengths from ap.nwsamp to ap.w_bins
@@ -238,7 +239,7 @@ class Telescope_params:
         self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
         self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
-        self.beam_ratio = 25/64.  # parameter dealing with the sampling of the beam in the pupil/focal plane vs grid size
+        self.beam_ratio = 0.25  # parameter dealing with the sampling of the beam in the pupil/focal plane vs grid size
         self.detector = 'ideal'  # 'MKIDs'
 
         # Speckles
