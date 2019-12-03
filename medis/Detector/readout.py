@@ -254,11 +254,9 @@ def save_step(args):
         dprint((method, args[0], len(args[1])))
         getattr(hdf, method)(*args)
 
-def save_step_const(output_queue, fields_filename, shape):
+def save_step_const(output_queue, fields_filename):
     """
     Appends the E field for each timestep under the heading t<iteration> as Timeseries.gen_timeseries is running
-
-    TODO convert this a big table that gets populated using the timestep ind rather than a series of smaller tables
 
     Parameters
     ----------
@@ -273,15 +271,24 @@ def save_step_const(output_queue, fields_filename, shape):
     -------
     h5 list of tables of E fields
     """
+
+    shape = [ap.numframes, len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size]
+    chunk = shape*1
+    chunk[0] = 1
+    # chunk = tuple(chunk)
+    if 'detector' not in sp.save_locs:
+        shape[1]+=1
     with h5py.File(fields_filename, mode='a') as hdf:
         print(f'Saving observation data at {fields_filename}')
+        print(shape, tuple(chunk))
+        dset = hdf.create_dataset('data', tuple(shape), maxshape=tuple(shape), dtype=np.complex64, chunks=tuple(chunk),
+                                  compression="gzip")
         while True:
             t, fields = output_queue.get()
+            dprint(sp.save_locs)
             if fields is not None:
-                if sp.verbose: print(f'Appending to {fields_filename}')
-                dset = hdf.create_dataset(f't{t}', shape, maxshape=shape, dtype=np.complex64, chunks=True,
-                                          compression="gzip")
-                dset[:] = fields
+                if sp.verbose: print(f'Adding time {t} to {fields_filename}')
+                dset[t] = fields
             else:
                 print('Finished saving observation data')
                 break

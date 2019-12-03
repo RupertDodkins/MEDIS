@@ -250,8 +250,7 @@ def run_medis():
 
         # start the process responsible for taking the save_queue and adding to the h5 file
         if sp.cont_save and tp.detector == 'ideal':
-            eshape = (len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size)
-            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.fields, eshape))
+            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.fields))
             proc.start()
 
         # start the process that generates the data as timesteps are fed
