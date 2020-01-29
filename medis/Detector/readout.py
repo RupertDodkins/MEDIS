@@ -254,7 +254,7 @@ def save_step(args):
         dprint((method, args[0], len(args[1])))
         getattr(hdf, method)(*args)
 
-def save_step_const(output_queue, fields_filename):
+def save_step_const(output_queue, fields_filename, shape):
     """
     Appends the E field for each timestep under the heading t<iteration> as Timeseries.gen_timeseries is running
 
@@ -272,12 +272,9 @@ def save_step_const(output_queue, fields_filename):
     h5 list of tables of E fields
     """
 
-    shape = [ap.numframes, len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size]
     chunk = shape*1
     chunk[0] = 1
     # chunk = tuple(chunk)
-    if 'detector' not in sp.save_locs:
-        shape[1]+=1
     with h5py.File(fields_filename, mode='a') as hdf:
         print(f'Saving observation data at {fields_filename}')
         print(shape, tuple(chunk))
@@ -305,7 +302,7 @@ def handle_output(output, filename):
         while True:
             args = output.get()
             dprint(type(args))
-            dprint((args[0], np.shape(args[1][-1])))
+            # dprint((args[0], np.shape(args[1][-1])))
             if args:
                 method, args = args
                 getattr(hdf, method)(*args)

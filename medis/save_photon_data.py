@@ -8,7 +8,7 @@ import random
 import pickle as pickle
 import time
 from proper_mod import prop_run
-# from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
+from medis.Utils.plot_tools import quicklook_im, view_datacube, loop_frames
 from medis.Utils.misc import dprint
 from medis.params import ap,cp,tp,mp,sp,iop,dp
 import medis.Detector.mkid_artefacts as MKIDs
@@ -249,8 +249,9 @@ def run_medis():
         jobs = []
 
         # start the process responsible for taking the save_queue and adding to the h5 file
+        shape = [ap.numframes, len(sp.save_locs), ap.w_bins, len(ap.contrast) + 1, ap.grid_size, ap.grid_size]
         if sp.cont_save and tp.detector == 'ideal':
-            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.fields))
+            proc = multiprocessing.Process(target=read.save_step_const, args=(save_queue, iop.fields, shape))
             proc.start()
 
         # start the process that generates the data as timesteps are fed
