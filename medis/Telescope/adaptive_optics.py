@@ -63,21 +63,21 @@ def deformable_mirror(wfo, CPA_maps, astrogrid=False):
         f= interpolate.interp2d(list(range(dm_map.shape[0])), list(range(dm_map.shape[0])), dm_map)
         dm_map = f(np.linspace(0,dm_map.shape[0], nact), np.linspace(0, dm_map.shape[0], nact))
 
-        s_amp = DM.amplitudemodel(0.4*10**-6, 3, c=1.6)
-        phase = 1 % 10 * 2 * np.pi / 10.
-        s_amp = 1 % 5 * s_amp / 5.
-        xloc, yloc = 12, 12
-        waffle = DM.make_speckle_kxy(xloc, yloc, s_amp, phase)
-        waffle += DM.make_speckle_kxy(xloc, -yloc, s_amp, phase)
-
         if tp.piston_error:
             mean_dm_map = np.mean(np.abs(dm_map))
             var = 1e-4  # 1e-11
             dm_map = dm_map + np.random.normal(0, var, (dm_map.shape[0], dm_map.shape[1]))
 
-
         dm_map = -dm_map * proper.prop_get_wavelength(wf_array[iw,0]) / (4 * np.pi)
-        dm_map += waffle
+
+        if tp.satelite_speck:
+            s_amp = DM.amplitudemodel(0.4*10**-6, 3, c=1.6)
+            phase = 1 % 10 * 2 * np.pi / 10.
+            s_amp = 1 % 5 * s_amp / 5.
+            xloc, yloc = 12, 12
+            waffle = DM.make_speckle_kxy(xloc, yloc, s_amp, phase)
+            waffle += DM.make_speckle_kxy(xloc, -yloc, s_amp, phase)
+            dm_map += waffle
 
         for io in range(shape[1]):
             dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)
