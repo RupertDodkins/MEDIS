@@ -227,8 +227,8 @@ def optics_propagate(empty_lamda, grid_size, PASSVALUE):
         # quicklook_wf(wfo.wf_array[0, 0])
 
     # quicklook_wf(wfo.wf_array[0,0])
-    if tp.rot_rate:
-        wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['iter']))
+    # if tp.rot_rate:
+    #     wfo.iter_func(aber.rotate_atmos, *(PASSVALUE['iter']))
 
     if tp.use_hex:
         fo.add_hex(wfo.wf_array)

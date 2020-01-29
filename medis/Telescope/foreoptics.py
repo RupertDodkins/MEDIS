@@ -18,7 +18,8 @@ def offset_companion(wf_array, it):
             yloc = ap.lods[io][1]
 
             if tp.rot_rate:
-                time = float(atmos_map[-19:-11])
+                print(atmos_map)
+                time = float(atmos_map.split('/')[-1].split('_')[1][1:])
                 rotate_angle = tp.rot_rate * time
                 rotate_angle = np.pi * rotate_angle/180.
                 rot_matrix = [[np.cos(rotate_angle),-np.sin(rotate_angle)],[np.sin(rotate_angle),np.cos(rotate_angle)]]
