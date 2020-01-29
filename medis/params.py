@@ -178,7 +178,7 @@ class Astro_params:
         # must be bigger than the beam size to avoid FT effects at edges; must be factor of 2
         # NOT the size of your detector/# of pixels
         self.interp_sample = True  # Set to interpolate wavelengths from ap.nwsamp to ap.w_bins
-        self.star_spec = 'ref'
+        self.star_spec = None
         self.planet_spec = None
 
     def __iter__(self):
@@ -238,7 +238,7 @@ class Telescope_params:
         # Optics + Detector
         self.diam = 5.0  # telescope diameter in meters
         self.f_lens = 200.0 * self.diam
-        self.platescale = 13.61  # mas # have to run get_sampling at the focus to find this
+        self.platescale = 13.61  # mas/pix # have to run get_sampling at the focus to find this
         self.beam_ratio = 0.25  # parameter dealing with the sampling of the beam in the pupil/focal plane vs grid size
         self.detector = 'ideal'  # 'MKIDs'
 
