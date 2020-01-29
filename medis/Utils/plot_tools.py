@@ -8,6 +8,7 @@ import matplotlib.ticker as ticker
 from medis.params import tp, sp, iop, ap
 from medis.Utils.misc import dprint
 import medis.Utils.colormaps as cmaps
+from medis.Dashboard.twilight import sunlight, twilight
 plt.register_cmap(name='viridis', cmap=cmaps.viridis)
 plt.register_cmap(name='plasma', cmap=cmaps.plasma)
 plt.register_cmap(name='inferno', cmap=cmaps.inferno)
@@ -572,7 +573,7 @@ def quicklook_wf(wfo, logAmp=True, show=True):
         ax1.imshow(after_dm, origin='lower', cmap="YlGnBu_r", norm=LogNorm())
     else:
         ax1.imshow(after_dm, origin='lower', cmap="YlGnBu_r")
-    ax2.imshow(phase_afterdm, origin='lower', cmap="YlGnBu_r")  #, vmin=-0.5, vmax=0.5)
+    ax2.imshow(phase_afterdm, origin='lower', cmap=twilight)  #, vmin=-0.5, vmax=0.5)
 
     ax3.plot(after_dm[int(ap.grid_size/2)])
     ax3.plot(np.sum(np.eye(ap.grid_size)*after_dm,axis=1))
