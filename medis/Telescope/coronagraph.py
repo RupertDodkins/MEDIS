@@ -137,6 +137,9 @@ def coronagraph(wfo, f_lens, occulter_type, occult_loc, diam):
     # quicklook_wf(wfo)
     return
 
+def init_vortex():
+    wfo = proper.prop_begin(tp.diam, ap.band[0], ap.grid_size, tp.beam_ratio)
+
 def vortex(wfo):
     # https://github.com/vortex-exoplanet/HEEPS/tree/master/heeps
     n = int(proper.prop_get_gridsize(wfo))

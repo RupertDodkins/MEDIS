@@ -17,8 +17,10 @@ import medis.Detector.pipeline as pipe
 import medis.Detector.readout as read
 import medis.Telescope.aberrations as aber
 from medis.Telescope.optics_propagate import Wavefronts
+from medis.Telescope.coronagraph import init_vortex
 import medis.Atmosphere.atmos as atmos
 from scipy.interpolate import interp1d
+import pprint
 
 class Timeseries():
     """
@@ -161,6 +163,9 @@ def initialize_telescope():
         sp.save_locs = np.append(sp.save_locs, 'detector')
         sp.gui_map_type = np.append(sp.gui_map_type, 'amp')
 
+    if tp.occulter_type.lower() == 'vortex':
+        init_vortex()
+
 def applymkideffects(spectralcube, t, o, save_queue, return_spectralcube=False):
 
     with open(iop.device_params, 'rb') as handle:
@@ -237,6 +242,10 @@ def run_medis():
     if not os.path.isfile(iop.fields):
         print(f'No file found at {iop.fields}')
         print('Creating New MEDIS Simulation')
+
+        if sp.verbose:
+            for param in [ap, cp, tp, mp, sp]:
+                pprint.pprint(param.__dict__)
 
         # Start the clock
         begin = time.time()
