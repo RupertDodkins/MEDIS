@@ -12,8 +12,8 @@ import medis.Utils.misc as misc
 import medis.Telescope.foreoptics as fo
 from medis.params import tp, cp, mp, ap, iop
 from medis.Utils.misc import dprint
+from medis.Utils.rawImageIO import circular_mask
 import astropy.io.fits as fits
-# import matplotlib.pylab as plt
 from skimage.restoration import unwrap_phase
 from scipy import interpolate
 
@@ -159,6 +159,19 @@ def circularise(prim_map):
     new_prim = np.transpose(new_prim)
     return new_prim
 
+def unwrap_wavefront(wfo):
+    shape = wfo.wf_array.shape
+    for iw in range(shape[0]):
+        for io in range(shape[1]):
+            orig_phase = proper.prop_get_phase(wfo.wf_array[iw, io])
+            unwrapped_phase = unwrap_phase(orig_phase)
+            proper.prop_add_phase(wfo.wf_array[iw, io], (unwrapped_phase-orig_phase)*wfo.wf_array[iw, io].lamda/(2*np.pi))
+
+            quicklook_wf(wfo.wf_array[iw, io])
+
+    wfo.test_save('unwrap_phase')
+    return wfo
+
 def add_aber(wfo, f_lens, d_lens, aber_params, step=0, lens_name='lens'):
     """
     loads a phase error map and adds aberrations using proper.prop_add_phase
@@ -265,7 +278,6 @@ def add_zern_ab(wfo):
     """
     proper.prop_zernikes(wfo, [2,3,4], np.array([175,150,200])*1.0e-9)
 
-
 def add_atmos(wfo, f_lens, it):
     """
     creates a phase offset matrix for each wavelength at each time step,
@@ -288,17 +300,21 @@ def add_atmos(wfo, f_lens, it):
 
     shape = wfo.wf_array.shape
 
+    atmos_map = atmos.get_filename(it)
     for iw in range(shape[0]):
         wavelength = wfo.wf_array[iw, 0].lamda
-        atmos_map = atmos.get_filename(it, wavelength)
+        scale = ap.band[0] / wavelength * 1e-9
         for io in range(shape[1]):
-            # if iw == 0 and io == 0:
-                obj_map = fits.open(atmos_map)[1].data
 
-                obj_map = unwrap_phase(obj_map)
+            obj_map = fits.open(atmos_map)[1].data
+            obj_map = rawImageIO.clipped_zoom(obj_map, scale)
 
-                obj_map *= wavelength/(2*np.pi)
-                proper.prop_add_phase(wfo.wf_array[iw,io], obj_map)
+            h, w = obj_map.shape[:2]
+            mask = circular_mask(h, w, radius=scale*h*tp.beam_ratio/2)
+            obj_map[~mask] = 0
+            obj_map[mask] -= np.mean(obj_map[mask])  # remove bias from spatial stretching
+
+            proper.prop_add_phase(wfo.wf_array[iw,io], obj_map)
 
     wfo.wf_array = abs_zeros(wfo.wf_array)  # Zeroing outside the pupil
     wfo.test_save('add_atmos')

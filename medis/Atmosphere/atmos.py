@@ -10,10 +10,11 @@ from medis.params import cp, ap, tp, iop, sp
 from medis.Utils.misc import dprint, eformat
 # from medis.Utils.plot_tools import quicklook_wf, quicklook_im
 import medis.Utils.rawImageIO as rawImageIO
+from skimage.restoration import unwrap_phase
 
-def get_filename(it, wsamp):
-    wave = eformat(wsamp, 3, 2)
-    return f'{iop.atmosdir}/telz_t{ap.sample_time*it:.5f}_w{wave}.fits'
+def get_filename(it):
+    # wave = eformat(wsamp, 3, 2)
+    return f'{iop.atmosdir}/telz_t{ap.sample_time*it:.5f}.fits'
 
 def prepare_maps():
     """
@@ -124,29 +125,29 @@ def generate_maps(plot=False):
 
     # aperture = hcipy.circular_aperture(tp.diam)(pupil_grid)
 
-    wavefronts = []
-    for wavelength in wsamples:
-        wavefronts.append(hcipy.Wavefront(hcipy.Field(np.ones(pupil_grid.size), pupil_grid), wavelength))
+    wf = hcipy.Wavefront(hcipy.Field(np.ones(pupil_grid.size), pupil_grid), wsamples[0])
 
     np.savetxt(iop.atmosconfig, [ap.sample_time, ap.grid_size, ap.w_bins, ap.numframes, cp.cn, cp.L0, cp.h, cp.v, cp.model], fmt='%s')
 
     for it, t in enumerate(np.arange(0, ap.numframes*ap.sample_time, ap.sample_time)):
         atmos.evolve_until(t)
-        for iw, wf in enumerate(wavefronts):
-            wf2 = atmos.forward(wf)
+        wf2 = atmos.forward(wf)
 
+        filename = get_filename(it)
+        if sp.verbose: print(f'saving {filename}')
 
-            filename = get_filename(it, wsamples[iw])
-            if sp.verbose: print(f'saving {filename}')
-            scale = ap.band[0] / wsamples[iw] * 1e-9
-            obj_map = wf2.phase.reshape(ap.grid_size, ap.grid_size)
-            obj_map = rawImageIO.clipped_zoom(obj_map, scale)
-            hdu = fits.ImageHDU(obj_map)
-            hdu.header['PIXSIZE'] = tp.diam/ap.grid_size
-            hdu.writeto(filename, overwrite=True)
+        obj_map = wf2.phase.reshape(ap.grid_size, ap.grid_size)
 
-            if plot:
-                plt.figure()
-                hcipy.imshow_field(wf2.phase, cmap=sunlight)
-                plt.colorbar()
-                plt.show(block=True)
+        obj_map = unwrap_phase(obj_map) * wsamples[0]/(2*np.pi)
+
+        hdu = fits.ImageHDU(obj_map)
+        hdu.header['PIXSIZE'] = tp.diam/ap.grid_size
+        hdu.writeto(filename, overwrite=True)
+
+        if plot:
+            plt.figure()
+            hcipy.imshow_field(wf2.phase, cmap=sunlight)
+            plt.colorbar()
+            plt.show(block=True)
+
+        plt.show()

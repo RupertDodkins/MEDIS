@@ -10,6 +10,7 @@ import medis.speckle_nulling.dm_functions as DM
 from medis.params import tp, cp, mp, ap, iop, sp
 from medis.Utils.misc import dprint
 from medis.Utils.plot_tools import view_datacube, quicklook_wf, quicklook_im
+from medis.Utils.rawImageIO import circular_mask
 import matplotlib.pyplot as plt
 
 def no_ao(wfo):
@@ -45,20 +46,20 @@ def deformable_mirror(wfo, CPA_maps, astrogrid=False):
     wf_array = wfo.wf_array
     beam_ratios = wfo.beam_ratios
 
-    nact = tp.ao_act  # 49                       # number of DM actuators along one axis
+    nact = tp.ao_act  # 49                    # number of DM actuators along one axis
     nact_across_pupil = nact -2 # 47          # number of DM actuators across pupil
-    dm_xc = (nact / 2)-0.5
-    dm_yc = (nact / 2)-0.5
+    dm_xc = (nact / 2) -1#-0.5
+    dm_yc = (nact / 2) -1 #-0.5
 
     shape = wf_array.shape
     for iw in range(shape[0]):
-        d_beam = 2 * proper.prop_get_beamradius(wf_array[iw,0])  # beam diameter
+        d_beam = 2 * proper.prop_get_beamradius(wf_array[iw,0])  #* ap.band[0] / proper.prop_get_wavelength(wf_array[iw,0]) * 1e-9  # beam diameter
         act_spacing = d_beam / nact_across_pupil  # actuator spacing
         # Compensating for chromatic beam size
-        dm_map = CPA_maps[0,iw, ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
-                              ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1,
-                 ap.grid_size//2-np.int_(beam_ratios[iw]*ap.grid_size//2):
-                 ap.grid_size//2+np.int_(beam_ratios[iw]*ap.grid_size//2)+1]
+        dm_map = CPA_maps[0,0, ap.grid_size//2-np.int_(beam_ratios[0]*ap.grid_size//2):
+                              ap.grid_size//2+np.int_(beam_ratios[0]*ap.grid_size//2)+1,
+                             ap.grid_size//2-np.int_(beam_ratios[0]*ap.grid_size//2):
+                             ap.grid_size//2+np.int_(beam_ratios[0]*ap.grid_size//2)+1]
 
         f= interpolate.interp2d(list(range(dm_map.shape[0])), list(range(dm_map.shape[0])), dm_map)
         dm_map = f(np.linspace(0,dm_map.shape[0], nact), np.linspace(0, dm_map.shape[0], nact))
@@ -68,7 +69,7 @@ def deformable_mirror(wfo, CPA_maps, astrogrid=False):
             var = 1e-4  # 1e-11
             dm_map = dm_map + np.random.normal(0, var, (dm_map.shape[0], dm_map.shape[1]))
 
-        dm_map = -dm_map * proper.prop_get_wavelength(wf_array[iw,0]) / (4 * np.pi)
+        dm_map = -dm_map * proper.prop_get_wavelength(wf_array[0,0]) / (4 * np.pi)
 
         if tp.satelite_speck:
             s_amp = DM.amplitudemodel(0.4*10**-6, 3, c=1.6)
@@ -82,14 +83,18 @@ def deformable_mirror(wfo, CPA_maps, astrogrid=False):
         for io in range(shape[1]):
             dmap = prop_dm(wf_array[iw,io], dm_map, dm_xc, dm_yc, act_spacing, FIT=True)
 
-    # kludge to help with spiders
+    # Smooth the edges of the beam since the dmap is oversized and causes discontinuities
     for iw in range(shape[0]):
         phase_map = proper.prop_get_phase(wf_array[iw,0])
         amp_map = proper.prop_get_amplitude(wf_array[iw,0])
-
-        lowpass = ndimage.gaussian_filter(phase_map, 1, mode='nearest')
-        smoothed = phase_map - lowpass
-
+        h, w = wf_array[iw, 0].wfarr.shape[:2]
+        wavelength = wf_array[iw, 0].lamda
+        scale = ap.band[0] / wavelength * 1e-9
+        inds = circular_mask(h, w, radius=scale*0.95 * h * tp.beam_ratio / 2)
+        mask = np.zeros_like(phase_map)
+        mask[inds] = 1
+        smooth_mask = ndimage.gaussian_filter(mask, 1.5, mode='nearest')
+        smoothed = phase_map * smooth_mask
         wf_array[iw, 0].wfarr = proper.prop_shift_center(amp_map*np.cos(smoothed)+1j*amp_map*np.sin(smoothed))
 
     wfo.test_save('deformable_mirror')
@@ -101,36 +106,42 @@ def flat_outside(wf_array):
         for io in range(wf_array.shape[1]):
             proper.prop_circular_aperture(wf_array[iw,io], 1, NORM=True)
 
-def quick_wfs(wfo, scale_shortest=True):
+def quick_wfs(wfo, scale_shortest=False):
     if sp.verbose: print('running quick wfs')
 
-    short_wf = wfo.wf_array[0, 0]
+    # short_wf = wfo.wf_array[0, 0]
     CPA_maps = np.zeros((1,len(wfo.wf_array),ap.grid_size,ap.grid_size))
 
-    if scale_shortest:
-        CPA_maps[0, 0] = unwrap_phase(proper.prop_get_phase(short_wf))
-        wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
-        x = np.arange(-ap.grid_size / 2, ap.grid_size / 2)
-        for iw in range(1, len(wsamples)):
-            beam_ratio = ap.band[0] / wsamples[iw] * 1e-9
-            zeros_ind = int(ap.grid_size * (1 - beam_ratio) / 2)
-            xnew = np.arange(-ap.grid_size / 2, ap.grid_size / 2, 1. / beam_ratio)
-            f = interpolate.interp2d(x, x, CPA_maps[0, 0], kind='cubic')
-            shrink = f(xnew, xnew)
-            if len(shrink) % 2 == 0:
-                CPA_maps[0, iw, zeros_ind:-zeros_ind, zeros_ind:-zeros_ind] = shrink
-            else:
-                CPA_maps[0, iw, zeros_ind+1:-zeros_ind, zeros_ind+1:-zeros_ind] = shrink
-
-    else:
-        for iw in range(len(wfo.wf_array)):
-            CPA_maps[0, iw] = unwrap_phase(proper.prop_get_phase(wfo.wf_array[iw,0]))
+    # if scale_shortest:
+    #     # quicklook_im(proper.prop_get_phase(short_wf), show=False)
+    #     CPA_maps[0, 0] = unwrap_phase(proper.prop_get_phase(short_wf))
+    #     # quicklook_im(CPA_maps[0, 0])
+    #     wsamples = np.linspace(ap.band[0], ap.band[1], ap.nwsamp) / 1e9
+    #     x = np.arange(-ap.grid_size / 2, ap.grid_size / 2)
+    #     for iw in range(1, len(wsamples)):
+    #         beam_ratio = ap.band[0] / wsamples[iw] * 1e-9
+    #         zeros_ind = int(ap.grid_size * (1 - beam_ratio) / 2)
+    #         xnew = np.arange(-ap.grid_size / 2, ap.grid_size / 2, 1. / beam_ratio)
+    #         f = interpolate.interp2d(x, x, CPA_maps[0, 0], kind='cubic')
+    #         shrink = f(xnew, xnew)
+    #         if len(shrink) % 2 == 0:
+    #             CPA_maps[0, iw, zeros_ind:-zeros_ind, zeros_ind:-zeros_ind] = shrink
+    #         else:
+    #             CPA_maps[0, iw, zeros_ind+1:-zeros_ind, zeros_ind+1:-zeros_ind] = shrink
+    # else:
+    #     for iw in range(len(wfo.wf_array)):
+    phasemap = proper.prop_get_phase(wfo.wf_array[0, 0])
+    phasemap_masked = np.ma.masked_equal(phasemap, 0)
+    CPA_maps[0,0] = unwrap_phase(phasemap_masked)
+    CPA_maps[0,0][phasemap==0] = 0
+            # quicklook_im(CPA_maps[0, iw])
     # CPA_maps[iw] = scipy.ndimage.filters.gaussian_filter(unwrap_phase(proper.prop_get_phase(wf_vec[iw])), sigma,
     #                                                      mode='constant')
 
     # if tp.piston_error:
     #     var = 1e-4  #1e-11 #0.1 wavelengths 0.1*1000e-9
     #     CPA_maps[iw] = CPA_maps[iw] + np.random.normal(0,var,(CPA_maps[iw].shape[0],CPA_maps[iw].shape[1]))
+    # view_datacube(CPA_maps[0], cmap='twilight')
     tiptilt = np.zeros((ap.grid_size,ap.grid_size))
 
     wfo.test_save('quick_wfs')
