@@ -344,7 +344,9 @@ def get_intensity(wf_array, sp, logAmp=True, show=False, save=True, phase=False)
             pickle.dump(int_maps, wfp, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax =None, width=5):
+def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax =None, width=5, cmap="inferno"):
+    if cmap == 'twilight':
+        cmap = twilight
     '''axis = anno/None/True'''
     from medis.params import ap
     w_string = np.linspace(ap.band[0], ap.band[1], ap.w_bins, dtype=str)
@@ -371,13 +373,13 @@ def view_datacube(datacube, show=True, logAmp=False, axis=True, vmin=None, vmax 
                 # datacube[w] = np.abs(datacube[w] + 1e-9)
                 im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax,
                                norm=SymLogNorm(linthresh=1e-5),
-                               cmap="inferno")
+                               cmap=cmap)
             else:
                 ax.set_title(w_string[w])
-                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, norm=LogNorm(), cmap="inferno")
+                im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, norm=LogNorm(), cmap=cmap)
         else:
             # ax.set_title(w_string[w])
-            im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap="inferno")
+            im = ax.imshow(datacube[w], interpolation='none', origin='lower', vmin=vmin, vmax=vmax, cmap=cmap)
         if axis == 'anno':
             annotate_axis(im, ax, datacube.shape[1])
         if axis is None:
@@ -409,6 +411,8 @@ def initialize_GUI():
 
 def quicklook_im(image, logAmp=False, show=True, vmin=None, vmax=None, axis=False, anno=None, title=None, pupil=False,
                  colormap="inferno", mark_star=False, label=None):
+    if colormap == 'twilight':
+        colormap = twilight
     # MEDIUM_SIZE = 27
     # plt.rc('font', size=MEDIUM_SIZE)  # controls default text sizes
 
