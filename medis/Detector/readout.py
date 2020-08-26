@@ -284,10 +284,20 @@ def save_step_const(output_queue, fields_filename, shape):
             t, fields = output_queue.get()
             dprint(sp.save_locs)
             if fields is not None:
-                if sp.verbose: print(f'Adding time {t} to {fields_filename}')
+                if sp.verbose: 
+                    print(f'Adding time {t} to {fields_filename}')
                 dset[t] = fields
             else:
-                print('Finished saving observation data')
+                for param in [iop, cp, tp, mp, sp, iop, dp, fp]:
+                    for key, value in dict(param).items():
+                        if type(value) == str or value is None:
+                            value = np.string_(value)
+                        try:
+                            hdf.attrs.create(f'{param.__name__()}.{key}', value)
+                        except TypeError:
+                            print('WARNING skipping some attributes - probably the aber dictionaries or save locs')
+                print(len(hdf.attrs),'attributes created')
+                print('file saved')
                 break
 
 def handle_output(output, filename):
